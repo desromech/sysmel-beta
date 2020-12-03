@@ -1,0 +1,5 @@
+-Wall
+-Wextra
+-std=c++17
+-Iinclude
+-Ithird-party/unittestpp
