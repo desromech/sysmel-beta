@@ -25,10 +25,10 @@ SUITE(Scanner)
         CHECK_EQUAL(TokenType::EndOfSource, scanSingleTokenType(""));
         CHECK_EQUAL(TokenType::EndOfSource, scanSingleTokenType("##"));
         CHECK_EQUAL(TokenType::EndOfSource, scanSingleTokenType("#* *#"));
-        CHECK_EQUAL(TokenType::Error, scanSingleTokenType("#* "));
+        CHECK_EQUAL(TokenType::ErrorIncompleteComment, scanSingleTokenType("#* "));
     }
 
-    TEST(Idenifiers)
+    TEST(Identifiers)
     {
         CHECK_EQUAL(TokenType::Identifier, scanSingleTokenType("A"));
         CHECK_EQUAL("A", scanSingleTokenText("A"));
@@ -59,6 +59,39 @@ SUITE(Scanner)
 
         CHECK_EQUAL(TokenType::Keyword, scanSingleTokenType("helloWorld01234:A:a1:_:"));
         CHECK_EQUAL("helloWorld01234:A:a1:_:", scanSingleTokenText("helloWorld01234:A:a1:_:"));
+    }
+
+    TEST(SymbolIdentifiers)
+    {
+        CHECK_EQUAL(TokenType::SymbolIdentifier, scanSingleTokenType("#A"));
+        CHECK_EQUAL("#A", scanSingleTokenText("#A"));
+
+        CHECK_EQUAL(TokenType::SymbolIdentifier, scanSingleTokenType("#_"));
+        CHECK_EQUAL("#_", scanSingleTokenText("#_"));
+
+        CHECK_EQUAL(TokenType::SymbolIdentifier, scanSingleTokenType("#a"));
+        CHECK_EQUAL("#a", scanSingleTokenText("#a"));
+
+        CHECK_EQUAL(TokenType::SymbolIdentifier, scanSingleTokenType("#helloWorld01234"));
+        CHECK_EQUAL("#helloWorld01234", scanSingleTokenText("#helloWorld01234"));
+    }
+
+    TEST(SymbolKeyword)
+    {
+        CHECK_EQUAL(TokenType::SymbolKeyword, scanSingleTokenType("#A:"));
+        CHECK_EQUAL("#A:", scanSingleTokenText("#A:"));
+
+        CHECK_EQUAL(TokenType::SymbolKeyword, scanSingleTokenType("#_:"));
+        CHECK_EQUAL("#_:", scanSingleTokenText("#_:"));
+
+        CHECK_EQUAL(TokenType::SymbolKeyword, scanSingleTokenType("#a:"));
+        CHECK_EQUAL("#a:", scanSingleTokenText("#a:"));
+
+        CHECK_EQUAL(TokenType::SymbolKeyword, scanSingleTokenType("#helloWorld01234:"));
+        CHECK_EQUAL("#helloWorld01234:", scanSingleTokenText("#helloWorld01234:"));
+
+        CHECK_EQUAL(TokenType::SymbolKeyword, scanSingleTokenType("#helloWorld01234:A:a1:_:"));
+        CHECK_EQUAL("#helloWorld01234:A:a1:_:", scanSingleTokenText("#helloWorld01234:A:a1:_:"));
     }
 
     TEST(Integers)
@@ -110,5 +143,106 @@ SUITE(Scanner)
 
         CHECK_EQUAL(TokenType::Float, scanSingleTokenType("-0123456789.14565e-53"));
         CHECK_EQUAL("-0123456789.14565e-53", scanSingleTokenText("-0123456789.14565e-53"));
+    }
+
+    TEST(Character)
+    {
+        CHECK_EQUAL(TokenType::Character, scanSingleTokenType("'a'"));
+        CHECK_EQUAL("'a'", scanSingleTokenText("'a'"));
+
+        CHECK_EQUAL(TokenType::Character, scanSingleTokenType("'\\''"));
+        CHECK_EQUAL("'\\''", scanSingleTokenText("'\\''"));
+
+        CHECK_EQUAL(TokenType::ErrorIncompleteCharacter, scanSingleTokenType("'\\'"));
+        CHECK_EQUAL("'\\'", scanSingleTokenText("'\\'"));
+    }
+
+    TEST(String)
+    {
+        CHECK_EQUAL(TokenType::String, scanSingleTokenType("\"\""));
+        CHECK_EQUAL("\"\"", scanSingleTokenText("\"\""));
+
+        CHECK_EQUAL(TokenType::String, scanSingleTokenType("\"a\""));
+        CHECK_EQUAL("\"a\"", scanSingleTokenText("\"a\""));
+
+        CHECK_EQUAL(TokenType::String, scanSingleTokenType("\"\\\"\""));
+        CHECK_EQUAL("\"\\\"\"", scanSingleTokenText("\"\\\"\""));
+
+        CHECK_EQUAL(TokenType::ErrorIncompleteString, scanSingleTokenType("\"\\\""));
+        CHECK_EQUAL("\"\\\"", scanSingleTokenText("\"\\\""));
+    }
+
+    TEST(SymbolString)
+    {
+        CHECK_EQUAL(TokenType::SymbolString, scanSingleTokenType("#\"\""));
+        CHECK_EQUAL("#\"\"", scanSingleTokenText("#\"\""));
+
+        CHECK_EQUAL(TokenType::SymbolString, scanSingleTokenType("#\"a\""));
+        CHECK_EQUAL("#\"a\"", scanSingleTokenText("#\"a\""));
+
+        CHECK_EQUAL(TokenType::SymbolString, scanSingleTokenType("#\"\\\"\""));
+        CHECK_EQUAL("#\"\\\"\"", scanSingleTokenText("#\"\\\"\""));
+
+        CHECK_EQUAL(TokenType::ErrorIncompleteSymbolString, scanSingleTokenType("#\"\\\""));
+        CHECK_EQUAL("#\"\\\"", scanSingleTokenText("#\"\\\""));
+    }
+
+    TEST(SpecialOperators)
+    {
+        CHECK_EQUAL(TokenType::Colon, scanSingleTokenType(":"));
+        CHECK_EQUAL(TokenType::Assignment, scanSingleTokenType(":="));
+        CHECK_EQUAL(TokenType::ColonColon, scanSingleTokenType("::"));
+    }
+
+    TEST(MacroOperators)
+    {
+        CHECK_EQUAL(TokenType::Quote, scanSingleTokenType("`'"));
+        CHECK_EQUAL(TokenType::QuasiQuote, scanSingleTokenType("``"));
+        CHECK_EQUAL(TokenType::QuasiUnquote, scanSingleTokenType("`,"));
+        CHECK_EQUAL(TokenType::Splice, scanSingleTokenType("`@"));
+    }
+
+    TEST(Delimiters)
+    {
+        CHECK_EQUAL(TokenType::Dot, scanSingleTokenType("."));
+        CHECK_EQUAL(TokenType::Semicolon, scanSingleTokenType(";"));
+        CHECK_EQUAL(TokenType::LeftParent, scanSingleTokenType("("));
+        CHECK_EQUAL(TokenType::RightParent, scanSingleTokenType(")"));
+        CHECK_EQUAL(TokenType::LeftBracket, scanSingleTokenType("["));
+        CHECK_EQUAL(TokenType::RightBracket, scanSingleTokenType("]"));
+        CHECK_EQUAL(TokenType::LeftCurlyBracket, scanSingleTokenType("{"));
+        CHECK_EQUAL(TokenType::RightCurlyBracket, scanSingleTokenType("}"));
+
+        CHECK_EQUAL(TokenType::LiteralArrayLeftParent, scanSingleTokenType("#("));
+        CHECK_EQUAL(TokenType::ByteArrayLeftBracket, scanSingleTokenType("#["));
+        CHECK_EQUAL(TokenType::DictionaryLeftBracket, scanSingleTokenType("#{"));
+    }
+
+    TEST(Operators)
+    {
+        CHECK_EQUAL(TokenType::LowPrecedenceBinaryOperator, scanSingleTokenType("::=>"));
+        CHECK_EQUAL(TokenType::GenericBinaryOperator, scanSingleTokenType("=>"));
+
+        CHECK_EQUAL(TokenType::LogicalOr, scanSingleTokenType("||"));
+        CHECK_EQUAL(TokenType::LogicalAnd, scanSingleTokenType("&&"));
+        CHECK_EQUAL(TokenType::BitwiseOr, scanSingleTokenType("|"));
+        CHECK_EQUAL(TokenType::BitwiseXor, scanSingleTokenType("^"));
+        CHECK_EQUAL(TokenType::BitwiseAnd, scanSingleTokenType("&"));
+        CHECK_EQUAL(TokenType::Equality, scanSingleTokenType("="));
+        CHECK_EQUAL(TokenType::IdentityEquality, scanSingleTokenType("=="));
+        CHECK_EQUAL(TokenType::NotEquality, scanSingleTokenType("~="));
+        CHECK_EQUAL(TokenType::IdentityNotEquality, scanSingleTokenType("~~"));
+        CHECK_EQUAL(TokenType::LessOrEqualThan, scanSingleTokenType("<="));
+        CHECK_EQUAL(TokenType::LessThan, scanSingleTokenType("<"));
+        CHECK_EQUAL(TokenType::GreaterOrEqualThan, scanSingleTokenType(">="));
+        CHECK_EQUAL(TokenType::GreaterThan, scanSingleTokenType(">"));
+        CHECK_EQUAL(TokenType::LogicalShiftLeft, scanSingleTokenType("<<"));
+        CHECK_EQUAL(TokenType::LogicalShiftRight, scanSingleTokenType(">>"));
+        CHECK_EQUAL(TokenType::Plus, scanSingleTokenType("+"));
+        CHECK_EQUAL(TokenType::Minus, scanSingleTokenType("-"));
+        CHECK_EQUAL(TokenType::Times, scanSingleTokenType("*"));
+        CHECK_EQUAL(TokenType::Divide, scanSingleTokenType("/"));
+        CHECK_EQUAL(TokenType::IntegerDivide, scanSingleTokenType("//"));
+        CHECK_EQUAL(TokenType::Modulus, scanSingleTokenType("%"));
     }
 }

@@ -79,7 +79,7 @@ struct SourcePosition
     {
         if(startPosition >= endPosition)
             return -1;
-        return sourceCollection->text[++startPosition];
+        return sourceCollection->text[startPosition++];
     }
 
     template<typename FT>
@@ -88,7 +88,7 @@ struct SourcePosition
         while(f(peek()))
             advance();
     }
-    
+
     const std::string &sourceName() const
     {
         return sourceCollection->name;

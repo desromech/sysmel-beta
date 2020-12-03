@@ -18,8 +18,7 @@ struct ASTNode
 {
     virtual std::any accept(ASTVisitor *visitor) = 0;
 
-    SourcePosition startPosition;
-    SourcePosition endPosition;
+    SourcePosition sourcePosition;
 };
 
 typedef std::shared_ptr<ASTNode> ASTNodePtr;

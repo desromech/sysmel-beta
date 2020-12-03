@@ -46,9 +46,14 @@ struct Token
     TokenType type;
     SourcePosition sourcePosition;
 
+    bool isErrorUnexpected() const
+    {
+        return type == TokenType::ErrorUnexpected;
+    }
+
     bool isError() const
     {
-        return type == TokenType::Error;
+        return TokenType::Error <= type && type <= TokenType::ErrorCount;
     }
 
     std::string text() const
