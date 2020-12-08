@@ -95,8 +95,11 @@ static ASTNodePtr parseInteger(TokenRange &currentPosition)
     auto startPosition = currentPosition;
     auto literal = std::make_shared<ASTIntegerLiteralNode> ();
     auto token = currentPosition.next();
-    auto parsedInteger = parseInteger(token.text());
     auto position = startPosition.until(currentPosition);
+    if(token.type != TokenType::Integer)
+        return makeParseErrorNodeAt(position, "Expected an integer literal.");
+
+    auto parsedInteger = parseInteger(token.text());
     if(!parsedInteger)
         return makeParseErrorNodeAt(position, "Invalid integer literal.");
 
@@ -111,9 +114,26 @@ static ASTNodePtr parseFloat(TokenRange &currentPosition)
     auto literal = std::make_shared<ASTFloatLiteralNode> ();
     auto token = currentPosition.next();
     auto position = startPosition.until(currentPosition);
+    if(token.type != TokenType::Float)
+        return makeParseErrorNodeAt(position, "Expected a float point literal.");
+
     literal->value = atof(token.text().c_str());
     literal->setTokenRange(position);
     return literal;
+}
+
+static ASTNodePtr parseIdentifier(TokenRange &currentPosition)
+{
+    auto startPosition = currentPosition;
+    auto node = std::make_shared<ASTIdentifierReferenceNode> ();
+    auto token = currentPosition.next();
+    auto position = startPosition.until(currentPosition);
+    if(token.type != TokenType::Identifier)
+        return makeParseErrorNodeAt(position, "Expected an identifier reference.");
+
+    node->identifier = token.text();
+    node->setTokenRange(position);
+    return node;
 }
 
 static ASTNodePtr parseLiteral(TokenRange &currentPosition)
@@ -143,22 +163,58 @@ static ASTNodePtr parseParentExpression(TokenRange &currentPosition)
     return expression;
 
 }
-static ASTNodePtr parsePrimary(TokenRange &currentPosition)
+
+static ASTNodePtr parsePrimaryExpression(TokenRange &currentPosition)
 {
     auto startPosition = currentPosition;
     switch(currentPosition.peek().type)
     {
     case TokenType::LeftParent:
         return parseParentExpression(currentPosition);
-
+    case TokenType::Identifier:
+        return parseIdentifier(currentPosition);
     default:
         return parseLiteral(currentPosition);
     }
 }
 
+static ASTNodePtr parseUnaryPostfixExpression(TokenRange &currentPosition)
+{
+    return parsePrimaryExpression(currentPosition);
+}
+
+static ASTNodePtr parseUnaryPrefixExpression(TokenRange &currentPosition)
+{
+    switch(currentPosition.peek().type)
+    {
+    case TokenType::Plus:
+    case TokenType::Minus:
+    case TokenType::LogicalNot:
+    case TokenType::BitwiseNot:
+        {
+            auto startPosition = currentPosition;
+            auto selector = "pre-" + currentPosition.next().text();
+            auto selectorPosition = startPosition.until(currentPosition);
+            auto selectorNode = makeLiteralSymbolASTNodeAt(selectorPosition, selector);
+
+            auto operand = parseUnaryPrefixExpression(currentPosition);
+            if(operand->isParseErrorNode())
+                return operand;
+
+            auto messageSend = std::make_shared<ASTMessageSendNode> ();
+            messageSend->setTokenRange(startPosition.until(currentPosition));
+            messageSend->selector = selectorNode;
+            messageSend->receiver = operand;
+            return messageSend;
+        }
+    default:
+        return parseUnaryPostfixExpression(currentPosition);
+    }
+}
+
 static ASTNodePtr parseExpression(TokenRange &currentPosition)
 {
-    return parsePrimary(currentPosition);
+    return parseUnaryPrefixExpression(currentPosition);
 }
 
 static ASTNodePtr parseExpressionList(TokenRange &currentPosition)

@@ -66,4 +66,60 @@ SUITE(Parser)
         CHECK(literal->isFloatLiteralNode());
         CHECK_EQUAL(+42.5e+2, literal->as<ASTFloatLiteralNode> ().value);
     }
+
+    TEST(IdentifierReference)
+    {
+        auto node = parseSingleExpression("hello");
+        CHECK(node->isIdentifierReferenceNode());
+        CHECK_EQUAL("hello", node->as<ASTIdentifierReferenceNode> ().identifier);
+
+        node = parseSingleExpression("_helloWorld12345");
+        CHECK(node->isIdentifierReferenceNode());
+        CHECK_EQUAL("_helloWorld12345", node->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(UnaryMinus)
+    {
+        auto node = parseSingleExpression("-a");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("pre--", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+
+    TEST(UnaryPlus)
+    {
+        auto node = parseSingleExpression("+a");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("pre-+", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(LogicalNot)
+    {
+        auto node = parseSingleExpression("!a");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("pre-!", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(BitwiseNot)
+    {
+        auto node = parseSingleExpression("~a");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("pre-~", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+    }
 }

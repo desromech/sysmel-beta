@@ -24,6 +24,9 @@ struct ASTCharacterLiteralNode;
 struct ASTStringLiteralNode;
 struct ASTSymbolLiteralNode;
 
+struct ASTIdentifierReferenceNode;
+struct ASTMessageSendNode;
+
 struct ASTVisitor;
 struct ASTNode : std::enable_shared_from_this<ASTNode>
 {
@@ -37,6 +40,9 @@ struct ASTNode : std::enable_shared_from_this<ASTNode>
     virtual bool isCharacterLiteralNode() const { return false; }
     virtual bool isStringLiteralNode() const { return false; }
     virtual bool isSymbolLiteralNode() const { return false; }
+
+    virtual bool isIdentifierReferenceNode() const { return false; }
+    virtual bool isMessageSendNode() const { return false; }
 
     template<typename T>
     T &as()
@@ -61,6 +67,7 @@ struct ASTNode : std::enable_shared_from_this<ASTNode>
 };
 
 typedef std::shared_ptr<ASTNode> ASTNodePtr;
+typedef std::vector<ASTNodePtr> ASTNodePtrList;
 
 struct ASTVisitor
 {
@@ -76,6 +83,9 @@ struct ASTVisitor
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) = 0;
     virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) = 0;
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) = 0;
+
+    virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) = 0;
+    virtual std::any visitMessageSendNode(ASTMessageSendNode &node) = 0;
 };
 
 struct ASTExpressionListNode : ASTNode
@@ -183,11 +193,51 @@ struct ASTParseErrorNode : ASTNode
     }
 };
 
+struct ASTIdentifierReferenceNode : ASTNode
+{
+    std::string identifier;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitIdentifierReferenceNode(*this);
+    }
+
+    virtual bool isIdentifierReferenceNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTMessageSendNode : ASTNode
+{
+    ASTNodePtr selector;
+    ASTNodePtr receiver;
+    ASTNodePtrList arguments;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitMessageSendNode(*this);
+    }
+
+    virtual bool isMessageSendNode() const override
+    {
+        return true;
+    }
+};
+
 inline ASTNodePtr makeParseErrorNodeAt(const TokenRange &tokens, const std::string &errorMessage)
 {
     auto node = std::make_shared<ASTParseErrorNode> ();
     node->setTokenRange(tokens);
     node->errorMessage = errorMessage;
+    return node;
+}
+
+inline ASTNodePtr makeLiteralSymbolASTNodeAt(const TokenRange &tokens, const std::string &value)
+{
+    auto node = std::make_shared<ASTSymbolLiteralNode> ();
+    node->setTokenRange(tokens);
+    node->value = value;
     return node;
 }
 

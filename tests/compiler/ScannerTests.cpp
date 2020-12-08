@@ -41,6 +41,9 @@ SUITE(Scanner)
         CHECK_EQUAL(TokenType::Identifier, scanSingleTokenType("a"));
         CHECK_EQUAL("a", scanSingleTokenText("a"));
 
+        CHECK_EQUAL(TokenType::Identifier, scanSingleTokenType("hello"));
+        CHECK_EQUAL("hello", scanSingleTokenText("hello"));
+
         CHECK_EQUAL(TokenType::Identifier, scanSingleTokenType("helloWorld01234"));
         CHECK_EQUAL("helloWorld01234", scanSingleTokenText("helloWorld01234"));
     }
