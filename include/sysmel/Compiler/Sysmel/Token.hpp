@@ -56,6 +56,11 @@ struct Token
         return TokenType::Error <= type && type <= TokenType::ErrorCount;
     }
 
+    bool isEndOfSource() const
+    {
+        return type == TokenType::EndOfSource;
+    }
+
     std::string text() const
     {
         return sourcePosition.text();
@@ -63,6 +68,28 @@ struct Token
 };
 
 typedef std::vector<Token> TokenList;
+typedef std::shared_ptr<TokenList> TokenListPtr;
+
+/**
+ * I am a range of tokens in a token stream.
+ */
+struct TokenRange : CollectionRange<TokenRange, TokenListPtr, TokenList, Token>
+{
+    typedef Token peek_type;
+
+    Token eofValue() const
+    {
+        if(!collection->empty() && collection->back().isEndOfSource())
+            return collection->back();
+
+        return Token{TokenType::EndOfSource, SourcePosition()};
+    }
+
+    SourcePosition asSourcePosition() const
+    {
+        return front().sourcePosition.until(back().sourcePosition);
+    }
+};
 
 } // End of namespace Sysmel
 } // End of namespace Compiler

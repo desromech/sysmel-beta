@@ -12,7 +12,7 @@ namespace Compiler
 namespace Sysmel
 {
 
-ASTNodePtr parseTokenList(const TokenList &tokenList);
+ASTNodePtr parseTokenList(const TokenListPtr &tokenList);
 inline ASTNodePtr parseString(const std::string &sourceString, const std::string &sourceName = "")
 {
     return parseTokenList(scanString(sourceString, sourceName));

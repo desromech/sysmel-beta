@@ -517,13 +517,13 @@ static void scanNextToken(SourcePosition &currentPosition, TokenList &result)
 
 }
 
-TokenList scanSourceCollection(const SourceCollectionPtr &sourceCollection)
+TokenListPtr scanSourceCollection(const SourceCollectionPtr &sourceCollection)
 {
-    TokenList result;
-    auto currentPosition = SourcePosition::forSourceCollection(sourceCollection);
+    auto result = std::make_shared<TokenList> ();
+    auto currentPosition = SourcePosition::forCollection(sourceCollection);
     do
     {
-        scanNextToken(currentPosition, result);
+        scanNextToken(currentPosition, *result);
     } while (!currentPosition.empty());
 
     return result;

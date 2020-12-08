@@ -6,14 +6,16 @@ using namespace SysmelMoebius::Compiler::Sysmel;
 
 static TokenType scanSingleTokenType(const std::string &source)
 {
-    auto tokenList = scanString(source);
+    auto tokenListPtr = scanString(source);
+    auto &tokenList = *tokenListPtr;
     CHECK(tokenList.size() == 1 || (tokenList.size() == 2 && tokenList[1].type == TokenType::EndOfSource));
     return tokenList[0].type;
 }
 
 static std::string scanSingleTokenText(const std::string &source)
 {
-    auto tokenList = scanString(source);
+    auto tokenListPtr = scanString(source);
+    auto &tokenList = *tokenListPtr;
     CHECK(tokenList.size() == 1 || (tokenList.size() == 2 && tokenList[1].type == TokenType::EndOfSource));
     return tokenList[0].text();
 }

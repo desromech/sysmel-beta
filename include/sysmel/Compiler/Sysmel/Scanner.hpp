@@ -11,9 +11,9 @@ namespace Compiler
 namespace Sysmel
 {
 
-TokenList scanSourceCollection(const SourceCollectionPtr &sourceCollection);
+TokenListPtr scanSourceCollection(const SourceCollectionPtr &sourceCollection);
 
-inline TokenList scanString(const std::string &sourceString, const std::string &sourceName = "")
+inline TokenListPtr scanString(const std::string &sourceString, const std::string &sourceName = "")
 {
     return scanSourceCollection(std::make_shared<SourceCollection> (sourceString, sourceName));
 }
