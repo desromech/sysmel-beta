@@ -210,6 +210,7 @@ SUITE(Scanner)
     TEST(Delimiters)
     {
         CHECK_EQUAL(TokenType::Dot, scanSingleTokenType("."));
+        CHECK_EQUAL(TokenType::Comma, scanSingleTokenType(","));
         CHECK_EQUAL(TokenType::Semicolon, scanSingleTokenType(";"));
         CHECK_EQUAL(TokenType::LeftParent, scanSingleTokenType("("));
         CHECK_EQUAL(TokenType::RightParent, scanSingleTokenType(")"));

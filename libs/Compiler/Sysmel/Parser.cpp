@@ -10,6 +10,9 @@ namespace Sysmel
 
 static constexpr int MaxIntegerRadixBase = 10 + 'Z' - 'A';
 
+static ASTNodePtr parseExpression(TokenRange &currentPosition);
+static ASTNodePtr parseAssignmentExpression(TokenRange &currentPosition);
+
 static std::optional<LiteralInteger> parseIntegerWithRadix(const std::string &string, int radix)
 {
     if(string.empty())
@@ -87,8 +90,6 @@ static std::optional<LiteralInteger> parseInteger(const std::string &string)
         return -positiveValue.value();
     return std::nullopt;
 }
-
-static ASTNodePtr parseExpression(TokenRange &currentPosition);
 
 static ASTNodePtr parseInteger(TokenRange &currentPosition)
 {
@@ -178,9 +179,104 @@ static ASTNodePtr parsePrimaryExpression(TokenRange &currentPosition)
     }
 }
 
+ASTNodePtrList parseCallArguments(TokenRange &currentPosition)
+{
+    ASTNodePtrList result;
+    if(currentPosition.next().type != TokenType::LeftParent)
+    {
+        result.push_back(makeParseErrorNodeAt(currentPosition, "Expected call arguments."));
+        return result;
+    }
+
+    // Empty case.
+    if(currentPosition.peek().type == TokenType::RightParent)
+    {
+        currentPosition.next();
+        return result;
+    }
+
+    // First element.
+    auto firstArgument = parseAssignmentExpression(currentPosition);
+    result.push_back(firstArgument);
+
+    while(currentPosition.peek().type == TokenType::Comma)
+    {
+        currentPosition.next();
+
+        auto argument = parseAssignmentExpression(currentPosition);
+        result.push_back(argument);
+        if(argument->isParseErrorNode())
+            break;
+    }
+
+    if(currentPosition.peek().type == TokenType::RightParent)
+    {
+        currentPosition.next();
+    }
+    else
+    {
+        if(!result.back()->isParseErrorNode())
+            result.push_back(makeParseErrorNodeAt(currentPosition, "Expected a right parenthesis."));
+    }
+
+    return result;
+}
+
 static ASTNodePtr parseUnaryPostfixExpression(TokenRange &currentPosition)
 {
-    return parsePrimaryExpression(currentPosition);
+    auto startPosition = currentPosition;
+    auto receiver = parsePrimaryExpression(currentPosition);
+    if(receiver->isParseErrorNode())
+        return receiver;
+
+    for(;;)
+    {
+        switch(currentPosition.peek().type)
+        {
+        case TokenType::Identifier:
+            // Unary message
+            {
+                auto selector = std::make_shared<ASTSymbolLiteralNode> ();
+                selector->setTokenRange(currentPosition.until(1));
+                selector->value = currentPosition.next().text();
+
+                auto messageSend = std::make_shared<ASTMessageSendNode> ();
+                messageSend->receiver = receiver;
+                messageSend->selector = selector;
+                messageSend->setTokenRange(startPosition.until(currentPosition));
+                receiver = messageSend;
+            }
+            break;
+        case TokenType::LeftParent:
+            // Call expression
+            {
+                auto selector = std::make_shared<ASTSymbolLiteralNode> ();
+                selector->setTokenRange(currentPosition.until(1));
+                selector->value = "()";
+
+                auto messageSend = std::make_shared<ASTMessageSendNode> ();
+                messageSend->selector = selector;
+                messageSend->receiver = receiver;
+                messageSend->arguments = parseCallArguments(currentPosition);
+                receiver = messageSend;
+            }
+            break;
+        case TokenType::LeftBracket:
+            // Subscript expression.
+            {
+
+            }
+            break;
+        case TokenType::QuasiUnquote:
+            // Unary message with macro selector.
+            {
+
+            }
+            break;
+        default:
+            return receiver;
+        }
+    }
 }
 
 static ASTNodePtr parseUnaryPrefixExpression(TokenRange &currentPosition)
@@ -212,9 +308,95 @@ static ASTNodePtr parseUnaryPrefixExpression(TokenRange &currentPosition)
     }
 }
 
+static inline int precedenceOfOperator(TokenType tokenType)
+{
+    switch(tokenType)
+    {
+    case TokenType::Times:
+    case TokenType::Divide:
+    case TokenType::IntegerDivide:
+    case TokenType::Modulus:
+        return 10;
+    case TokenType::Plus:
+    case TokenType::Minus:
+        return 9;
+    case TokenType::LogicalShiftLeft:
+    case TokenType::LogicalShiftRight:
+        return 8;
+
+    case TokenType::LessThan:
+    case TokenType::LessOrEqualThan:
+    case TokenType::GreaterThan:
+    case TokenType::GreaterOrEqualThan:
+        return 7;
+
+    case TokenType::Equality:
+    case TokenType::IdentityEquality:
+    case TokenType::NotEquality:
+    case TokenType::IdentityNotEquality:
+        return 6;
+
+    case TokenType::BitwiseAnd: return 5;
+    case TokenType::BitwiseXor: return 4;
+    case TokenType::BitwiseOr: return 3;
+    case TokenType::LogicalAnd: return 2;
+    case TokenType::LogicalOr: return 1;
+    case TokenType::GenericBinaryOperator: return 0;
+
+    default: return -1;
+    }
+}
+
+static ASTNodePtr parseBinaryExpressionWithPrecedence(ASTNodePtr leftOperand, TokenRange &currentPosition, int minimalPrecedence)
+{
+    // Algorithm from: https://en.wikipedia.org/wiki/Operator-precedence_parser
+    int currentPrecedence;
+    while((currentPrecedence = precedenceOfOperator(currentPosition.peek().type)) >= minimalPrecedence)
+    {
+        // Make the selector symbol node.
+        auto selectorPosition = currentPosition.until(1);
+        auto operatorToken = currentPosition.next();
+        auto selectorNode = makeLiteralSymbolASTNodeAt(selectorPosition, operatorToken.text());
+
+        // Parse the next operand
+        auto rightOperand = parseUnaryPrefixExpression(currentPosition);
+
+        // Apply the next precedence levels.
+        int nextPrecedence;
+        while((nextPrecedence = precedenceOfOperator(currentPosition.peek().type)) > currentPrecedence)
+        {
+            rightOperand = parseBinaryExpressionWithPrecedence(rightOperand, currentPosition, nextPrecedence);
+        }
+
+        // Make the node.
+        auto messageSend = std::make_shared<ASTMessageSendNode> ();
+        messageSend->setTokenRange(leftOperand->tokens.until(rightOperand->tokens));
+        messageSend->selector = selectorNode;
+        messageSend->receiver = leftOperand;
+        messageSend->arguments.push_back(rightOperand);
+        leftOperand = messageSend;
+    }
+
+    return leftOperand;
+}
+
+static ASTNodePtr parseBinaryExpression(TokenRange &currentPosition)
+{
+    auto primary = parseUnaryPrefixExpression(currentPosition);
+    if(primary->isParseErrorNode())
+        return primary;
+
+    return parseBinaryExpressionWithPrecedence(primary, currentPosition, 0);
+}
+
+static ASTNodePtr parseAssignmentExpression(TokenRange &currentPosition)
+{
+    return parseBinaryExpression(currentPosition);
+}
+
 static ASTNodePtr parseExpression(TokenRange &currentPosition)
 {
-    return parseUnaryPrefixExpression(currentPosition);
+    return parseAssignmentExpression(currentPosition);
 }
 
 static ASTNodePtr parseExpressionList(TokenRange &currentPosition)

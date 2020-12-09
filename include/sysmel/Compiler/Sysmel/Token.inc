@@ -48,6 +48,7 @@ TOKEN_NAME(ColonColon) // ::
 TOKEN_NAME(Assignment) // :=
 
 TOKEN_NAME(Dot) // .
+TOKEN_NAME(Comma) // ,
 TOKEN_NAME(Semicolon) // ;
 TOKEN_NAME(LeftParent) // ())
 TOKEN_NAME(RightParent) // )

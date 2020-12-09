@@ -168,6 +168,7 @@ static std::unordered_map<std::string, TokenType> KnownOperators {
     {"/", TokenType::Divide},
     {"//", TokenType::IntegerDivide},
     {"%", TokenType::Modulus},
+    {",", TokenType::Comma},
 };
 
 static TokenType skipKeywordOrIdentifier(SourcePosition &currentPosition)
@@ -479,6 +480,9 @@ static void scanNextToken(SourcePosition &currentPosition, TokenList &result)
     {
     case '.':
         delimiterTokenType = TokenType::Dot;
+        break;
+    case ',':
+        delimiterTokenType = TokenType::Comma;
         break;
     case ';':
         delimiterTokenType = TokenType::Semicolon;

@@ -101,6 +101,42 @@ SUITE(Parser)
         CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
     }
 
+    TEST(BinaryOperation)
+    {
+        auto node = parseSingleExpression("a+b");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("+", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+
+        CHECK(node->as<ASTMessageSendNode> ().arguments[0]->isIdentifierReferenceNode());
+        CHECK_EQUAL("b", node->as<ASTMessageSendNode> ().arguments[0]->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(BinaryOperation2)
+    {
+        auto node = parseSingleExpression("a+b*c");
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("+", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+
+        node = node->as<ASTMessageSendNode> ().arguments[0];
+        CHECK(node->isMessageSendNode());
+        CHECK(node->as<ASTMessageSendNode> ().selector->isSymbolLiteralNode());
+        CHECK_EQUAL("*", node->as<ASTMessageSendNode> ().selector->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(node->as<ASTMessageSendNode> ().receiver->isIdentifierReferenceNode());
+        CHECK_EQUAL("b", node->as<ASTMessageSendNode> ().receiver->as<ASTIdentifierReferenceNode> ().identifier);
+
+        CHECK(node->as<ASTMessageSendNode> ().arguments[0]->isIdentifierReferenceNode());
+        CHECK_EQUAL("c", node->as<ASTMessageSendNode> ().arguments[0]->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
     TEST(LogicalNot)
     {
         auto node = parseSingleExpression("!a");
