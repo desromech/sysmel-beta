@@ -81,12 +81,20 @@ struct TokenRange : CollectionRange<TokenRange, TokenListPtr, TokenList, Token>
     {
         if(!collection->empty() && collection->back().isEndOfSource())
             return collection->back();
+        if(!collection->empty())
+        {
+            auto sourceCollection = collection->front().sourcePosition.collection;
+            if(sourceCollection)
+                return Token{TokenType::EndOfSource, SourcePosition::forEndOfCollection(sourceCollection)};
+        }
 
         return Token{TokenType::EndOfSource, SourcePosition()};
     }
 
     SourcePosition asSourcePosition() const
     {
+        if(startPosition + 1 >= endPosition)
+            return front().sourcePosition;
         return front().sourcePosition.until(back().sourcePosition);
     }
 };

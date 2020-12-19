@@ -49,5 +49,9 @@ add_subdirectory(third-party)
 # Build the libs
 add_subdirectory(libs)
 
+# Build the apps
+add_subdirectory(apps)
+
 # Build the tests
+enable_testing()
 add_subdirectory(tests)

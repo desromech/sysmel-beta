@@ -179,7 +179,7 @@ static TokenType skipKeywordOrIdentifier(SourcePosition &currentPosition)
     do
     {
         currentPosition.skipWhile(isIdentifierCharacter);
-        if(currentPosition.peek() == ':')
+        if(currentPosition.peek() == ':' && currentPosition.peek(1) != '=')
         {
             currentPosition.advance();
             scanningKeyword = true;
@@ -219,7 +219,7 @@ static TokenType skipNumber(SourcePosition &currentPosition)
     bool isFloat = false;
 
     // Fractional part.
-    if(dotExponentOrRadix == '.')
+    if(dotExponentOrRadix == '.' && isDigit(currentPosition.peek(1)))
     {
         currentPosition.advance();
         isFloat = true;
@@ -360,6 +360,7 @@ static void scanNextToken(SourcePosition &currentPosition, TokenList &result)
         }
         else if(isOperatorCharacter(symbolFirst))
         {
+            currentPosition.advance();
             currentPosition.skipWhile(isOperatorCharacter);
             result.push_back(Token {TokenType::SymbolOperator, tokenStart.until(currentPosition)});
             return;

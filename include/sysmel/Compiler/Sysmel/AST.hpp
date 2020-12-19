@@ -16,6 +16,10 @@ namespace Sysmel
 
 struct ASTNode;
 struct ASTParseErrorNode;
+struct ASTBlockClosureArgumentNode;
+struct ASTBlockClosureSignatureNode;
+struct ASTBlockNode;
+struct ASTPragmaNode;
 struct ASTExpressionListNode;
 
 struct ASTIntegerLiteralNode;
@@ -26,6 +30,19 @@ struct ASTSymbolLiteralNode;
 
 struct ASTIdentifierReferenceNode;
 struct ASTMessageSendNode;
+struct ASTMessageChainNode;
+struct ASTMessageChainMessageNode;
+struct ASTCallNode;
+struct ASTSubscriptNode;
+struct ASTMakeTupleNode;
+struct ASTMakeDictionaryNode;
+struct ASTDictionaryElementNode;
+struct ASTLiteralArrayNode;
+
+struct ASTQuoteNode;
+struct ASTQuasiQuoteNode;
+struct ASTQuasiUnquoteNode;
+struct ASTSpliceNode;
 
 struct ASTVisitor;
 struct ASTNode : std::enable_shared_from_this<ASTNode>
@@ -34,6 +51,10 @@ struct ASTNode : std::enable_shared_from_this<ASTNode>
 
     virtual bool isParseErrorNode() const { return false; }
     virtual bool isExpressionListNode() const { return false; }
+    virtual bool isPragmaNode() const { return false; }
+    virtual bool isBlockNode() const { return false; }
+    virtual bool isBlockClosureArgumentNode() const { return false; }
+    virtual bool isBlockClosureSignatureNode() const { return false; }
 
     virtual bool isIntegerLiteralNode() const { return false; }
     virtual bool isFloatLiteralNode() const { return false; }
@@ -43,6 +64,20 @@ struct ASTNode : std::enable_shared_from_this<ASTNode>
 
     virtual bool isIdentifierReferenceNode() const { return false; }
     virtual bool isMessageSendNode() const { return false; }
+    virtual bool isMessageChainNode() const { return false; }
+    virtual bool isMessageChainMessageNode() const { return false; }
+    virtual bool isCallNode() const { return false; }
+    virtual bool isSubscriptNode() const { return false; }
+
+    virtual bool isMakeTupleNode() const { return false; }
+    virtual bool isMakeDictionaryNode() const { return false; }
+    virtual bool isDictionaryElementNode() const { return false; }
+    virtual bool isLiteralArrayNode() const { return false; }
+
+    virtual bool isQuoteNode() const { return false; }
+    virtual bool isQuasiQuoteNode() const { return false; }
+    virtual bool isQuasiUnquoteNode() const { return false; }
+    virtual bool isSpliceNode() const { return false; }
 
     template<typename T>
     T &as()
@@ -78,6 +113,11 @@ struct ASTVisitor
 
     virtual std::any visitParseErrorNode(ASTParseErrorNode &node) = 0;
     virtual std::any visitExpressionListNode(ASTExpressionListNode &node) = 0;
+    virtual std::any visitPragmaNode(ASTPragmaNode &node) = 0;
+    virtual std::any visitBlockNode(ASTBlockNode &node) = 0;
+    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) = 0;
+    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &node) = 0;
+
     virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) = 0;
     virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) = 0;
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) = 0;
@@ -86,11 +126,25 @@ struct ASTVisitor
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) = 0;
     virtual std::any visitMessageSendNode(ASTMessageSendNode &node) = 0;
+    virtual std::any visitMessageChainNode(ASTMessageChainNode &node) = 0;
+    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) = 0;
+    virtual std::any visitCallNode(ASTCallNode &node) = 0;
+    virtual std::any visitSubscriptNode(ASTSubscriptNode &node) = 0;
+
+    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) = 0;
+    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) = 0;
+    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) = 0;
+    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) = 0;
+
+    virtual std::any visitQuoteNode(ASTQuoteNode &node) = 0;
+    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) = 0;
+    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) = 0;
+    virtual std::any visitSpliceNode(ASTSpliceNode &node) = 0;
 };
 
 struct ASTExpressionListNode : ASTNode
 {
-    std::vector<ASTNodePtr> expressions;
+    ASTNodePtrList expressions;
 
     virtual std::any accept(ASTVisitor &visitor) override
     {
@@ -101,6 +155,71 @@ struct ASTExpressionListNode : ASTNode
     {
         return true;
     }
+};
+
+struct ASTPragmaNode : ASTNode
+{
+    ASTNodePtr selector;
+    ASTNodePtrList arguments;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitPragmaNode(*this);
+    }
+
+    virtual bool isPragmaNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTBlockClosureArgumentNode : ASTNode
+{
+    ASTNodePtr type;
+    ASTNodePtr identifier;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitBlockClosureArgumentNode(*this);
+    }
+
+    virtual bool isBlockClosureArgumentNode() const override
+    {
+        return true;
+    }
+};
+struct ASTBlockClosureSignatureNode : ASTNode
+{
+    ASTNodePtrList arguments;
+    ASTNodePtr returnType;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitBlockClosureSignatureNode(*this);
+    }
+
+    virtual bool isBlockClosureSignatureNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTBlockNode : ASTNode
+{
+    ASTNodePtr blockClosureSignature;
+    ASTNodePtrList pragmas;
+    ASTNodePtr expressionList;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitBlockNode(*this);
+    }
+
+    virtual bool isBlockNode() const override
+    {
+        return true;
+    }
+
 };
 
 struct ASTIntegerLiteralNode : ASTNode
@@ -225,12 +344,202 @@ struct ASTMessageSendNode : ASTNode
     }
 };
 
+struct ASTMessageChainMessageNode : ASTNode
+{
+    ASTNodePtr selector;
+    ASTNodePtrList arguments;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitMessageChainMessageNode(*this);
+    }
+
+    virtual bool isMessageChainMessageNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTMessageChainNode : ASTNode
+{
+    ASTNodePtr receiver;
+    ASTNodePtrList messages;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitMessageChainNode(*this);
+    }
+
+    virtual bool isMessageChainNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTCallNode : ASTNode
+{
+    ASTNodePtr callable;
+    ASTNodePtrList arguments;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitCallNode(*this);
+    }
+
+    virtual bool isCallNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTSubscriptNode : ASTNode
+{
+    ASTNodePtr array;
+    ASTNodePtr index;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitSubscriptNode(*this);
+    }
+
+    virtual bool isSubscriptNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTMakeTupleNode : ASTNode
+{
+    ASTNodePtrList elements;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitMakeTupleNode(*this);
+    }
+
+    virtual bool isMakeTupleNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTMakeDictionaryNode : ASTNode
+{
+    ASTNodePtrList elements;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitMakeDictionaryNode(*this);
+    }
+
+    virtual bool isMakeDictionaryNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTDictionaryElementNode : ASTNode
+{
+    ASTNodePtr key;
+    ASTNodePtr value;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitDictionaryElementNode(*this);
+    }
+
+    virtual bool isDictionaryElementNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTLiteralArrayNode : ASTNode
+{
+    ASTNodePtrList elements;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitLiteralArrayNode(*this);
+    }
+
+    virtual bool isLiteralArrayNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTQuoteNode : ASTNode
+{
+    ASTNodePtr quoted;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitQuoteNode(*this);
+    }
+
+    virtual bool isQuoteNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTQuasiQuoteNode : ASTNode
+{
+    ASTNodePtr quoted;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitQuasiQuoteNode(*this);
+    }
+
+    virtual bool isQuasiQuoteNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTQuasiUnquoteNode : ASTNode
+{
+    ASTNodePtr expression;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitQuasiUnquoteNode(*this);
+    }
+
+    virtual bool isQuasiUnquoteNode() const override
+    {
+        return true;
+    }
+};
+
+struct ASTSpliceNode : ASTNode
+{
+    ASTNodePtr expression;
+
+    virtual std::any accept(ASTVisitor &visitor) override
+    {
+        return visitor.visitSpliceNode(*this);
+    }
+
+    virtual bool isSpliceNode() const override
+    {
+        return true;
+    }
+};
+
 inline ASTNodePtr makeParseErrorNodeAt(const TokenRange &tokens, const std::string &errorMessage)
 {
     auto node = std::make_shared<ASTParseErrorNode> ();
     node->setTokenRange(tokens);
     node->errorMessage = errorMessage;
     return node;
+}
+
+inline ASTNodePtr makeParseErrorNodeAtToken(const TokenRange &position, const std::string &errorMessage)
+{
+    return makeParseErrorNodeAt(position.until(1), errorMessage);
 }
 
 inline ASTNodePtr makeLiteralSymbolASTNodeAt(const TokenRange &tokens, const std::string &value)

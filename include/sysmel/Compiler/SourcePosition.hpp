@@ -34,9 +34,20 @@ struct SourcePosition : CollectionRange<SourcePosition, SourceCollectionPtr, std
         return collection->name;
     }
 
+    SourceLineColumn startLineColumn() const
+    {
+        return collection->lineAndColumnForIndex(startPosition);
+    }
+
+    SourceLineColumn endLineColumn() const
+    {
+        return collection->lineAndColumnForIndex(startPosition);
+    }
+
     friend std::ostream &operator<<(std::ostream &out, SourcePosition &position)
     {
-        return out << position.sourceName() << "[" << position.startPosition << ":" << position.endPosition;
+        auto lineColumn = position.startLineColumn();
+        return out << position.sourceName() << ':' << lineColumn.line << ':' << lineColumn.column;
     }
 };
 

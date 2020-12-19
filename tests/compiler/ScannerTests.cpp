@@ -99,6 +99,21 @@ SUITE(Scanner)
         CHECK_EQUAL("#helloWorld01234:A:a1:_:", scanSingleTokenText("#helloWorld01234:A:a1:_:"));
     }
 
+    TEST(SymbolOperator)
+    {
+        CHECK_EQUAL(TokenType::SymbolOperator, scanSingleTokenType("#<"));
+        CHECK_EQUAL("#<", scanSingleTokenText("#<"));
+
+        CHECK_EQUAL(TokenType::SymbolOperator, scanSingleTokenType("#=="));
+        CHECK_EQUAL("#==", scanSingleTokenText("#=="));
+
+        CHECK_EQUAL(TokenType::SymbolOperator, scanSingleTokenType("#->"));
+        CHECK_EQUAL("#->", scanSingleTokenText("#->"));
+
+        CHECK_EQUAL(TokenType::SymbolOperator, scanSingleTokenType("#=>"));
+        CHECK_EQUAL("#=>", scanSingleTokenText("#=>"));
+    }
+
     TEST(Integers)
     {
         CHECK_EQUAL(TokenType::Integer, scanSingleTokenType("0"));

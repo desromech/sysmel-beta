@@ -3,6 +3,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 
 namespace SysmelMoebius
 {
@@ -27,6 +28,11 @@ struct CollectionRange
     static SelfType forCollection(const CollectionPtr &collection)
     {
         return SelfType{collection, 0, collection->size()};
+    }
+
+    static SelfType forEndOfCollection(const CollectionPtr &collection)
+    {
+        return SelfType{collection, collection->size(), collection->size()};
     }
 
     auto start() const
@@ -71,6 +77,7 @@ struct CollectionRange
 
     SelfType until(const SelfType &other) const
     {
+        assert(collection == other.collection);
         return SelfType {collection, startPosition, other.startPosition};
     }
 
@@ -86,7 +93,9 @@ struct CollectionRange
 
     PeekType back() const
     {
-        return endPosition < collection->size() ? (*collection)[endPosition] : static_cast<const SelfType*> (this)->eofValue();
+        return (endPosition > 0 && endPosition <= collection->size()) ?
+            (*collection)[endPosition - 1]
+            : static_cast<const SelfType*> (this)->eofValue();
     }
 
     PeekType next()
