@@ -572,6 +572,75 @@ SUITE(Parser)
         }
     }
 
+    TEST(SourceWithEmptyLiteralArray)
+    {
+        auto node = parseStringWithLiteralArrayContent("");
+        CHECK(node->isLiteralArrayNode());
+        CHECK(node->as<ASTLiteralArrayNode> ().elements.empty());
+    }
+
+    TEST(SourceWithLiteralArray)
+    {
+        auto node = parseStringWithLiteralArrayContent("a");
+        CHECK(node->isLiteralArrayNode());
+        auto &elements = node->as<ASTLiteralArrayNode> ().elements;
+        CHECK_EQUAL(1u, elements.size());
+
+        auto element = elements[0];
+        CHECK(element->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", element->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(SourceWithLiteralArray2)
+    {
+        auto node = parseStringWithLiteralArrayContent("a b");
+        CHECK(node->isLiteralArrayNode());
+        auto &elements = node->as<ASTLiteralArrayNode> ().elements;
+        CHECK_EQUAL(2u, elements.size());
+
+        auto element = elements[0];
+        CHECK(element->isIdentifierReferenceNode());
+        CHECK_EQUAL("a", element->as<ASTIdentifierReferenceNode> ().identifier);
+
+        element = elements[1];
+        CHECK(element->isIdentifierReferenceNode());
+        CHECK_EQUAL("b", element->as<ASTIdentifierReferenceNode> ().identifier);
+    }
+
+    TEST(SourceWithLiteralArray3)
+    {
+        auto node = parseStringWithLiteralArrayContent("hello:World: #b");
+        CHECK(node->isLiteralArrayNode());
+        auto &elements = node->as<ASTLiteralArrayNode> ().elements;
+        CHECK_EQUAL(2u, elements.size());
+
+        auto element = elements[0];
+        CHECK(element->isSymbolLiteralNode());
+        CHECK_EQUAL("hello:World:", element->as<ASTSymbolLiteralNode> ().value);
+
+        element = elements[1];
+        CHECK(element->isSymbolLiteralNode());
+        CHECK_EQUAL("b", element->as<ASTSymbolLiteralNode> ().value);
+    }
+
+    TEST(SourceLiteralArray4)
+    {
+        std::vector operators = {"*", "/", "//", "%", "+", "-", "<<", ">>",
+            "<=", ">=", "<", ">", "=", "==", "~=", "~~", "&", "|", "&&",
+            "||", "==>", "-->"};
+        auto node = parseStringWithLiteralArrayContent("* / // % + - << >> <= >= < > = == ~= ~~ & | && || ==> -->");
+        CHECK(node->isLiteralArrayNode());
+        auto &elements = node->as<ASTLiteralArrayNode> ().elements;
+        CHECK_EQUAL(operators.size(), elements.size());
+
+        for(size_t i = 0; i < operators.size(); ++i)
+        {
+            auto element = elements[i];
+            CHECK(element->isSymbolLiteralNode());
+            CHECK_EQUAL(operators[i], element->as<ASTSymbolLiteralNode> ().value);
+        }
+    }
+
     TEST(LogicalNot)
     {
         auto node = parseSingleExpression("!a");
@@ -955,6 +1024,187 @@ SUITE(Parser)
     TEST(MakeDictionary6)
     {
         auto node = parseSingleExpression("#{A: 1. B: . C: .}");
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(3u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+
+        element = node->as<ASTMakeDictionaryNode> ().elements[1];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+        CHECK_EQUAL(nullptr, element->as<ASTDictionaryElementNode> ().value);
+
+        element = node->as<ASTMakeDictionaryNode> ().elements[2];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("C", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+        CHECK_EQUAL(nullptr, element->as<ASTDictionaryElementNode> ().value);
+    }
+
+    TEST(LiteralEmptyDictionary)
+    {
+        auto node = parseSingleExpression("#( #{} )");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK(node->as<ASTMakeDictionaryNode> ().elements.empty());
+    }
+
+    TEST(LiteralEmptyDictionary2)
+    {
+        auto node = parseSingleExpression("#( #{.} )");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK(node->as<ASTMakeDictionaryNode> ().elements.empty());
+    }
+
+    TEST(LiteralEmptyDictionary3)
+    {
+        auto node = parseSingleExpression("#(#{..})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK(node->as<ASTMakeDictionaryNode> ().elements.empty());
+    }
+
+    TEST(LiteralDictionary)
+    {
+        auto node = parseSingleExpression("#(#{A: 1})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(1u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+    }
+
+    TEST(LiteralDictionary2)
+    {
+        auto node = parseSingleExpression("#(#{A:})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(1u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK_EQUAL(nullptr, element->as<ASTDictionaryElementNode> ().value);
+    }
+
+    TEST(LiteralDictionary3)
+    {
+        auto node = parseSingleExpression("#(#{A: 1 .. B: 2})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(2u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+
+        element = node->as<ASTMakeDictionaryNode> ().elements[1];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+    }
+
+    TEST(LiteralDictionary4)
+    {
+        auto node = parseSingleExpression("#(#{#A : 1 .. B: 2})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(2u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+
+        element = node->as<ASTMakeDictionaryNode> ().elements[1];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+    }
+
+    TEST(LiteralDictionary5)
+    {
+        auto node = parseSingleExpression("#(#{#A : 1 .. B:.})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
+        CHECK(node->isMakeDictionaryNode());
+        CHECK_EQUAL(2u, node->as<ASTMakeDictionaryNode> ().elements.size());
+
+        auto element = node->as<ASTMakeDictionaryNode> ().elements[0];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
+        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+
+        element = node->as<ASTMakeDictionaryNode> ().elements[1];
+        CHECK(element->isDictionaryElementNode());
+        CHECK(element->as<ASTDictionaryElementNode> ().key->isSymbolLiteralNode());
+        CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
+
+        CHECK_EQUAL(nullptr, element->as<ASTDictionaryElementNode> ().value);
+    }
+
+    TEST(LiteralDictionary6)
+    {
+        auto node = parseSingleExpression("#(#{A: 1. B: . C: .})");
+        CHECK(node->isLiteralArrayNode());
+        CHECK_EQUAL(1u, node->as<ASTLiteralArrayNode> ().elements.size());
+
+        node = node->as<ASTLiteralArrayNode> ().elements[0];
         CHECK(node->isMakeDictionaryNode());
         CHECK_EQUAL(3u, node->as<ASTMakeDictionaryNode> ().elements.size());
 

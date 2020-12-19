@@ -13,9 +13,16 @@ namespace Sysmel
 {
 
 ASTNodePtr parseTokenList(const TokenListPtr &tokenList);
+ASTNodePtr parseTokenListWithLiteralArrayContent(const TokenListPtr &tokenList);
+
 inline ASTNodePtr parseString(const std::string &sourceString, const std::string &sourceName = "")
 {
     return parseTokenList(scanString(sourceString, sourceName));
+}
+
+inline ASTNodePtr parseStringWithLiteralArrayContent(const std::string &sourceString, const std::string &sourceName = "")
+{
+    return parseTokenListWithLiteralArrayContent(scanString(sourceString, sourceName));
 }
 
 } // End of namespace Sysmel

@@ -12,6 +12,8 @@ namespace Sysmel
 static constexpr int MaxIntegerRadixBase = 10 + 'Z' - 'A';
 
 static ASTNodePtr parseLiteralArray(TokenRange &currentPosition);
+static ASTNodePtr parseDictionaryExpression(TokenRange &currentPosition, bool isLiteralDictionary);
+static ASTNodePtr parseSourceWithLiteralArrayContent(TokenRange &currentPosition);
 static ASTNodePtr parseLiteral(TokenRange &currentPosition);
 static ASTNodePtr parseExpression(TokenRange &currentPosition);
 static ASTNodePtr parseExpressionList(TokenRange &currentPosition);
@@ -316,6 +318,7 @@ static ASTNodePtr parseLiteralArrayElement(TokenRange &currentPosition)
     case TokenType::LeftParent: return parseLiteralArray(currentPosition);
     case TokenType::Keyword: return parseSimpleLiteralSymbol(currentPosition, 0);
     case TokenType::Identifier: return parseIdentifier(currentPosition);
+    case TokenType::DictionaryLeftBracket: return parseDictionaryExpression(currentPosition, true);
 
     case TokenType::Times:
     case TokenType::Divide:
@@ -371,6 +374,29 @@ static ASTNodePtr parseLiteralArray(TokenRange &currentPosition)
 
     if(currentPosition.peek().type != TokenType::RightParent)
         return makeParseErrorNodeAtToken(currentPosition, "Expected a right parenthesis.");
+    currentPosition.advance();
+    literalArray->setTokenRange(startPosition.until(currentPosition));
+    return literalArray;
+}
+
+static ASTNodePtr parseSourceWithLiteralArrayContent(TokenRange &currentPosition)
+{
+    auto startPosition = currentPosition;
+
+    auto literalArray = std::make_shared<ASTLiteralArrayNode> ();
+    while(currentPosition.peek().type != TokenType::EndOfSource)
+    {
+        auto element = parseLiteralArrayElement(currentPosition);
+        literalArray->elements.push_back(element);
+        if(element->isParseErrorNode())
+        {
+            literalArray->setTokenRange(startPosition.until(currentPosition));
+            return literalArray;
+        }
+    }
+
+    if(currentPosition.peek().type != TokenType::EndOfSource)
+        return makeParseErrorNodeAtToken(currentPosition, "Expected the end of source.");
     currentPosition.advance();
     literalArray->setTokenRange(startPosition.until(currentPosition));
     return literalArray;
@@ -656,7 +682,7 @@ static ASTNodePtr parseBlockExpression(TokenRange &currentPosition)
     return block;
 }
 
-static ASTNodePtr parseDictionaryKey(TokenRange &currentPosition)
+static ASTNodePtr parseDictionaryKey(TokenRange &currentPosition, bool isLiteralDictionary)
 {
     // The single keyword case.
     if(currentPosition.peek().type == TokenType::Keyword)
@@ -675,7 +701,7 @@ static ASTNodePtr parseDictionaryKey(TokenRange &currentPosition)
     }
 
     // The expression key.
-    auto key = parseBinaryExpression(currentPosition);
+    auto key = isLiteralDictionary ? parseLiteralArrayElement(currentPosition) : parseBinaryExpression(currentPosition);
 
     // The separator.
     if(currentPosition.peek().type == TokenType::Colon)
@@ -691,11 +717,11 @@ static ASTNodePtr parseDictionaryKey(TokenRange &currentPosition)
     return key;
 }
 
-static ASTNodePtr parseDictionaryElement(TokenRange &currentPosition)
+static ASTNodePtr parseDictionaryElement(TokenRange &currentPosition, bool isLiteralDictionary)
 {
     auto startPosition = currentPosition;
     auto element = std::make_shared<ASTDictionaryElementNode> ();
-    element->key = parseDictionaryKey(currentPosition);
+    element->key = parseDictionaryKey(currentPosition, isLiteralDictionary);
 
     switch(currentPosition.peek().type)
     {
@@ -704,7 +730,10 @@ static ASTNodePtr parseDictionaryElement(TokenRange &currentPosition)
         // No value.
         break;
     default:
-        element->value = parseExpression(currentPosition);
+        if(isLiteralDictionary)
+            element->value = parseLiteralArrayElement(currentPosition);
+        else
+            element->value = parseExpression(currentPosition);
         break;
     }
 
@@ -712,7 +741,7 @@ static ASTNodePtr parseDictionaryElement(TokenRange &currentPosition)
     return element;
 }
 
-static ASTNodePtr parseDictionaryExpression(TokenRange &currentPosition)
+static ASTNodePtr parseDictionaryExpression(TokenRange &currentPosition, bool isLiteralDictionary)
 {
     auto startPosition = currentPosition;
     if(currentPosition.peek().type != TokenType::DictionaryLeftBracket)
@@ -730,7 +759,7 @@ static ASTNodePtr parseDictionaryExpression(TokenRange &currentPosition)
 
         if(currentPosition.peek().type != TokenType::RightCurlyBracket)
         {
-            auto element = parseDictionaryElement(currentPosition);
+            auto element = parseDictionaryElement(currentPosition, isLiteralDictionary);
             dictionary->elements.push_back(element);
             if(element->isParseErrorNode())
                 break;
@@ -757,28 +786,20 @@ static ASTNodePtr parsePrimaryExpression(TokenRange &currentPosition)
     auto startPosition = currentPosition;
     switch(currentPosition.peek().type)
     {
-    case TokenType::LeftParent:
-        return parseParentExpression(currentPosition);
-    case TokenType::Quote:
-        return parseQuote(currentPosition);
-    case TokenType::QuasiQuote:
-        return parseQuasiQuote(currentPosition);
-    case TokenType::QuasiUnquote:
-        return parseQuasiUnquote(currentPosition);
-    case TokenType::Splice:
-        return parseSplice(currentPosition);
-    case TokenType::LeftCurlyBracket:
-        return parseBlockExpression(currentPosition);
-    case TokenType::DictionaryLeftBracket:
-        return parseDictionaryExpression(currentPosition);
-    case TokenType::Identifier:
-        return parseIdentifier(currentPosition);
+    case TokenType::LeftParent: return parseParentExpression(currentPosition);
+    case TokenType::Quote: return parseQuote(currentPosition);
+    case TokenType::QuasiQuote: return parseQuasiQuote(currentPosition);
+    case TokenType::QuasiUnquote: return parseQuasiUnquote(currentPosition);
+    case TokenType::Splice: return parseSplice(currentPosition);
+    case TokenType::LeftCurlyBracket: return parseBlockExpression(currentPosition);
+    case TokenType::DictionaryLeftBracket: return parseDictionaryExpression(currentPosition, false);
+    case TokenType::Identifier: return parseIdentifier(currentPosition);
     default:
         return parseLiteral(currentPosition);
     }
 }
 
-ASTNodePtrList parseCallArguments(TokenRange &currentPosition)
+static ASTNodePtrList parseCallArguments(TokenRange &currentPosition)
 {
     ASTNodePtrList result;
     if(currentPosition.next().type != TokenType::LeftParent)
@@ -1252,6 +1273,13 @@ ASTNodePtr parseTokenList(const TokenListPtr &tokenList)
 {
     auto currentPosition = TokenRange::forCollection(tokenList);
     auto expressionList = parseExpressionList(currentPosition);
+    return expressionList;
+}
+
+ASTNodePtr parseTokenListWithLiteralArrayContent(const TokenListPtr &tokenList)
+{
+    auto currentPosition = TokenRange::forCollection(tokenList);
+    auto expressionList = parseSourceWithLiteralArrayContent(currentPosition);
     return expressionList;
 }
 
