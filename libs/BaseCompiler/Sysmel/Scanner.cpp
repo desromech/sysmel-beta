@@ -1,4 +1,4 @@
-#include "sysmel/Compiler/Sysmel/Scanner.hpp"
+#include "sysmel/BaseCompiler/Sysmel/Scanner.hpp"
 #include <unordered_map>
 #include <cassert>
 

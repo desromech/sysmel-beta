@@ -1,4 +1,4 @@
-#include "sysmel/Compiler/DOM.hpp"
+#include "sysmel/BaseCompiler/DOM.hpp"
 #include "UnitTest++/UnitTest++.h"
 
 using namespace SysmelMoebius::Compiler;

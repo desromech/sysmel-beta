@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Token.hpp"
-#include "sysmel/Compiler/LiteralInteger.hpp"
+#include "sysmel/BaseCompiler/LiteralInteger.hpp"
 #include <memory>
 #include <any>
 

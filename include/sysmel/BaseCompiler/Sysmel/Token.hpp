@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_PARSER_TOKEN_HPP
 #pragma once
 
-#include "sysmel/Compiler/SourcePosition.hpp"
+#include "sysmel/BaseCompiler/SourcePosition.hpp"
 #include <vector>
 
 namespace SysmelMoebius

@@ -1,5 +1,5 @@
-#include "sysmel/Compiler/Sysmel/Parser.hpp"
-#include "sysmel/Compiler/Sysmel/Visitors.hpp"
+#include "sysmel/BaseCompiler/Sysmel/Parser.hpp"
+#include "sysmel/BaseCompiler/Sysmel/Visitors.hpp"
 #include <fstream>
 #include <iostream>
 

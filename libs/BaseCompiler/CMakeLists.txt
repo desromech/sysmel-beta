@@ -12,4 +12,4 @@ set(Compiler_Sources
     ${DOM_Sources}
 )
 
-add_library(SysmelCompiler STATIC ${Compiler_Sources})
+add_library(SysmelBaseCompiler STATIC ${Compiler_Sources})

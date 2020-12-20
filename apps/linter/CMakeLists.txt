@@ -3,4 +3,4 @@ set(SysmelLinter_Sources
 )
 
 add_executable(SysmelLinter ${SysmelLinter_Sources})
-target_link_libraries(SysmelLinter SysmelCompiler)
+target_link_libraries(SysmelLinter SysmelBaseCompiler)

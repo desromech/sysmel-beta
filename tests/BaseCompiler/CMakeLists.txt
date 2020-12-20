@@ -6,6 +6,6 @@ set(CompilerTests_Sources
 )
 
 add_executable(CompilerTests ${CompilerTests_Sources})
-target_link_libraries(CompilerTests UnitTest++ SysmelCompiler)
+target_link_libraries(CompilerTests UnitTest++ SysmelBaseCompiler)
 
 add_test(NAME RunCompilerTests COMMAND CompilerTests)
