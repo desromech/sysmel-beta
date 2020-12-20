@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_SOURCE_COLLECTION_HPP
-#define SYSMEL_COMPILER_SOURCE_COLLECTION_HPP
+#ifndef SYSMEL_BASE_COMPILER_SOURCE_COLLECTION_HPP
+#define SYSMEL_BASE_COMPILER_SOURCE_COLLECTION_HPP
 #pragma once
 
 #include <string>
@@ -110,4 +110,4 @@ typedef std::shared_ptr<SourceCollection> SourceCollectionPtr;
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_SOURCE_COLLECTION_HPP
+#endif //SYSMEL_BASE_COMPILER_SOURCE_COLLECTION_HPP

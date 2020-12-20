@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_PARSER_RANGE_HPP
-#define SYSMEL_COMPILER_PARSER_RANGE_HPP
+#ifndef SYSMEL_BASE_COMPILER_PARSER_RANGE_HPP
+#define SYSMEL_BASE_COMPILER_PARSER_RANGE_HPP
 #pragma once
 
 #include <algorithm>
@@ -116,4 +116,4 @@ struct CollectionRange
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_PARSER_RANGE_HPP
+#endif //SYSMEL_BASE_COMPILER_PARSER_RANGE_HPP

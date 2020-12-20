@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_PARSER_PARSER_HPP
-#define SYSMEL_COMPILER_PARSER_PARSER_HPP
+#ifndef SYSMEL_BASE_COMPILER_PARSER_PARSER_HPP
+#define SYSMEL_BASE_COMPILER_PARSER_PARSER_HPP
 #pragma once
 
 #include "AST.hpp"
@@ -29,4 +29,4 @@ inline ASTNodePtr parseStringWithLiteralArrayContent(const std::string &sourceSt
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_PARSER_PARSER_HPP
+#endif //SYSMEL_BASE_COMPILER_PARSER_PARSER_HPP

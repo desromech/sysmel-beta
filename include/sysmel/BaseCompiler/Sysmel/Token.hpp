@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_PARSER_TOKEN_HPP
-#define SYSMEL_COMPILER_PARSER_TOKEN_HPP
+#ifndef SYSMEL_BASE_COMPILER_PARSER_TOKEN_HPP
+#define SYSMEL_BASE_COMPILER_PARSER_TOKEN_HPP
 #pragma once
 
 #include "sysmel/BaseCompiler/SourcePosition.hpp"
@@ -103,4 +103,4 @@ struct TokenRange : CollectionRange<TokenRange, TokenListPtr, TokenList, Token>
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_PARSER_TOKEN_HPP
+#endif //SYSMEL_BASE_COMPILER_PARSER_TOKEN_HPP

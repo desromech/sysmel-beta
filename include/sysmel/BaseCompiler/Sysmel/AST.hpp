@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_PARSER_AST_HPP
-#define SYSMEL_COMPILER_PARSER_AST_HPP
+#ifndef SYSMEL_BASE_COMPILER_PARSER_AST_HPP
+#define SYSMEL_BASE_COMPILER_PARSER_AST_HPP
 #pragma once
 
 #include "Token.hpp"
@@ -554,4 +554,4 @@ inline ASTNodePtr makeLiteralSymbolASTNodeAt(const TokenRange &tokens, const std
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_PARSER_AST_HPP
+#endif //SYSMEL_BASE_COMPILER_PARSER_AST_HPP
