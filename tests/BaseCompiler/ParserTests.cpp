@@ -119,16 +119,20 @@ SUITE(Parser)
     TEST(LiteralSymbolString)
     {
         auto literal = parseSingleExpression("#\"\"");
-        CHECK(literal->isStringLiteralNode());
+        CHECK(literal->isSymbolLiteralNode());
         CHECK_EQUAL("", literal->as<ASTSymbolLiteralNode> ().value);
 
         literal = parseSingleExpression("#\"hello\"");
-        CHECK(literal->isStringLiteralNode());
+        CHECK(literal->isSymbolLiteralNode());
         CHECK_EQUAL("hello", literal->as<ASTSymbolLiteralNode> ().value);
 
         literal = parseSingleExpression("#\"Hello World\\r\\n\"");
-        CHECK(literal->isStringLiteralNode());
+        CHECK(literal->isSymbolLiteralNode());
         CHECK_EQUAL("Hello World\r\n", literal->as<ASTSymbolLiteralNode> ().value);
+
+        literal = parseSingleExpression("#\"std::string\"");
+        CHECK(literal->isSymbolLiteralNode());
+        CHECK_EQUAL("std::string", literal->as<ASTSymbolLiteralNode> ().value);
     }
 
     TEST(IdentifierReference)

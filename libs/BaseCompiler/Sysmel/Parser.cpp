@@ -301,7 +301,7 @@ static ASTNodePtr parseLiteralSymbolString(TokenRange &currentPosition)
     assert(rawStringValue.size() >= 3);
     auto rawStringContent = rawStringValue.substr(2, rawStringValue.size() - 3);
 
-    auto node = std::make_shared<ASTStringLiteralNode> ();
+    auto node = std::make_shared<ASTSymbolLiteralNode> ();
     node->setTokenRange(startPosition.until(currentPosition));
 
     std::string errorMessage;

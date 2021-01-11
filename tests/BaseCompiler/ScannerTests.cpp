@@ -205,6 +205,9 @@ SUITE(Scanner)
 
         CHECK_EQUAL(TokenType::ErrorIncompleteSymbolString, scanSingleTokenType("#\"\\\""));
         CHECK_EQUAL("#\"\\\"", scanSingleTokenText("#\"\\\""));
+
+        CHECK_EQUAL(TokenType::SymbolString, scanSingleTokenType("#\"std::string\""));
+        CHECK_EQUAL("#\"std::string\"", scanSingleTokenText("#\"std::string\""));
     }
 
     TEST(SpecialOperators)

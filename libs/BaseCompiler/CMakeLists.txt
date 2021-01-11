@@ -9,6 +9,7 @@ set(DOM_Sources
 
 set(SObjectSchemaCompiler_Sources
     SObjectSchemaParser.cpp
+    SObjectSchemaSemanticAnalyzer.cpp
 )
 
 set(Compiler_Sources

@@ -1,5 +1,4 @@
 #include "sysmel/BaseCompiler/SObjectSchema.hpp"
-#include "sysmel/BaseCompiler/DOM.hpp"
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
@@ -45,27 +44,141 @@ static void parseSchemaLoadFrom(const DOM::Array &form, SchemaParsingContext &co
     parseSchemaFromFileNamed(fullFileName, subContext);
 }
 
+static SchemaMethodExpressionPtr parseSchemaMethodExpressionFrom(const DOM::Value &expressionValue, SchemaParsingContext &context);
+
+typedef SchemaMethodExpressionPtr (*ExpressionFormParser) (const DOM::Array &form, SchemaParsingContext &context);
+static std::map<std::string, ExpressionFormParser> expressionFormParserDispatchTable{
+    {"SelfType", +[](const DOM::Array &, SchemaParsingContext &) -> SchemaMethodExpressionPtr {
+        return std::make_shared<SchemaMethodSelfTypeExpression> ();
+    }},
+
+    {"typeToCTypeName", +[](const DOM::Array &form, SchemaParsingContext &context) -> SchemaMethodExpressionPtr {
+        auto result = std::make_shared<SchemaTypeToCTypeNameExpression> ();
+        result->typeExpression = parseSchemaMethodExpressionFrom(form[1], context);
+        return result;
+    }},
+
+};
+
+static SchemaMethodExpressionPtr parseSchemaMethodExpressionFrom(const DOM::Value &expressionValue, SchemaParsingContext &context)
+{
+    struct Visitor
+    {
+        SchemaParsingContext &context;
+
+        SchemaMethodExpressionPtr operator()(const DOM::Void &)
+        {
+            return std::make_shared<SchemaVoidLiteralValue> ();
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Nil &)
+        {
+            return std::make_shared<SchemaNilLiteralValue> ();
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::True &)
+        {
+            return std::make_shared<SchemaTrueLiteralValue> ();
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::False &)
+        {
+            return std::make_shared<SchemaFalseLiteralValue> ();
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Integer &value)
+        {
+            auto schemaValue = std::make_shared<SchemaIntegerLiteralValue> ();
+            schemaValue->value = value;
+            return schemaValue;
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Float &value)
+        {
+            auto schemaValue = std::make_shared<SchemaFloatLiteralValue> ();
+            schemaValue->value = value;
+            return schemaValue;
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Character &value)
+        {
+            auto schemaValue = std::make_shared<SchemaCharacterLiteralValue> ();
+            schemaValue->value = value;
+            return schemaValue;
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::String &value)
+        {
+            auto schemaValue = std::make_shared<SchemaStringLiteralValue> ();
+            schemaValue->value = value;
+            return schemaValue;
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Symbol &value)
+        {
+            auto schemaValue = std::make_shared<SchemaSymbolLiteralValue> ();
+            schemaValue->value = value;
+            return schemaValue;
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Array &form)
+        {
+            auto formName = std::get<DOM::Symbol> (form[0]).value;
+            auto formParserIt = expressionFormParserDispatchTable.find(formName);
+            if(formParserIt == expressionFormParserDispatchTable.end())
+                throw std::runtime_error("Unsupported expression form #" + formName);
+
+            return formParserIt->second(form, context);
+        }
+
+        SchemaMethodExpressionPtr operator()(const DOM::Dictionary &)
+        {
+            return nullptr;
+        }
+    };
+
+    return std::visit(Visitor{context}, expressionValue);
+}
+
+static void parseSchemaMethodFrom(const SchemaMethodPtr &method, const DOM::Value &methodValue, SchemaParsingContext &context)
+{
+    method->valueExpression = parseSchemaMethodExpressionFrom(methodValue, context);
+
+}
+
 static void parseSchemaTypeFrom(const DOM::Array &form, SchemaParsingContext &context)
 {
-    if(form.size() < 4 || form.size() > 5)
-    {
-        std::ostringstream error;
-        error << "Unsupported type specification: " << form << std::ends;
-        throw std::runtime_error(error.str());
-    }
-
     auto type = std::make_shared<SchemaType> ();
     type->fullNamespace = context.activeNamespace;
     type->name = std::get<DOM::Symbol> (form[1]).value;
     if(std::holds_alternative<DOM::Symbol> (form[2]))
         type->superTypeName = std::get<DOM::Symbol> (form[2]).value;
 
-    if(form.size() >= 5)
-        type->sysmelName = std::get<DOM::Symbol> (form[3]).value;
-    else
-        type->sysmelName = type->name;
+    for(size_t i = 3; i < form.size(); ++i)
+    {
+        auto keyword = std::get<DOM::Symbol> (form[i]).value;
+        if(keyword == "sysmelName")
+        {
+            type->sysmelName = std::get<DOM::Symbol> (form[++i]).value;
+            continue;
+        }
 
-    type->methods = std::get<DOM::Dictionary> (form.elements.back());
+        if(keyword == "methods")
+        {
+            auto methods = std::get<DOM::Dictionary> (form[++i]);
+            for(auto &[key, valueExpression] : methods.elements)
+            {
+                auto method = std::make_shared<SchemaMethod> ();
+                method->selector = std::get<DOM::Symbol> (key).value;
+                parseSchemaMethodFrom(method, valueExpression, context);
+                type->methodDictionary.insert(std::make_pair(method->selector, method));
+            }
+            continue;
+        }
+
+        throw std::runtime_error("Unsupport type spec keyword " + keyword);
+    }
+
     context.schema->addEntity(type);
 }
 
@@ -124,6 +237,7 @@ SchemaPtr parseSchemaFromFileNamed(const std::string &fileName)
     if(separator != std::string::npos)
         parsingContext.directory = fileName.substr(0, separator + 1);
 
+    // Parse the schema from the file.
     parseSchemaFromFileNamed(fileName, parsingContext);
 
     return parsingContext.schema;

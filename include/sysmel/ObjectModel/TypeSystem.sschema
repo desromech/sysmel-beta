@@ -3,215 +3,461 @@
 (namespace TypeSystem)
 
 ## The abstract type hierarchy.
-(type Type nil AnyValue #{
-    ## Basic accessors.
-    instanceSize: 0.
-    instanceAlignment: 0.
-    ctype: #void.
+(type Type nil
+    sysmelName AnyValue
+    methods #{
+        ## Basic accessors.
+        instanceSize: 0.
+        instanceAlignment: 0.
+        ctype: (typeToCTypeName (SelfType)).
 
-    ## Testing methods.
-    isAbstract: true.
-    isNativeType: false.
-    isOpaqueType: false.
-    isUndefinedType: false.
-    isVoidType: false.
-    isReturnType: false.
+        ## Testing methods.
+        isAbstract: true.
+        isNativeType: false.
+        isOpaqueType: false.
+        isUndefinedType: false.
+        isVoidType: false.
+        isReturnType: false.
 
-    isPrimitiveScalarType: false.
-    isPrimitiveVectorType: false.
-    isPrimitiveMatrixType: false.
-    isPrimitiveBooleanType: false.
-    isPrimitiveNumberType: false.
-    isPrimitiveFloatType: false.
-    isPrimitiveIntegerType: false.
-    isPrimitiveSignedIntegerType: false.
-    isPrimitiveUnsignedIntegerType: false.
-})
+        isLiteralValueType: false.
+        isLiteralArrayType: false.
+        isLiteralByteArrayType: false.
+        isLiteralAssociationType: false.
+        isLiteralDictionaryType: false.
+        isLiteralIntervalType: false.
+        isLiteralScalarType: false.
+        isLiteralBooleanType: false.
+        isLiteralBooleanTrueType: false.
+        isLiteralBooleanFalseType: false.
+        isLiteralNumberType: false.
+        isLiteralFloatType: false.
+        isLiteralIntegerType: false.
+        isLiteralPositiveIntegerType: false.
+        isLiteralNegativeIntegerType: false.
+        isLiteralCharacterType: false.
+        isLiteralStringType: false.
+        isLiteralSymbolType: false.
 
-(type NativeType PrimitiveType _NativeType #{
-    isNativeType: true.
-})
+        isPrimitiveScalarType: false.
+        isPrimitiveVectorType: false.
+        isPrimitiveMatrixType: false.
+        isPrimitiveBooleanType: false.
+        isPrimitiveNumberType: false.
+        isPrimitiveFloatType: false.
+        isPrimitiveIntegerType: false.
+        isPrimitiveSignedIntegerType: false.
+        isPrimitiveUnsignedIntegerType: false.
+
+        ## Some types have a different definition depending on their actual type.
+        hasTargetSpecificDefinition: false
+    }
+)
+
+(type NativeType Type
+    sysmelName _NativeType
+    methods #{
+        isNativeType: true.
+    }
+)
+
+## =============================================================================
+## Literal types
+## =============================================================================
+(type LiteralValueType Type
+    sysmelName _LiteralValueType
+    methods #{
+        isLiteralValueType: true.
+    }
+)
+
+(type LiteralArrayType LiteralValueType
+    sysmelName _LiteralArray
+    methods #{
+        isLiteralArrayType: true.
+    }
+)
+
+(type LiteralByteArrayType LiteralArrayType
+    sysmelName _LiteralByteArray
+    methods #{
+        isLiteralByteArrayType: true.
+    }
+)
+
+(type LiteralAssociationType LiteralValueType
+    sysmelName _LiteralAssociation
+    methods #{
+        isLiteralAssociationType: true.
+    }
+)
+
+(type LiteralDictionaryType LiteralValueType
+    sysmelName _LiteralDictionary
+    methods #{
+        isLiteralDictionaryType: true.
+    }
+)
+
+(type LiteralIntervalType LiteralValueType
+    sysmelName _LiteralIntervalType
+    methods #{
+        isLiteralIntervalType: true.
+    }
+)
+
+(type LiteralScalarType LiteralValueType
+    sysmelName _LiteralScalarType
+    methods #{
+        isLiteralScalarType: true.
+    }
+)
+
+(type LiteralBooleanType LiteralScalarType
+    sysmelName _LiteralBooleanType
+    methods #{
+        isLiteralBooleanType: true.
+    }
+)
+
+(type LiteralBooleanTrueType LiteralBooleanType
+    sysmelName _LiteralBooleanTrue
+    methods #{
+        isLiteralBooleanTrueType: true.
+    }
+)
+
+(type isLiteralBooleanFalseType LiteralBooleanType
+    sysmelName _LiteralBooleanFalse
+    methods #{
+        isLiteralBooleanFalseType: true.
+    }
+)
+
+(type LiteralNumberType LiteralScalarType
+    sysmelName _LiteralNumber
+    methods #{
+        isLiteralNumberType: true.
+    }
+)
+
+(type LiteralFloatType LiteralScalarType
+    sysmelName _LiteralFloat
+    methods #{
+        isLiteralFloatType: true.
+    }
+)
+
+(type LiteralIntegerType LiteralScalarType
+    sysmelName _LiteralInteger
+    methods #{
+        isLiteralIntegerType: true.
+    }
+)
+
+(type LiteralPositiveIntegerType LiteralIntegerType
+    sysmelName _LiteralPositiveInteger
+    methods #{
+        isLiteralPositiveIntegerType: true.
+    }
+)
+
+(type LiteralNegativeIntegerType LiteralIntegerType
+    sysmelName _LiteralNegativeInteger
+    methods #{
+        isLiteralNegativeIntegerType: true.
+    }
+)
+
+(type LiteralCharacterType LiteralIntegerType
+    sysmelName _LiteralCharacter
+    methods #{
+        isLiteralCharacterType: true.
+    }
+)
+
+(type LiteralStringType LiteralValueType
+    sysmelName _LiteralString
+    methods #{
+        isLiteralStringType: true.
+        ctype: #"std::string".
+    }
+)
+
+(type LiteralSymbolType LiteralValueType
+    sysmelName _LiteralSymbol
+    methods #{
+        isLiteralSymbolType: true.
+        ctype: #"std::string".
+    }
+)
 
 ## =============================================================================
 ## Opaque types.
 ## =============================================================================
 
-(type OpaqueType NativeType _OpaqueType #{
-    isOpaqueType: true.
-})
+(type OpaqueType NativeType
+    sysmelName _OpaqueType
+    methods #{
+        isOpaqueType: true.
+    }
+)
 
-(type CompilerObjectType OpaqueType _CompilerObjectType #{
-    isCompilerObjectType: true.
-})
+(type CompilerObjectType OpaqueType
+    sysmelName _CompilerObjectType
+    methods #{
+        isCompilerObjectType: true.
+    }
+)
 
-(type AbstractSpecificCompilerObjectType CompilerObjectType _AbstractSpecificCompilerObjectType #{
-    isSpecificCompilerObjectType: true.
-})
+(type AbstractSpecificCompilerObjectType CompilerObjectType
+    sysmelName _AbstractSpecificCompilerObjectType
+    methods #{
+        isSpecificCompilerObjectType: true.
+    }
+)
 
-(type SpecificCompilerObjectType AbstractSpecificCompilerObjectType _SpecificCompilerObjectType #{
-    isSpecificCompilerObjectType: true.
-})
+(type SpecificCompilerObjectType AbstractSpecificCompilerObjectType
+    sysmelName _SpecificCompilerObjectType
+    methods #{
+        isSpecificCompilerObjectType: true.
+    }
+)
 
-(type ASTNodeType AbstractSpecificCompilerObjectType _ASTNodeType #{
-    isSpecificCompilerObjectType: true.
-})
+(type ASTNodeType AbstractSpecificCompilerObjectType
+    sysmelName _ASTNodeType
+    methods #{
+        isSpecificCompilerObjectType: true.
+    }
+)
 
-(type NamespaceType OpaqueType _NamespaceType #{
-    isAbstract: false.
-    isUndefinedType: true.
-    ctype: #"std::nullptr_t".
-})
+(type NamespaceType OpaqueType
+    sysmelName _NamespaceType
+    methods #{
+        isAbstract: false.
+        isUndefinedType: true.
+        ctype: #"std::nullptr_t".
+    }
+)
 
-(type UndefinedType OpaqueType _UndefinedType #{
-    isAbstract: false.
-    isUndefinedType: true.
-    ctype: #"std::nullptr_t".
-})
+(type UndefinedType OpaqueType
+    sysmelName _UndefinedType
+    methods #{
+        isAbstract: false.
+        isUndefinedType: true.
+        ctype: #"std::nullptr_t".
+    }
+)
 
-(type VoidType OpaqueType Void #{
-    isAbstract: false.
-    isVoidType: true.
-    ctype: #void.
-})
+(type Void OpaqueType
+    methods #{
+        isAbstract: false.
+        isVoidType: true.
+        ctype: #void.
+    }
+)
 
-(type ReturnType VoidType _ReturnType #{
-    isAbstract: false.
-    isReturnType: true.
-})
+(type ReturnType Void
+    sysmelName _ReturnType
+    methods #{
+        isAbstract: false.
+        isReturnType: true.
+    }
+)
 
 ## =============================================================================
 ## Primitive types.
 ## =============================================================================
 
-(type PrimitiveType NativeType _PrimitiveType #{
-    isPrimitiveType: true.
-})
+(type PrimitiveType NativeType
+    sysmelName _PrimitiveType
+    methods #{
+        isPrimitiveType: true.
+    }
+)
 
-(type PrimitiveScalarType PrimitiveType _PrimitiveScalarType #{
-    isPrimitiveScalarType: true.
-})
+(type PrimitiveScalarType PrimitiveType
+    sysmelName _PrimitiveScalarType
+    methods #{
+        isPrimitiveScalarType: true.
+    }
+)
 
-(type PrimitiveMatrixType PrimitiveType _PrimitiveMatrixType #{
-    isPrimitiveMatrixType: true.
-})
+(type PrimitiveMatrixType PrimitiveType
+    sysmelName _PrimitiveMatrixType
+    methods #{
+        isPrimitiveMatrixType: true.
+    }
+)
 
-(type PrimitiveVectorType PrimitiveType _PrimitiveVectorType #{
-    isPrimitiveVectorType: true.
-})
+(type PrimitiveVectorType PrimitiveType
+    sysmelName _PrimitiveVectorType
+    methods #{
+        isPrimitiveVectorType: true.
+    }
+)
 
-(type PrimitiveBooleanType PrimitiveScalarType _PrimitiveBooleanType #{
-    isPrimitiveBooleanType: true.
-})
+(type PrimitiveBooleanType PrimitiveScalarType
+    sysmelName _PrimitiveBooleanType
+    methods #{
+        isPrimitiveBooleanType: true.
+    }
+)
 
-(type PrimitiveNumberType PrimitiveScalarType _PrimitiveNumberType #{
-    isPrimitiveNumberType: true.
-})
+(type PrimitiveNumberType PrimitiveScalarType
+    sysmelName _PrimitiveNumberType
+    methods #{
+        isPrimitiveNumberType: true.
+    }
+)
 
-(type PrimitiveFloatType PrimitiveNumberType _PrimitiveFloatType #{
-    isPrimitiveFloatType: true.
-})
+(type PrimitiveFloatType PrimitiveNumberType
+    sysmelName _PrimitiveFloatType
+    methods #{
+        isPrimitiveFloatType: true.
+    }
+)
 
-(type PrimitiveIntegerType PrimitiveNumberType _PrimitiveIntegerType #{
-    isPrimitiveIntegerType: true.
-})
+(type PrimitiveIntegerType PrimitiveNumberType
+    sysmelName _PrimitiveIntegerType
+    methods #{
+        isPrimitiveIntegerType: true.
+    }
+)
 
-(type PrimitiveSignedIntegerType PrimitiveIntegerType _PrimitiveSignedIntegerType #{
-    isPrimitiveSignedIntegerType: true.
-    isSigned: true.
-    isUnsigned: false.
-})
+(type PrimitiveSignedIntegerType PrimitiveIntegerType
+    sysmelName _PrimitiveSignedIntegerType
+    methods #{
+        isPrimitiveSignedIntegerType: true.
+        isSigned: true.
+        isUnsigned: false.
+    }
+)
 
-(type PrimitiveUnsignedIntegerType PrimitiveIntegerType _PrimitiveUnsignedIntegerType #{
-    isPrimitiveUnsignedIntegerType: true.
-    isSigned: true.
-    isUnsigned: false.
-})
+(type PrimitiveUnsignedIntegerType PrimitiveIntegerType
+    sysmelName _PrimitiveUnsignedIntegerType
+    methods #{
+        isPrimitiveUnsignedIntegerType: true.
+        isSigned: true.
+        isUnsigned: false.
+    }
+)
 
-(type PrimitiveCharacterType PrimitiveUnsignedIntegerType _PrimitiveCharacterType #{
-    isPrimitiveCharacterType: true.
-})
+(type PrimitiveCharacterType PrimitiveUnsignedIntegerType
+    sysmelName _PrimitiveCharacterType
+    methods #{
+        isPrimitiveCharacterType: true.
+    }
+)
 
 ## The primitive numerical types
-(type Boolean8 PrimitiveBooleanType #{
-    instanceSize: 1.
-    instanceAlignment: 1.
-    ctype: bool.
-})
+(type Boolean8 PrimitiveBooleanType
+    methods #{
+        instanceSize: 1.
+        instanceAlignment: 1.
+        ctype: bool.
+    }
+)
 
-(type Int8 PrimitiveSignedIntegerType #{
-    instanceSize: 1.
-    instanceAlignment: 1.
-    ctype: int8_t.
-})
+(type Int8 PrimitiveSignedIntegerType
+    methods #{
+        instanceSize: 1.
+        instanceAlignment: 1.
+        ctype: int8_t.
+    }
+)
 
-(type UInt8 PrimitiveUnsignedIntegerType #{
-    instanceSize: 1.
-    instanceAlignment: 1.
-    ctype: uint8_t.
-})
+(type UInt8 PrimitiveUnsignedIntegerType
+    methods #{
+        instanceSize: 1.
+        instanceAlignment: 1.
+        ctype: uint8_t.
+    }
+)
 
-(type Char8 PrimitiveCharacterType #{
-    instanceSize: 1.
-    instanceAlignment: 1.
-    ctype: uint8_t.
-})
+(type Char8 PrimitiveCharacterType
+    methods #{
+        instanceSize: 1.
+        instanceAlignment: 1.
+        ctype: uint8_t.
+    }
+)
 
-(type Int16 PrimitiveSignedIntegerType #{
-    instanceSize: 2.
-    instanceAlignment: 2.
-    ctype: int16_t.
-})
+(type Int16 PrimitiveSignedIntegerType
+    methods #{
+        instanceSize: 2.
+        instanceAlignment: 2.
+        ctype: int16_t.
+    }
+)
 
-(type UInt16 PrimitiveUnsignedIntegerType #{
-    instanceSize: 2.
-    instanceAlignment: 2.
-    ctype: uint16_t.
-})
+(type UInt16 PrimitiveUnsignedIntegerType
+    methods #{
+        instanceSize: 2.
+        instanceAlignment: 2.
+        ctype: uint16_t.
+    }
+)
 
-(type Char16 PrimitiveCharacterType #{
-    instanceSize: 2.
-    instanceAlignment: 2.
-    ctype: uint16_t.
-})
+(type Char16 PrimitiveCharacterType
+    methods #{
+        instanceSize: 2.
+        instanceAlignment: 2.
+        ctype: uint16_t.
+    }
+)
 
-(type Int32 PrimitiveSignedIntegerType #{
-    instanceSize: 4.
-    instanceAlignment: 4.
-    ctype: int32_t.
-})
+(type Int32 PrimitiveSignedIntegerType
+    methods #{
+        instanceSize: 4.
+        instanceAlignment: 4.
+        ctype: int32_t.
+    }
+)
 
-(type UInt32 PrimitiveUnsignedIntegerType #{
-    instanceSize: 4.
-    instanceAlignment: 4.
-    ctype: uint32_t.
-})
+(type UInt32 PrimitiveUnsignedIntegerType
+    methods #{
+        instanceSize: 4.
+        instanceAlignment: 4.
+        ctype: uint32_t.
+    }
+)
 
-(type Char32 PrimitiveCharacterType #{
-    instanceSize: 4.
-    instanceAlignment: 4.
-    ctype: uint32_t.
-})
+(type Char32 PrimitiveCharacterType
+    methods #{
+        instanceSize: 4.
+        instanceAlignment: 4.
+        ctype: uint32_t.
+    }
+)
 
-(type Int64 PrimitiveSignedIntegerType #{
-    instanceSize: 8.
-    instanceAlignment: 8.
-    ctype: int64_t.
-})
+(type Int64 PrimitiveSignedIntegerType
+    methods #{
+        instanceSize: 8.
+        instanceAlignment: 8.
+        ctype: int64_t.
+    }
+)
 
-(type UInt64 PrimitiveUnsignedIntegerType #{
-    instanceSize: 8.
-    instanceAlignment: 8.
-    ctype: uint64_t.
-})
+(type UInt64 PrimitiveUnsignedIntegerType
+    methods #{
+        instanceSize: 8.
+        instanceAlignment: 8.
+        ctype: uint64_t.
+    }
+)
 
-(type Float32 PrimitiveFloatType #{
-    instanceSize: 4.
-    instanceAlignment: 4.
-    ctype: float.
-})
+(type Float32 PrimitiveFloatType
+    methods #{
+        instanceSize: 4.
+        instanceAlignment: 4.
+        ctype: float.
+    }
+)
 
-(type Float64 PrimitiveFloatType #{
-    instanceSize: 8.
-    instanceAlignment: 8.
-    ctype: double.
-})
+(type Float64 PrimitiveFloatType
+    methods #{
+        instanceSize: 8.
+        instanceAlignment: 8.
+        ctype: double.
+    }
+)
