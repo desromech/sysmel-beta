@@ -1,0 +1,155 @@
+__type AnyValue supertype: nil;
+    layoutNamed: #GCObject;
+    yourself.
+__type _MetaType.
+AnyValue type type: _MetaType.
+
+__type Type supertype: AnyValue.
+__type _MetaType supertype: Type.
+AnyValue type supertype: Type.
+
+__type _NativeType supertype: AnyValue.
+
+##==============================================================================
+## Literal types
+##==============================================================================
+__type _LiteralValueType supertype: AnyValue.
+__type _LiteralArray supertype: _LiteralValueType.
+__type _LiteralByteArray supertype: _LiteralArray.
+__type _LiteralAssociation supertype: _LiteralValueType.
+__type _LiteralDictionary supertype: _LiteralValueType.
+__type _LiteralIntervalType supertype: _LiteralValueType.
+__type _LiteralScalarType supertype: _LiteralValueType.
+__type _LiteralBoolean supertype: _LiteralScalarType.
+__type _LiteralBooleanTrue supertype: _LiteralBoolean.
+__type _LiteralBooleanFalse supertype: _LiteralBoolean.
+__type _LiteralNumber supertype: _LiteralScalarType.
+__type _LiteralFloat supertype: _LiteralNumber.
+__type _LiteralInteger supertype: _LiteralNumber.
+__type _LiteralPositiveInteger supertype: _LiteralInteger.
+__type _LiteralNegativeInteger supertype: _LiteralInteger.
+__type _LiteralCharacter supertype: _LiteralPositiveInteger.
+__type _LiteralString supertype: _LiteralValueType.
+__type _LiteralString supertype: _LiteralSymbol.
+
+##==============================================================================
+## Opaque types
+##==============================================================================
+__type _OpaqueType supertype: _NativeType.
+__type _CompilerObjectType supertype: _OpaqueType.
+__type _AbstractSpecificCompilerObjectType supertype: _CompilerObjectType.
+__type _ASTNodeType supertype: _AbstractSpecificCompilerObjectType.
+__type _NamespaceType supertype: _OpaqueType.
+__type _UndefinedType supertype: _OpaqueType.
+__type Void supertype: _OpaqueType;
+    layoutNamed: #Void;
+    size: 0;
+    alignment: 1;
+    yourself.
+__type _ReturnType supertype: Void.
+
+##==============================================================================
+## Primitive types
+##==============================================================================
+__type _PrimitiveType supertype: _NativeType.
+__type _PrimitiveScalarType supertype: _PrimitiveType.
+__type _PrimitiveVectorType supertype: _PrimitiveType.
+__type _PrimitiveMatrixType supertype: _PrimitiveType.
+__type _PrimitiveBooleanType supertype: _PrimitiveScalarType.
+__type _PrimitiveNumberType supertype: _PrimitiveScalarType.
+__type _PrimitiveFloatType supertype: _PrimitiveNumberType;
+    layoutNamed: #Float;
+    yourself.
+
+__type _PrimitiveIntegerType supertype: _PrimitiveNumberType.
+__type _PrimitiveSignedIntegerType supertype: _PrimitiveIntegerType.
+    layoutNamed: #SignedInteger;
+    yourself.
+
+__type _PrimitiveUnsignedIntegerType supertype: _PrimitiveIntegerType.
+    layoutNamed: #UnsignedInteger;
+    yourself.
+
+__type _PrimitiveCharacterType supertype: _PrimitiveUnsignedIntegerType.
+    layoutNamed: #Character;
+    yourself.
+
+__type Boolean8 supertype: _PrimitiveBooleanType;
+    size: 1;
+    alignment: 1;
+    yourself.
+
+__type Int8 supertype: _PrimitiveSignedIntegerType;
+    size: 1;
+    alignment: 1;
+    yourself.
+
+__type UInt8 supertype: _PrimitiveUnsignedIntegerType;
+    size: 1;
+    alignment: 1;
+    yourself.
+
+__type Char8 supertype: _PrimitiveCharacterType;
+    size: 1;
+    alignment: 1;
+    yourself.
+
+__type Int16 supertype: _PrimitiveSignedIntegerType;
+    size: 2;
+    alignment: 2;
+    yourself.
+
+__type UInt16 supertype: _PrimitiveUnsignedIntegerType;
+    size: 2;
+    alignment: 2;
+    yourself.
+
+__type Char16 supertype: _PrimitiveCharacterType;
+    size: 2;
+    alignment: 2;
+    yourself.
+
+__type Int32 supertype: _PrimitiveSignedIntegerType;
+    size: 4;
+    alignment: 4;
+    yourself.
+
+__type UInt32 supertype: _PrimitiveUnsignedIntegerType;
+    size: 4;
+    alignment: 4;
+    yourself.
+
+__type Char32 supertype: _PrimitiveCharacterType;
+    size: 4;
+    alignment: 4;
+    yourself.
+
+__type Int64 supertype: _PrimitiveSignedIntegerType;
+    size: 8;
+    alignment: 8;
+    yourself.
+
+__type UInt32 supertype: _PrimitiveUnsignedIntegerType;
+    size: 8;
+    alignment: 8;
+    yourself.
+
+__type Char32 supertype: _PrimitiveCharacterType;
+    size: 8;
+    alignment: 8;
+    yourself.
+
+__type Float16 supertype: _PrimitiveFloatType;
+    size: 2;
+    alignment: 2;
+    yourself.
+
+__type Float32 supertype: _PrimitiveFloatType;
+    size: 4;
+    alignment: 4;
+    yourself.
+
+__type Float64 supertype: _PrimitiveFloatType;
+    size: 8;
+    alignment: 8;
+    yourself.

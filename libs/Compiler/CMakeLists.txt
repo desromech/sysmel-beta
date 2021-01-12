@@ -13,3 +13,4 @@ set(Compiler_Sources
 )
 
 add_library(SysmelCompiler STATIC ${Compiler_Sources})
+target_link_libraries(SysmelCompiler SysmelObjectModel)

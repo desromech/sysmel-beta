@@ -50,6 +50,8 @@ std::vector<uint8_t> Schema::serializeToBinaryData() const
         record.instanceAlignment = uint32_t(typeDefinition->instanceAlignment);
         auto baseType = typeDefinition->baseType.lock();
         record.baseType = baseType ? baseType->index : 0;
+        auto superType = typeDefinition->superType.lock();
+        record.superType = superType ? superType->index : 0;
 
         auto &slots = typeDefinition->getSlots();
         record.slotTableCount = slots.size();
@@ -207,6 +209,13 @@ SchemaPtr Schema::deserializeFromBinaryData(const std::vector<uint8_t> &data)
             if(record.name > decodedStrings.size())
                 return nullptr;
             type->name = decodedStrings[record.name - 1];
+        }
+
+        if(record.superType != 0)
+        {
+            if(record.superType > types.size())
+                return nullptr;
+            type->superType = types[record.superType - 1];
         }
 
         if(record.baseType != 0)

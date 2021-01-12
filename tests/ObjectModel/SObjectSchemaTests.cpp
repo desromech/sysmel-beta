@@ -48,8 +48,8 @@ SUITE(SObjectSchema)
     {
         auto schema = std::make_shared<Schema> ();
 
-        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::Integer, 8, 8);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint64Type->layout);
+        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::UnsignedInteger, 8, 8);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint64Type->layout);
         CHECK_EQUAL(8u, uint64Type->instanceSize);
         CHECK_EQUAL(8u, uint64Type->instanceAlignment);
 
@@ -68,7 +68,7 @@ SUITE(SObjectSchema)
         CHECK(!deserializedSchema->getTypeDefinitions().empty());
 
         auto readUInt64Type = deserializedSchema->getTypeDefinitionNamed("UInt64");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt64Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt64Type->layout);
         CHECK_EQUAL(8u, readUInt64Type->instanceSize);
         CHECK_EQUAL(8u, readUInt64Type->instanceAlignment);
 
@@ -83,13 +83,13 @@ SUITE(SObjectSchema)
     {
         auto schema = std::make_shared<Schema> ();
 
-        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::Integer, 1, 1);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint8Type->layout);
+        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::UnsignedInteger, 1, 1);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint8Type->layout);
         CHECK_EQUAL(1u, uint8Type->instanceSize);
         CHECK_EQUAL(1u, uint8Type->instanceAlignment);
 
-        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::Integer, 8, 8);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint64Type->layout);
+        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::UnsignedInteger, 8, 8);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint64Type->layout);
         CHECK_EQUAL(8u, uint64Type->instanceSize);
         CHECK_EQUAL(8u, uint64Type->instanceAlignment);
 
@@ -114,12 +114,12 @@ SUITE(SObjectSchema)
         CHECK(!deserializedSchema->getTypeDefinitions().empty());
 
         auto readUInt8Type = deserializedSchema->getTypeDefinitionNamed("UInt8");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt8Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt8Type->layout);
         CHECK_EQUAL(1u, readUInt8Type->instanceSize);
         CHECK_EQUAL(1u, readUInt8Type->instanceAlignment);
 
         auto readUInt64Type = deserializedSchema->getTypeDefinitionNamed("UInt64");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt64Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt64Type->layout);
         CHECK_EQUAL(8u, readUInt64Type->instanceSize);
         CHECK_EQUAL(8u, readUInt64Type->instanceAlignment);
 
@@ -137,13 +137,13 @@ SUITE(SObjectSchema)
     {
         auto schema = std::make_shared<Schema> ();
 
-        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::Integer, 1, 1);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint8Type->layout);
+        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::UnsignedInteger, 1, 1);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint8Type->layout);
         CHECK_EQUAL(1u, uint8Type->instanceSize);
         CHECK_EQUAL(1u, uint8Type->instanceAlignment);
 
-        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::Integer, 8, 8);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint64Type->layout);
+        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::UnsignedInteger, 8, 8);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint64Type->layout);
         CHECK_EQUAL(8u, uint64Type->instanceSize);
         CHECK_EQUAL(8u, uint64Type->instanceAlignment);
 
@@ -168,12 +168,12 @@ SUITE(SObjectSchema)
         CHECK(!deserializedSchema->getTypeDefinitions().empty());
 
         auto readUInt8Type = deserializedSchema->getTypeDefinitionNamed("UInt8");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt8Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt8Type->layout);
         CHECK_EQUAL(1u, readUInt8Type->instanceSize);
         CHECK_EQUAL(1u, readUInt8Type->instanceAlignment);
 
         auto readUInt64Type = deserializedSchema->getTypeDefinitionNamed("UInt64");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt64Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt64Type->layout);
         CHECK_EQUAL(8u, readUInt64Type->instanceSize);
         CHECK_EQUAL(8u, readUInt64Type->instanceAlignment);
 
@@ -191,13 +191,13 @@ SUITE(SObjectSchema)
     {
         auto schema = std::make_shared<Schema> ();
 
-        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::Integer, 1, 1);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint8Type->layout);
+        auto uint8Type = schema->createBasicType("UInt8", SchemaTypeLayout::UnsignedInteger, 1, 1);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint8Type->layout);
         CHECK_EQUAL(1u, uint8Type->instanceSize);
         CHECK_EQUAL(1u, uint8Type->instanceAlignment);
 
-        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::Integer, 8, 8);
-        CHECK_EQUAL(SchemaTypeLayout::Integer, uint64Type->layout);
+        auto uint64Type = schema->createBasicType("UInt64", SchemaTypeLayout::UnsignedInteger, 8, 8);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, uint64Type->layout);
         CHECK_EQUAL(8u, uint64Type->instanceSize);
         CHECK_EQUAL(8u, uint64Type->instanceAlignment);
 
@@ -222,12 +222,12 @@ SUITE(SObjectSchema)
         CHECK(!deserializedSchema->getTypeDefinitions().empty());
 
         auto readUInt8Type = deserializedSchema->getTypeDefinitionNamed("UInt8");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt8Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt8Type->layout);
         CHECK_EQUAL(1u, readUInt8Type->instanceSize);
         CHECK_EQUAL(1u, readUInt8Type->instanceAlignment);
 
         auto readUInt64Type = deserializedSchema->getTypeDefinitionNamed("UInt64");
-        CHECK_EQUAL(SchemaTypeLayout::Integer, readUInt64Type->layout);
+        CHECK_EQUAL(SchemaTypeLayout::UnsignedInteger, readUInt64Type->layout);
         CHECK_EQUAL(8u, readUInt64Type->instanceSize);
         CHECK_EQUAL(8u, readUInt64Type->instanceAlignment);
 

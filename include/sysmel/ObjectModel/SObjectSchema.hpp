@@ -28,7 +28,8 @@ enum SchemaTypeLayout : uint8_t
 
     // Basic type.
     Character = 'C',
-    Integer = 'I',
+    UnsignedInteger = 'u',
+    SignedInteger = 's',
     Float = 'F',
 
     // Basic derived types.
@@ -36,9 +37,13 @@ enum SchemaTypeLayout : uint8_t
     Enum = 'E',
     Pointer = 'P',
 
+    // Aggregate types.
+    GCObject = 'G',
     Structure = 'S',
-    PackedStructure = 's',
+    PackedStructure = 'p',
     Union = 'U',
+
+    Void = 'V',
 };
 
 /**
@@ -50,6 +55,7 @@ struct SchemaTypeDefinitionRecord
     uint8_t reserved[3];
 
     uint32_t name;
+    uint32_t superType;
     uint32_t baseType;
     uint32_t instanceSize;
     uint32_t instanceAlignment;
@@ -158,7 +164,9 @@ public:
 
     SchemaTypeLayout layout = SchemaTypeLayout::Invalid;
     std::string name;
+    SchemaTypeDefinitionWeakPtr superType;
     SchemaTypeDefinitionWeakPtr baseType;
+
     size_t instanceSize = 0;
     size_t instanceAlignment = 0;
 
@@ -255,7 +263,7 @@ public:
         auto it = slotNameDictionary.find(name);
         return it != slotNameDictionary.end() ? it->second : nullptr;
     }
-    
+
 private:
     Slots slots;
     std::unordered_map<std::string, SchemaTypeDefinitionSlotPtr> slotNameDictionary;
