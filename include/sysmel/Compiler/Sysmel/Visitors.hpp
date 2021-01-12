@@ -1,5 +1,5 @@
-#ifndef SYSMEL_BASE_COMPILER_SYSMEL_VISITORS_HPP
-#define SYSMEL_BASE_COMPILER_SYSMEL_VISITORS_HPP
+#ifndef SYSMEL_COMPILER_SYSMEL_VISITORS_HPP
+#define SYSMEL_COMPILER_SYSMEL_VISITORS_HPP
 #pragma once
 
 #include "AST.hpp"
@@ -215,4 +215,4 @@ bool validateASTParseErrors(const ASTNodePtr &ast, const FT &parseErrorCallback)
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_BASE_COMPILER_PARSER_AST_HPP
+#endif //SYSMEL_COMPILER_PARSER_AST_HPP

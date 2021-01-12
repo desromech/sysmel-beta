@@ -1,4 +1,4 @@
-#include "sysmel/BaseCompiler/Sysmel/Scanner.hpp"
+#include "sysmel/Compiler/Sysmel/Scanner.hpp"
 #include "UnitTest++/UnitTest++.h"
 
 using namespace SysmelMoebius::Compiler;

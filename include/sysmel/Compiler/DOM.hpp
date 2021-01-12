@@ -1,5 +1,5 @@
-#ifndef SYSMEL_BASE_COMPILER_DOM_HPP
-#define SYSMEL_BASE_COMPILER_DOM_HPP
+#ifndef SYSMEL_COMPILER_DOM_HPP
+#define SYSMEL_COMPILER_DOM_HPP
 #pragma once
 
 #include "LiteralInteger.hpp"
@@ -410,4 +410,4 @@ inline ParseResult parseStringWithSysmelSyntax(const std::string &text, const st
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_BASE_COMPILER_DOM_LITERAL_HPP
+#endif //SYSMEL_COMPILER_DOM_LITERAL_HPP

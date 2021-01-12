@@ -1,5 +1,5 @@
-#ifndef SYSMEL_BASE_COMPILER_SOURCE_POSITION_HPP
-#define SYSMEL_BASE_COMPILER_SOURCE_POSITION_HPP
+#ifndef SYSMEL_COMPILER_SOURCE_POSITION_HPP
+#define SYSMEL_COMPILER_SOURCE_POSITION_HPP
 #pragma once
 
 #include "SourceCollection.hpp"
@@ -54,4 +54,4 @@ struct SourcePosition : CollectionRange<SourcePosition, SourceCollectionPtr, std
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_BASE_COMPILER_SOURCE_POSITION_HPP
+#endif //SYSMEL_COMPILER_SOURCE_POSITION_HPP

@@ -1,5 +1,5 @@
-#ifndef SYSMEL_BASE_COMPILER_PARSER_SCANNER_HPP
-#define SYSMEL_BASE_COMPILER_PARSER_SCANNER_HPP
+#ifndef SYSMEL_COMPILER_PARSER_SCANNER_HPP
+#define SYSMEL_COMPILER_PARSER_SCANNER_HPP
 #pragma once
 
 #include "Token.hpp"
@@ -22,4 +22,4 @@ inline TokenListPtr scanString(const std::string &sourceString, const std::strin
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_BASE_COMPILER_PARSER_SCANNER_HPP
+#endif //SYSMEL_COMPILER_PARSER_SCANNER_HPP

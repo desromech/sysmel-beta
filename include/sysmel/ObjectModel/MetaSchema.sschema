@@ -1,5 +1,0 @@
-## I am a specification for the meta-schema of a schema.
-(namespace Sysmel ObjectModel)
-
-## We need a type system for defining the meta-schema.
-(load "TypeSystem.sschema")

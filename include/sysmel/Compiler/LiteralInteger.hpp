@@ -1,5 +1,5 @@
-#ifndef SYSMEL_BASE_COMPILER_LITERAL_INTEGER_HPP
-#define SYSMEL_BASE_COMPILER_LITERAL_INTEGER_HPP
+#ifndef SYSMEL_COMPILER_LITERAL_INTEGER_HPP
+#define SYSMEL_COMPILER_LITERAL_INTEGER_HPP
 #pragma once
 
 #include <stdint.h>
@@ -112,4 +112,4 @@ struct LiteralInteger
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_BASE_COMPILER_LITERAL_INTEGER_HPP
+#endif //SYSMEL_COMPILER_LITERAL_INTEGER_HPP
