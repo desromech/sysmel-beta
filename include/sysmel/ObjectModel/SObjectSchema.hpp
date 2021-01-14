@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include "Object.hpp"
 
 namespace SysmelMoebius
 {
@@ -46,6 +47,12 @@ enum SchemaTypeLayout : uint8_t
     Void = 'V',
 };
 
+enum SchemaTypeFlags : uint32_t
+{
+    None = 0,
+    IsMetaType = 1<<0,
+};
+
 /**
  * I am a type definition record.
  */
@@ -55,6 +62,8 @@ struct SchemaTypeDefinitionRecord
     uint8_t reserved[3];
 
     uint32_t name;
+    uint32_t flags;
+    uint32_t metaType;
     uint32_t superType;
     uint32_t baseType;
     uint32_t instanceSize;
@@ -145,8 +154,10 @@ typedef std::shared_ptr<SchemaTypeDefinitionSlot> SchemaTypeDefinitionSlotPtr;
 /**
  * I am a type slot definition.
  */
-struct SchemaTypeDefinitionSlot
+struct SchemaTypeDefinitionSlot : Object
 {
+    SYSMEL_CLASS_DECLARE(SchemaTypeDefinitionSlot, Object);
+
     std::string name;
     SchemaTypeDefinitionWeakPtr type;
     size_t offset = 0;
@@ -155,15 +166,33 @@ struct SchemaTypeDefinitionSlot
 /**
  * I am an type definition.
  */
-class SchemaTypeDefinition : public std::enable_shared_from_this<SchemaTypeDefinition>
+class SchemaTypeDefinition : public Object
 {
 public:
+    SYSMEL_CLASS_DECLARE(SchemaTypeDefinition, Object);
+
     typedef std::vector<SchemaTypeDefinitionSlotPtr> Slots;
+
+    SchemaTypeDefinitionPtr getMetaType() const;
+    void setMetaType(const SchemaTypeDefinitionPtr &newMetaType);
+    SchemaTypeDefinitionPtr getSuperType() const;
+    void setSuperType(const SchemaTypeDefinitionPtr &newSuperType);
+
+    void setLayoutNamed(const std::string &layoutName);
+    void setSize(size_t value);
+    void setAlignment(size_t value);
+
+    bool isMetaType() const
+    {
+        return (flags & uint32_t(SchemaTypeFlags::IsMetaType)) != 0;
+    }
 
     uint32_t index = 0;
 
     SchemaTypeLayout layout = SchemaTypeLayout::Invalid;
+    uint32_t flags = 0;
     std::string name;
+    SchemaTypeDefinitionWeakPtr metaType;
     SchemaTypeDefinitionWeakPtr superType;
     SchemaTypeDefinitionWeakPtr baseType;
 
@@ -272,9 +301,10 @@ private:
 /**
  * I am an schema for the object layouts.
  */
-class Schema
+class Schema : public Object
 {
 public:
+    SYSMEL_CLASS_DECLARE(Schema, Object);
     typedef std::vector<SchemaTypeDefinitionPtr> TypeDefinitions;
 
     SchemaTypeDefinitionPtr addTypeDefinition(const SchemaTypeDefinitionPtr &typeDefinition)

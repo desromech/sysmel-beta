@@ -30,7 +30,7 @@ __type _LiteralPositiveInteger supertype: _LiteralInteger.
 __type _LiteralNegativeInteger supertype: _LiteralInteger.
 __type _LiteralCharacter supertype: _LiteralPositiveInteger.
 __type _LiteralString supertype: _LiteralValueType.
-__type _LiteralString supertype: _LiteralSymbol.
+__type _LiteralSymbol supertype: _LiteralString.
 
 ##==============================================================================
 ## Opaque types
@@ -62,15 +62,15 @@ __type _PrimitiveFloatType supertype: _PrimitiveNumberType;
     yourself.
 
 __type _PrimitiveIntegerType supertype: _PrimitiveNumberType.
-__type _PrimitiveSignedIntegerType supertype: _PrimitiveIntegerType.
+__type _PrimitiveSignedIntegerType supertype: _PrimitiveIntegerType;
     layoutNamed: #SignedInteger;
     yourself.
 
-__type _PrimitiveUnsignedIntegerType supertype: _PrimitiveIntegerType.
+__type _PrimitiveUnsignedIntegerType supertype: _PrimitiveIntegerType;
     layoutNamed: #UnsignedInteger;
     yourself.
 
-__type _PrimitiveCharacterType supertype: _PrimitiveUnsignedIntegerType.
+__type _PrimitiveCharacterType supertype: _PrimitiveUnsignedIntegerType;
     layoutNamed: #Character;
     yourself.
 

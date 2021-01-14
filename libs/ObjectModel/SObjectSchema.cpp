@@ -6,6 +6,114 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+//==============================================================================
+// SchemaTypeDefinition
+//==============================================================================
+
+BEGIN_SYSMEL_INSTANCE_SIDE_METHODS(SchemaTypeDefinitionSlot)
+END_SYSMEL_INSTANCE_SIDE_METHODS()
+
+BEGIN_SYSMEL_CLASS_SIDE_METHODS(SchemaTypeDefinitionSlot)
+END_SYSMEL_CLASS_SIDE_METHODS()
+
+//==============================================================================
+// SchemaTypeDefinition
+//==============================================================================
+
+BEGIN_SYSMEL_INSTANCE_SIDE_METHODS(SchemaTypeDefinition)
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(getMetaType, "type"),
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(setMetaType, "type:"),
+
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(getSuperType, "supertype"),
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(setSuperType, "supertype:"),
+
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(setLayoutNamed, "layoutNamed:"),
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(setSize, "size:"),
+    MAKE_SYSMEL_MEMBER_METHOD_WRAPPER_WITH_SELECTOR(setAlignment, "alignment:"),
+END_SYSMEL_INSTANCE_SIDE_METHODS()
+
+BEGIN_SYSMEL_CLASS_SIDE_METHODS(SchemaTypeDefinition)
+END_SYSMEL_CLASS_SIDE_METHODS()
+
+SchemaTypeDefinitionPtr SchemaTypeDefinition::getMetaType() const
+{
+    return metaType.lock();
+}
+
+void SchemaTypeDefinition::setMetaType(const SchemaTypeDefinitionPtr &newMetaType)
+{
+    metaType = newMetaType;
+}
+
+SchemaTypeDefinitionPtr SchemaTypeDefinition::getSuperType() const
+{
+    return superType.lock();
+};
+
+void SchemaTypeDefinition::setSuperType(const SchemaTypeDefinitionPtr &newSuperType)
+{
+    superType = newSuperType;
+    if(!newSuperType)
+        return;
+        
+    if(!isMetaType())
+    {
+        auto metaTypeValue = metaType.lock();
+        auto superMetaType = newSuperType->metaType.lock();
+        if(metaTypeValue)
+        {
+            metaTypeValue->superType = superMetaType;
+            if(!metaTypeValue->metaType.lock())
+                metaTypeValue->metaType = superMetaType->metaType.lock();
+        }
+    }
+}
+
+static std::unordered_map<std::string, SchemaTypeLayout> layoutNameMap = {
+    {"Invalid", SchemaTypeLayout::Invalid},
+    {"Character", SchemaTypeLayout::Character},
+    {"UnsignedInteger", SchemaTypeLayout::UnsignedInteger},
+    {"SignedInteger", SchemaTypeLayout::SignedInteger},
+    {"Float", SchemaTypeLayout::Float},
+    {"Alias", SchemaTypeLayout::Alias},
+    {"Enum", SchemaTypeLayout::Enum},
+    {"Pointer", SchemaTypeLayout::Pointer},
+    {"GCObject", SchemaTypeLayout::GCObject},
+    {"Structure", SchemaTypeLayout::Structure},
+    {"PackedStructure", SchemaTypeLayout::PackedStructure},
+    {"Union", SchemaTypeLayout::Union},
+    {"Void", SchemaTypeLayout::Void},
+};
+
+void SchemaTypeDefinition::setLayoutNamed(const std::string &layoutName)
+{
+    auto it = layoutNameMap.find(layoutName);
+    if(it == layoutNameMap.end())
+        throw std::runtime_error("Unsupported schema type layout named " + layoutName + ".");
+    layout = it->second;
+}
+
+void SchemaTypeDefinition::setSize(size_t value)
+{
+    instanceSize = value;
+}
+void SchemaTypeDefinition::setAlignment(size_t value)
+{
+    instanceAlignment = value;
+}
+
+
+//==============================================================================
+// SchemaTypeDefinition
+//==============================================================================
+
+
+BEGIN_SYSMEL_INSTANCE_SIDE_METHODS(Schema)
+END_SYSMEL_INSTANCE_SIDE_METHODS()
+
+BEGIN_SYSMEL_CLASS_SIDE_METHODS(Schema)
+END_SYSMEL_CLASS_SIDE_METHODS()
+
 struct SchemaStringDataWriter
 {
     uint32_t internString(const std::string &string)
@@ -44,10 +152,13 @@ std::vector<uint8_t> Schema::serializeToBinaryData() const
     {
         SchemaTypeDefinitionRecord record{};
         record.layout = typeDefinition->layout;
+        record.flags = typeDefinition->flags;
         record.name = stringWriter.internString(typeDefinition->name);
         record.slotTableOffset = typeSlotDefinitionTable.size();
         record.instanceSize = uint32_t(typeDefinition->instanceSize);
         record.instanceAlignment = uint32_t(typeDefinition->instanceAlignment);
+        auto metaType = typeDefinition->metaType.lock();
+        record.metaType = metaType ? metaType->index : 0;
         auto baseType = typeDefinition->baseType.lock();
         record.baseType = baseType ? baseType->index : 0;
         auto superType = typeDefinition->superType.lock();
@@ -211,6 +322,13 @@ SchemaPtr Schema::deserializeFromBinaryData(const std::vector<uint8_t> &data)
             type->name = decodedStrings[record.name - 1];
         }
 
+        if(record.metaType != 0)
+        {
+            if(record.metaType > types.size())
+                return nullptr;
+            type->metaType = types[record.metaType - 1];
+        }
+
         if(record.superType != 0)
         {
             if(record.superType > types.size())
@@ -226,6 +344,7 @@ SchemaPtr Schema::deserializeFromBinaryData(const std::vector<uint8_t> &data)
         }
 
         type->layout = record.layout;
+        type->flags = record.flags;
         type->instanceSize = record.instanceSize;
         type->instanceAlignment = record.instanceAlignment;
 

@@ -1,4 +1,5 @@
 set(Parser_Sources
+    Sysmel/BootstrapInterpreter.cpp
     Sysmel/Scanner.cpp
     Sysmel/Parser.cpp
 )
