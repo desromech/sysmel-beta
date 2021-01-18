@@ -117,6 +117,7 @@ struct Object : std::enable_shared_from_this<Object>
         return "Object";
     }
 
+    virtual ~Object() {}
     virtual ObjectTypePtr getType() const
     {
         return TypeSingletonForClass<Object>::uniqueInstance();
@@ -245,7 +246,7 @@ struct UndefinedObject : Object
     }
 
 
-    virtual std::string asString() const
+    virtual std::string asString() const override
     {
         return "nil";
     }
@@ -265,7 +266,7 @@ struct LiteralVoid : Object
         return SharedPtrSingletonInstanceHolderForClass<LiteralVoid>::value;
     }
 
-    virtual std::string asString() const
+    virtual std::string asString() const override
     {
         return "void";
     }
@@ -295,7 +296,7 @@ struct LiteralTrue : LiteralBoolean
         return SharedPtrSingletonInstanceHolderForClass<LiteralTrue>::value;
     }
 
-    virtual std::string asString() const
+    virtual std::string asString() const override
     {
         return "true";
     }
@@ -315,7 +316,7 @@ struct LiteralFalse : LiteralBoolean
         return SharedPtrSingletonInstanceHolderForClass<LiteralFalse>::value;
     }
 
-    virtual std::string asString() const
+    virtual std::string asString() const override
     {
         return "false";
     }
@@ -360,12 +361,12 @@ struct LiteralSignedInteger : LiteralInteger
     LiteralSignedInteger(int64_t v)
         : value(v) {}
 
-    virtual std::string asString() const;
+    virtual std::string asString() const override;
 
-    virtual uint64_t asUInt64() const;
-    virtual int64_t asInt64() const;
-    virtual float asFloat32() const;
-    virtual double asFloat64() const;
+    virtual uint64_t asUInt64() const override;
+    virtual int64_t asInt64() const override;
+    virtual float asFloat32() const override;
+    virtual double asFloat64() const override;
 
     int64_t value;
 };
@@ -380,12 +381,12 @@ struct LiteralUnsignedInteger : LiteralInteger
     LiteralUnsignedInteger(uint64_t v)
         : value(v) {}
 
-    virtual std::string asString() const;
+    virtual std::string asString() const override;
 
-    virtual uint64_t asUInt64() const;
-    virtual int64_t asInt64() const;
-    virtual float asFloat32() const;
-    virtual double asFloat64() const;
+    virtual uint64_t asUInt64() const override;
+    virtual int64_t asInt64() const override;
+    virtual float asFloat32() const override;
+    virtual double asFloat64() const override;
 
     uint64_t value;
 };
@@ -400,10 +401,10 @@ struct LiteralFloat : LiteralNumber
     LiteralFloat(double v)
         : value(v) {}
 
-    virtual std::string asString() const;
+    virtual std::string asString() const override;
 
-    virtual float asFloat32() const;
-    virtual double asFloat64() const;
+    virtual float asFloat32() const override;
+    virtual double asFloat64() const override;
 
     double value;
 };
@@ -745,7 +746,7 @@ private:
 };
 
 template<typename F>
-class ObjectMethodWrapper;
+struct ObjectMethodWrapper;
 
 template<typename CT, typename RT, typename ...Args>
 struct ObjectMethodWrapper<RT (CT::*) (Args...)>

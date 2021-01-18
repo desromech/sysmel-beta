@@ -47,6 +47,7 @@ struct ASTSpliceNode;
 struct ASTVisitor;
 struct ASTNode : std::enable_shared_from_this<ASTNode>
 {
+    virtual ~ASTNode() {}
     virtual std::any accept(ASTVisitor &visitor) = 0;
 
     virtual bool isParseErrorNode() const { return false; }
@@ -106,6 +107,7 @@ typedef std::vector<ASTNodePtr> ASTNodePtrList;
 
 struct ASTVisitor
 {
+    virtual ~ASTVisitor() {}
     virtual std::any visitNode(ASTNode &node)
     {
         return node.accept(*this);

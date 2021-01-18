@@ -18,6 +18,8 @@ typedef std::shared_ptr<BootstrapEvaluationEnvironment> BootstrapEvaluationEnvir
 class BootstrapEvaluationEnvironment
 {
 public:
+    virtual ~BootstrapEvaluationEnvironment() {};
+
     BootstrapEvaluationEnvironment() {}
     BootstrapEvaluationEnvironment(const BootstrapEvaluationEnvironmentPtr &cparent)
         : parent(cparent) {}
