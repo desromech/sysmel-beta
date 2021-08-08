@@ -1,4 +1,4 @@
-#include "sysmel/BaseCompiler/Sysmel/Parser.hpp"
+#include "sysmel/Compiler/Sysmel/Parser.hpp"
 #include "UnitTest++/UnitTest++.h"
 
 using namespace SysmelMoebius::Compiler;
