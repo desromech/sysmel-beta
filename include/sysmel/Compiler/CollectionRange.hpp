@@ -27,12 +27,12 @@ struct CollectionRange
 
     static SelfType forCollection(const CollectionPtr &collection)
     {
-        return SelfType{collection, 0, collection->size()};
+        return SelfType{{collection, 0, collection->size()}};
     }
 
     static SelfType forEndOfCollection(const CollectionPtr &collection)
     {
-        return SelfType{collection, collection->size(), collection->size()};
+        return SelfType{{collection, collection->size(), collection->size()}};
     }
 
     auto start() const
@@ -72,13 +72,13 @@ struct CollectionRange
 
     SelfType until(size_t increment) const
     {
-        return SelfType {collection, startPosition, std::min(startPosition + increment, endPosition)};
+        return SelfType {{collection, startPosition, std::min(startPosition + increment, endPosition)}};
     }
 
     SelfType until(const SelfType &other) const
     {
         assert(collection == other.collection);
-        return SelfType {collection, startPosition, other.startPosition};
+        return SelfType {{collection, startPosition, other.startPosition}};
     }
 
     PeekType peek(size_t offset = 0) const

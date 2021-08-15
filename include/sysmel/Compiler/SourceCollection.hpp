@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <vector>
 
 namespace SysmelMoebius
 {

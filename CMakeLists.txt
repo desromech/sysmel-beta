@@ -30,7 +30,7 @@ include(${CMAKE_ROOT}/Modules/CheckIncludeFileCXX.cmake)
 include(${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
 include(${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 
-find_package(LLVM REQUIRED CONFIG)
+##find_package(LLVM REQUIRED CONFIG)
 
 # Set output dir.
 set(EXECUTABLE_OUTPUT_PATH "${Sysmel_BINARY_DIR}/dist")

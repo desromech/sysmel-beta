@@ -206,7 +206,7 @@ SUITE(LargeInteger)
         CHECK_EQUAL(LargeInteger{362880}, LargeInteger{9}.factorial());
         CHECK_EQUAL(LargeInteger{3628800}, LargeInteger{10}.factorial());
 
-        CHECK_EQUAL(LargeInteger{2432902008176640000}, LargeInteger{20}.factorial());
+        CHECK_EQUAL(LargeInteger{2432902008176640000ull}, LargeInteger{20}.factorial());
         CHECK_EQUAL(LargeInteger{"265252859812191058636308480000000"}, LargeInteger{30}.factorial());
         CHECK_EQUAL(LargeInteger{"815915283247897734345611269596115894272000000000"}, LargeInteger{40}.factorial());
         CHECK_EQUAL(LargeInteger{"30414093201713378043612608166064768844377641568960512000000000000"}, LargeInteger{50}.factorial());
