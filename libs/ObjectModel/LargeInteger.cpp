@@ -391,7 +391,7 @@ LargeInteger LargeInteger::operator+(const LargeInteger &other) const
     return result;
 }
 
-const LargeInteger &LargeInteger::operator+=(const LargeInteger &other)
+LargeInteger &LargeInteger::operator+=(const LargeInteger &other)
 {
     *this = *this + other;
     return *this;
@@ -429,7 +429,7 @@ LargeInteger LargeInteger::operator-(const LargeInteger &other) const
     return result;
 }
 
-const LargeInteger &LargeInteger::operator-=(const LargeInteger &other)
+LargeInteger &LargeInteger::operator-=(const LargeInteger &other)
 {
     *this = *this - other;
     return *this;
@@ -461,9 +461,37 @@ LargeInteger LargeInteger::operator*(const LargeInteger &other) const
     return result;
 }
 
-const LargeInteger &LargeInteger::operator*=(const LargeInteger &other)
+LargeInteger &LargeInteger::operator*=(const LargeInteger &other)
 {
     *this = *this * other;
+    return *this;
+}
+
+LargeInteger LargeInteger::operator/(const LargeInteger &divisor) const
+{
+    LargeInteger quotient;
+    LargeInteger remainder;
+    divisionAndRemainder(divisor, quotient, remainder);
+    return quotient;
+}
+
+LargeInteger &LargeInteger::operator/=(const LargeInteger &divisor)
+{
+    *this = *this / divisor;
+    return *this;
+}
+
+LargeInteger LargeInteger::operator%(const LargeInteger &divisor) const
+{
+    LargeInteger quotient;
+    LargeInteger remainder;
+    divisionAndRemainder(divisor, quotient, remainder);
+    return remainder;
+}
+
+LargeInteger &LargeInteger::operator%=(const LargeInteger &divisor)
+{
+    *this = *this % divisor;
     return *this;
 }
 
@@ -500,7 +528,7 @@ LargeInteger LargeInteger::operator<<(uint32_t shiftAmount) const
     return result;
 }
 
-const LargeInteger &LargeInteger::operator<<=(uint32_t shiftAmount)
+LargeInteger &LargeInteger::operator<<=(uint32_t shiftAmount)
 {
     *this = *this << shiftAmount;
     return *this;
@@ -547,7 +575,7 @@ LargeInteger LargeInteger::operator>>(uint32_t shiftAmount) const
     return result;
 }
 
-const LargeInteger &LargeInteger::operator>>=(uint32_t shiftAmount)
+LargeInteger &LargeInteger::operator>>=(uint32_t shiftAmount)
 {
     *this = *this >> shiftAmount;
     return *this;
@@ -561,9 +589,28 @@ LargeInteger LargeInteger::factorial() const
     return *this * (*this + MinusOne).factorial();
 }
 
-void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder)
+void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const
 {
     assert(!divisor.isZero());
+    // Compare the magnitude to rule out the easy cases.
+    auto magnitudeComparison = compareMagnitudes(*this, divisor);
+    if(magnitudeComparison < 0)
+    {
+        quotient = Zero;
+        remainder = *this;
+        remainder.signBit = false;
+        remainder.normalize();
+        return;
+    }
+    else if(magnitudeComparison == 1)
+    {
+        if(signBit != divisor.signBit)
+            quotient = MinusOne;
+        else
+            quotient = One;
+        remainder = Zero;
+        return;
+    }
 
     auto lastWord = divisor.words.back();
     auto lastWordHighBit = highBitOf(lastWord);

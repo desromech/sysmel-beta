@@ -93,6 +93,23 @@ SUITE(LargeInteger)
         CHECK_EQUAL(LargeInteger{1}, LargeInteger{3} + LargeInteger{-2});
     }
 
+    TEST(Subtraction)
+    {
+        // Neutral element
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} - LargeInteger{0});
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger{1} - LargeInteger{0});
+
+        CHECK_EQUAL(LargeInteger{-1}, LargeInteger{0} - LargeInteger{1});
+
+        // Simple subtractions.
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{1} - LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{35}, LargeInteger{7} - LargeInteger{42});
+ 
+        CHECK_EQUAL(LargeInteger{5}, LargeInteger{2} - LargeInteger{-3});
+        CHECK_EQUAL(LargeInteger{5}, LargeInteger{3} - LargeInteger{-2});
+        CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-1} - LargeInteger{1});
+   }
+    
     TEST(Multiplication)
     {
         // Neutral element
@@ -122,6 +139,32 @@ SUITE(LargeInteger)
         // Simple multiplications.
         CHECK_EQUAL(LargeInteger{6}, LargeInteger{2} * LargeInteger{3});
         CHECK_EQUAL(LargeInteger{49}, LargeInteger{7} * LargeInteger{7});
+    }
+
+    TEST(Division)
+    {
+        // Neutral element
+        CHECK_EQUAL(LargeInteger{2}, LargeInteger{2} / LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{3}, LargeInteger{3} / LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-2} / LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{-3}, LargeInteger{-3} / LargeInteger{1});
+        
+        // Division from zero
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} / LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} / LargeInteger{-1});
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} / LargeInteger{2});
+        CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} / LargeInteger{-2});
+
+        // Negation
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger{-1} / LargeInteger{-1});
+        CHECK_EQUAL(LargeInteger{-1}, LargeInteger{-1} / LargeInteger{1});
+        CHECK_EQUAL(LargeInteger{-1}, LargeInteger{1} / LargeInteger{-1});
+        CHECK_EQUAL(LargeInteger{-2}, LargeInteger{2} / LargeInteger{-1});
+
+        // Simple divisions
+        CHECK_EQUAL(LargeInteger{3}, LargeInteger{6} / LargeInteger{2});
+        CHECK_EQUAL(LargeInteger{6}, LargeInteger{6} / LargeInteger{3});
+        CHECK_EQUAL(LargeInteger{7}, LargeInteger{7} / LargeInteger{7});
     }
 
     TEST(ShiftLeft)
@@ -177,6 +220,7 @@ SUITE(LargeInteger)
         CHECK_EQUAL("-1", LargeInteger{-1}.asString());
         CHECK_EQUAL("10", LargeInteger{10}.asString());
         CHECK_EQUAL("42", LargeInteger{42}.asString());
+        CHECK_EQUAL("123456", LargeInteger{123456}.asString());
     }
 
 }

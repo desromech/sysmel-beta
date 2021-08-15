@@ -107,22 +107,28 @@ struct LargeInteger
 
 
     LargeInteger operator+(const LargeInteger &other) const;
-    const LargeInteger &operator+=(const LargeInteger &other);
+    LargeInteger &operator+=(const LargeInteger &other);
 
     LargeInteger operator-(const LargeInteger &other) const;
-    const LargeInteger &operator-=(const LargeInteger &other);
+    LargeInteger &operator-=(const LargeInteger &other);
 
     LargeInteger operator*(const LargeInteger &other) const;
-    const LargeInteger &operator*=(const LargeInteger &other);
+    LargeInteger &operator*=(const LargeInteger &other);
+
+    LargeInteger operator/(const LargeInteger &divisor) const;
+    LargeInteger &operator/=(const LargeInteger &divisor);
+
+    LargeInteger operator%(const LargeInteger &divisor) const;
+    LargeInteger &operator%=(const LargeInteger &divisor);
 
     LargeInteger operator<<(uint32_t shiftAmount) const;
-    const LargeInteger &operator<<=(uint32_t shiftAmount);
+    LargeInteger &operator<<=(uint32_t shiftAmount);
 
     LargeInteger operator>>(uint32_t shiftAmount) const;
-    const LargeInteger &operator>>=(uint32_t shiftAmount);
+    LargeInteger &operator>>=(uint32_t shiftAmount);
 
     LargeInteger factorial() const;
-    void divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder);
+    void divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const;
 
     bool isZero() const;
     bool isOne() const;
