@@ -1,5 +1,5 @@
-#ifndef SYSMEL_OBJECT_MODEL_LARGE_INTEGER
-#define SYSMEL_OBJECT_MODEL_LARGE_INTEGER
+#ifndef SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP
+#define SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP
 #pragma once
 
 #include <stdint.h>
@@ -30,13 +30,13 @@ struct LargeInteger
     {
     }
 
-    LargeInteger(uint32_t value);
-    LargeInteger(int32_t value);
-    LargeInteger(uint64_t value);
-    LargeInteger(int64_t value);
-    LargeInteger(bool isNegative, std::vector<uint32_t> &&newWords);
-    LargeInteger(bool isNegative, const std::vector<uint32_t> &newWords);
-    LargeInteger(const std::string &string, uint8_t radix = 10);
+    explicit LargeInteger(uint32_t value);
+    explicit LargeInteger(int32_t value);
+    explicit LargeInteger(uint64_t value);
+    explicit LargeInteger(int64_t value);
+    explicit LargeInteger(bool isNegative, std::vector<uint32_t> &&newWords);
+    explicit LargeInteger(bool isNegative, const std::vector<uint32_t> &newWords);
+    explicit LargeInteger(const std::string &string, uint8_t radix = 10);
 
     void setValue(uint32_t value);
     void setValue(int32_t value);
@@ -104,7 +104,7 @@ struct LargeInteger
     }
 
     LargeInteger operator-() const;
-
+    LargeInteger operator~() const;
 
     LargeInteger operator+(const LargeInteger &other) const;
     LargeInteger &operator+=(const LargeInteger &other);
@@ -128,6 +128,8 @@ struct LargeInteger
     LargeInteger &operator>>=(uint32_t shiftAmount);
 
     LargeInteger factorial() const;
+    static LargeInteger binomialCoefficient(const LargeInteger &n, const LargeInteger &k);
+
     void divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const;
 
     bool isZero() const;
@@ -146,4 +148,4 @@ struct LargeInteger
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_OBJECT_MODEL_LARGE_INTEGER
+#endif //SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP

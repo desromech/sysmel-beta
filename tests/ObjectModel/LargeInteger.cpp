@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
+#include "sysmel/ObjectModel/Error.hpp"
 #include "UnitTest++/UnitTest++.h"
 #include <iostream>
 
@@ -163,8 +164,14 @@ SUITE(LargeInteger)
 
         // Simple divisions
         CHECK_EQUAL(LargeInteger{3}, LargeInteger{6} / LargeInteger{2});
-        CHECK_EQUAL(LargeInteger{6}, LargeInteger{6} / LargeInteger{3});
-        CHECK_EQUAL(LargeInteger{7}, LargeInteger{7} / LargeInteger{7});
+        CHECK_EQUAL(LargeInteger{2}, LargeInteger{6} / LargeInteger{3});
+        CHECK_EQUAL(LargeInteger{7}, LargeInteger{49} / LargeInteger{7});
+    }
+
+    TEST(DivisionByZeroError)
+    {
+        CHECK_THROW(LargeInteger{1}/LargeInteger{0}, DivisionByZeroError);
+        CHECK_THROW(LargeInteger{0}/LargeInteger{0}, DivisionByZeroError);
     }
 
     TEST(ShiftLeft)
@@ -206,11 +213,34 @@ SUITE(LargeInteger)
         CHECK_EQUAL(LargeInteger{362880}, LargeInteger{9}.factorial());
         CHECK_EQUAL(LargeInteger{3628800}, LargeInteger{10}.factorial());
 
-        CHECK_EQUAL(LargeInteger{2432902008176640000ull}, LargeInteger{20}.factorial());
+        CHECK_EQUAL(LargeInteger{uint64_t(2432902008176640000)}, LargeInteger{20}.factorial());
         CHECK_EQUAL(LargeInteger{"265252859812191058636308480000000"}, LargeInteger{30}.factorial());
         CHECK_EQUAL(LargeInteger{"815915283247897734345611269596115894272000000000"}, LargeInteger{40}.factorial());
         CHECK_EQUAL(LargeInteger{"30414093201713378043612608166064768844377641568960512000000000000"}, LargeInteger{50}.factorial());
         CHECK_EQUAL(LargeInteger{"93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000"}, LargeInteger{100}.factorial());
+    }
+
+    TEST(BinomialCoefficient)
+    {
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{0}, LargeInteger{0}));
+
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{1}, LargeInteger{0}));
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{1}, LargeInteger{1}));
+
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{2}, LargeInteger{0}));
+        CHECK_EQUAL(LargeInteger{2}, LargeInteger::binomialCoefficient(LargeInteger{2}, LargeInteger{1}));
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{2}, LargeInteger{2}));
+
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{3}, LargeInteger{0}));
+        CHECK_EQUAL(LargeInteger{3}, LargeInteger::binomialCoefficient(LargeInteger{3}, LargeInteger{1}));
+        CHECK_EQUAL(LargeInteger{3}, LargeInteger::binomialCoefficient(LargeInteger{3}, LargeInteger{2}));
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{3}, LargeInteger{3}));
+
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{0}));
+        CHECK_EQUAL(LargeInteger{4}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{1}));
+        CHECK_EQUAL(LargeInteger{6}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{2}));
+        CHECK_EQUAL(LargeInteger{4}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{3}));
+        CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{4}));
     }
 
     TEST(AsString)

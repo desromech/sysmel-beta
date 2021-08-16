@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Token.hpp"
-#include "sysmel/Compiler/LiteralInteger.hpp"
+#include "sysmel/ObjectModel/LargeInteger.hpp"
 #include <memory>
 #include <any>
 
@@ -13,6 +13,8 @@ namespace Compiler
 {
 namespace Sysmel
 {
+
+using SysmelMoebius::ObjectModel::LargeInteger;
 
 struct ASTNode;
 struct ASTParseErrorNode;
@@ -226,7 +228,7 @@ struct ASTBlockNode : ASTNode
 
 struct ASTIntegerLiteralNode : ASTNode
 {
-    LiteralInteger value;
+    LargeInteger value;
 
     virtual std::any accept(ASTVisitor &visitor) override
     {

@@ -1,6 +1,6 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
+#include "sysmel/ObjectModel/Error.hpp"
 #include <algorithm>
-#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -48,9 +48,9 @@ static size_t computeSignificantWordCount(const uint32_t words[], size_t wordCou
     return wordCount;
 }
 
-static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &right)
+static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &right, size_t rightShift = 0)
 {
-    intptr_t wordCountDiff = left.words.size() - right.words.size();
+    intptr_t wordCountDiff = left.words.size() - (right.words.size() + rightShift);
     if(wordCountDiff != 0)
         return wordCountDiff;
 
@@ -58,7 +58,7 @@ static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &r
     for(size_t i = 0; i < wordCount; ++i)
     {
         auto wordIndex = wordCount - i - 1;
-        auto leftWord = left.words[wordIndex];
+        auto leftWord = left.words[wordIndex + rightShift];
         auto rightWord = right.words[wordIndex];
         auto difference = static_cast<int32_t> (leftWord - rightWord);
         if(difference != 0)
@@ -154,9 +154,81 @@ static void multiplyMagnitudesInto(const LargeInteger &left, const LargeInteger 
     }
 }
 
+static void accumulateSubtractingMultipliedWithOffset(LargeInteger &accumulator, const LargeInteger &right, uint32_t wordFactor, size_t offset)
+{
+    assert(right.words.size() + offset <= accumulator.words.size());
+
+    int32_t borrow = 0;
+    for(size_t i = 0; i < right.words.size(); ++i)
+    {
+        auto &accumulatorWord = accumulator.words[i + offset];
+        uint64_t rightWord = uint64_t(right.words[i])*wordFactor;
+
+        int64_t subtraction = accumulatorWord - rightWord + borrow;
+        accumulatorWord = static_cast<uint32_t> (subtraction & 0xFFFFFFFF);
+        borrow = static_cast<int32_t> (subtraction >> 32);
+    }
+
+    // Keep propagating the carry beyond.
+    for(size_t i = right.words.size() + offset; i < accumulator.words.size(); ++i)
+    {
+        auto &accumulatorWord = accumulator.words[i];
+        int64_t subtraction = uint64_t(accumulatorWord) + borrow;
+        accumulatorWord = static_cast<uint32_t> (subtraction & 0xFFFFFFFF);
+        borrow = static_cast<int32_t> (subtraction >> 32);
+    }
+
+    // If there is still some borrow, flip the sign bit, and assign to the borrow.
+    if(borrow != 0)
+    {
+        accumulator.signBit = !accumulator.signBit;
+        accumulator.words.resize(1);
+        accumulator.words[0] = borrow;
+    }
+}
+
 static void divideMagnitudesInto(const LargeInteger &dividend, const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder)
 {
+    auto n = divisor.words.size();
+    auto m = dividend.words.size() - n;
+    quotient.words.clear();
+    quotient.words.resize(m + 1);
 
+    remainder = dividend;
+    remainder.signBit = false;
+
+    if(compareMagnitudes(dividend, divisor, m) >= 0)
+    {
+        quotient.words[m] = 1;
+        accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, m);
+        remainder.normalize();
+    }
+    else
+    {
+        quotient.words[m] = 0;
+    }
+
+    auto lastDivisorDigit = divisor.words.back();
+
+    for(auto i = m; i > 0;)
+    {
+        assert(!remainder.signBit);
+        --i;
+
+        auto &qi = quotient.words[i];
+        auto qs = ((uint64_t(remainder.words[i + n]) << 32) | remainder.words[i + n - 1]) / lastDivisorDigit;
+        qi = uint32_t(std::min(qs, uint64_t(0xFFFFFFFF)));
+        accumulateSubtractingMultipliedWithOffset(remainder, divisor, qi, i);
+        remainder.normalize();
+        if(remainder.signBit)
+        {
+            --qi;
+            accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, i);
+            remainder.normalize();
+        }
+
+        assert(!remainder.signBit);
+    }
 }
 
 static uint8_t bitsPerDigitInRadix(uint8_t radix)
@@ -355,6 +427,11 @@ bool LargeInteger::isMinusOne() const
 LargeInteger LargeInteger::operator-() const
 {
     return LargeInteger{!signBit && !words.empty(), words};
+}
+
+LargeInteger LargeInteger::operator~() const
+{
+    return MinusOne - *this;
 }
 
 LargeInteger LargeInteger::operator+(const LargeInteger &other) const
@@ -584,14 +661,21 @@ LargeInteger &LargeInteger::operator>>=(uint32_t shiftAmount)
 LargeInteger LargeInteger::factorial() const
 {
     if(isZero())
-        return 1;
+        return One;
 
     return *this * (*this + MinusOne).factorial();
 }
 
+LargeInteger LargeInteger::binomialCoefficient(const LargeInteger &n, const LargeInteger &k)
+{
+    return n.factorial() / (k.factorial()*(n - k).factorial());
+}
+
 void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const
 {
-    assert(!divisor.isZero());
+    if(divisor.isZero())
+        throw DivisionByZeroError();
+
     // Compare the magnitude to rule out the easy cases.
     auto magnitudeComparison = compareMagnitudes(*this, divisor);
     if(magnitudeComparison < 0)
@@ -602,7 +686,7 @@ void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeIntege
         remainder.normalize();
         return;
     }
-    else if(magnitudeComparison == 1)
+    else if(magnitudeComparison == 0)
     {
         if(signBit != divisor.signBit)
             quotient = MinusOne;
@@ -644,18 +728,20 @@ std::string LargeInteger::asString() const
     LargeInteger currentValue = *this;
     LargeInteger quotient;
     LargeInteger remainder;
-    std::string result;
-    result.reserve(words.size()*32 / 4 + (signBit ? 1 : 0));
-    if(signBit)
-        result.push_back('-');
-
+    std::string reverseResult;
+    reverseResult.reserve(words.size()*32 / 4);
     while(!currentValue.isZero())
     {
         currentValue.divisionAndRemainder(Ten, quotient, remainder);
-        result.push_back(remainder.wordAt(0) + '0');
+        reverseResult.push_back(remainder.wordAt(0) + '0');
         currentValue = quotient;
     }
 
+    std::string result;
+    result.reserve(reverseResult.size() + (signBit ? 1 : 0));
+    if(signBit)
+        result.push_back('-');
+    result.insert(result.end(), reverseResult.rbegin(), reverseResult.rend());
     return result;
 }
 

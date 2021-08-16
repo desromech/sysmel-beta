@@ -25,23 +25,23 @@ SUITE(Parser)
     {
         auto literal = parseSingleExpression("0");
         CHECK(literal->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{0}, literal->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{0}, literal->as<ASTIntegerLiteralNode> ().value);
 
         literal = parseSingleExpression("-0");
         CHECK(literal->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{0}, literal->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{0}, literal->as<ASTIntegerLiteralNode> ().value);
 
         literal = parseSingleExpression("42");
         CHECK(literal->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42}, literal->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42}, literal->as<ASTIntegerLiteralNode> ().value);
 
         literal = parseSingleExpression("-42");
         CHECK(literal->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{-42}, literal->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{-42}, literal->as<ASTIntegerLiteralNode> ().value);
 
         literal = parseSingleExpression("(-42)");
         CHECK(literal->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{-42}, literal->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{-42}, literal->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(FloatLiteral)
@@ -689,7 +689,7 @@ SUITE(Parser)
         CHECK_EQUAL(1u, node->as<ASTCallNode> ().arguments.size());
 
         CHECK(node->as<ASTCallNode> ().arguments[0]->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42u}, node->as<ASTCallNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42u}, node->as<ASTCallNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(CallExpression3)
@@ -703,7 +703,7 @@ SUITE(Parser)
         CHECK_EQUAL(2u, node->as<ASTCallNode> ().arguments.size());
 
         CHECK(node->as<ASTCallNode> ().arguments[0]->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42}, node->as<ASTCallNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42}, node->as<ASTCallNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
 
         CHECK(node->as<ASTCallNode> ().arguments[1]->isIdentifierReferenceNode());
         CHECK_EQUAL("b", node->as<ASTCallNode> ().arguments[1]->as<ASTIdentifierReferenceNode> ().identifier);
@@ -718,7 +718,7 @@ SUITE(Parser)
         CHECK_EQUAL("a", node->as<ASTSubscriptNode> ().array->as<ASTIdentifierReferenceNode> ().identifier);
 
         CHECK(node->as<ASTSubscriptNode> ().index->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42}, node->as<ASTSubscriptNode> ().index->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42}, node->as<ASTSubscriptNode> ().index->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(QuoteNode)
@@ -940,7 +940,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(MakeDictionary2)
@@ -969,7 +969,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -977,7 +977,7 @@ SUITE(Parser)
         CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(MakeDictionary4)
@@ -992,7 +992,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1000,7 +1000,7 @@ SUITE(Parser)
         CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(MakeDictionary5)
@@ -1015,7 +1015,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1037,7 +1037,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1101,7 +1101,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(LiteralDictionary2)
@@ -1138,7 +1138,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1146,7 +1146,7 @@ SUITE(Parser)
         CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(LiteralDictionary4)
@@ -1165,7 +1165,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1173,7 +1173,7 @@ SUITE(Parser)
         CHECK_EQUAL("B", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{2u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(LiteralDictionary5)
@@ -1192,7 +1192,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1218,7 +1218,7 @@ SUITE(Parser)
         CHECK_EQUAL("A", element->as<ASTDictionaryElementNode> ().key->as<ASTSymbolLiteralNode> ().value);
 
         CHECK(element->as<ASTDictionaryElementNode> ().value->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{1u}, element->as<ASTDictionaryElementNode> ().value->as<ASTIntegerLiteralNode> ().value);
 
         element = node->as<ASTMakeDictionaryNode> ().elements[1];
         CHECK(element->isDictionaryElementNode());
@@ -1260,7 +1260,7 @@ SUITE(Parser)
 
         CHECK_EQUAL(1u, pragma->as<ASTPragmaNode> ().arguments.size());
         CHECK(pragma->as<ASTPragmaNode> ().arguments[0]->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42}, pragma->as<ASTPragmaNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42}, pragma->as<ASTPragmaNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
     }
 
     TEST(KeywordPragma2)
@@ -1277,10 +1277,10 @@ SUITE(Parser)
         CHECK_EQUAL(2u, pragma->as<ASTPragmaNode> ().arguments.size());
 
         CHECK(pragma->as<ASTPragmaNode> ().arguments[0]->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{42}, pragma->as<ASTPragmaNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{42}, pragma->as<ASTPragmaNode> ().arguments[0]->as<ASTIntegerLiteralNode> ().value);
 
         CHECK(pragma->as<ASTPragmaNode> ().arguments[1]->isIntegerLiteralNode());
-        CHECK_EQUAL(LiteralInteger{-5}, pragma->as<ASTPragmaNode> ().arguments[1]->as<ASTIntegerLiteralNode> ().value);
+        CHECK_EQUAL(LargeInteger{-5}, pragma->as<ASTPragmaNode> ().arguments[1]->as<ASTIntegerLiteralNode> ().value);
     }
 
 }

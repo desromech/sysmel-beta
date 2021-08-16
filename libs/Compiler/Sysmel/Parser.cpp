@@ -33,12 +33,12 @@ static bool isSingleKeyword(const std::string &keyword)
 
     return colonCount == 1;
 }
-static std::optional<LiteralInteger> parseIntegerWithRadix(const std::string &string, int radix)
+static std::optional<LargeInteger> parseIntegerWithRadix(const std::string &string, int radix)
 {
     if(string.empty())
         return std::nullopt;
 
-    auto baseFactor = LiteralInteger{radix};
+    auto baseFactor = LargeInteger{radix};
 
     // Parse the optional sign.
     size_t index = 0;
@@ -56,7 +56,7 @@ static std::optional<LiteralInteger> parseIntegerWithRadix(const std::string &st
     if(index >= string.size())
         return std::nullopt;
 
-    auto result = LiteralInteger{0};
+    auto result = LargeInteger{0};
     for(; index < string.size(); ++index)
     {
         // Parse the digit value.
@@ -65,9 +65,9 @@ static std::optional<LiteralInteger> parseIntegerWithRadix(const std::string &st
         if('0' <= digit && digit <= '9')
             value = digit - '0';
         else if('A' <= digit && digit <= 'Z')
-            value = digit - 'Z';
+            value = digit - 'A' + 10;
         else if('a' <= digit && digit <= 'z')
-            value = digit - 'z';
+            value = digit - 'a' + 10;
         else
             return std::nullopt;
 
@@ -75,13 +75,14 @@ static std::optional<LiteralInteger> parseIntegerWithRadix(const std::string &st
         if(value >= radix)
             return std::nullopt;
 
-        result = result * baseFactor + LiteralInteger{value};
+        result *= baseFactor;
+        result += LargeInteger{value};
     }
 
     return negative ? -result : result;
 }
 
-static std::optional<LiteralInteger> parseInteger(const std::string &string)
+static std::optional<LargeInteger> parseInteger(const std::string &string)
 {
     auto radixEndPosition = std::min(string.find('r'), string.find('R'));
     if(radixEndPosition == std::string::npos)
