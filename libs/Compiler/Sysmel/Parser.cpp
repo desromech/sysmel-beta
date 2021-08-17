@@ -195,6 +195,9 @@ static bool parseStringEscapeSequences(const std::string &string, std::string &o
 
         switch(c)
         {
+        case '0':
+            outResult.push_back(0);
+            break;
         case 'n':
             outResult.push_back('\n');
             break;

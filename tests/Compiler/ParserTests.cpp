@@ -99,6 +99,10 @@ SUITE(Parser)
         literal = parseSingleExpression("'\\t'");
         CHECK(literal->isCharacterLiteralNode());
         CHECK_EQUAL(uint32_t('\t'), literal->as<ASTCharacterLiteralNode> ().value);
+
+        literal = parseSingleExpression("'\\0'");
+        CHECK(literal->isCharacterLiteralNode());
+        CHECK_EQUAL(uint32_t('\0'), literal->as<ASTCharacterLiteralNode> ().value);
     }
 
     TEST(LiteralSymbol)

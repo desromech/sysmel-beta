@@ -132,6 +132,11 @@ struct LargeInteger
 
     void divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const;
 
+    bool isNegative() const
+    {
+        return signBit && !words.empty();
+    }
+    
     bool isZero() const;
     bool isOne() const;
     bool isMinusOne() const;

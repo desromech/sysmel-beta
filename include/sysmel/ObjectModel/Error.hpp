@@ -16,6 +16,13 @@ public:
         : std::runtime_error(message) {}
 };
 
+class MessageNotUnderstood : public Error
+{
+public:
+    MessageNotUnderstood(const std::string &message = "Message not understood.")
+        : Error(message) {}
+};
+
 class ArithmeticError : public Error
 {
 public:
