@@ -2,6 +2,9 @@
 #include "sysmel/ObjectModel/LiteralNegativeInteger.hpp"
 #include "sysmel/ObjectModel/LiteralPositiveInteger.hpp"
 #include "sysmel/ObjectModel/LiteralCharacter.hpp"
+
+#include "sysmel/ObjectModel/LiteralSymbol.hpp"
+#include "sysmel/ObjectModel/LiteralInteger.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -48,5 +51,14 @@ std::string LiteralInteger::printString() const
     return value.asString();
 }
 
+ObjectPtr LiteralInteger::performWithArguments(const ObjectPtr &selector, const std::vector<ObjectPtr> &arguments)
+{
+    static auto factorialSymbol = LiteralSymbol::intern("factorial");
+    if(selector == factorialSymbol)
+    {
+        return makeFor(value.factorial());
+    }
+    return LiteralNumber::performWithArguments(selector, arguments);
+}
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

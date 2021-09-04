@@ -25,6 +25,12 @@ public:
     virtual bool isLiteralInteger() const override;
     virtual std::string printString() const override;
 
+    const LargeInteger &getValue() const
+    {
+        return value;
+    }
+
+    virtual ObjectPtr performWithArguments(const ObjectPtr &selector, const std::vector<ObjectPtr> &arguments) override;
 protected:
     LargeInteger value;
 };

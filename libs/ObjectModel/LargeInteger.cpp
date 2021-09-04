@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -50,19 +51,21 @@ static size_t computeSignificantWordCount(const uint32_t words[], size_t wordCou
 
 static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &right, size_t rightShift = 0)
 {
-    intptr_t wordCountDiff = left.words.size() - (right.words.size() + rightShift);
+    assert(left.isNormalized());
+    assert(right.isNormalized());
+    auto leftWordCount = left.words.size();
+    auto rightWordCount = right.words.size();
+    intptr_t wordCountDiff = leftWordCount - (rightWordCount + rightShift);
     if(wordCountDiff != 0)
         return wordCountDiff;
 
-    auto wordCount = left.words.size();
-    for(size_t i = 0; i < wordCount; ++i)
+    assert(leftWordCount == (rightWordCount + rightShift));
+    for(size_t i = 0; i < rightWordCount; ++i)
     {
-        auto wordIndex = wordCount - i - 1;
-        auto leftWord = left.words[wordIndex + rightShift];
-        auto rightWord = right.words[wordIndex];
-        auto difference = static_cast<int32_t> (leftWord - rightWord);
-        if(difference != 0)
-            return difference;
+        auto leftWord = left.words[leftWordCount - i - 1];
+        auto rightWord = right.words[rightWordCount - i - 1];
+        if(leftWord != rightWord)
+            return leftWord < rightWord ? -1 : 1;
     }
 
     return 0;
@@ -154,9 +157,41 @@ static void multiplyMagnitudesInto(const LargeInteger &left, const LargeInteger 
     }
 }
 
+static LargeInteger timeFactorWithOffset(const LargeInteger &operand, uint32_t wordFactor, size_t offset)
+{
+    LargeInteger result;
+    result.words.resize(operand.words.size() + offset);
+
+    uint32_t carry = 0;
+    for(size_t i = 0; i < operand.words.size(); ++i)
+    {
+        uint64_t timesFactorWithCarry = uint64_t(operand.words[i])*wordFactor + carry;
+        result.words[i + offset] = uint32_t(timesFactorWithCarry & 0xFFFFFFFF);
+        carry = uint32_t(timesFactorWithCarry >> 32);
+    }
+
+    if(carry != 0)
+    {
+        result.words.push_back(carry);
+    }
+    result.normalize();
+
+    return result;
+}
 static void accumulateSubtractingMultipliedWithOffset(LargeInteger &accumulator, const LargeInteger &right, uint32_t wordFactor, size_t offset)
 {
-    assert(right.words.size() + offset <= accumulator.words.size());
+    accumulator -= timeFactorWithOffset(right, wordFactor, offset);
+    /*auto rightTimesFactorWithOffset = timeFactorWithOffset(right, wordFactor, offset);
+    assert(accumulator.isNormalized());
+    assert(right.isNormalized());
+
+    auto requiredSize = right.words.size() + offset;
+    size_t addedWordCount = 0;
+    if(accumulator.words.size() < requiredSize)
+    {
+        addedWordCount = requiredSize - accumulator.words.size();
+        accumulator.words.resize(requiredSize);
+    }
 
     int32_t borrow = 0;
     for(size_t i = 0; i < right.words.size(); ++i)
@@ -169,7 +204,7 @@ static void accumulateSubtractingMultipliedWithOffset(LargeInteger &accumulator,
         borrow = static_cast<int32_t> (subtraction >> 32);
     }
 
-    // Keep propagating the carry beyond.
+    // Keep propagating the borrow beyond.
     for(size_t i = right.words.size() + offset; i < accumulator.words.size(); ++i)
     {
         auto &accumulatorWord = accumulator.words[i];
@@ -179,12 +214,22 @@ static void accumulateSubtractingMultipliedWithOffset(LargeInteger &accumulator,
     }
 
     // If there is still some borrow, flip the sign bit, and assign to the borrow.
-    if(borrow != 0)
+    if(addedWordCount > 0)
     {
+        accumulator.signBit = !accumulator.signBit;
+        std::cout << "AddedWordCount " << addedWordCount << std::endl;
+        if(borrow != 0)
+        {
+            std::cout << "Remaining borrow " << borrow << std::endl;
+        }
+    }
+    else if(borrow != 0)
+    {
+        std::cout << "Remaining borrow non-added " << borrow << std::endl;
         accumulator.signBit = !accumulator.signBit;
         accumulator.words.resize(1);
         accumulator.words[0] = borrow;
-    }
+    }*/
 }
 
 static void divideMagnitudesInto(const LargeInteger &dividend, const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder)
@@ -199,6 +244,7 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
 
     if(compareMagnitudes(dividend, divisor, m) >= 0)
     {
+        compareMagnitudes(dividend, divisor, m);
         quotient.words[m] = 1;
         accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, m);
         remainder.normalize();
@@ -216,12 +262,14 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
         --i;
 
         auto &qi = quotient.words[i];
-        auto qs = ((uint64_t(remainder.words[i + n]) << 32) | remainder.words[i + n - 1]) / lastDivisorDigit;
+        auto qs = ((uint64_t(remainder.wordAt(i + n)) << 32) | remainder.wordAt(i + n - 1)) / lastDivisorDigit;
         qi = uint32_t(std::min(qs, uint64_t(0xFFFFFFFF)));
+
         accumulateSubtractingMultipliedWithOffset(remainder, divisor, qi, i);
         remainder.normalize();
-        if(remainder.signBit)
+        while(remainder.signBit)
         {
+            assert(qi > 0);
             --qi;
             accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, i);
             remainder.normalize();
@@ -229,6 +277,8 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
 
         assert(!remainder.signBit);
     }
+
+    assert(compareMagnitudes(remainder, divisor) < 0);
 }
 
 static uint8_t bitsPerDigitInRadix(uint8_t radix)

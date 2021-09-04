@@ -136,7 +136,12 @@ struct LargeInteger
     {
         return signBit && !words.empty();
     }
-    
+
+    bool isNormalized() const
+    {
+        return words.empty() || words.back() != 0;
+    }
+
     bool isZero() const;
     bool isOne() const;
     bool isMinusOne() const;

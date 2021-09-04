@@ -14,12 +14,15 @@ namespace ObjectModel
 class LiteralSymbol : public LiteralString
 {
 public:
-    LiteralSymbol(const std::string &ctorValue = std::string())
-        : LiteralString(ctorValue) {}
-
+    static std::shared_ptr<LiteralSymbol> intern(const std::string &value);
+    
     virtual bool isLiteralSymbol() const override;
 
     virtual std::string printString() const override;
+
+private:
+    LiteralSymbol(const std::string &ctorValue = std::string())
+        : LiteralString(ctorValue) {}
 };
 
 } // End of namespace ObjectModel

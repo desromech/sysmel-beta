@@ -90,7 +90,7 @@ public:
 
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
-        return ObjectPtr(std::make_shared<LiteralSymbol> (node.value));
+        return ObjectPtr(LiteralSymbol::intern(node.value));
     }
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
