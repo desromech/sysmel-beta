@@ -684,8 +684,6 @@ void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeIntege
     {
         quotient = Zero;
         remainder = *this;
-        remainder.signBit = false;
-        remainder.normalize();
         return;
     }
     else if(magnitudeComparison == 0)
@@ -716,7 +714,7 @@ void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeIntege
 
     quotient.signBit = signBit ^ divisor.signBit;
     quotient.normalize();
-    remainder.signBit = false;
+    remainder.signBit = signBit;
     remainder.normalize();
 }
 
@@ -758,7 +756,7 @@ std::string LargeInteger::asString() const
         return "0";
     }
 
-    /*if(words.size() <= 2)
+    if(words.size() <= 2)
     {
         std::ostringstream out;
         if(signBit)
@@ -773,10 +771,10 @@ std::string LargeInteger::asString() const
         }
 
         return out.str();
-    }*/
+    }
 
+    // TODO: Use a proper divide-and-conquer algorithm for this.
     static const LargeInteger TenRaisedTo19 = LargeInteger{uint64_t(10000000000000000000ull)};
-    //assert(TenRaisedTo19.asString() == "10000000000000000000");
 
     LargeInteger currentValue = *this;
     currentValue.signBit = false;

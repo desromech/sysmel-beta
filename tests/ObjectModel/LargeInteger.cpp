@@ -168,6 +168,55 @@ SUITE(LargeInteger)
         CHECK_EQUAL(LargeInteger{7}, LargeInteger{49} / LargeInteger{7});
     }
 
+    TEST(Remainder)
+    {
+        // Positive - Positive
+        CHECK_EQUAL(0, 0 % 5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} % LargeInteger{5});
+        CHECK_EQUAL(1, 1 % 5); CHECK_EQUAL(LargeInteger{1}, LargeInteger{1} % LargeInteger{5});
+        CHECK_EQUAL(2, 2 % 5); CHECK_EQUAL(LargeInteger{2}, LargeInteger{2} % LargeInteger{5});
+        CHECK_EQUAL(3, 3 % 5); CHECK_EQUAL(LargeInteger{3}, LargeInteger{3} % LargeInteger{5});
+        CHECK_EQUAL(4, 4 % 5); CHECK_EQUAL(LargeInteger{4}, LargeInteger{4} % LargeInteger{5});
+        CHECK_EQUAL(0, 5 % 5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{5} % LargeInteger{5});
+        CHECK_EQUAL(1, 6 % 5); CHECK_EQUAL(LargeInteger{1}, LargeInteger{6} % LargeInteger{5});
+        CHECK_EQUAL(2, 7 % 5); CHECK_EQUAL(LargeInteger{2}, LargeInteger{7} % LargeInteger{5});
+        CHECK_EQUAL(3, 8 % 5); CHECK_EQUAL(LargeInteger{3}, LargeInteger{8} % LargeInteger{5});
+        CHECK_EQUAL(4, 9 % 5); CHECK_EQUAL(LargeInteger{4}, LargeInteger{9} % LargeInteger{5});
+
+        // Negative - Negative
+        CHECK_EQUAL(-1, -1 % -5); CHECK_EQUAL(LargeInteger{-1}, LargeInteger{-1} % LargeInteger{-5});
+        CHECK_EQUAL(-2, -2 % -5); CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-2} % LargeInteger{-5});
+        CHECK_EQUAL(-3, -3 % -5); CHECK_EQUAL(LargeInteger{-3}, LargeInteger{-3} % LargeInteger{-5});
+        CHECK_EQUAL(-4, -4 % -5); CHECK_EQUAL(LargeInteger{-4}, LargeInteger{-4} % LargeInteger{-5});
+        CHECK_EQUAL(0, -5 % -5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{-5} % LargeInteger{-5});
+        CHECK_EQUAL(-1, -6 % -5); CHECK_EQUAL(LargeInteger{-1}, LargeInteger{-6} % LargeInteger{-5});
+        CHECK_EQUAL(-2, -7 % -5); CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-7} % LargeInteger{-5});
+        CHECK_EQUAL(-3, -8 % -5); CHECK_EQUAL(LargeInteger{-3}, LargeInteger{-8} % LargeInteger{-5});
+        CHECK_EQUAL(-4, -9 % -5); CHECK_EQUAL(LargeInteger{-4}, LargeInteger{-9} % LargeInteger{-5});
+
+        // Positive - Negative
+        CHECK_EQUAL(0, 0 % -5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{0} % LargeInteger{-5});
+        CHECK_EQUAL(1, 1 % -5); CHECK_EQUAL(LargeInteger{1}, LargeInteger{1} % LargeInteger{-5});
+        CHECK_EQUAL(2, 2 % -5); CHECK_EQUAL(LargeInteger{2}, LargeInteger{2} % LargeInteger{-5});
+        CHECK_EQUAL(3, 3 % -5); CHECK_EQUAL(LargeInteger{3}, LargeInteger{3} % LargeInteger{-5});
+        CHECK_EQUAL(4, 4 % -5); CHECK_EQUAL(LargeInteger{4}, LargeInteger{4} % LargeInteger{-5});
+        CHECK_EQUAL(0, 5 % -5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{5} % LargeInteger{-5});
+        CHECK_EQUAL(1, 6 % -5); CHECK_EQUAL(LargeInteger{1}, LargeInteger{6} % LargeInteger{-5});
+        CHECK_EQUAL(2, 7 % -5); CHECK_EQUAL(LargeInteger{2}, LargeInteger{7} % LargeInteger{-5});
+        CHECK_EQUAL(3, 8 % -5); CHECK_EQUAL(LargeInteger{3}, LargeInteger{8} % LargeInteger{-5});
+        CHECK_EQUAL(4, 9 % -5); CHECK_EQUAL(LargeInteger{4}, LargeInteger{9} % LargeInteger{-5});
+
+        // Negative - Positive
+        CHECK_EQUAL(-1, -1 % 5); CHECK_EQUAL(LargeInteger{-1}, LargeInteger{-1} % LargeInteger{5});
+        CHECK_EQUAL(-2, -2 % 5); CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-2} % LargeInteger{5});
+        CHECK_EQUAL(-3, -3 % 5); CHECK_EQUAL(LargeInteger{-3}, LargeInteger{-3} % LargeInteger{5});
+        CHECK_EQUAL(-4, -4 % 5); CHECK_EQUAL(LargeInteger{-4}, LargeInteger{-4} % LargeInteger{5});
+        CHECK_EQUAL(0, -5 % 5); CHECK_EQUAL(LargeInteger{0}, LargeInteger{-5} % LargeInteger{5});
+        CHECK_EQUAL(-1, -6 % 5); CHECK_EQUAL(LargeInteger{-1}, LargeInteger{-6} % LargeInteger{5});
+        CHECK_EQUAL(-2, -7 % 5); CHECK_EQUAL(LargeInteger{-2}, LargeInteger{-7} % LargeInteger{5});
+        CHECK_EQUAL(-3, -8 % 5); CHECK_EQUAL(LargeInteger{-3}, LargeInteger{-8} % LargeInteger{5});
+        CHECK_EQUAL(-4, -9 % 5); CHECK_EQUAL(LargeInteger{-4}, LargeInteger{-9} % LargeInteger{5});
+    }
+
     TEST(DivisionByZeroError)
     {
         CHECK_THROW(LargeInteger{1}/LargeInteger{0}, DivisionByZeroError);
