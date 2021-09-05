@@ -104,7 +104,7 @@ SUITE(LargeInteger)
 
         // Simple subtractions.
         CHECK_EQUAL(LargeInteger{0}, LargeInteger{1} - LargeInteger{1});
-        CHECK_EQUAL(LargeInteger{35}, LargeInteger{7} - LargeInteger{42});
+        CHECK_EQUAL(LargeInteger{-35}, LargeInteger{7} - LargeInteger{42});
  
         CHECK_EQUAL(LargeInteger{5}, LargeInteger{2} - LargeInteger{-3});
         CHECK_EQUAL(LargeInteger{5}, LargeInteger{3} - LargeInteger{-2});
@@ -241,6 +241,23 @@ SUITE(LargeInteger)
         CHECK_EQUAL(LargeInteger{6}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{2}));
         CHECK_EQUAL(LargeInteger{4}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{3}));
         CHECK_EQUAL(LargeInteger{1}, LargeInteger::binomialCoefficient(LargeInteger{4}, LargeInteger{4}));
+    }
+
+    TEST(AsHexString)
+    {
+        CHECK_EQUAL("0", LargeInteger{}.asHexString());
+        CHECK_EQUAL("1", LargeInteger{1}.asHexString());
+        CHECK_EQUAL("-1", LargeInteger{-1}.asHexString());
+        CHECK_EQUAL("A", LargeInteger{10}.asHexString());
+        CHECK_EQUAL("2A", LargeInteger{42}.asHexString());
+        CHECK_EQUAL("1E240", LargeInteger{123456}.asHexString());
+
+        CHECK_EQUAL("21C3677C82B40000", LargeInteger{20}.factorial().asHexString());
+        CHECK_EQUAL("D13F6370F96865DF5DD54000000", LargeInteger{30}.factorial().asHexString());
+        CHECK_EQUAL("8EEAE81B84C7F27E080FDE64FF05254000000000", LargeInteger{40}.factorial().asHexString());
+        CHECK_EQUAL("49EEBC961ED279B02B1EF4F28D19A84F5973A1D2C7800000000000", LargeInteger{50}.factorial().asHexString());
+        CHECK_EQUAL("1B30964EC395DC24069528D54BBDA40D16E966EF9A70EB21B5B2943A321CDF10391745570CCA9420C6ECB3B72ED2EE8B02EA2735C61A000000000000000000000000", LargeInteger{100}.factorial().asHexString());
+        CHECK_EQUAL("29A857090114875BA4DB6CD48EB197FFCAF0730BC388499A8C0E87E9854C253EEB306EF59E33ECC0F352847EAAE8691E58A9BEB434E84A9D68FBAB85E3270936F66CD32B2009B4948A51C096C970FD7F3E208773A39A9BD13A95CA25CE6EDF52F45A0A019B4431524593E57012C03AD01E8372C59E8A8ADF4C076D40B09CB04C48AEC2A0000000000000000000000000000000000000000000000000", LargeInteger{200}.factorial().asHexString());
     }
 
     TEST(AsString)

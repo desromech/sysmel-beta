@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include <algorithm>
+#include <sstream>
 #include <iostream>
 
 namespace SysmelMoebius
@@ -55,9 +56,9 @@ static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &r
     assert(right.isNormalized());
     auto leftWordCount = left.words.size();
     auto rightWordCount = right.words.size();
-    intptr_t wordCountDiff = leftWordCount - (rightWordCount + rightShift);
-    if(wordCountDiff != 0)
-        return wordCountDiff;
+    auto effectiveRightWordCount = rightWordCount + rightShift;
+    if(leftWordCount != effectiveRightWordCount)
+        return leftWordCount < effectiveRightWordCount ? -1 : 1;
 
     assert(leftWordCount == (rightWordCount + rightShift));
     for(size_t i = 0; i < rightWordCount; ++i)
@@ -160,7 +161,7 @@ static void multiplyMagnitudesInto(const LargeInteger &left, const LargeInteger 
 static LargeInteger timeFactorWithOffset(const LargeInteger &operand, uint32_t wordFactor, size_t offset)
 {
     LargeInteger result;
-    result.words.resize(operand.words.size() + offset);
+    result.words.resize(operand.words.size() + offset + 1);
 
     uint32_t carry = 0;
     for(size_t i = 0; i < operand.words.size(); ++i)
@@ -170,66 +171,21 @@ static LargeInteger timeFactorWithOffset(const LargeInteger &operand, uint32_t w
         carry = uint32_t(timesFactorWithCarry >> 32);
     }
 
-    if(carry != 0)
-    {
-        result.words.push_back(carry);
-    }
+    result.words.back() = carry;
     result.normalize();
 
     return result;
 }
-static void accumulateSubtractingMultipliedWithOffset(LargeInteger &accumulator, const LargeInteger &right, uint32_t wordFactor, size_t offset)
+
+static LargeInteger wordShifted(const LargeInteger &operand, size_t offset)
 {
-    accumulator -= timeFactorWithOffset(right, wordFactor, offset);
-    /*auto rightTimesFactorWithOffset = timeFactorWithOffset(right, wordFactor, offset);
-    assert(accumulator.isNormalized());
-    assert(right.isNormalized());
+    LargeInteger result;
+    result.words.resize(operand.words.size() + offset);
 
-    auto requiredSize = right.words.size() + offset;
-    size_t addedWordCount = 0;
-    if(accumulator.words.size() < requiredSize)
-    {
-        addedWordCount = requiredSize - accumulator.words.size();
-        accumulator.words.resize(requiredSize);
-    }
+    for(size_t i = 0; i < operand.words.size(); ++i)
+        result.words[i + offset] = operand.words[i];
 
-    int32_t borrow = 0;
-    for(size_t i = 0; i < right.words.size(); ++i)
-    {
-        auto &accumulatorWord = accumulator.words[i + offset];
-        uint64_t rightWord = uint64_t(right.words[i])*wordFactor;
-
-        int64_t subtraction = accumulatorWord - rightWord + borrow;
-        accumulatorWord = static_cast<uint32_t> (subtraction & 0xFFFFFFFF);
-        borrow = static_cast<int32_t> (subtraction >> 32);
-    }
-
-    // Keep propagating the borrow beyond.
-    for(size_t i = right.words.size() + offset; i < accumulator.words.size(); ++i)
-    {
-        auto &accumulatorWord = accumulator.words[i];
-        int64_t subtraction = uint64_t(accumulatorWord) + borrow;
-        accumulatorWord = static_cast<uint32_t> (subtraction & 0xFFFFFFFF);
-        borrow = static_cast<int32_t> (subtraction >> 32);
-    }
-
-    // If there is still some borrow, flip the sign bit, and assign to the borrow.
-    if(addedWordCount > 0)
-    {
-        accumulator.signBit = !accumulator.signBit;
-        std::cout << "AddedWordCount " << addedWordCount << std::endl;
-        if(borrow != 0)
-        {
-            std::cout << "Remaining borrow " << borrow << std::endl;
-        }
-    }
-    else if(borrow != 0)
-    {
-        std::cout << "Remaining borrow non-added " << borrow << std::endl;
-        accumulator.signBit = !accumulator.signBit;
-        accumulator.words.resize(1);
-        accumulator.words[0] = borrow;
-    }*/
+    return result;
 }
 
 static void divideMagnitudesInto(const LargeInteger &dividend, const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder)
@@ -244,10 +200,9 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
 
     if(compareMagnitudes(dividend, divisor, m) >= 0)
     {
-        compareMagnitudes(dividend, divisor, m);
         quotient.words[m] = 1;
-        accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, m);
-        remainder.normalize();
+        remainder -= wordShifted(divisor, m);
+        assert(remainder.isNormalized());
     }
     else
     {
@@ -262,20 +217,17 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
         --i;
 
         auto &qi = quotient.words[i];
-        auto qs = ((uint64_t(remainder.wordAt(i + n)) << 32) | remainder.wordAt(i + n - 1)) / lastDivisorDigit;
+        auto doubleWordDividend = (uint64_t(remainder.wordAt(i + n)) << 32) | remainder.wordAt(i + n - 1);
+        auto qs = doubleWordDividend / lastDivisorDigit;
         qi = uint32_t(std::min(qs, uint64_t(0xFFFFFFFF)));
 
-        accumulateSubtractingMultipliedWithOffset(remainder, divisor, qi, i);
-        remainder.normalize();
+        remainder -= timeFactorWithOffset(divisor, qi, i);
         while(remainder.signBit)
         {
             assert(qi > 0);
             --qi;
-            accumulateSubtractingMultipliedWithOffset(remainder, divisor, 1, i);
-            remainder.normalize();
+            remainder += wordShifted(divisor, i);
         }
-
-        assert(!remainder.signBit);
     }
 
     assert(compareMagnitudes(remainder, divisor) < 0);
@@ -541,7 +493,7 @@ LargeInteger LargeInteger::operator-(const LargeInteger &other) const
         }
         else
         {
-            result.signBit = other.signBit;
+            result.signBit = !signBit;
             subtractMagnitudesInto(other, *this, result);
         }
     }
@@ -768,6 +720,37 @@ void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeIntege
     remainder.normalize();
 }
 
+std::string LargeInteger::asHexString() const
+{
+    if(isZero())
+    {
+        return "0";
+    }
+
+    std::string result;
+    result.reserve(words.size()*8 + (signBit ? 1 : 0));
+    if(signBit)
+        result.push_back('-');
+
+    char Alphabet[] = "0123456789ABCDEF";
+    bool hasNonZeroLeft = false;
+    for(size_t i = 0; i < words.size(); ++i)
+    {
+        auto word = words[words.size() - i - 1];
+        for(auto j = 0; j < 8; ++j)
+        {
+            auto nibble = (word >> (32 - j*4 - 4)) & 0xF;
+            if(nibble != 0 || hasNonZeroLeft)
+            {
+                hasNonZeroLeft = true;
+                result.push_back(Alphabet[nibble]);
+            }
+        }
+    }
+
+    return result;
+}
+
 std::string LargeInteger::asString() const
 {
     if(isZero())
@@ -775,15 +758,54 @@ std::string LargeInteger::asString() const
         return "0";
     }
 
+    /*if(words.size() <= 2)
+    {
+        std::ostringstream out;
+        if(signBit)
+            out << '-';
+        if(words.size() == 2)
+        {
+            out << (words[0] | (uint64_t(words[1]) << 32));
+        }
+        else
+        {
+            out << words[0];
+        }
+
+        return out.str();
+    }*/
+
+    static const LargeInteger TenRaisedTo19 = LargeInteger{uint64_t(10000000000000000000ull)};
+    //assert(TenRaisedTo19.asString() == "10000000000000000000");
+
     LargeInteger currentValue = *this;
+    currentValue.signBit = false;
+
     LargeInteger quotient;
     LargeInteger remainder;
     std::string reverseResult;
     reverseResult.reserve(words.size()*32 / 4);
     while(!currentValue.isZero())
     {
-        currentValue.divisionAndRemainder(Ten, quotient, remainder);
-        reverseResult.push_back(remainder.wordAt(0) + '0');
+        currentValue.divisionAndRemainder(TenRaisedTo19, quotient, remainder);
+        auto segmentRemainder = remainder.wordAt(0) | (uint64_t(remainder.wordAt(1)) << 32);
+
+        size_t segmentDigitCount = 0;
+        do
+        {
+            reverseResult.push_back((segmentRemainder % 10) + '0');
+            segmentRemainder /= 10;
+            ++segmentDigitCount;
+        } while(segmentRemainder != 0);
+
+        assert(segmentDigitCount <= 19);
+        if(!quotient.isZero())
+        {
+            auto paddingCount = 19 - segmentDigitCount;
+            for(size_t i = 0; i < paddingCount; ++i)
+                reverseResult.push_back('0');
+        }
+
         currentValue = quotient;
     }
 

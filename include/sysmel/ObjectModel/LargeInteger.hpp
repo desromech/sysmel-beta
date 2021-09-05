@@ -146,6 +146,7 @@ struct LargeInteger
     bool isOne() const;
     bool isMinusOne() const;
 
+    std::string asHexString() const;
     std::string asString() const;
     void normalize();
 
