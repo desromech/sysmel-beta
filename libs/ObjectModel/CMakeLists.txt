@@ -1,6 +1,7 @@
 set(ObjectModel_Sources
     LargeInteger.cpp
     AnyValue.cpp
+    BootstrapMethod.cpp
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
@@ -19,6 +20,7 @@ set(ObjectModel_Sources
     RuntimeContext.cpp
     TranslationUnitModule.cpp
     Type.cpp
+    Wrappers.cpp
 )
 
 add_library(SysmelObjectModel SHARED ${ObjectModel_Sources})

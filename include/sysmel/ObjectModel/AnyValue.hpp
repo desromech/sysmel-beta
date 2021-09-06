@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "LargeInteger.hpp"
 
 namespace SysmelMoebius
 {
@@ -17,7 +18,7 @@ typedef std::shared_ptr<AnyValue> AnyValuePtr;
 class Type;
 typedef std::shared_ptr<Type> TypePtr;
 
-typedef std::pair<std::string, AnyValuePtr> MethodBinding;
+typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
 
 typedef std::pair<std::string, MethodBindings> MethodCategory;
@@ -27,8 +28,8 @@ struct StaticBootstrapDefinedTypeMetadata
 {
     const StaticBootstrapDefinedTypeMetadata *supertype;
     std::string typeName;
-    MethodCategories instanceMethods;
-    MethodCategories typeMethods;
+    MethodCategories (*instanceMethods)();
+    MethodCategories (*typeMethods)();
     size_t bootstrapTypeID;
 };
 
@@ -49,8 +50,8 @@ template<typename T>
 StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::metadata = StaticBootstrapDefinedTypeMetadata{
     StaticBootstrapDefinedTypeMetadataFor<typename T::SuperType>::get(),
     T::__typeName__,
-    T::__instanceMethods__(),
-    T::__typeMethods__(),
+    &T::__instanceMethods__,
+    &T::__typeMethods__,
     0
 };
 
@@ -106,6 +107,18 @@ public:
         return std::static_pointer_cast<SelfType> (SuperType::shared_from_this());
     }
 };
+
+template<typename T>
+struct WrapValue;
+
+template<typename T>
+struct UnwrapValue;
+
+AnyValuePtr internSymbol(const std::string &symbolValue);
+AnyValuePtr voidConstant();
+AnyValuePtr nilConstant();
+AnyValuePtr trueConstant();
+AnyValuePtr falseConstant();
 
 /**
  * I am the base interface for any value that is passed through the interpreter.
@@ -190,11 +203,72 @@ public:
     /// Convert the object into a string for printing purposes.
     virtual std::string printString() const;
 
+    /// Reads the wrapped value as an UInt8.
+    virtual uint8_t unwrapAsUInt8() const;
+
+    /// Reads the wrapped value as an Int8.
+    virtual int8_t unwrapAsInt8() const;
+
+    /// Reads the wrapped value as an UInt16.
+    virtual uint16_t unwrapAsUInt16() const;
+
+    /// Reads the wrapped value as an Int16.
+    virtual int16_t unwrapAsInt16() const;
+
+    /// Reads the wrapped value as an UInt32.
+    virtual uint32_t unwrapAsUInt32() const;
+
+    /// Reads the wrapped value as an Int32.
+    virtual int32_t unwrapAsInt32() const;
+
+    /// Reads the wrapped value as an UInt64.
+    virtual uint64_t unwrapAsUInt64() const;
+
+    /// Reads the wrapped value as an Int64.
+    virtual int64_t unwrapAsInt64() const;
+
+    /// Reads the wrapped value as a large integer.
+    virtual LargeInteger unwrapAsLargeInteger() const;
+
+    /// Reads the wrapped value as a Char8.
+    virtual char unwrapAsChar8() const;
+
+    /// Reads the wrapped value as a Char16.
+    virtual char16_t unwrapAsChar16() const;
+
+    /// Reads the wrapped value as a Char32.
+    virtual char32_t unwrapAsChar32() const;
+
+    /// Reads the wrapped value as a Float32.
+    virtual float unwrapAsFloat32() const;
+
+    /// Reads the wrapped value as a Float64.
+    virtual double unwrapAsFloat64() const;
+
+    /// Convert the object into a string.
+    virtual std::string unwrapAsString() const;
+
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
 
     /// Evaluates the requested message with the given arguments.
     virtual AnyValuePtr performWithArguments(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments);
+
+    template<typename ResultType, typename... Args>
+    ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)
+    {
+        std::vector<AnyValuePtr> marshalledArguments = {
+            WrapValue<Args>::apply(std::forward<Args> (arguments))...
+        };
+        return UnwrapValue<ResultType>::apply (performWithArguments(selector, marshalledArguments));
+    }
+
+    template<typename ResultType, typename... Args>
+    ResultType perform(const std::string &selector, Args&& ...arguments)
+    {
+        return perform<ResultType> (internSymbol(selector), arguments...);
+    }
+
 };
 
 } // End of namespace ObjectModel

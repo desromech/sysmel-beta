@@ -14,6 +14,14 @@ static BootstrapTypeRegistration<BootstrapType> bootstrapTypeTypeRegistration;
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;
+    if(staticMetadata->supertype)
+        supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype->bootstrapTypeID);
+        
+    for(auto &[category, methods] : staticMetadata->instanceMethods())
+    {
+        for(auto &[selector, method] : methods)
+            methodDictionary.insert(std::make_pair(selector, method));
+    }
 }
 
 TypePtr BootstrapType::getSuperType()
@@ -27,7 +35,7 @@ AnyValuePtr BootstrapType::lookupSelector(const AnyValuePtr &selector)
     if(it != methodDictionary.end())
         return it->second;
 
-    return Type::lookupSelector(selector);
+    return SuperType::lookupSelector(selector);
 }
 
 } // End of namespace ObjectModel

@@ -38,5 +38,10 @@ std::string LiteralString::printString() const
     return out.str();
 }
 
+std::string LiteralString::unwrapAsString() const
+{
+    return value;
+}
+
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

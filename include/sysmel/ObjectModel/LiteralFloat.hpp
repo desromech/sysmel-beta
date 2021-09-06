@@ -24,6 +24,8 @@ public:
 
     virtual std::string printString() const override;
 
+    virtual float unwrapAsFloat32() const override;
+    virtual double unwrapAsFloat64() const override;
 protected:
     double value;
 };

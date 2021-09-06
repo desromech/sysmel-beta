@@ -25,6 +25,11 @@ std::shared_ptr<LiteralSymbol> LiteralSymbol::intern(const std::string &value)
     return newSymbol;
 }
 
+AnyValuePtr internSymbol(const std::string &symbolValue)
+{
+    return LiteralSymbol::intern(symbolValue);
+}
+
 LiteralSymbolPtr LiteralSymbol::makeFor(const std::string &value)
 {
     return intern(value);

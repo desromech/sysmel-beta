@@ -119,6 +119,81 @@ std::string AnyValue::printString() const
     return "an AnyValue";
 }
 
+uint8_t AnyValue::unwrapAsUInt8() const
+{
+    throw CannotUnwrap();
+}
+
+int8_t AnyValue::unwrapAsInt8() const
+{
+    throw CannotUnwrap();
+}
+
+uint16_t AnyValue::unwrapAsUInt16() const
+{
+    throw CannotUnwrap();
+}
+
+int16_t AnyValue::unwrapAsInt16() const
+{
+    throw CannotUnwrap();
+}
+
+uint32_t AnyValue::unwrapAsUInt32() const
+{
+    throw CannotUnwrap();
+}
+
+int32_t AnyValue::unwrapAsInt32() const
+{
+    throw CannotUnwrap();
+}
+
+uint64_t AnyValue::unwrapAsUInt64() const
+{
+    throw CannotUnwrap();
+}
+
+int64_t AnyValue::unwrapAsInt64() const
+{
+    throw CannotUnwrap();
+}
+
+LargeInteger AnyValue::unwrapAsLargeInteger() const
+{
+    throw CannotUnwrap();
+}
+
+float AnyValue::unwrapAsFloat32() const
+{
+    throw CannotUnwrap();
+}
+
+double AnyValue::unwrapAsFloat64() const
+{
+    throw CannotUnwrap();
+}
+
+char AnyValue::unwrapAsChar8() const
+{
+    throw CannotUnwrap();
+}
+
+char16_t AnyValue::unwrapAsChar16() const
+{
+    throw CannotUnwrap();
+}
+
+char32_t AnyValue::unwrapAsChar32() const
+{
+    throw CannotUnwrap();
+}
+
+std::string AnyValue::unwrapAsString() const
+{
+    throw CannotUnwrap();
+}
+
 AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     (void)selector;

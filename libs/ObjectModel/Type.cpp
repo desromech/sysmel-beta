@@ -16,6 +16,10 @@ TypePtr Type::getSuperType()
 
 AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
 {
+    auto superType = getSuperType();
+    if(superType)
+        return superType->lookupSelector(selector);
+
     return AnyValuePtr();
 }
 

@@ -51,6 +51,25 @@ public:
         : ArithmeticError(message) {}
 };
 
+class CannotUnwrap : public Error
+{
+public:
+    CannotUnwrap(const std::string &message = "Cannot unwrap the object as the specified type.")
+        : Error(message) {}
+};
+
+class ArgumentsCountMismatch : public Error
+{
+public:
+    ArgumentsCountMismatch(size_t initialExpectedCount, size_t initialCallCount, const std::string &message = "Argument count mismatch")
+        : Error(message), expectedCount(initialExpectedCount), callCount(initialCallCount) {}
+
+protected:
+    size_t expectedCount;
+    size_t callCount;
+};
+
+
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius
 
