@@ -16,7 +16,7 @@ SUITE(BootstrapModule)
         CHECK_EQUAL(1, unwrapValue<int> (wrapValue(1)));
 
         CHECK(wrapValue(-1)->isLiteralNegativeInteger());
-        CHECK_EQUAL(-1, wrapValue(1)->unwrapAsInt32());
+        CHECK_EQUAL(-1, wrapValue(-1)->unwrapAsInt32());
         CHECK_EQUAL(-1, unwrapValue<int> (wrapValue(-1)));
     }
 

@@ -9,6 +9,7 @@
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include <algorithm>
+#include <limits>
 
 namespace SysmelMoebius
 {
@@ -74,42 +75,60 @@ std::string LiteralInteger::printString() const
 
 uint8_t LiteralInteger::unwrapAsUInt8() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint8_t>::max()})
+        throw CannotUnwrap();
+    return uint8_t(value.wordAt(0));
 }
 
 int8_t LiteralInteger::unwrapAsInt8() const
 {
-    throw CannotUnwrap();
+    if(value < LargeInteger{std::numeric_limits<int8_t>::min()} || value > LargeInteger{std::numeric_limits<int8_t>::max()})
+        throw CannotUnwrap();
+    return value.isNegative() ? int8_t(-value.wordAt(0)) : int8_t(value.wordAt(0));
 }
 
 uint16_t LiteralInteger::unwrapAsUInt16() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint16_t>::max()})
+        throw CannotUnwrap();
+    return uint16_t(value.wordAt(0));
 }
 
 int16_t LiteralInteger::unwrapAsInt16() const
 {
-    throw CannotUnwrap();
+    if(value < LargeInteger{std::numeric_limits<int16_t>::min()} || value > LargeInteger{std::numeric_limits<int16_t>::max()})
+        throw CannotUnwrap();
+    return value.isNegative() ? int16_t(-value.wordAt(0)) : int16_t(value.wordAt(0));
 }
 
 uint32_t LiteralInteger::unwrapAsUInt32() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint32_t>::max()})
+        throw CannotUnwrap();
+    return value.wordAt(0);
 }
 
 int32_t LiteralInteger::unwrapAsInt32() const
 {
-    throw CannotUnwrap();
+    if(value < LargeInteger{std::numeric_limits<int32_t>::min()} || value > LargeInteger{std::numeric_limits<int32_t>::max()})
+        throw CannotUnwrap();
+    return value.isNegative() ? int32_t(-value.wordAt(0)) : int32_t(value.wordAt(0));
 }
 
 uint64_t LiteralInteger::unwrapAsUInt64() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint64_t>::max()})
+        throw CannotUnwrap();
+    return value.wordAt(0) | uint64_t(value.wordAt(1)) << 32;
 }
 
 int64_t LiteralInteger::unwrapAsInt64() const
 {
-    throw CannotUnwrap();
+    if(value < LargeInteger{std::numeric_limits<int64_t>::min()} || value > LargeInteger{std::numeric_limits<int64_t>::max()})
+        throw CannotUnwrap();
+
+    auto magnitude = int64_t(value.wordAt(0) | uint64_t(value.wordAt(1)) << 32);
+    return value.isNegative() ? -magnitude : magnitude;
 }
 
 LargeInteger LiteralInteger::unwrapAsLargeInteger() const
@@ -119,17 +138,23 @@ LargeInteger LiteralInteger::unwrapAsLargeInteger() const
 
 char LiteralInteger::unwrapAsChar8() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<char>::max()})
+        throw CannotUnwrap();
+    return char(value.wordAt(0));
 }
 
 char16_t LiteralInteger::unwrapAsChar16() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<char16_t>::max()})
+        throw CannotUnwrap();
+    return char16_t(value.wordAt(0));
 }
 
 char32_t LiteralInteger::unwrapAsChar32() const
 {
-    throw CannotUnwrap();
+    if(value.isNegative() || value > LargeInteger{std::numeric_limits<char32_t>::max()})
+        throw CannotUnwrap();
+    return char32_t(value.wordAt(0));
 }
 
 float LiteralInteger::unwrapAsFloat32() const
