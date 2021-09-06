@@ -1,11 +1,14 @@
 #include "sysmel/ObjectModel/LiteralCharacter.hpp"
 #include "sysmel/ObjectModel/StringUtilities.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+
+static BootstrapTypeRegistration<LiteralCharacter> literalCharacterTypeRegistration;
 
 bool LiteralCharacter::isLiteralCharacter() const
 {

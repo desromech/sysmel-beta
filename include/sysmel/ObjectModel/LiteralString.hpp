@@ -1,5 +1,6 @@
 #ifndef SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_STRING_HPP
 #define SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_STRING_HPP
+#pragma once
 
 #include "LiteralValue.hpp"
 
@@ -8,14 +9,18 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+class LiteralString;
+typedef std::shared_ptr<LiteralString> LiteralStringPtr;
+
 /**
  * I am a literal string value.
  */
-class LiteralString : public LiteralValue
+class LiteralString : public SubtypeOf<LiteralValue, LiteralString>
 {
 public:
-    LiteralString(const std::string &ctorValue = std::string())
-        : value(ctorValue) {}
+    static constexpr char const __typeName__[] = "LiteralString";
+
+    static LiteralStringPtr makeFor(const std::string &value);
         
     virtual bool isLiteralString() const override;
 

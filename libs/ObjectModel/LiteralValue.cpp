@@ -1,10 +1,12 @@
 #include "sysmel/ObjectModel/LiteralValue.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+static BootstrapTypeRegistration<LiteralValue> literalValueTypeRegistration;
 
 bool LiteralValue::isLiteralValue() const
 {

@@ -1,6 +1,9 @@
 set(ObjectModel_Sources
     LargeInteger.cpp
-    Object.cpp
+    AnyValue.cpp
+    BootstrapModule.cpp
+    BootstrapType.cpp
+    BootstrapTypeRegistration.cpp
     LiteralInteger.cpp
     LiteralNegativeInteger.cpp
     LiteralNumber.cpp
@@ -10,6 +13,12 @@ set(ObjectModel_Sources
     LiteralValue.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    Module.cpp
+    ModuleReference.cpp
+    ProgramEntity.cpp
+    RuntimeContext.cpp
+    TranslationUnitModule.cpp
+    Type.cpp
 )
 
-add_library(SysmelObjectModel STATIC ${ObjectModel_Sources})
+add_library(SysmelObjectModel SHARED ${ObjectModel_Sources})

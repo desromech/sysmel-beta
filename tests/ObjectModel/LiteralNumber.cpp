@@ -1,7 +1,6 @@
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
 #include "sysmel/ObjectModel/LiteralNumber.hpp"
 #include "UnitTest++/UnitTest++.h"
-#include <iostream>
 
 using namespace SysmelMoebius::ObjectModel;
 

@@ -1,7 +1,6 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "UnitTest++/UnitTest++.h"
-#include <iostream>
 
 using namespace SysmelMoebius::ObjectModel;
 

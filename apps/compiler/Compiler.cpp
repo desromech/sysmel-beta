@@ -1,10 +1,11 @@
 #include "sysmel/Compiler/Sysmel/Parser.hpp"
 #include "sysmel/Compiler/Sysmel/Visitors.hpp"
-#include "sysmel/ObjectModel/Object.hpp"
+#include "sysmel/ObjectModel/AnyValue.hpp"
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
 #include "sysmel/ObjectModel/LiteralFloat.hpp"
 #include "sysmel/ObjectModel/LiteralString.hpp"
 #include "sysmel/ObjectModel/LiteralSymbol.hpp"
+#include "sysmel/ObjectModel/RuntimeContext.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -70,27 +71,27 @@ public:
 
     virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
-        return ObjectPtr(LiteralInteger::makeFor(node.value));
+        return AnyValuePtr(LiteralInteger::makeFor(node.value));
     }
 
     virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
-        return ObjectPtr(std::make_shared<LiteralFloat> (node.value));
+        return AnyValuePtr(std::make_shared<LiteralFloat> (node.value));
     }
 
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
-        return ObjectPtr(LiteralInteger::makeForCharacter(node.value));
+        return AnyValuePtr(LiteralInteger::makeForCharacter(node.value));
     }
 
     virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
-        return ObjectPtr(std::make_shared<LiteralString> (node.value));
+        return AnyValuePtr(LiteralString::makeFor(node.value));
     }
 
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
-        return ObjectPtr(LiteralSymbol::intern(node.value));
+        return AnyValuePtr(LiteralSymbol::intern(node.value));
     }
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
@@ -100,15 +101,15 @@ public:
 
     virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
     {
-        auto receiver = std::any_cast<ObjectPtr> (visitNode(*node.receiver));
+        auto receiver = std::any_cast<AnyValuePtr> (visitNode(*node.receiver));
 
-        auto selector = std::any_cast<ObjectPtr> (visitNode(*node.selector));
+        auto selector = std::any_cast<AnyValuePtr> (visitNode(*node.selector));
 
-        std::vector<ObjectPtr> arguments;
+        std::vector<AnyValuePtr> arguments;
         arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
         {
-            auto argValue = std::any_cast<ObjectPtr> (visitNode(*arg));
+            auto argValue = std::any_cast<AnyValuePtr> (visitNode(*arg));
         }
 
         return receiver->performWithArguments(selector, arguments);
@@ -192,7 +193,7 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
     if(hasError)
         return;
 
-    auto result = std::any_cast<ObjectPtr> (TestEvaluator::BasicASTEvaluator().visitNode(*ast));
+    auto result = std::any_cast<AnyValuePtr> (TestEvaluator::BasicASTEvaluator().visitNode(*ast));
     std::cout << result->printString() << std::endl;
 }
 
@@ -207,18 +208,20 @@ void evalFileNamed(const std::string &fileName)
 
 int main(int argc, const char *argv[])
 {
-    for(int i = 1; i < argc; ++i)
-    {
-        std::string arg = argv[i];
-        if(arg == "-eval")
+    SysmelMoebius::ObjectModel::RuntimeContext::create()->activeDuring([&](){
+        for(int i = 1; i < argc; ++i)
         {
-            evalString(argv[++i], "<command line arg>");
+            std::string arg = argv[i];
+            if(arg == "-eval")
+            {
+                evalString(argv[++i], "<command line arg>");
+            }
+            else
+            {
+                evalFileNamed(argv[i]);
+            }
         }
-        else
-        {
-            evalFileNamed(argv[i]);
-        }
-    }
+    });
 
     return 0;
 }

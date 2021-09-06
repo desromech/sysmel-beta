@@ -1,5 +1,6 @@
 #ifndef SYSMEL_COMPILER_OBJECT_MODEL_STRING_UTILITIES_HPP
 #define SYSMEL_COMPILER_OBJECT_MODEL_STRING_UTILITIES_HPP
+#pragma once
 
 #include <ostream>
 #include <iomanip>

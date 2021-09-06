@@ -1,5 +1,6 @@
 #ifndef SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_INTEGER_HPP
 #define SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_INTEGER_HPP
+#pragma once
 
 #include "LiteralNumber.hpp"
 #include "LargeInteger.hpp"
@@ -15,9 +16,11 @@ typedef std::shared_ptr<LiteralInteger> LiteralIntegerPtr;
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralInteger : public LiteralNumber
+class LiteralInteger : public SubtypeOf<LiteralNumber, LiteralInteger>
 {
 public:
+    static constexpr char const __typeName__[] = "LiteralInteger";
+
     static LiteralIntegerPtr makeFor(const LargeInteger &value);
     static LiteralIntegerPtr makeFor(LargeInteger &&value);
     static LiteralIntegerPtr makeForCharacter(char32_t value);
@@ -30,7 +33,6 @@ public:
         return value;
     }
 
-    virtual ObjectPtr performWithArguments(const ObjectPtr &selector, const std::vector<ObjectPtr> &arguments) override;
 protected:
     LargeInteger value;
 };

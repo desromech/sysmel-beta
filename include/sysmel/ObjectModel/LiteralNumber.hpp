@@ -1,5 +1,6 @@
 #ifndef SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_NUMBER_HPP
 #define SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_NUMBER_HPP
+#pragma once
 
 #include "LiteralValue.hpp"
 
@@ -11,9 +12,11 @@ namespace ObjectModel
 /**
  * I am literal number value.
  */
-class LiteralNumber : public LiteralValue
+class LiteralNumber : public SubtypeOf<LiteralValue, LiteralNumber>
 {
 public:
+    static constexpr char const __typeName__[] = "LiteralNumber";
+
     virtual bool isLiteralNumber() const override;
 };
 

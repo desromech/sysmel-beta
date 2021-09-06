@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/LiteralFloat.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -7,6 +8,7 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+static BootstrapTypeRegistration<LiteralFloat> literalFloatTypeRegistration;
 
 bool LiteralFloat::isLiteralFloat() const
 {

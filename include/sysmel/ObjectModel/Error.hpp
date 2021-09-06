@@ -16,6 +16,13 @@ public:
         : std::runtime_error(message) {}
 };
 
+class CannotEvaluateMessage : public Error
+{
+public:
+    CannotEvaluateMessage(const std::string &message = "This object cannot evaluate messages.")
+        : Error(message) {}
+};
+
 class MessageNotUnderstood : public Error
 {
 public:

@@ -1,5 +1,6 @@
 #ifndef SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_NEGATIVE_INTEGER_HPP
 #define SYSMEL_COMPILER_OBJECT_MODEL_LITERAL_NEGATIVE_INTEGER_HPP
+#pragma once
 
 #include "LiteralInteger.hpp"
 
@@ -11,9 +12,11 @@ namespace ObjectModel
 /**
  * I am a literal negative integer value.
  */
-class LiteralNegativeInteger : public LiteralInteger
+class LiteralNegativeInteger : public SubtypeOf<LiteralInteger, LiteralNegativeInteger>
 {
 public:
+    static constexpr char const __typeName__[] = "LiteralNegativeInteger";
+
     virtual bool isLiteralNegativeInteger() const override;
 };
 

@@ -1,5 +1,6 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 #include <sstream>
 #include <iostream>

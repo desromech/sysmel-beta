@@ -1,11 +1,20 @@
 #include "sysmel/ObjectModel/LiteralString.hpp"
 #include "sysmel/ObjectModel/StringUtilities.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+static BootstrapTypeRegistration<LiteralString> literalStringTypeRegistration;
+
+LiteralStringPtr LiteralString::makeFor(const std::string &value)
+{
+    auto result = std::make_shared<LiteralString> ();
+    result->value = value;
+    return result;
+}
 
 bool LiteralString::isLiteralString() const
 {
