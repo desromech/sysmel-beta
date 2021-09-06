@@ -26,10 +26,10 @@ public:
     virtual bool isBootstrapModule() const override;
 
     TypePtr getBootstrapDefinedTypeNamed(const std::string &typeName);
-    TypePtr getBootstrapDefinedType(const StaticBootstrapDefinedTypeMetadata *metadata);
+    TypePtr getBootstrapDefinedType(size_t id);
 
 private:
-    std::unordered_map<const StaticBootstrapDefinedTypeMetadata *, TypePtr> bootstrapDefinedTypeMetadataMap;
+    std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
 };
 

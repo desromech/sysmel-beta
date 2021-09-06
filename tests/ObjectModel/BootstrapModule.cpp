@@ -1,6 +1,9 @@
 #include "sysmel/ObjectModel/RuntimeContext.hpp"
 #include "sysmel/ObjectModel/BootstrapModule.hpp"
 
+#include "sysmel/ObjectModel/Type.hpp"
+#include "sysmel/ObjectModel/BootstrapType.hpp"
+
 #include "sysmel/ObjectModel/LiteralValue.hpp"
 #include "sysmel/ObjectModel/LiteralNumber.hpp"
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
@@ -71,6 +74,12 @@ SUITE(BootstrapModule)
 
             CHECK(module->getBootstrapDefinedTypeNamed("RuntimeContext"));
             CHECK_EQUAL(module->getBootstrapDefinedTypeNamed("RuntimeContext"), RuntimeContext::__staticType__());
+
+            CHECK(module->getBootstrapDefinedTypeNamed("Type"));
+            CHECK_EQUAL(module->getBootstrapDefinedTypeNamed("Type"), Type::__staticType__());
+
+            CHECK(module->getBootstrapDefinedTypeNamed("BootstrapType"));
+            CHECK_EQUAL(module->getBootstrapDefinedTypeNamed("BootstrapType"), BootstrapType::__staticType__());
 
         });
     }

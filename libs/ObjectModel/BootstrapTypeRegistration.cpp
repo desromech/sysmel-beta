@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include <assert.h>
 
 namespace SysmelMoebius
 {
@@ -13,14 +14,17 @@ static StaticBootstrapDefinedTypeMetadataListPtr getOrCreateMetadataList()
     return singleton;
 }
 
-const std::vector<const StaticBootstrapDefinedTypeMetadata*> &getBootstrapDefinedTypeMetadataList()
+const StaticBootstrapDefinedTypeMetadataList &getBootstrapDefinedTypeMetadataList()
 {
     return *getOrCreateMetadataList();
 }
 
-void registerBootstrapDefinedTypeMetadata(const StaticBootstrapDefinedTypeMetadata *metadata)
+void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *metadata)
 {
-    getOrCreateMetadataList()->push_back(metadata);
+    assert(metadata->bootstrapTypeID == 0);
+    const auto &list = getOrCreateMetadataList();
+    list->push_back(metadata);
+    metadata->bootstrapTypeID = list->size();
 }
 
 } // End of namespace ObjectModel

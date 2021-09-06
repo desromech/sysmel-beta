@@ -29,33 +29,35 @@ struct StaticBootstrapDefinedTypeMetadata
     std::string typeName;
     MethodCategories instanceMethods;
     MethodCategories typeMethods;
+    size_t bootstrapTypeID;
 };
 
-TypePtr getBootstrapDefinedTypeWithMetadata(const StaticBootstrapDefinedTypeMetadata *metadata);
+TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID);
 
 template<typename T>
 struct StaticBootstrapDefinedTypeMetadataFor
 {
-    static const StaticBootstrapDefinedTypeMetadata metadata;
+    static StaticBootstrapDefinedTypeMetadata metadata;
 
-    static const StaticBootstrapDefinedTypeMetadata *get()
+    static StaticBootstrapDefinedTypeMetadata *get()
     {
         return &metadata;
     }
 };
 
 template<typename T>
-const StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::metadata = StaticBootstrapDefinedTypeMetadata{
+StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::metadata = StaticBootstrapDefinedTypeMetadata{
     StaticBootstrapDefinedTypeMetadataFor<typename T::SuperType>::get(),
     T::__typeName__,
     T::__instanceMethods__(),
-    T::__typeMethods__()
+    T::__typeMethods__(),
+    0
 };
 
 template<>
 struct StaticBootstrapDefinedTypeMetadataFor<void>
 {
-    static const StaticBootstrapDefinedTypeMetadata *get()
+    static StaticBootstrapDefinedTypeMetadata *get()
     {
         return nullptr;
     }
@@ -66,7 +68,7 @@ struct StaticBootstrapDefinedTypeFor
 {
     static TypePtr get()
     {
-        return getBootstrapDefinedTypeWithMetadata(StaticBootstrapDefinedTypeMetadataFor<T>::get());
+        return getBootstrapDefinedTypeWithID(StaticBootstrapDefinedTypeMetadataFor<T>::get()->bootstrapTypeID);
     }
 };
 
@@ -93,7 +95,7 @@ public:
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
-    
+
     virtual TypePtr getType() const override
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();

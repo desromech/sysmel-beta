@@ -7,6 +7,7 @@ namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+static BootstrapTypeRegistration<Type> typeTypeRegistration;
 
 TypePtr Type::getSuperType()
 {

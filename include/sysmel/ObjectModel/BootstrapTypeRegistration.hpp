@@ -9,9 +9,9 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
-typedef std::vector<const StaticBootstrapDefinedTypeMetadata*> StaticBootstrapDefinedTypeMetadataList;
+typedef std::vector<StaticBootstrapDefinedTypeMetadata*> StaticBootstrapDefinedTypeMetadataList;
 const StaticBootstrapDefinedTypeMetadataList &getBootstrapDefinedTypeMetadataList();
-void registerBootstrapDefinedTypeMetadata(const StaticBootstrapDefinedTypeMetadata *metadata);
+void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *metadata);
 
 template<typename T>
 struct BootstrapTypeRegistration

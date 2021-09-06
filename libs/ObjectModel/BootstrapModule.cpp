@@ -16,19 +16,20 @@ void BootstrapModule::initialize()
     auto &bootstrapMetadataList = getBootstrapDefinedTypeMetadataList();
 
     // First pass: create all of the bootstrap type instances.
+    bootstrapDefinedTypeTable.reserve(bootstrapDefinedTypeTable.size());
     for(auto metadata : bootstrapMetadataList)
     {
         auto type = std::make_shared<BootstrapType> ();
-        bootstrapDefinedTypeMetadataMap.insert(std::make_pair(metadata, type));
+        bootstrapDefinedTypeTable.push_back(type);
         if(!metadata->typeName.empty())
             bootstrapDefinedTypeNameMap.insert(std::make_pair(metadata->typeName, type));
     }
 
     // Second pass: initialize the bootstrap types.
-    for(auto metadata : bootstrapMetadataList)
+    for(size_t i = 0; i < bootstrapMetadataList.size(); ++i)
     {
-        auto type = std::static_pointer_cast<BootstrapType> (getBootstrapDefinedType(metadata));
-        type->initializeWithMetadata(metadata);
+        auto type = std::static_pointer_cast<BootstrapType> (bootstrapDefinedTypeTable[i]);
+        type->initializeWithMetadata(bootstrapMetadataList[i]);
     }
 }
 
@@ -43,15 +44,16 @@ TypePtr BootstrapModule::getBootstrapDefinedTypeNamed(const std::string &typeNam
     return it != bootstrapDefinedTypeNameMap.end() ? it->second : TypePtr();    
 }
 
-TypePtr BootstrapModule::getBootstrapDefinedType(const StaticBootstrapDefinedTypeMetadata *metadata)
+TypePtr BootstrapModule::getBootstrapDefinedType(size_t bootstrapTypeID)
 {
-    auto it = bootstrapDefinedTypeMetadataMap.find(metadata);
-    return it != bootstrapDefinedTypeMetadataMap.end() ? it->second : TypePtr();
+    if(bootstrapTypeID == 0 || bootstrapTypeID > bootstrapDefinedTypeTable.size())
+        return TypePtr();
+    return bootstrapDefinedTypeTable[bootstrapTypeID - 1];
 }
 
-TypePtr getBootstrapDefinedTypeWithMetadata(const StaticBootstrapDefinedTypeMetadata *metadata)
+TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID)
 {
-    return RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(metadata);
+    return RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(bootstrapTypeID);
 }
 
 } // End of namespace ObjectModel
