@@ -26,6 +26,8 @@ class ProgramEntity : public SubtypeOf<AnyValue, ProgramEntity>
 public:
     static constexpr char const __typeName__[] = "ProgramEntity";
 
+    virtual bool isProgramEntity() const override;
+
     virtual ModulePtr getDefinitionModule() const;
 };
 

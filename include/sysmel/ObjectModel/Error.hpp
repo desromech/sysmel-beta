@@ -69,6 +69,27 @@ protected:
     size_t callCount;
 };
 
+class CannotOverloadPatternMatchingMethod : public Error
+{
+public:
+    CannotOverloadPatternMatchingMethod(const std::string &message = "Cannot overload the existent method with additional patterns.")
+        : Error(message) {}
+};
+
+class NotMatchingPatternFound : public Error
+{
+public:
+    NotMatchingPatternFound(const std::string &message = "Failed to find matching pattern.")
+        : Error(message) {}
+};
+
+class AmbiguousMatchingPatternsFound : public Error
+{
+public:
+    AmbiguousMatchingPatternsFound(const std::string &message = "Ambiguous matching patterns have been found.")
+        : Error(message) {}
+};
+
 
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

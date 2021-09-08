@@ -10,6 +10,91 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+//=============================================================================
+// Wrapper type for
+//=============================================================================
+
+template<>
+struct WrapperTypeFor<LargeInteger> 
+{
+    static TypePtr apply();
+};
+
+template<>
+struct WrapperTypeFor<uint8_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<int8_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<uint16_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<int16_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<uint32_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<int32_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<uint64_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<int64_t> : WrapperTypeFor<LargeInteger> {};
+
+template<>
+struct WrapperTypeFor<char32_t> 
+{
+    static TypePtr apply();
+};
+
+template<>
+struct WrapperTypeFor<char> : WrapperTypeFor<char32_t> {};
+
+template<>
+struct WrapperTypeFor<char16_t> : WrapperTypeFor<char32_t> {};
+
+template<>
+struct WrapperTypeFor<double> 
+{
+    static TypePtr apply();
+};
+
+template<>
+struct WrapperTypeFor<float> : WrapperTypeFor<double> {};
+
+template<>
+struct WrapperTypeFor<std::string> 
+{
+    static TypePtr apply();
+};
+
+template<>
+struct WrapperTypeFor<const char *> : WrapperTypeFor<std::string> {};
+
+template<size_t N>
+struct WrapperTypeFor<const char (&)[N]> : WrapperTypeFor<std::string> {};
+
+template<typename T>
+struct WrapperTypeFor<T&> : WrapperTypeFor<T> {};
+
+template<typename T>
+struct WrapperTypeFor<const T&> : WrapperTypeFor<T> {};
+
+template<typename T>
+struct WrapperTypeFor<T&&> : WrapperTypeFor<T> {};
+
+template<typename T>
+TypePtr wrapperTypeFor()
+{
+    return WrapperTypeFor<T>::apply();
+}
+
+//=============================================================================
+// Wrap Value
+//=============================================================================
 template<>
 struct WrapValue<uint32_t>
 {
@@ -88,10 +173,23 @@ template<size_t N>
 struct WrapValue<const char (&)[N]> : WrapValue<std::string> {};
 
 template<typename T>
+struct WrapValue<T&> : WrapValue<T> {};
+
+template<typename T>
+struct WrapValue<const T&> : WrapValue<T> {};
+
+template<typename T>
+struct WrapValue<T&&> : WrapValue<T> {};
+
+template<typename T>
 AnyValuePtr wrapValue(T &&value)
 {
     return WrapValue<T>::apply(std::forward<T> (value));
 }
+
+//=============================================================================
+// Unwrap Value
+//=============================================================================
 
 template<>
 struct UnwrapValue<uint8_t>

@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "UnitTest++/UnitTest++.h"
+#include <limits>
 
 using namespace SysmelMoebius::ObjectModel;
 
@@ -323,6 +324,23 @@ SUITE(LargeInteger)
         CHECK_EQUAL("30414093201713378043612608166064768844377641568960512000000000000", LargeInteger{50}.factorial().asString());
         CHECK_EQUAL("93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000", LargeInteger{100}.factorial().asString());
         CHECK_EQUAL("788657867364790503552363213932185062295135977687173263294742533244359449963403342920304284011984623904177212138919638830257642790242637105061926624952829931113462857270763317237396988943922445621451664240254033291864131227428294853277524242407573903240321257405579568660226031904170324062351700858796178922222789623703897374720000000000000000000000000000000000000000000000000", LargeInteger{200}.factorial().asString());
+    }
+
+    TEST(AsDouble)
+    {
+        CHECK_EQUAL(0.0, LargeInteger{}.asDouble());
+        CHECK_EQUAL(1.0, LargeInteger{1}.asDouble());
+        CHECK_EQUAL(-1.0, LargeInteger{-1}.asDouble());
+        CHECK_EQUAL(10.0, LargeInteger{10}.asDouble());
+        CHECK_EQUAL(42.0, LargeInteger{42}.asDouble());
+        CHECK_EQUAL(123456.0, LargeInteger{123456}.asDouble());
+
+        CHECK_EQUAL(2.43290200817664e18, LargeInteger{20}.factorial().asDouble());
+        CHECK_EQUAL(2.6525285981219107e32, LargeInteger{30}.factorial().asDouble());
+        CHECK_EQUAL(8.159152832478977e47, LargeInteger{40}.factorial().asDouble());
+        CHECK_EQUAL(3.0414093201713376e64, LargeInteger{50}.factorial().asDouble());
+        CHECK_EQUAL(9.332621544394415e157, LargeInteger{100}.factorial().asDouble());
+        CHECK_EQUAL(std::numeric_limits<double>::infinity(), LargeInteger{200}.factorial().asDouble());
     }
 
 }

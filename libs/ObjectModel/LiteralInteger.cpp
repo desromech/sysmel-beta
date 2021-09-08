@@ -15,7 +15,13 @@ namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+
 static BootstrapTypeRegistration<LiteralInteger> literalIntegerTypeRegistration;
+
+TypePtr WrapperTypeFor<LargeInteger>::apply()
+{
+    return LiteralInteger::__staticType__();
+}
 
 MethodCategories LiteralInteger::__instanceMethods__()
 {
@@ -23,7 +29,40 @@ MethodCategories LiteralInteger::__instanceMethods__()
         {"arithmetic", {
             makeMethodBinding<LargeInteger (LargeInteger)> ("negated", +[](const LargeInteger &value) {
                 return -value;
-            })
+            }),
+
+            // Addition
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("+", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a + b;
+            }),
+
+            makeMethodBinding<double (LargeInteger, double)> ("+", +[](const LargeInteger &a, double b) {
+                return a.asDouble() + b;
+            }),
+
+            // Subtraction
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("-", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a - b;
+            }),
+
+            // Multiplication
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("*", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a * b;
+            }),
+
+            // Integer division
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("//", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a / b;
+            }),
+
+            // Remainder
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("%", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a % b;
+            }),
+
+            makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("\\\\", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a % b;
+            }),
         }},
 
         {"math functions", {
@@ -159,12 +198,13 @@ char32_t LiteralInteger::unwrapAsChar32() const
 
 float LiteralInteger::unwrapAsFloat32() const
 {
+
     throw CannotUnwrap();
 }
 
 double LiteralInteger::unwrapAsFloat64() const
 {
-    throw CannotUnwrap();
+    return value.asDouble();
 }
 
 } // End of namespace ObjectModel

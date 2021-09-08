@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LiteralString.hpp"
 #include "sysmel/ObjectModel/StringUtilities.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
@@ -8,6 +9,11 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 static BootstrapTypeRegistration<LiteralString> literalStringTypeRegistration;
+
+TypePtr WrapperTypeFor<std::string>::apply()
+{
+    return LiteralString::__staticType__();
+}
 
 LiteralStringPtr LiteralString::makeFor(const std::string &value)
 {

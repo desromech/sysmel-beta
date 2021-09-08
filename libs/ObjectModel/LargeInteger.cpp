@@ -674,6 +674,37 @@ LargeInteger LargeInteger::binomialCoefficient(const LargeInteger &n, const Larg
     return n.factorial() / (k.factorial()*(n - k).factorial());
 }
 
+uint32_t LargeInteger::highBitOfMagnitude() const
+{
+    assert(isNormalized());
+    if(isZero())
+        return 0;
+    return uint32_t(highBitOf(words.back()) + (words.size() - 1) * 32);
+
+}
+
+double LargeInteger::asDouble() const
+{
+    assert(isNormalized());
+    if(isZero())
+        return 0.0;
+
+    if(words.size() == 1)
+    {
+        auto magnitude = double(words[0]);
+        return signBit ? -magnitude : magnitude;
+    }
+    else if(words.size() == 2)
+    {
+        auto magnitude = double(words[0] | (uint64_t(words[1]) << 32));
+        return signBit ? -magnitude : magnitude;
+    }
+
+    auto highestBit = highBitOfMagnitude();
+    // TODO: Copy the algorithm from Pharo.
+    return 0.0;
+}
+
 void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const
 {
     if(divisor.isZero())

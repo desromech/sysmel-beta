@@ -29,6 +29,48 @@ SUITE(LiteralNumber)
         CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNegativeInteger());
     }
 
+    TEST(Negated)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK_EQUAL(LargeInteger{0}, wrapValue(LargeInteger{0})->perform<LargeInteger> ("negated"));
+            CHECK_EQUAL(LargeInteger{-1}, wrapValue(LargeInteger{1})->perform<LargeInteger> ("negated"));
+            CHECK_EQUAL(LargeInteger{1}, wrapValue(LargeInteger{-1})->perform<LargeInteger> ("negated"));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("negated"));
+            CHECK_EQUAL(-1, wrapValue(1)->perform<int> ("negated"));
+            CHECK_EQUAL(1, wrapValue(-1)->perform<int> ("negated"));
+
+            CHECK_EQUAL(-1.0f, wrapValue(1.0f)->perform<float> ("negated"));
+            CHECK_EQUAL(-42.5f, wrapValue(42.5f)->perform<float> ("negated"));
+            CHECK_EQUAL(1.0f, wrapValue(-1.0f)->perform<float> ("negated"));
+            CHECK_EQUAL(42.5f, wrapValue(-42.5f)->perform<float> ("negated"));
+
+            CHECK_EQUAL(-1.0, wrapValue(1.0)->perform<float> ("negated"));
+            CHECK_EQUAL(-42.5, wrapValue(42.5)->perform<float> ("negated"));
+            CHECK_EQUAL(1.0, wrapValue(-1.0)->perform<float> ("negated"));
+            CHECK_EQUAL(42.5, wrapValue(-42.5)->perform<float> ("negated"));
+        });
+    }
+
+    TEST(Addition)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("+", 0));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("+", 0));
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("+", 0));
+
+            CHECK_EQUAL(2, wrapValue(1)->perform<int> ("+", 1));
+            CHECK_EQUAL(0, wrapValue(1)->perform<int> ("+", -1));
+
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("+", 0.0));
+            CHECK_EQUAL(1.0, wrapValue(1)->perform<double> ("+", 0.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1)->perform<double> ("+", 0.0));
+
+            CHECK_EQUAL(2.0, wrapValue(1)->perform<double> ("+", 1.0));
+            CHECK_EQUAL(0.0, wrapValue(1)->perform<double> ("+", -1.0));
+        });
+    }
+
     TEST(Factorial)
     {
         RuntimeContext::create()->activeDuring([&](){

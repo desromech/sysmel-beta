@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_OBJECT_MODEL_BOOTSTRAP_METHOD_HPP
 #pragma once
 
-#include "ProgramEntity.hpp"
+#include "SpecificMethod.hpp"
 #include "Wrappers.hpp"
 #include "Error.hpp"
 #include <type_traits>
@@ -15,7 +15,7 @@ namespace ObjectModel
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
  */
-class BootstrapMethodBase : public SubtypeOf<ProgramEntity, BootstrapMethodBase>
+class BootstrapMethodBase : public SubtypeOf<SpecificMethod, BootstrapMethodBase>
 {
 public:
     static constexpr char const __typeName__[] = "BootstrapMethod";
@@ -24,6 +24,8 @@ public:
         : selector(initialSelector), argumentCount(initialArgumentCount)
     {
     }
+
+    virtual bool isBootstrapMethod() const override;
 
 protected:
     AnyValuePtr selector;
@@ -42,8 +44,15 @@ public:
     BootstrapMethod(const AnyValuePtr &initialSelector, FT initialFunctor)
         : BootstrapMethodBase(initialSelector, sizeof...(Args)), functor(initialFunctor)
     {
+        selector = initialSelector;
+        signature = MethodSignature{
+            wrapperTypeFor<ResultType> (),
+            wrapperTypeFor<ReceiverType> (),
+            {
+                wrapperTypeFor<Args> ()...
+            }
+        };
     }
-
 
     AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override
     {
@@ -56,7 +65,7 @@ public:
         if constexpr(std::is_same<ResultType, void>::value)
         {
             functor(unwrapValue<ReceiverType> (receiver), unwrapValue<Args> (arguments[index++])...);
-            return voidConstant();
+            return getVoidConstant();
         }
         else
         {

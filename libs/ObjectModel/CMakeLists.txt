@@ -14,10 +14,13 @@ set(ObjectModel_Sources
     LiteralValue.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    Method.cpp
     Module.cpp
     ModuleReference.cpp
+    PatternMatchingMethod.cpp
     ProgramEntity.cpp
     RuntimeContext.cpp
+    SpecificMethod.cpp
     TranslationUnitModule.cpp
     Type.cpp
     Wrappers.cpp

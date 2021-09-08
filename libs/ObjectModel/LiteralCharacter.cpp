@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LiteralCharacter.hpp"
 #include "sysmel/ObjectModel/StringUtilities.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -9,6 +10,11 @@ namespace ObjectModel
 {
 
 static BootstrapTypeRegistration<LiteralCharacter> literalCharacterTypeRegistration;
+
+TypePtr WrapperTypeFor<char32_t>::apply()
+{
+    return LiteralCharacter::__staticType__();
+}
 
 bool LiteralCharacter::isLiteralCharacter() const
 {

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Type.hpp"
-#include <unordered_map>
 
 namespace SysmelMoebius
 {
@@ -19,16 +18,11 @@ public:
     static constexpr char const __typeName__[] = "BootstrapType";
 
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
-    
-    virtual TypePtr getSuperType() override;
 
-    virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector) override;
+    std::string printString() const override;
 
 protected:
     const StaticBootstrapDefinedTypeMetadata *staticMetadata;
-    TypePtr supertype;
-
-    std::unordered_map<AnyValuePtr, AnyValuePtr> methodDictionary;
 };
 
 } // End of namespace ObjectModel

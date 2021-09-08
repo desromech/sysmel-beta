@@ -20,22 +20,13 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
     for(auto &[category, methods] : staticMetadata->instanceMethods())
     {
         for(auto &[selector, method] : methods)
-            methodDictionary.insert(std::make_pair(selector, method));
+            addMethodWithSelector(selector, method);
     }
 }
 
-TypePtr BootstrapType::getSuperType()
+std::string BootstrapType::printString() const
 {
-    return supertype;
-}
-
-AnyValuePtr BootstrapType::lookupSelector(const AnyValuePtr &selector)
-{
-    auto it = methodDictionary.find(selector);
-    if(it != methodDictionary.end())
-        return it->second;
-
-    return SuperType::lookupSelector(selector);
+    return staticMetadata->typeName;
 }
 
 } // End of namespace ObjectModel

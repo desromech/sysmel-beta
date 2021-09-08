@@ -110,6 +110,7 @@ public:
         for(auto &arg : node.arguments)
         {
             auto argValue = std::any_cast<AnyValuePtr> (visitNode(*arg));
+            arguments.push_back(argValue);
         }
 
         return receiver->performWithArguments(selector, arguments);

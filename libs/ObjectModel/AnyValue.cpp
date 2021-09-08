@@ -29,12 +29,43 @@ void AnyValue::initialize()
 {
 }
 
+bool AnyValue::isProgramEntity() const
+{
+    return false;
+}
+
+
 bool AnyValue::isType() const
 {
     return false;
 }
 
 bool AnyValue::isBootstrapType() const
+{
+    return false;
+}
+
+bool AnyValue::isMethod() const
+{
+    return false;
+}
+
+bool AnyValue::isSpecificMethod() const
+{
+    return false;
+}
+
+bool AnyValue::isBootstrapMethod() const
+{
+    return false;
+}
+
+bool AnyValue::isPatternMatchingMethod() const
+{
+    return false;
+}
+
+bool AnyValue::isTemplateMethod() const
 {
     return false;
 }

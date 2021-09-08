@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ProgramEntity.hpp"
+#include <unordered_map>
 
 namespace SysmelMoebius
 {
@@ -25,6 +26,22 @@ public:
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
+
+    /// This method add a new method into the method dictionary with the specified selector.
+    virtual void addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
+
+    /// This method computes the rank required for matching the specified type without implicit casting.
+    virtual PatternMatchingRank rankToMatchType(const TypePtr &type);
+
+    /// This method computes the rank required for matching the specified value without implicit casting.
+    virtual PatternMatchingRank rankToMatchValue(const AnyValuePtr &value);
+
+protected:
+    virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
+
+    TypePtr supertype;
+
+    std::unordered_map<AnyValuePtr, AnyValuePtr> methodDictionary;
 };
 
 } // End of namespace ObjectModel

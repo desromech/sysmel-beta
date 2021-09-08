@@ -18,12 +18,19 @@ typedef std::shared_ptr<AnyValue> AnyValuePtr;
 class Type;
 typedef std::shared_ptr<Type> TypePtr;
 
+typedef std::vector<TypePtr> TypePtrList;
+
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
 
 typedef std::pair<std::string, MethodBindings> MethodCategory;
 typedef std::vector<MethodCategory> MethodCategories;
 
+typedef int32_t PatternMatchingRank;
+
+/**
+ * I hold the metadata that is required by a bootstrap defined type.
+ */
 struct StaticBootstrapDefinedTypeMetadata
 {
     const StaticBootstrapDefinedTypeMetadata *supertype;
@@ -109,16 +116,38 @@ public:
 };
 
 template<typename T>
+struct WrapperTypeFor;
+
+template<typename T>
 struct WrapValue;
 
 template<typename T>
 struct UnwrapValue;
 
+/**
+ * Constructs a literal symbol from a string.
+ */
 AnyValuePtr internSymbol(const std::string &symbolValue);
-AnyValuePtr voidConstant();
-AnyValuePtr nilConstant();
-AnyValuePtr trueConstant();
-AnyValuePtr falseConstant();
+
+/**
+ * Retrieves the singleton void constant.
+ */
+AnyValuePtr getVoidConstant();
+
+/**
+ * Retrieves the singleton nil constant.
+ */
+AnyValuePtr getNilConstant();
+
+/**
+ * Retrieves the singleton true constant.
+ */
+AnyValuePtr getTrueConstant();
+
+/**
+ * Retrieves the singleton false constant.
+ */
+AnyValuePtr getFalseConstant();
 
 /**
  * I am the base interface for any value that is passed through the interpreter.
@@ -149,11 +178,29 @@ public:
     /// Generic method for initializing the object.
     virtual void initialize();
 
-    /// Is this object a type?.
+    /// Is this object a program entity?
+    virtual bool isProgramEntity() const;
+
+    /// Is this object a type?
     virtual bool isType() const;
 
-    /// Is this object the a bootstrap defined type?.
+    /// Is this object the a bootstrap defined type?
     virtual bool isBootstrapType() const;
+
+    /// Is this object a method?
+    virtual bool isMethod() const;
+
+    /// Is this object a bootstrap method?
+    virtual bool isSpecificMethod() const;
+
+    /// Is this object a bootstrap method?
+    virtual bool isBootstrapMethod() const;
+
+    /// Is this object a pattern method?
+    virtual bool isPatternMatchingMethod() const;
+
+    /// Is this object a template method?
+    virtual bool isTemplateMethod() const;
 
     /// Is this object a literal value?
     virtual bool isLiteralValue() const;

@@ -8,6 +8,11 @@ namespace ObjectModel
 
 static BootstrapTypeRegistration<ProgramEntity> programEntityTypeRegistration;
 
+bool ProgramEntity::isProgramEntity() const
+{
+    return true;
+}
+
 ModulePtr ProgramEntity::getDefinitionModule() const
 {
     return ModulePtr();

@@ -16,6 +16,8 @@ class LiteralFloat : public SubtypeOf<LiteralNumber, LiteralFloat>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralFloat";
+    
+    static MethodCategories __instanceMethods__();
 
     LiteralFloat(double ctorValue = 0.0)
         : value(ctorValue) {}
