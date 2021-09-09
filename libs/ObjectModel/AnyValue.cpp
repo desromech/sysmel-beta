@@ -2,6 +2,7 @@
 #include "sysmel/ObjectModel/Type.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -12,8 +13,12 @@ namespace ObjectModel
 static BootstrapTypeRegistration<AnyValue> anyValueTypeRegistration;
 
 MethodCategories AnyValue::__instanceMethods__()
-{
-    return MethodCategories{};
+{    return MethodCategories{
+        {"printing", {
+            makeMethodBinding("printString", &AnyValue::printString),
+            makeMethodBinding("asString", &AnyValue::asString),
+        }}
+    };
 }
 
 MethodCategories AnyValue::__typeMethods__()
@@ -191,6 +196,11 @@ int64_t AnyValue::unwrapAsInt64() const
 }
 
 LargeInteger AnyValue::unwrapAsLargeInteger() const
+{
+    throw CannotUnwrap();
+}
+
+Fraction AnyValue::unwrapAsFraction() const
 {
     throw CannotUnwrap();
 }

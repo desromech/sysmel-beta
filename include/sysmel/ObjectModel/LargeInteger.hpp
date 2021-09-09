@@ -103,6 +103,8 @@ struct LargeInteger
         return *this;
     }
 
+    LargeInteger abs() const;
+    
     LargeInteger operator-() const;
     LargeInteger operator~() const;
 
@@ -152,6 +154,8 @@ struct LargeInteger
     std::string asHexString() const;
     std::string asString() const;
     void normalize();
+
+    static LargeInteger gcd(const LargeInteger &a, const LargeInteger &b);
 
     friend std::ostream &operator<<(std::ostream &out, const LargeInteger &integer)
     {

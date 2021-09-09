@@ -28,6 +28,9 @@ public:
 
     virtual float unwrapAsFloat32() const override;
     virtual double unwrapAsFloat64() const override;
+
+    virtual double asFloat() const;
+    
 protected:
     double value;
 };

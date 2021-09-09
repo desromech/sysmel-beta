@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include <math.h>
 #include <algorithm>
 #include <sstream>
 #include <iostream>
@@ -13,7 +14,7 @@ namespace ObjectModel
 static uint32_t highBitOf(uint32_t word)
 {
 #if defined(_MSC_VER)
-    return 32 - __lzcnt
+    return 32 - __lzcnt(word);
 #elif defined(__GNUC__)
     return 32 - __builtin_clz(word);
 #else
@@ -239,7 +240,7 @@ static uint8_t bitsPerDigitInRadix(uint8_t radix)
     if(radix == 0)
         return 0;
 
-    return highBitOf(radix - 1) + 1;
+    return highBitOf(uint32_t(radix - 1)) + 1;
 }
 
 static int8_t parseDigitInRadix(char digit, uint8_t radix)
@@ -694,15 +695,20 @@ double LargeInteger::asDouble() const
         auto magnitude = double(words[0]);
         return signBit ? -magnitude : magnitude;
     }
-    else if(words.size() == 2)
+
+
+    auto mantissaPart = words[words.size() - 2] | (uint64_t(words[words.size() - 1]) << 32);
+    auto remainingWordCount = words.size() - 2;
+    double mantissa = mantissaPart;
+
+    // Add the third word which might have additional required bits.
+    if(words.size() >= 3)
     {
-        auto magnitude = double(words[0] | (uint64_t(words[1]) << 32));
-        return signBit ? -magnitude : magnitude;
+        mantissa = ldexp(mantissa, 32) + words[words.size() - 3];
+        --remainingWordCount;
     }
 
-    auto highestBit = highBitOfMagnitude();
-    // TODO: Copy the algorithm from Pharo.
-    return 0.0;
+    return ldexp(signBit ? -mantissa : mantissa, remainingWordCount*32);
 }
 
 void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const
@@ -847,5 +853,23 @@ std::string LargeInteger::asString() const
     return result;
 }
 
+LargeInteger LargeInteger::abs() const
+{
+    return isNegative() ? -(*this) : *this;
+}
+
+LargeInteger LargeInteger::gcd(const LargeInteger &a, const LargeInteger &b)
+{
+    auto ca = a.abs();
+    auto cb = b.abs();
+    while(!cb.isZero())
+    {
+        auto t = cb;
+        cb = ca % cb;
+        ca = t;
+    }
+
+    return ca;
+}
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

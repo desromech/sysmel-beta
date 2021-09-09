@@ -21,9 +21,46 @@ MethodCategories LiteralFloat::__instanceMethods__()
 {
     return MethodCategories{
         {"arithmetic", {
+            // Negation
             makeMethodBinding<double (double)> ("negated", +[](double value) {
                 return -value;
-            })
+            }),
+
+            // Addition
+            makeMethodBinding<double (double, double)> ("+", +[](double a, double b) {
+                return a + b;
+            }),
+
+            makeMethodBinding<double (double, LargeInteger)> ("+", +[](double a, const LargeInteger &b) {
+                return a + b.asDouble();
+            }),
+
+            // Subtraction
+            makeMethodBinding<double (double, double)> ("-", +[](double a, double b) {
+                return a - b;
+            }),
+
+            makeMethodBinding<double (double, LargeInteger)> ("-", +[](double a, const LargeInteger &b) {
+                return a - b.asDouble();
+            }),
+
+            // Multiplication
+            makeMethodBinding<double (double, double)> ("*", +[](double a, double b) {
+                return a * b;
+            }),
+
+            makeMethodBinding<double (double, LargeInteger)> ("*", +[](double a, const LargeInteger &b) {
+                return a * b.asDouble();
+            }),
+
+            // Division
+            makeMethodBinding<double (double, double)> ("/", +[](double a, double b) {
+                return a / b;
+            }),
+
+            makeMethodBinding<double (double, LargeInteger)> ("/", +[](double a, const LargeInteger &b) {
+                return a / b.asDouble();
+            }),
         }}
     };
 }
@@ -48,6 +85,11 @@ float LiteralFloat::unwrapAsFloat32() const
 }
 
 double LiteralFloat::unwrapAsFloat64() const
+{
+    return value;
+}
+
+double LiteralFloat::asFloat() const
 {
     return value;
 }

@@ -5,10 +5,12 @@ set(ObjectModel_Sources
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
+    Fraction.cpp
     LiteralInteger.cpp
     LiteralNegativeInteger.cpp
     LiteralNumber.cpp
     LiteralFloat.cpp
+    LiteralFraction.cpp
     LiteralPositiveInteger.cpp
     LiteralCharacter.cpp
     LiteralValue.cpp

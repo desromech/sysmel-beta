@@ -1,5 +1,6 @@
 #include "sysmel/ObjectModel/Wrappers.hpp"
 #include "sysmel/ObjectModel/LargeInteger.hpp"
+#include "sysmel/ObjectModel/LiteralFraction.hpp"
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
 #include "sysmel/ObjectModel/LiteralFloat.hpp"
 #include "sysmel/ObjectModel/LiteralString.hpp"
@@ -38,6 +39,11 @@ AnyValuePtr WrapValue<char32_t>::apply(char32_t value)
 AnyValuePtr WrapValue<LargeInteger>::apply(const LargeInteger &value)
 {
     return LiteralInteger::makeFor(value);
+}
+
+AnyValuePtr WrapValue<Fraction>::apply(const Fraction &value)
+{
+    return LiteralFraction::makeFor(value);
 }
 
 AnyValuePtr WrapValue<double>::apply(double value)

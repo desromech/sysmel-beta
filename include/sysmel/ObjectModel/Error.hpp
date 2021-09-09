@@ -90,6 +90,12 @@ public:
         : Error(message) {}
 };
 
+class SubclassResponsibility : public Error
+{
+public:
+    SubclassResponsibility(const std::string &message = "This method should be implemented in a subclass.")
+        : Error(message) {}
+};
 
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

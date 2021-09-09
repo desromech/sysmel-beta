@@ -43,6 +43,9 @@ public:
     virtual char unwrapAsChar8() const;
     virtual char16_t unwrapAsChar16() const;
     virtual char32_t unwrapAsChar32() const;
+
+    virtual Fraction unwrapAsFraction() const;
+    
     virtual float unwrapAsFloat32() const;
     virtual double unwrapAsFloat64() const;
 
@@ -50,6 +53,8 @@ public:
     {
         return value;
     }
+
+    virtual double asFloat() const override;
 
 protected:
     LargeInteger value;

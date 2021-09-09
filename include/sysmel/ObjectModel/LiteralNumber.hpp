@@ -9,6 +9,10 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+class LiteralNumber;
+typedef std::shared_ptr<LiteralNumber> LiteralNumberPtr;
+
+
 /**
  * I am literal number value.
  */
@@ -17,7 +21,11 @@ class LiteralNumber : public SubtypeOf<LiteralValue, LiteralNumber>
 public:
     static constexpr char const __typeName__[] = "LiteralNumber";
 
+    static MethodCategories __instanceMethods__();
+
     virtual bool isLiteralNumber() const override;
+
+    virtual double asFloat() const;
 };
 
 } // End of namespace ObjectModel

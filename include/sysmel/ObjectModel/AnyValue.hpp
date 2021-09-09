@@ -1,11 +1,13 @@
-#ifndef SYSMEL_COMPILER_OBJECT_MODEL_OBJECT_HPP
-#define SYSMEL_COMPILER_OBJECT_MODEL_OBJECT_HPP
+#ifndef SYSMEL_COMPILER_OBJECT_MODEL_ANY_VALUE_HPP
+#define SYSMEL_COMPILER_OBJECT_MODEL_ANY_VALUE_HPP
 #pragma once
 
 #include <memory>
 #include <string>
 #include <vector>
 #include "LargeInteger.hpp"
+#include "Fraction.hpp"
+
 
 namespace SysmelMoebius
 {
@@ -277,6 +279,9 @@ public:
     /// Reads the wrapped value as a large integer.
     virtual LargeInteger unwrapAsLargeInteger() const;
 
+    /// Reads the wrapped value as a fraction.
+    virtual Fraction unwrapAsFraction() const;
+
     /// Reads the wrapped value as a Char8.
     virtual char unwrapAsChar8() const;
 
@@ -321,4 +326,4 @@ public:
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_OBJECT_MODEL_OBJECT_HPP
+#endif //SYSMEL_COMPILER_OBJECT_MODEL_ANY_VALUE_HPP

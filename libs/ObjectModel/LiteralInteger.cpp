@@ -4,7 +4,7 @@
 #include "sysmel/ObjectModel/LiteralCharacter.hpp"
 
 #include "sysmel/ObjectModel/LiteralSymbol.hpp"
-#include "sysmel/ObjectModel/LiteralInteger.hpp"
+#include "sysmel/ObjectModel/LiteralFraction.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
@@ -45,22 +45,50 @@ MethodCategories LiteralInteger::__instanceMethods__()
                 return a - b;
             }),
 
+            makeMethodBinding<double (LargeInteger, double)> ("-", +[](const LargeInteger &a, double b) {
+                return a.asDouble() - b;
+            }),
+
             // Multiplication
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("*", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a * b;
             }),
 
+            makeMethodBinding<double (LargeInteger, double)> ("*", +[](const LargeInteger &a, double b) {
+                return a.asDouble() * b;
+            }),
+
+            // Division
+            makeMethodBinding<LiteralNumberPtr (LargeInteger, LargeInteger)> ("/", +[](const LargeInteger &a, const LargeInteger &b) {
+                if(b.isZero())
+                    throw DivisionByZeroError();
+
+                return LiteralFraction::makeFor(Fraction{a, b}.reduced());
+            }),
+
+            makeMethodBinding<double (LargeInteger, double)> ("/", +[](const LargeInteger &a, double b) {
+                return a.asDouble() / b;
+            }),
+
             // Integer division
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("//", +[](const LargeInteger &a, const LargeInteger &b) {
+                if(b.isZero())
+                    throw DivisionByZeroError();
                 return a / b;
             }),
 
             // Remainder
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("%", +[](const LargeInteger &a, const LargeInteger &b) {
+                if(b.isZero())
+                    throw DivisionByZeroError();
+
                 return a % b;
             }),
 
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("\\\\", +[](const LargeInteger &a, const LargeInteger &b) {
+                if(b.isZero())
+                    throw DivisionByZeroError();
+
                 return a % b;
             }),
         }},
@@ -196,6 +224,11 @@ char32_t LiteralInteger::unwrapAsChar32() const
     return char32_t(value.wordAt(0));
 }
 
+Fraction LiteralInteger::unwrapAsFraction() const
+{
+    return Fraction{value, LargeInteger{1}};
+}
+
 float LiteralInteger::unwrapAsFloat32() const
 {
 
@@ -203,6 +236,11 @@ float LiteralInteger::unwrapAsFloat32() const
 }
 
 double LiteralInteger::unwrapAsFloat64() const
+{
+    return value.asDouble();
+}
+
+double LiteralInteger::asFloat() const
 {
     return value.asDouble();
 }

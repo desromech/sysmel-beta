@@ -55,6 +55,7 @@ SUITE(LiteralNumber)
     TEST(Addition)
     {
         RuntimeContext::create()->activeDuring([&](){
+            // Integer - Integer
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("+", 0));
             CHECK_EQUAL(1, wrapValue(1)->perform<int> ("+", 0));
             CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("+", 0));
@@ -62,12 +63,266 @@ SUITE(LiteralNumber)
             CHECK_EQUAL(2, wrapValue(1)->perform<int> ("+", 1));
             CHECK_EQUAL(0, wrapValue(1)->perform<int> ("+", -1));
 
+            // Integer - Float
             CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("+", 0.0));
             CHECK_EQUAL(1.0, wrapValue(1)->perform<double> ("+", 0.0));
             CHECK_EQUAL(-1.0, wrapValue(-1)->perform<double> ("+", 0.0));
 
             CHECK_EQUAL(2.0, wrapValue(1)->perform<double> ("+", 1.0));
             CHECK_EQUAL(0.0, wrapValue(1)->perform<double> ("+", -1.0));
+
+            // Float - Integer
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("+", 0));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("+", 0));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("+", 0));
+
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("+", 1));
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("+", -1));
+
+            // Float - Float
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("+", 0.0));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("+", 0.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("+", 0.0));
+
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("+", 1.0));
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("+", -1.0));
+
+        });
+    }
+
+    TEST(Subtraction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            // Integer - Integer
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("-", 0));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("-", 0));
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("-", 0));
+
+            CHECK_EQUAL(0, wrapValue(1)->perform<int> ("-", 1));
+            CHECK_EQUAL(2, wrapValue(1)->perform<int> ("-", -1));
+
+            // Integer - Float
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("-", 0.0));
+            CHECK_EQUAL(1.0, wrapValue(1)->perform<double> ("-", 0.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1)->perform<double> ("-", 0.0));
+
+            CHECK_EQUAL(0.0, wrapValue(1)->perform<double> ("-", 1.0));
+            CHECK_EQUAL(2.0, wrapValue(1)->perform<double> ("-", -1.0));
+
+            // Float - Integer
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("-", 0));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("-", 0));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("-", 0));
+
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("-", 1));
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("-", -1));
+
+            // Float - Float
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("-", 0.0));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("-", 0.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("-", 0.0));
+
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("-", 1.0));
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("-", -1.0));
+        });
+    }
+
+    TEST(Multiplication)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            // Integer - Integer
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("*", 0));
+            CHECK_EQUAL(0, wrapValue(1)->perform<int> ("*", 0));
+            CHECK_EQUAL(0, wrapValue(-1)->perform<int> ("*", 0));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("*", 1));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("*", 1));
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("*", 1));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("*", -1));
+            CHECK_EQUAL(-1, wrapValue(1)->perform<int> ("*", -1));
+            CHECK_EQUAL(1, wrapValue(-1)->perform<int> ("*", -1));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("*", 2));
+            CHECK_EQUAL(2, wrapValue(1)->perform<int> ("*", 2));
+            CHECK_EQUAL(-2, wrapValue(-1)->perform<int> ("*", 2));
+
+            // Integer - Float
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("*", 0.0));
+            CHECK_EQUAL(0.0, wrapValue(1)->perform<double> ("*", 0.0));
+            CHECK_EQUAL(0.0, wrapValue(-1)->perform<double> ("*", 0.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("*", 1.0));
+            CHECK_EQUAL(1.0, wrapValue(1)->perform<double> ("*", 1.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1)->perform<double> ("*", 1.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("*", -1.0));
+            CHECK_EQUAL(-1.0, wrapValue(1)->perform<double> ("*", -1.0));
+            CHECK_EQUAL(1.0, wrapValue(-1)->perform<double> ("*", -1.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("*", 2.0));
+            CHECK_EQUAL(2.0, wrapValue(1)->perform<double> ("*", 2.0));
+            CHECK_EQUAL(-2.0, wrapValue(-1)->perform<double> ("*", 2.0));
+
+            // Float - Integer
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 0));
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("*", 0));
+            CHECK_EQUAL(0.0, wrapValue(-1.0)->perform<double> ("*", 0));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 1));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("*", 1));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("*", 1));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", -1));
+            CHECK_EQUAL(-1.0, wrapValue(1.0)->perform<double> ("*", -1));
+            CHECK_EQUAL(1.0, wrapValue(-1.0)->perform<double> ("*", -1));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 2));
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("*", 2));
+            CHECK_EQUAL(-2.0, wrapValue(-1.0)->perform<double> ("*", 2));
+
+            // Float - Float
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 0.0));
+            CHECK_EQUAL(0.0, wrapValue(1.0)->perform<double> ("*", 0.0));
+            CHECK_EQUAL(0.0, wrapValue(-1.0)->perform<double> ("*", 0.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 1.0));
+            CHECK_EQUAL(1.0, wrapValue(1.0)->perform<double> ("*", 1.0));
+            CHECK_EQUAL(-1.0, wrapValue(-1.0)->perform<double> ("*", 1.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", -1.0));
+            CHECK_EQUAL(-1.0, wrapValue(1.0)->perform<double> ("*", -1.0));
+            CHECK_EQUAL(1.0, wrapValue(-1.0)->perform<double> ("*", -1.0));
+
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("*", 2.0));
+            CHECK_EQUAL(2.0, wrapValue(1.0)->perform<double> ("*", 2.0));
+            CHECK_EQUAL(-2.0, wrapValue(-1.0)->perform<double> ("*", 2.0));
+        });
+    }
+
+    TEST(Division)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            // Integer - Integer => Integer
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("/", 1));
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("/", -1));
+
+            CHECK_EQUAL(2, wrapValue(6)->perform<int> ("/", 3));
+            CHECK_EQUAL(-3, wrapValue(6)->perform<int> ("/", -2));
+            CHECK_EQUAL(-3, wrapValue(-6)->perform<int> ("/", 2));
+
+            // Integer - Float => Float
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("/", 1.0));
+            CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("/", -1.0));
+
+            CHECK_EQUAL(2.0, wrapValue(6)->perform<double> ("/", 3.0));
+            CHECK_EQUAL(-3.0, wrapValue(6)->perform<double> ("/", -2.0));
+            CHECK_EQUAL(-3.0, wrapValue(-6)->perform<double> ("/", 2.0));
+
+            // Float - Integer => Float
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("/", 1));
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("/", -1));
+
+            CHECK_EQUAL(2.0, wrapValue(6.0)->perform<double> ("/", 3));
+            CHECK_EQUAL(-3.0, wrapValue(6.0)->perform<double> ("/", -2));
+            CHECK_EQUAL(-3.0, wrapValue(-6.0)->perform<double> ("/", 2));
+
+            // Float - Float => Float
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("/", 1.0));
+            CHECK_EQUAL(0.0, wrapValue(0.0)->perform<double> ("/", -1.0));
+
+            CHECK_EQUAL(2.0, wrapValue(6.0)->perform<double> ("/", 3.0));
+            CHECK_EQUAL(-3.0, wrapValue(6.0)->perform<double> ("/", -2.0));
+            CHECK_EQUAL(-3.0, wrapValue(-6.0)->perform<double> ("/", 2.0));
+
+        });
+    }
+
+    TEST(IntegerDivision)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("//", 1));
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("//", -1));
+
+            CHECK_EQUAL(2, wrapValue(6)->perform<int> ("//", 3));
+            CHECK_EQUAL(-3, wrapValue(6)->perform<int> ("//", -2));
+            CHECK_EQUAL(-3, wrapValue(-6)->perform<int> ("//", 2));
+        });
+    }
+
+    TEST(IntegerRemainder)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", 1));
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", -1));
+
+            CHECK_EQUAL(0, wrapValue(6)->perform<int> ("%", 3));
+            CHECK_EQUAL(0, wrapValue(6)->perform<int> ("%", -2));
+            CHECK_EQUAL(0, wrapValue(-6)->perform<int> ("%", 2));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", 3));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("%", 3));
+            CHECK_EQUAL(2, wrapValue(2)->perform<int> ("%", 3));
+            CHECK_EQUAL(0, wrapValue(3)->perform<int> ("%", 3));
+            CHECK_EQUAL(1, wrapValue(4)->perform<int> ("%", 3));
+            CHECK_EQUAL(2, wrapValue(5)->perform<int> ("%", 3));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", -3));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("%", -3));
+            CHECK_EQUAL(2, wrapValue(2)->perform<int> ("%", -3));
+            CHECK_EQUAL(0, wrapValue(3)->perform<int> ("%", -3));
+            CHECK_EQUAL(1, wrapValue(4)->perform<int> ("%", -3));
+            CHECK_EQUAL(2, wrapValue(5)->perform<int> ("%", -3));
+
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("%", 3));
+            CHECK_EQUAL(-2, wrapValue(-2)->perform<int> ("%", 3));
+            CHECK_EQUAL(-0, wrapValue(-3)->perform<int> ("%", 3));
+            CHECK_EQUAL(-1, wrapValue(-4)->perform<int> ("%", 3));
+            CHECK_EQUAL(-2, wrapValue(-5)->perform<int> ("%", 3));
+
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("%", -3));
+            CHECK_EQUAL(-2, wrapValue(-2)->perform<int> ("%", -3));
+            CHECK_EQUAL(-0, wrapValue(-3)->perform<int> ("%", -3));
+            CHECK_EQUAL(-1, wrapValue(-4)->perform<int> ("%", -3));
+            CHECK_EQUAL(-2, wrapValue(-5)->perform<int> ("%", -3));
+        });
+    }
+
+    TEST(IntegerRemainder2)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", 1));
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", -1));
+
+            CHECK_EQUAL(0, wrapValue(6)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(0, wrapValue(6)->perform<int> ("\\\\", -2));
+            CHECK_EQUAL(0, wrapValue(-6)->perform<int> ("\\\\", 2));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(2, wrapValue(2)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(0, wrapValue(3)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(1, wrapValue(4)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(2, wrapValue(5)->perform<int> ("\\\\", 3));
+
+            CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(1, wrapValue(1)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(2, wrapValue(2)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(0, wrapValue(3)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(1, wrapValue(4)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(2, wrapValue(5)->perform<int> ("\\\\", -3));
+
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(-2, wrapValue(-2)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(-0, wrapValue(-3)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(-1, wrapValue(-4)->perform<int> ("\\\\", 3));
+            CHECK_EQUAL(-2, wrapValue(-5)->perform<int> ("\\\\", 3));
+
+            CHECK_EQUAL(-1, wrapValue(-1)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(-2, wrapValue(-2)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(-0, wrapValue(-3)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(-1, wrapValue(-4)->perform<int> ("\\\\", -3));
+            CHECK_EQUAL(-2, wrapValue(-5)->perform<int> ("\\\\", -3));
         });
     }
 

@@ -16,6 +16,9 @@ bool Method::isMethod() const
 
 MethodPatternMatchingResult Method::matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
+    (void)selector;
+    (void)arguments;
+    (void)receiver;
     return MethodPatternMatchingResult{};
 }
 
