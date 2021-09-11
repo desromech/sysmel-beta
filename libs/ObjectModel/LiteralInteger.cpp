@@ -59,11 +59,11 @@ MethodCategories LiteralInteger::__instanceMethods__()
             }),
 
             // Division
-            makeMethodBinding<LiteralNumberPtr (LargeInteger, LargeInteger)> ("/", +[](const LargeInteger &a, const LargeInteger &b) {
+            makeMethodBinding<Fraction (LargeInteger, LargeInteger)> ("/", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
                     throw DivisionByZeroError();
 
-                return LiteralFraction::makeFor(Fraction{a, b}.reduced());
+                return Fraction{a, b}.reduced();
             }),
 
             makeMethodBinding<double (LargeInteger, double)> ("/", +[](const LargeInteger &a, double b) {

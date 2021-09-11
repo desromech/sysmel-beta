@@ -14,13 +14,30 @@ static BootstrapTypeRegistration<LiteralFraction> literalFractionTypeRegistratio
 
 TypePtr WrapperTypeFor<Fraction>::apply()
 {
-    return LiteralFraction::__staticType__();
+    return LiteralNumber::__staticType__();
 }
 
 MethodCategories LiteralFraction::__instanceMethods__()
 {
     return MethodCategories{
         {"arithmetic", {
+            makeMethodBinding<Fraction (Fraction)> ("negated", +[](const Fraction &value) {
+                return -value;
+            }),
+
+            // Addition
+            makeMethodBinding<Fraction (Fraction, LargeInteger)> ("+", +[](const Fraction &a, const LargeInteger &b) {
+                return a + Fraction{b};
+            }),
+
+            makeMethodBinding<Fraction (Fraction, Fraction)> ("+", +[](const Fraction &a, const Fraction &b) {
+                return a + Fraction{b};
+            }),
+
+            makeMethodBinding<double (Fraction, double)> ("+", +[](const Fraction &a, double b) {
+                return a.asDouble() + b;
+            }),
+
         }}
     };
 }

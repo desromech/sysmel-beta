@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/Fraction.hpp"
+#include "sysmel/ObjectModel/Error.hpp"
 #include <assert.h>
 
 namespace SysmelMoebius
@@ -18,6 +19,63 @@ Fraction Fraction::reduced() const
     assert(result.numerator.isNormalized());
     assert(result.denominator.isNormalized());
     return result;
+}
+
+Fraction Fraction::operator-() const
+{
+    return Fraction{-numerator, denominator};
+}
+
+Fraction Fraction::operator+(const Fraction &other) const
+{
+    return Fraction{numerator * other.denominator + denominator*other.numerator, denominator * other.denominator}.reduced();
+}
+
+Fraction Fraction::operator-(const Fraction &other) const
+{
+    return Fraction{numerator * other.denominator - denominator*other.numerator, denominator * other.denominator}.reduced();
+}
+
+Fraction Fraction::operator*(const Fraction &other) const
+{
+    return Fraction{numerator * other.numerator, denominator * other.denominator}.reduced();
+}
+
+Fraction Fraction::operator/(const Fraction &other) const
+{
+    if(other.numerator.isZero())
+        throw DivisionByZeroError();
+    return Fraction{numerator * other.denominator, denominator * other.numerator}.reduced();
+}
+
+bool Fraction::operator==(const Fraction &other) const
+{
+    return numerator*other.denominator == denominator*other.numerator;
+}
+
+bool Fraction::operator!=(const Fraction &other) const
+{
+    return numerator*other.denominator != denominator*other.numerator;
+}
+
+bool Fraction::operator<(const Fraction &other) const
+{
+    return numerator*other.denominator < denominator*other.numerator;
+}
+
+bool Fraction::operator<=(const Fraction &other) const
+{
+    return numerator*other.denominator <= denominator*other.numerator;
+}
+
+bool Fraction::operator>(const Fraction &other) const
+{
+    return numerator*other.denominator > denominator*other.numerator;
+}
+
+bool Fraction::operator>=(const Fraction &other) const
+{
+    return numerator*other.denominator >= denominator*other.numerator;
 }
 
 double Fraction::asDouble() const

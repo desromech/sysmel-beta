@@ -63,6 +63,13 @@ SUITE(LiteralNumber)
             CHECK_EQUAL(2, wrapValue(1)->perform<int> ("+", 1));
             CHECK_EQUAL(0, wrapValue(1)->perform<int> ("+", -1));
 
+            // Integer - Fraction
+            CHECK_EQUAL(Fraction(3, 2), wrapValue(Fraction(1, 2))->perform<Fraction> ("+", 1));
+
+            // Fraction - Fraction
+            CHECK_EQUAL(Fraction(3, 5), wrapValue(Fraction(1, 5))->perform<Fraction> ("+", Fraction(2, 5)));
+            CHECK_EQUAL(1, wrapValue(Fraction(1, 2))->perform<int> ("+", Fraction(1, 2)));
+
             // Integer - Float
             CHECK_EQUAL(0.0, wrapValue(0)->perform<double> ("+", 0.0));
             CHECK_EQUAL(1.0, wrapValue(1)->perform<double> ("+", 0.0));
