@@ -3,7 +3,6 @@
 #pragma once
 
 #include "ProgramEntity.hpp"
-#include <unordered_map>
 
 namespace SysmelMoebius
 {
@@ -44,6 +43,9 @@ public:
     /// This method adds the method in the specified categories.
     virtual void addMethodCategories(const MethodCategories &categories);
 
+    /// Is this type a kind of the other type?
+    virtual bool isKindOf(const TypePtr &otherType);
+
     /// This method computes the rank required for matching the specified type without implicit casting.
     virtual PatternMatchingRank rankToMatchType(const TypePtr &type);
 
@@ -61,8 +63,8 @@ protected:
 
     TypePtr supertype;
 
-    std::unordered_map<AnyValuePtr, AnyValuePtr> macroMethodDictionary;
-    std::unordered_map<AnyValuePtr, AnyValuePtr> methodDictionary;
+    MethodDictionaryPtr macroMethodDictionary;
+    MethodDictionaryPtr methodDictionary;
 };
 
 } // End of namespace ObjectModel

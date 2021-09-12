@@ -33,8 +33,11 @@ public:
     {
         return signature;
     }
-
+    
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
+
+    virtual bool isMacroMethod() const override;
+
 protected:
     MethodSignature signature;
 };

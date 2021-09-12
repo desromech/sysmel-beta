@@ -1,5 +1,6 @@
 #include "sysmel/ObjectModel/SpecificMethod.hpp"
 #include "sysmel/ObjectModel/Type.hpp"
+#include "sysmel/ObjectModel/MacroInvocationContext.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <iostream>
 
@@ -38,6 +39,11 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
     }
 
     return MethodPatternMatchingResult{shared_from_this(), totalRank};
+}
+
+bool SpecificMethod::isMacroMethod() const
+{
+    return signature.receiverType && signature.receiverType->isKindOf(MacroInvocationContext::__staticType__());
 }
 
 } // End of namespace ObjectModel

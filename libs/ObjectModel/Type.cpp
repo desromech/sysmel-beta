@@ -1,8 +1,8 @@
 #include "sysmel/ObjectModel/Type.hpp"
+#include "sysmel/ObjectModel/MethodDictionary.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
-#include "sysmel/ObjectModel/PatternMatchingMethod.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -32,11 +32,7 @@ void Type::setSupertype(const TypePtr &newSupertype)
 
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
 {
-    auto it = methodDictionary.find(selector);
-    if(it != methodDictionary.end())
-        return it->second;
-
-    return AnyValuePtr();
+    return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
 AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
@@ -54,6 +50,9 @@ AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
 
 void Type::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
 {
+    if(!macroMethodDictionary)
+        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+    macroMethodDictionary->addMethodWithSelector(selector, method);
 }
 
 void Type::addMacroMethodCategories(const MethodCategories &categories)
@@ -67,35 +66,9 @@ void Type::addMacroMethodCategories(const MethodCategories &categories)
 
 void Type::addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
 {
-    auto it = methodDictionary.find(selector);
-    if(it == methodDictionary.end())
-    {
-        methodDictionary.insert(std::make_pair(selector, method));
-        return;
-    }
-
-    if(method->isPatternMatchingMethod())
-        throw CannotOverloadPatternMatchingMethod();
-
-    auto existent = it->second;
-    if(method->isMethod() && existent->isMethod())
-    {
-        if(!existent->isPatternMatchingMethod())
-        {
-            auto newPatternMatchingMethod = std::make_shared<PatternMatchingMethod> (selector);
-            newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (existent));
-            newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (method));
-            methodDictionary[selector] = newPatternMatchingMethod;
-        }
-        else
-        {
-            auto patternMatchingMethod = std::static_pointer_cast<PatternMatchingMethod> (existent);
-            patternMatchingMethod->addPattern(std::static_pointer_cast<Method> (method));
-        }
-        return;
-    }
-
-    throw CannotOverloadPatternMatchingMethod();
+    if(!methodDictionary)
+        methodDictionary = std::make_shared<MethodDictionary> ();
+    methodDictionary->addMethodWithSelector(selector, method);
 }
 
 void Type::addMethodCategories(const MethodCategories &categories)
@@ -115,6 +88,18 @@ TypePtr Type::getInstanceType()
 TypePtr Type::getMetaType()
 {
     return getType();
+}
+
+bool Type::isKindOf(const TypePtr &otherType)
+{
+    if(this == otherType.get())
+        return true;
+    
+    auto supertype = getSupertype();
+    if(supertype)
+        return supertype->isKindOf(otherType);
+
+    return false;
 }
 
 PatternMatchingRank Type::rankToMatchType(const TypePtr &type)

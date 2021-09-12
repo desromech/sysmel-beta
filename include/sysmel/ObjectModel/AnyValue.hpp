@@ -19,8 +19,20 @@ typedef std::shared_ptr<AnyValue> AnyValuePtr;
 
 class Type;
 typedef std::shared_ptr<Type> TypePtr;
-
 typedef std::vector<TypePtr> TypePtrList;
+
+class MethodDictionary;
+typedef std::shared_ptr<MethodDictionary> MethodDictionaryPtr;
+
+class ASTNode;
+typedef std::shared_ptr<ASTNode> ASTNodePtr;
+typedef std::vector<ASTNodePtr> ASTNodePtrList;
+
+class ASTBuilder;
+typedef std::shared_ptr<ASTBuilder> ASTBuilderPtr;
+
+class MacroInvocationContext;
+typedef std::shared_ptr<MacroInvocationContext> MacroInvocationContextPtr;
 
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
@@ -199,6 +211,39 @@ public:
     virtual void initialize();
 
     /// Is this object a program entity?
+    virtual bool isCompilerObject() const;
+
+    /// Is this object an AST node?
+    virtual bool isASTNode() const;
+
+    /// Is this object an AST builder?
+    virtual bool isASTBuilder() const;
+
+    /// Is this object an AST identifier reference node?
+    virtual bool isASTIdentifierReferenceNode() const;
+
+    /// Is this object an AST intrinsic operation node?
+    virtual bool isASTIntrinsicOperationNode() const;
+
+    /// Is this object an AST message send node?
+    virtual bool isASTMessageSendNode() const;
+
+    /// Is this object an AST literal value node?
+    virtual bool isASTLiteralValueNode() const;
+
+    /// Is this object an AST sequence node?
+    virtual bool isASTSequenceNode() const;
+
+    /// Is this object an AST cleanup scope node?
+    virtual bool isASTCleanUpScopeNode() const;
+
+    /// Is this object an AST cleanup scope node?
+    virtual bool isASTLexicalScopeNode() const;
+
+    /// Is this object an AST cleanup scope node?
+    virtual bool isASTClosureNode() const;
+
+    /// Is this object a program entity?
     virtual bool isProgramEntity() const;
 
     /// Is this object a type?
@@ -207,8 +252,17 @@ public:
     /// Is this object the a bootstrap defined type?
     virtual bool isBootstrapType() const;
 
+    /// Is this object a macro invocation context?
+    virtual bool isMacroInvocationContext() const;
+
+    /// Is this object a macro method?
+    virtual bool isMacroMethod() const;
+
     /// Is this object a method?
     virtual bool isMethod() const;
+
+    /// Is this object a method dictionary?
+    virtual bool isMethodDictionary() const;
 
     /// Is this object a bootstrap method?
     virtual bool isSpecificMethod() const;

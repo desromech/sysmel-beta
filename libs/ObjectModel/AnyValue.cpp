@@ -1,8 +1,10 @@
 #include "sysmel/ObjectModel/AnyValue.hpp"
+#include "sysmel/ObjectModel/ASTNode.hpp"
 #include "sysmel/ObjectModel/Type.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
+#include "sysmel/ObjectModel/MacroInvocationContext.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -17,6 +19,9 @@ MethodCategories AnyValue::__instanceMethods__()
     return MethodCategories{
         {"accessing", {
             makeMethodBinding("__type__", &AnyValue::getType),
+            makeMethodBinding<AnyValuePtr (AnyValuePtr)> ("yourself", [](const AnyValuePtr &self) {
+                return self;
+            }),
         }},
 
         {"printing", {
@@ -33,7 +38,13 @@ MethodCategories AnyValue::__typeMethods__()
 
 MethodCategories AnyValue::__instanceMacroMethods__()
 {
-    return MethodCategories{};
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("yourself", [](const MacroInvocationContextPtr &macroContext) {
+                return macroContext->receiverNode;
+            }),
+        }}
+    };
 }
 
 MethodCategories AnyValue::__typeMacroMethods__()
@@ -49,11 +60,65 @@ void AnyValue::initialize()
 {
 }
 
-bool AnyValue::isProgramEntity() const
+bool AnyValue::isCompilerObject() const
 {
     return false;
 }
 
+bool AnyValue::isASTNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTBuilder() const
+{
+    return false;
+}
+
+bool AnyValue::isASTIdentifierReferenceNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTIntrinsicOperationNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMessageSendNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTLiteralValueNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSequenceNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTCleanUpScopeNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTLexicalScopeNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTClosureNode() const
+{
+    return false;
+}
+
+bool AnyValue::isProgramEntity() const
+{
+    return false;
+}
 
 bool AnyValue::isType() const
 {
@@ -65,7 +130,22 @@ bool AnyValue::isBootstrapType() const
     return false;
 }
 
+bool AnyValue::isMacroInvocationContext() const
+{
+    return false;
+}
+
+bool AnyValue::isMacroMethod() const
+{
+    return false;
+}
+
 bool AnyValue::isMethod() const
+{
+    return false;
+}
+
+bool AnyValue::isMethodDictionary() const
 {
     return false;
 }

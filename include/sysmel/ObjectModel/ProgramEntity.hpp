@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_OBJECT_MODEL_PROGRAM_ENTITY_HPP
 #pragma once
 
-#include "AnyValue.hpp"
+#include "CompilerObject.hpp"
 
 namespace SysmelMoebius
 {
@@ -21,7 +21,7 @@ typedef std::shared_ptr<RuntimeContext> RuntimeContextPtr;
 /**
  * I am the base interface for any program metamodel entity
  */
-class ProgramEntity : public SubtypeOf<AnyValue, ProgramEntity>
+class ProgramEntity : public SubtypeOf<CompilerObject, ProgramEntity>
 {
 public:
     static constexpr char const __typeName__[] = "ProgramEntity";

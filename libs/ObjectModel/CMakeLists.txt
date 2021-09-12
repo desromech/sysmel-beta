@@ -1,11 +1,22 @@
 set(ObjectModel_Sources
     LargeInteger.cpp
     AnyValue.cpp
+    ASTBuilder.cpp
+    ASTCleanUpScopeNode.cpp
+    ASTClosureNode.cpp
+    ASTIdentifierReferenceNode.cpp
+    ASTIntrinsicOperationNode.cpp
+    ASTLexicalScopeNode.cpp
+    ASTLiteralValueNode.cpp
+    ASTMessageSendNode.cpp
+    ASTNode.cpp
+    ASTSequenceNode.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
+    CompilerObject.cpp
     Fraction.cpp
     LiteralInteger.cpp
     LiteralNegativeInteger.cpp
@@ -17,8 +28,10 @@ set(ObjectModel_Sources
     LiteralValue.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    MacroInvocationContext.cpp
     MetaType.cpp
     Method.cpp
+    MethodDictionary.cpp
     Module.cpp
     ModuleReference.cpp
     PatternMatchingMethod.cpp
