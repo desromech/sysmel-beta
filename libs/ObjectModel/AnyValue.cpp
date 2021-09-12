@@ -13,7 +13,12 @@ namespace ObjectModel
 static BootstrapTypeRegistration<AnyValue> anyValueTypeRegistration;
 
 MethodCategories AnyValue::__instanceMethods__()
-{    return MethodCategories{
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding("__type__", &AnyValue::getType),
+        }},
+
         {"printing", {
             makeMethodBinding("printString", &AnyValue::printString),
             makeMethodBinding("asString", &AnyValue::asString),
@@ -22,6 +27,16 @@ MethodCategories AnyValue::__instanceMethods__()
 }
 
 MethodCategories AnyValue::__typeMethods__()
+{
+    return MethodCategories{};
+}
+
+MethodCategories AnyValue::__instanceMacroMethods__()
+{
+    return MethodCategories{};
+}
+
+MethodCategories AnyValue::__typeMacroMethods__()
 {
     return MethodCategories{};
 }
@@ -152,7 +167,7 @@ std::string AnyValue::asString() const
 
 std::string AnyValue::printString() const
 {
-    return "an AnyValue";
+    return "a " + getType()->printString();
 }
 
 uint8_t AnyValue::unwrapAsUInt8() const

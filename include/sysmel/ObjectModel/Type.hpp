@@ -18,8 +18,13 @@ class Type : public SubtypeOf<ProgramEntity, Type>
 public:
     static constexpr char const __typeName__[] = "Type";
 
+    static MethodCategories __instanceMethods__();
+
     /// This method evaluates a specific message in the receiver with the specific arguments.
-    virtual TypePtr getSuperType();
+    virtual TypePtr getSupertype();
+
+    /// This method sets the super type.
+    virtual void setSupertype(const TypePtr &newSupertype);
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector);
@@ -27,8 +32,17 @@ public:
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
 
+    /// This method add a new macro method into the method dictionary with the specified selector.
+    virtual void addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
+
+    /// This method adds the method in the specified categories.
+    virtual void addMacroMethodCategories(const MethodCategories &categories);
+
     /// This method add a new method into the method dictionary with the specified selector.
     virtual void addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
+
+    /// This method adds the method in the specified categories.
+    virtual void addMethodCategories(const MethodCategories &categories);
 
     /// This method computes the rank required for matching the specified type without implicit casting.
     virtual PatternMatchingRank rankToMatchType(const TypePtr &type);
@@ -36,11 +50,18 @@ public:
     /// This method computes the rank required for matching the specified value without implicit casting.
     virtual PatternMatchingRank rankToMatchValue(const AnyValuePtr &value);
 
+    /// This method returns the instance type.
+    virtual TypePtr getInstanceType();
+
+    /// This method returns the meta type.
+    virtual TypePtr getMetaType();
+
 protected:
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
     TypePtr supertype;
 
+    std::unordered_map<AnyValuePtr, AnyValuePtr> macroMethodDictionary;
     std::unordered_map<AnyValuePtr, AnyValuePtr> methodDictionary;
 };
 

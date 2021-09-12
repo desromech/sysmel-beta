@@ -21,8 +21,12 @@ public:
 
     std::string printString() const override;
 
+    virtual TypePtr getType() const override;
+    void setType(const TypePtr &theMetaType);
+
 protected:
     const StaticBootstrapDefinedTypeMetadata *staticMetadata;
+    TypePtr metaType;
 };
 
 } // End of namespace ObjectModel

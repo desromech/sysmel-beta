@@ -1,7 +1,9 @@
 #include "sysmel/ObjectModel/BootstrapModule.hpp"
 #include "sysmel/ObjectModel/RuntimeContext.hpp"
+#include "sysmel/ObjectModel/MetaType.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapType.hpp"
+#include "sysmel/ObjectModel/BootstrapExtensionMethods.hpp"
 #include <iostream>
 
 namespace SysmelMoebius
@@ -20,7 +22,12 @@ void BootstrapModule::initialize()
     for(auto metadata : bootstrapMetadataList)
     {
         auto type = std::make_shared<BootstrapType> ();
+        auto metaType = std::make_shared<MetaType> ();
+        type->setType(metaType);
+        metaType->setThisType(type);
+
         bootstrapDefinedTypeTable.push_back(type);
+        bootstrapDefinedTypeTable.push_back(metaType);
         if(!metadata->typeName.empty())
             bootstrapDefinedTypeNameMap.insert(std::make_pair(metadata->typeName, type));
     }
@@ -28,8 +35,18 @@ void BootstrapModule::initialize()
     // Second pass: initialize the bootstrap types.
     for(size_t i = 0; i < bootstrapMetadataList.size(); ++i)
     {
-        auto type = std::static_pointer_cast<BootstrapType> (bootstrapDefinedTypeTable[i]);
+        auto type = std::static_pointer_cast<BootstrapType> (bootstrapDefinedTypeTable[i*2]);
         type->initializeWithMetadata(bootstrapMetadataList[i]);
+    }
+
+    // Special case: short-circuit any value type with the type.
+    // We are skipping over BootstrapType because not everying is going to be one of them.
+    AnyValue::__staticType__()->getType()->setSupertype(Type::__staticType__());
+
+    // Third pass: apply the extension methods.
+    for(const auto &[typeMetadata, extensionMethods] : getRegisteredBootstrapExtensionMethods())
+    {
+        extensionMethods.applyToType(getBootstrapDefinedType(typeMetadata->bootstrapTypeID));
     }
 }
 

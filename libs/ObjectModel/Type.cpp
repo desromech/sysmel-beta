@@ -1,9 +1,9 @@
 #include "sysmel/ObjectModel/Type.hpp"
 #include "sysmel/ObjectModel/Error.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include "sysmel/ObjectModel/PatternMatchingMethod.hpp"
 #include <algorithm>
-#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -11,9 +11,23 @@ namespace ObjectModel
 {
 static BootstrapTypeRegistration<Type> typeTypeRegistration;
 
-TypePtr Type::getSuperType()
+MethodCategories Type::__instanceMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding("supertype", &Type::getSupertype),
+        }},
+    };
+}
+
+TypePtr Type::getSupertype()
 {
     return supertype;
+}
+
+void Type::setSupertype(const TypePtr &newSupertype)
+{
+    supertype = newSupertype;
 }
 
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
@@ -31,11 +45,24 @@ AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
     if(localMethod)
         return localMethod;
 
-    auto superType = getSuperType();
+    auto superType = getSupertype();
     if(superType)
         return superType->lookupSelector(selector);
 
     return AnyValuePtr();
+}
+
+void Type::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+{
+}
+
+void Type::addMacroMethodCategories(const MethodCategories &categories)
+{
+    for(auto &[category, methods] : categories)
+    {
+        for(auto &[selector, method] : methods)
+            addMacroMethodWithSelector(selector, method);
+    }
 }
 
 void Type::addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
@@ -71,10 +98,29 @@ void Type::addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr 
     throw CannotOverloadPatternMatchingMethod();
 }
 
+void Type::addMethodCategories(const MethodCategories &categories)
+{
+    for(auto &[category, methods] : categories)
+    {
+        for(auto &[selector, method] : methods)
+            addMethodWithSelector(selector, method);
+    }
+}
+
+TypePtr Type::getInstanceType()
+{
+    return shared_from_this();
+}
+
+TypePtr Type::getMetaType()
+{
+    return getType();
+}
+
 PatternMatchingRank Type::rankToMatchType(const TypePtr &type)
 {
     PatternMatchingRank rank = 0;
-    for(auto currentType = type; currentType; currentType = currentType->getSuperType())
+    for(auto currentType = type; currentType; currentType = currentType->getSupertype())
     {
         if(currentType.get() == this)
             return rank;

@@ -15,13 +15,26 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
 {
     staticMetadata = theStaticMetadata;
     if(staticMetadata->supertype)
-        supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype->bootstrapTypeID);
-        
-    for(auto &[category, methods] : staticMetadata->instanceMethods())
     {
-        for(auto &[selector, method] : methods)
-            addMethodWithSelector(selector, method);
+        supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype->bootstrapTypeID);
+        metaType->setSupertype(supertype->getType());
     }
+        
+    addMacroMethodCategories(staticMetadata->instanceMacroMethods());
+    addMethodCategories(staticMetadata->instanceMethods());
+
+    metaType->addMacroMethodCategories(staticMetadata->typeMacroMethods());
+    metaType->addMethodCategories(staticMetadata->typeMethods());
+}
+
+TypePtr BootstrapType::getType() const
+{
+    return metaType;
+}
+
+void BootstrapType::setType(const TypePtr &theMetaType)
+{
+    metaType = theMetaType;
 }
 
 std::string BootstrapType::printString() const

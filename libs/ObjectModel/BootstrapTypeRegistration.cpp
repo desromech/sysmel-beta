@@ -23,8 +23,8 @@ void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *me
 {
     assert(metadata->bootstrapTypeID == 0);
     const auto &list = getOrCreateMetadataList();
+    metadata->bootstrapTypeID = list->size()*2 + 1;
     list->push_back(metadata);
-    metadata->bootstrapTypeID = list->size();
 }
 
 } // End of namespace ObjectModel

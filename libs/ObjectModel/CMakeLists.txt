@@ -1,6 +1,7 @@
 set(ObjectModel_Sources
     LargeInteger.cpp
     AnyValue.cpp
+    BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
     BootstrapType.cpp
@@ -16,6 +17,7 @@ set(ObjectModel_Sources
     LiteralValue.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    MetaType.cpp
     Method.cpp
     Module.cpp
     ModuleReference.cpp

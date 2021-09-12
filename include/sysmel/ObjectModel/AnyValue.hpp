@@ -39,6 +39,8 @@ struct StaticBootstrapDefinedTypeMetadata
     std::string typeName;
     MethodCategories (*instanceMethods)();
     MethodCategories (*typeMethods)();
+    MethodCategories (*instanceMacroMethods)();
+    MethodCategories (*typeMacroMethods)();
     size_t bootstrapTypeID;
 };
 
@@ -61,6 +63,8 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     T::__typeName__,
     &T::__instanceMethods__,
     &T::__typeMethods__,
+    &T::__instanceMacroMethods__,
+    &T::__typeMacroMethods__,
     0
 };
 
@@ -97,6 +101,16 @@ public:
     }
 
     static MethodCategories __typeMethods__()
+    {
+        return MethodCategories{};
+    }
+
+    static MethodCategories __instanceMacroMethods__()
+    {
+        return MethodCategories{};
+    }
+
+    static MethodCategories __typeMacroMethods__()
     {
         return MethodCategories{};
     }
@@ -161,8 +175,12 @@ public:
     typedef AnyValue SelfType;
 
     static constexpr char const __typeName__[] = "AnyValue";
+
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
+
+    static MethodCategories __instanceMacroMethods__();
+    static MethodCategories __typeMacroMethods__();
 
     static TypePtr __staticType__()
     {
