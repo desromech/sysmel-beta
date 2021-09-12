@@ -135,6 +135,21 @@ TypePtr wrapperTypeFor()
     return WrapperTypeFor<T>::apply();
 }
 
+template<typename T>
+struct WrapperTypeForReturning : WrapperTypeFor<T> {};
+
+template<>
+struct WrapperTypeForReturning<Fraction>
+{
+    static TypePtr apply();
+};
+
+template<typename T>
+TypePtr wrapperTypeForReturning()
+{
+    return WrapperTypeForReturning<T>::apply();
+}
+
 //=============================================================================
 // Wrap Value
 //=============================================================================

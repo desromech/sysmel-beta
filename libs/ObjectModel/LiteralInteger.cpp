@@ -32,8 +32,24 @@ MethodCategories LiteralInteger::__instanceMethods__()
             }),
 
             // Addition
+            makeMethodBinding<LiteralCharacterPtr (LargeInteger, LiteralCharacterPtr)> ("+", +[](const LargeInteger &a, const LiteralCharacterPtr &b) {
+                auto result = std::make_shared<LiteralCharacter> ();
+                result->value = a + b->getValue();
+                return result;
+            }),
+
+            makeMethodBinding<LiteralCharacterPtr (LiteralCharacterPtr, LargeInteger)> ("+", +[](const LiteralCharacterPtr &a, const LargeInteger &b) {
+                auto result = std::make_shared<LiteralCharacter> ();
+                result->value = a->getValue() + b;
+                return result;
+            }),
+
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("+", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a + b;
+            }),
+
+            makeMethodBinding<Fraction (LargeInteger, Fraction)> ("+", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} + b;
             }),
 
             makeMethodBinding<double (LargeInteger, double)> ("+", +[](const LargeInteger &a, double b) {
@@ -45,6 +61,10 @@ MethodCategories LiteralInteger::__instanceMethods__()
                 return a - b;
             }),
 
+            makeMethodBinding<Fraction (LargeInteger, Fraction)> ("-", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} - b;
+            }),
+
             makeMethodBinding<double (LargeInteger, double)> ("-", +[](const LargeInteger &a, double b) {
                 return a.asDouble() - b;
             }),
@@ -52,6 +72,10 @@ MethodCategories LiteralInteger::__instanceMethods__()
             // Multiplication
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("*", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a * b;
+            }),
+
+            makeMethodBinding<Fraction (LargeInteger, Fraction)> ("*", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} * b;
             }),
 
             makeMethodBinding<double (LargeInteger, double)> ("*", +[](const LargeInteger &a, double b) {
@@ -64,6 +88,13 @@ MethodCategories LiteralInteger::__instanceMethods__()
                     throw DivisionByZeroError();
 
                 return Fraction{a, b}.reduced();
+            }),
+
+            makeMethodBinding<Fraction (LargeInteger, Fraction)> ("/", +[](const LargeInteger &a, const Fraction &b) {
+                if(b.numerator.isZero())
+                    throw DivisionByZeroError();
+
+                return Fraction(a) / b;
             }),
 
             makeMethodBinding<double (LargeInteger, double)> ("/", +[](const LargeInteger &a, double b) {
@@ -123,9 +154,9 @@ LiteralIntegerPtr LiteralInteger::makeFor(LargeInteger &&value)
     return result;
 }
 
-LiteralIntegerPtr LiteralInteger::makeForCharacter(char32_t value)
+LiteralCharacterPtr LiteralInteger::makeForCharacter(char32_t value)
 {
-    LiteralIntegerPtr result = std::make_shared<LiteralCharacter> ();
+    LiteralCharacterPtr result = std::make_shared<LiteralCharacter> ();
     result->value = LargeInteger{value};
     return result;
 }

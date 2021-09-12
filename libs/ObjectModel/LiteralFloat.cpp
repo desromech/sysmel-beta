@@ -27,39 +27,55 @@ MethodCategories LiteralFloat::__instanceMethods__()
             }),
 
             // Addition
-            makeMethodBinding<double (double, double)> ("+", +[](double a, double b) {
-                return a + b;
-            }),
-
             makeMethodBinding<double (double, LargeInteger)> ("+", +[](double a, const LargeInteger &b) {
                 return a + b.asDouble();
             }),
 
-            // Subtraction
-            makeMethodBinding<double (double, double)> ("-", +[](double a, double b) {
-                return a - b;
+            makeMethodBinding<double (double, Fraction)> ("+", +[](double a, const Fraction &b) {
+                return a + b.asDouble();
             }),
 
+            makeMethodBinding<double (double, double)> ("+", +[](double a, double b) {
+                return a + b;
+            }),
+
+            // Subtraction
             makeMethodBinding<double (double, LargeInteger)> ("-", +[](double a, const LargeInteger &b) {
                 return a - b.asDouble();
             }),
 
-            // Multiplication
-            makeMethodBinding<double (double, double)> ("*", +[](double a, double b) {
-                return a * b;
+            makeMethodBinding<double (double, Fraction)> ("-", +[](double a, const Fraction &b) {
+                return a - b.asDouble();
             }),
 
+            makeMethodBinding<double (double, double)> ("-", +[](double a, double b) {
+                return a - b;
+            }),
+
+            // Multiplication
             makeMethodBinding<double (double, LargeInteger)> ("*", +[](double a, const LargeInteger &b) {
                 return a * b.asDouble();
             }),
 
-            // Division
-            makeMethodBinding<double (double, double)> ("/", +[](double a, double b) {
-                return a / b;
+            makeMethodBinding<double (double, Fraction)> ("*", +[](double a, const Fraction &b) {
+                return a * b.asDouble();
             }),
 
+            makeMethodBinding<double (double, double)> ("*", +[](double a, double b) {
+                return a * b;
+            }),
+
+            // Division
             makeMethodBinding<double (double, LargeInteger)> ("/", +[](double a, const LargeInteger &b) {
                 return a / b.asDouble();
+            }),
+
+            makeMethodBinding<double (double, Fraction)> ("/", +[](double a, const Fraction &b) {
+                return a / b.asDouble();
+            }),
+
+            makeMethodBinding<double (double, double)> ("/", +[](double a, double b) {
+                return a / b;
             }),
         }}
     };

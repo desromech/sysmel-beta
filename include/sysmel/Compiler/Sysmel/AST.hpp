@@ -258,7 +258,7 @@ struct ASTFloatLiteralNode : ASTNode
 
 struct ASTCharacterLiteralNode : ASTNode
 {
-    uint32_t value;
+    char32_t value;
 
     virtual std::any accept(ASTVisitor &visitor) override
     {

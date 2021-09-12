@@ -1,10 +1,7 @@
 #include "sysmel/Compiler/Sysmel/Parser.hpp"
 #include "sysmel/Compiler/Sysmel/Visitors.hpp"
 #include "sysmel/ObjectModel/AnyValue.hpp"
-#include "sysmel/ObjectModel/LiteralInteger.hpp"
-#include "sysmel/ObjectModel/LiteralFloat.hpp"
-#include "sysmel/ObjectModel/LiteralString.hpp"
-#include "sysmel/ObjectModel/LiteralSymbol.hpp"
+#include "sysmel/ObjectModel/Wrappers.hpp"
 #include "sysmel/ObjectModel/RuntimeContext.hpp"
 #include <fstream>
 #include <iostream>
@@ -71,27 +68,27 @@ public:
 
     virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
-        return AnyValuePtr(LiteralInteger::makeFor(node.value));
+        return wrapValue(node.value);
     }
 
     virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
-        return AnyValuePtr(std::make_shared<LiteralFloat> (node.value));
+        return wrapValue(node.value);
     }
 
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
-        return AnyValuePtr(LiteralInteger::makeForCharacter(node.value));
+        return wrapValue(node.value);
     }
 
     virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
-        return AnyValuePtr(LiteralString::makeFor(node.value));
+        return wrapValue(node.value);
     }
 
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
-        return AnyValuePtr(LiteralSymbol::intern(node.value));
+        return internSymbol(node.value);
     }
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override

@@ -21,6 +21,11 @@ bool LiteralCharacter::isLiteralCharacter() const
     return true;
 }
 
+MethodCategories LiteralCharacter::__instanceMethods__()
+{
+    return MethodCategories{ };
+}
+
 std::string LiteralCharacter::asString() const
 {
     std::string result;

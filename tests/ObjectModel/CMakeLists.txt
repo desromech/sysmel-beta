@@ -5,6 +5,7 @@ set(CompilerTests_Sources
     
     BootstrapModule.cpp
     Wrappers.cpp
+    Type.cpp
 )
 
 add_executable(ObjectModelTests ${CompilerTests_Sources})

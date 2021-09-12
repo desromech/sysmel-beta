@@ -13,6 +13,9 @@ namespace ObjectModel
 class LiteralInteger;
 typedef std::shared_ptr<LiteralInteger> LiteralIntegerPtr;
 
+class LiteralCharacter;
+typedef std::shared_ptr<LiteralCharacter> LiteralCharacterPtr;
+
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
@@ -25,7 +28,7 @@ public:
 
     static LiteralIntegerPtr makeFor(const LargeInteger &value);
     static LiteralIntegerPtr makeFor(LargeInteger &&value);
-    static LiteralIntegerPtr makeForCharacter(char32_t value);
+    static LiteralCharacterPtr makeForCharacter(char32_t value);
 
     virtual bool isLiteralInteger() const override;
     virtual std::string printString() const override;

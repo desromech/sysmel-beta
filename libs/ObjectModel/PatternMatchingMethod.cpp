@@ -41,6 +41,7 @@ AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selecto
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);
+            bestRank = result.matchingRank;
         }
         else if(result.matchingRank == bestRank)
         {

@@ -40,7 +40,7 @@ public:
     {
         selector = initialSelector;
         signature = MethodSignature{
-            wrapperTypeFor<ResultType> (),
+            wrapperTypeForReturning<ResultType> (),
             wrapperTypeFor<ReceiverType> (),
             {
                 wrapperTypeFor<Args> ()...
@@ -83,7 +83,7 @@ public:
     {
         selector = initialSelector;
         signature = MethodSignature{
-            wrapperTypeFor<ResultType> (),
+            wrapperTypeForReturning<ResultType> (),
             wrapperTypeFor<ReceiverType*> (),
             {
                 wrapperTypeFor<Args> ()...
@@ -127,7 +127,7 @@ public:
     {
         selector = initialSelector;
         signature = MethodSignature{
-            wrapperTypeFor<ResultType> (),
+            wrapperTypeForReturning<ResultType> (),
             wrapperTypeFor<const ReceiverType*> (),
             {
                 wrapperTypeFor<Args> ()...

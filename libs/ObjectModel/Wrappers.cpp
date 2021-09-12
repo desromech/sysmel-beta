@@ -2,6 +2,7 @@
 #include "sysmel/ObjectModel/LargeInteger.hpp"
 #include "sysmel/ObjectModel/LiteralFraction.hpp"
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
+#include "sysmel/ObjectModel/LiteralCharacter.hpp"
 #include "sysmel/ObjectModel/LiteralFloat.hpp"
 #include "sysmel/ObjectModel/LiteralString.hpp"
 #include <algorithm>

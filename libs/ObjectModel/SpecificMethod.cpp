@@ -1,6 +1,7 @@
 #include "sysmel/ObjectModel/SpecificMethod.hpp"
 #include "sysmel/ObjectModel/Type.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include <iostream>
 
 namespace SysmelMoebius
 {

@@ -17,6 +17,8 @@ class LiteralCharacter : public SubtypeOf<LiteralPositiveInteger, LiteralCharact
 public:
     static constexpr char const __typeName__[] = "LiteralCharacter";
 
+    static MethodCategories __instanceMethods__();
+    
     virtual bool isLiteralCharacter() const override;
     virtual std::string asString() const override;
     virtual std::string printString() const override;
