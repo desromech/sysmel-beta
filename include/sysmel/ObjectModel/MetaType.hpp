@@ -20,10 +20,10 @@ public:
     virtual void setThisType(const TypePtr &instanceType);
 
     /// This method returns the instance type.
-    virtual TypePtr getInstanceType();
+    virtual TypePtr getInstanceType() override;
 
     /// This method returns the meta type.
-    virtual TypePtr getMetaType();
+    virtual TypePtr getMetaType() override;
 
     std::string printString() const override;
 protected:

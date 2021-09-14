@@ -2,6 +2,7 @@
 #include "sysmel/ObjectModel/StringUtilities.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include <unordered_map>
+#include <sstream>
 
 namespace SysmelMoebius
 {

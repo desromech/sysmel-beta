@@ -24,9 +24,9 @@ public:
     virtual bool isLiteralFraction() const override;
     virtual std::string printString() const override;
 
-    virtual Fraction unwrapAsFraction() const;
-    virtual float unwrapAsFloat32() const;
-    virtual double unwrapAsFloat64() const;
+    virtual Fraction unwrapAsFraction() const override;
+    virtual float unwrapAsFloat32() const override;
+    virtual double unwrapAsFloat64() const override;
 
     const Fraction &getValue() const
     {

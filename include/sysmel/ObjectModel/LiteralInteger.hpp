@@ -33,24 +33,24 @@ public:
     virtual bool isLiteralInteger() const override;
     virtual std::string printString() const override;
 
-    virtual uint8_t unwrapAsUInt8() const;
-    virtual int8_t unwrapAsInt8() const;
-    virtual uint16_t unwrapAsUInt16() const;
-    virtual int16_t unwrapAsInt16() const;
-    virtual uint32_t unwrapAsUInt32() const;
-    virtual int32_t unwrapAsInt32() const;
-    virtual uint64_t unwrapAsUInt64() const;
-    virtual int64_t unwrapAsInt64() const;
-    virtual LargeInteger unwrapAsLargeInteger() const;
+    virtual uint8_t unwrapAsUInt8() const override;
+    virtual int8_t unwrapAsInt8() const override;
+    virtual uint16_t unwrapAsUInt16() const override;
+    virtual int16_t unwrapAsInt16() const override;
+    virtual uint32_t unwrapAsUInt32() const override;
+    virtual int32_t unwrapAsInt32() const override;
+    virtual uint64_t unwrapAsUInt64() const override;
+    virtual int64_t unwrapAsInt64() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
-    virtual char unwrapAsChar8() const;
-    virtual char16_t unwrapAsChar16() const;
-    virtual char32_t unwrapAsChar32() const;
+    virtual char unwrapAsChar8() const override;
+    virtual char16_t unwrapAsChar16() const override;
+    virtual char32_t unwrapAsChar32() const override;
 
-    virtual Fraction unwrapAsFraction() const;
+    virtual Fraction unwrapAsFraction() const override;
     
-    virtual float unwrapAsFloat32() const;
-    virtual double unwrapAsFloat64() const;
+    virtual float unwrapAsFloat32() const override;
+    virtual double unwrapAsFloat64() const override;
 
     const LargeInteger &getValue() const
     {

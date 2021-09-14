@@ -3,6 +3,7 @@
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include <algorithm>
+#include <sstream>
 
 namespace SysmelMoebius
 {
