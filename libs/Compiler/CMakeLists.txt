@@ -1,6 +1,7 @@
 set(Parser_Sources
     Sysmel/Scanner.cpp
     Sysmel/Parser.cpp
+    Sysmel/SysmelLanguageSupport.cpp
 )
 
 set(Compiler_Sources

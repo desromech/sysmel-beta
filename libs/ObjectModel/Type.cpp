@@ -16,8 +16,14 @@ MethodCategories Type::__instanceMethods__()
     return MethodCategories{
         {"accessing", {
             makeMethodBinding("supertype", &Type::getSupertype),
+            makeMethodBinding("subtypes", &Type::getSubtypes),
         }},
     };
+}
+
+bool Type::isType() const
+{
+    return true;
 }
 
 TypePtr Type::getSupertype()
@@ -28,6 +34,17 @@ TypePtr Type::getSupertype()
 void Type::setSupertype(const TypePtr &newSupertype)
 {
     supertype = newSupertype;
+}
+
+const TypePtrList &Type::getSubtypes()
+{
+    return subtypes;
+}
+
+void Type::registerSubtype(const TypePtr &subtype)
+{
+    if(!subtype->isMetaType())
+        subtypes.push_back(subtype);
 }
 
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
@@ -128,6 +145,28 @@ AnyValuePtr Type::runWithArgumentsIn(const AnyValuePtr &selector, const std::vec
         return method->runWithArgumentsIn(selector, arguments, receiver);
 
     throw MessageNotUnderstood("Message " + selector->printString() + " is not understood by " + receiver->printString() + ".");
+}
+
+void Type::subtypesDo(const TypeIterationBlock &aBlock)
+{
+    for(auto &subtype : subtypes)
+        aBlock(subtype);
+}
+
+void Type::allSubtypesDo(const TypeIterationBlock &aBlock)
+{
+    TypeIterationBlock recursiveBlock = [&](const TypePtr &type) {
+        aBlock(type);
+        type->subtypesDo(recursiveBlock);
+    };
+
+    subtypesDo(recursiveBlock);
+}
+
+void Type::withAllSubtypesDo(const TypeIterationBlock &aBlock)
+{
+    aBlock(shared_from_this());
+    allSubtypesDo(aBlock);
 }
 
 } // End of namespace ObjectModel

@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_OBJECT_MODEL_MODULE_REFERENCE_HPP
 #pragma once
 
-#include "AnyValue.hpp"
+#include "CompilerObject.hpp"
 #include "LiteralSymbol.hpp"
 #include "Module.hpp"
 
@@ -14,7 +14,7 @@ namespace ObjectModel
 /**
  * I am a reference towards a particular module in the system
  */
-class ModuleReference : public SubtypeOf<AnyValue, ModuleReference>
+class ModuleReference : public SubtypeOf<CompilerObject, ModuleReference>
 {
 public:
     static constexpr char const __typeName__[] = "ModuleReference";

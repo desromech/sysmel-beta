@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -11,6 +12,11 @@ static BootstrapTypeRegistration<ASTIdentifierReferenceNode> ASTIdentifierRefere
 bool ASTIdentifierReferenceNode::isASTIdentifierReferenceNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTIdentifierReferenceNode::encodeAsSExpression() const
+{
+    return wrapValue(AnyValuePtrList{internSymbol("identifier"), identifier});
 }
 
 } // End of namespace ObjectModel

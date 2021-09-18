@@ -16,6 +16,7 @@ namespace ObjectModel
 
 class AnyValue;
 typedef std::shared_ptr<AnyValue> AnyValuePtr;
+typedef std::vector<AnyValuePtr> AnyValuePtrList;
 
 class Type;
 typedef std::shared_ptr<Type> TypePtr;
@@ -243,13 +244,31 @@ public:
     /// Is this object an AST cleanup scope node?
     virtual bool isASTClosureNode() const;
 
+    /// Is this object an AST parse error node?
+    virtual bool isASTParseErrorNode() const;
+
+    /// Is this object an AST source code?
+    virtual bool isASTSourceCode() const;
+
+    /// Is this object an AST source position?
+    virtual bool isASTSourcePosition() const;
+
+    /// Is this object an AST source code position?
+    virtual bool isASTSourceCodePosition() const;
+
     /// Is this object a program entity?
     virtual bool isProgramEntity() const;
 
     /// Is this object a type?
     virtual bool isType() const;
 
-    /// Is this object the a bootstrap defined type?
+    /// Is this object a meta type?
+    virtual bool isMetaType() const;
+
+    /// Is this object a basic type?
+    virtual bool isBasicType() const;
+
+    /// Is this object a bootstrap defined type?
     virtual bool isBootstrapType() const;
 
     /// Is this object a macro invocation context?
@@ -278,6 +297,9 @@ public:
 
     /// Is this object a literal value?
     virtual bool isLiteralValue() const;
+
+    /// Is this object a literal array?
+    virtual bool isLiteralArray() const;
 
     /// Is this object a literal number?
     virtual bool isLiteralNumber() const;
@@ -318,11 +340,17 @@ public:
     /// Is this object a literal void?
     virtual bool isLiteralVoid() const;
 
+    /// Is this object a literal undefined?
+    virtual bool isLiteralUndefined() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 
     /// Convert the object into a string for printing purposes.
     virtual std::string printString() const;
+
+    /// Reads the wrapped value as boolean.
+    virtual bool unwrapAsBoolean() const;
 
     /// Reads the wrapped value as an UInt8.
     virtual uint8_t unwrapAsUInt8() const;
@@ -371,6 +399,9 @@ public:
 
     /// Convert the object into a string.
     virtual std::string unwrapAsString() const;
+
+    /// Convert the object into an array.
+    virtual AnyValuePtrList unwrapAsArray() const;
 
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);

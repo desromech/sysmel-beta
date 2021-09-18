@@ -115,12 +115,42 @@ bool AnyValue::isASTClosureNode() const
     return false;
 }
 
+bool AnyValue::isASTParseErrorNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSourceCode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSourcePosition() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSourceCodePosition() const
+{
+    return false;
+}
+
 bool AnyValue::isProgramEntity() const
 {
     return false;
 }
 
 bool AnyValue::isType() const
+{
+    return false;
+}
+
+bool AnyValue::isMetaType() const
+{
+    return false;
+}
+
+bool AnyValue::isBasicType() const
 {
     return false;
 }
@@ -171,6 +201,11 @@ bool AnyValue::isTemplateMethod() const
 }
 
 bool AnyValue::isLiteralValue() const
+{
+    return false;
+}
+
+bool AnyValue::isLiteralArray() const
 {
     return false;
 }
@@ -240,6 +275,11 @@ bool AnyValue::isLiteralVoid() const
     return false;
 }
 
+bool AnyValue::isLiteralUndefined() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();
@@ -248,6 +288,11 @@ std::string AnyValue::asString() const
 std::string AnyValue::printString() const
 {
     return "a " + getType()->printString();
+}
+
+bool AnyValue::unwrapAsBoolean() const
+{
+    throw CannotUnwrap();
 }
 
 uint8_t AnyValue::unwrapAsUInt8() const
@@ -326,6 +371,11 @@ char32_t AnyValue::unwrapAsChar32() const
 }
 
 std::string AnyValue::unwrapAsString() const
+{
+    throw CannotUnwrap();
+}
+
+AnyValuePtrList AnyValue::unwrapAsArray() const
 {
     throw CannotUnwrap();
 }

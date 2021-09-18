@@ -1,5 +1,8 @@
 #include "sysmel/ObjectModel/Wrappers.hpp"
 #include "sysmel/ObjectModel/LargeInteger.hpp"
+#include "sysmel/ObjectModel/LiteralBooleanTrue.hpp"
+#include "sysmel/ObjectModel/LiteralBooleanFalse.hpp"
+#include "sysmel/ObjectModel/LiteralArray.hpp"
 #include "sysmel/ObjectModel/LiteralFraction.hpp"
 #include "sysmel/ObjectModel/LiteralInteger.hpp"
 #include "sysmel/ObjectModel/LiteralCharacter.hpp"
@@ -11,6 +14,13 @@ namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+
+AnyValuePtr WrapValue<bool>::apply(bool value)
+{
+    if(value)
+        return LiteralBooleanTrue::uniqueInstance();
+    return LiteralBooleanFalse::uniqueInstance();
+}
 
 AnyValuePtr WrapValue<uint32_t>::apply(uint32_t value)
 {
@@ -55,6 +65,11 @@ AnyValuePtr WrapValue<double>::apply(double value)
 AnyValuePtr WrapValue<std::string>::apply(const std::string &value)
 {
     return LiteralString::makeFor(value);
+}
+
+AnyValuePtr WrapValue<AnyValuePtrList>::apply(const AnyValuePtrList &content)
+{
+    return LiteralArray::makeFor(content);
 }
 
 } // End of namespace ObjectModel

@@ -3,11 +3,14 @@
 #pragma once
 
 #include "ProgramEntity.hpp"
+#include <functional>
 
 namespace SysmelMoebius
 {
 namespace ObjectModel
 {
+
+typedef std::function<void (TypePtr)> TypeIterationBlock;
 
 /**
  * I am the base interface for all of the types that are defined in the system.
@@ -19,11 +22,19 @@ public:
 
     static MethodCategories __instanceMethods__();
 
+    virtual bool isType() const;
+
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual TypePtr getSupertype();
 
     /// This method sets the super type.
     virtual void setSupertype(const TypePtr &newSupertype);
+
+    /// This method retrieves the subtypes.
+    virtual const TypePtrList &getSubtypes();
+
+    /// This method registers a subtypes.
+    virtual void registerSubtype(const TypePtr &subtype);
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector);
@@ -58,10 +69,20 @@ public:
     /// This method returns the meta type.
     virtual TypePtr getMetaType();
 
+    /// This methods iterates through the direct subtypes.
+    void subtypesDo(const TypeIterationBlock &aBlock);
+
+    /// This methods iterates through all the direct subtypes.
+    void allSubtypesDo(const TypeIterationBlock &aBlock);
+
+    /// This methods iterates through all the direct subtypes and myself.
+    void withAllSubtypesDo(const TypeIterationBlock &aBlock);
+
 protected:
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
     TypePtr supertype;
+    TypePtrList subtypes;
 
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;

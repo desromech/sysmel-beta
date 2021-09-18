@@ -9,6 +9,9 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+class ASTSourcePosition;
+typedef std::shared_ptr<ASTSourcePosition> ASTSourcePositionPtr;
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -18,6 +21,13 @@ public:
     static constexpr char const __typeName__[] = "ASTNode";
 
     virtual bool isASTNode() const override;
+
+    /// This method encodes the AST node as a s-expression for debugging purposes.
+    virtual AnyValuePtr encodeAsSExpression() const;
+
+    virtual std::string printString() const;
+
+    ASTSourcePositionPtr sourcePosition;
 };
 
 } // End of namespace ObjectModel

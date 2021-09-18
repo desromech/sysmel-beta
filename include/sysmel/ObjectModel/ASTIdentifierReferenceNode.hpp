@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTIdentifierReferenceNode";
 
     virtual bool isASTIdentifierReferenceNode() const override;
+    virtual AnyValuePtr encodeAsSExpression() const override;
 
     AnyValuePtr identifier;
 };

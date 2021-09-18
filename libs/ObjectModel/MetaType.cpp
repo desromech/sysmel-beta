@@ -13,6 +13,11 @@ void MetaType::setThisType(const TypePtr &instanceType)
     thisType = instanceType;
 }
 
+bool MetaType::isMetaType() const
+{
+    return true;
+}
+
 TypePtr MetaType::getInstanceType()
 {
     return thisType;

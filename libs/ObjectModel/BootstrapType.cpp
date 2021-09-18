@@ -11,6 +11,11 @@ namespace ObjectModel
 
 static BootstrapTypeRegistration<BootstrapType> bootstrapTypeTypeRegistration;
 
+bool BootstrapType::isBootstrapType() const
+{
+    return true;
+}
+
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;

@@ -10,7 +10,11 @@ set(ObjectModel_Sources
     ASTLiteralValueNode.cpp
     ASTMessageSendNode.cpp
     ASTNode.cpp
+    ASTParseErrorNode.cpp
     ASTSequenceNode.cpp
+    ASTSourceCode.cpp
+    ASTSourceCodePosition.cpp
+    ASTSourcePosition.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
@@ -18,6 +22,11 @@ set(ObjectModel_Sources
     BootstrapTypeRegistration.cpp
     CompilerObject.cpp
     Fraction.cpp
+    LanguageSupport.cpp
+    LiteralArray.cpp
+    LiteralBoolean.cpp
+    LiteralBooleanTrue.cpp
+    LiteralBooleanFalse.cpp
     LiteralInteger.cpp
     LiteralNegativeInteger.cpp
     LiteralNumber.cpp
@@ -25,9 +34,11 @@ set(ObjectModel_Sources
     LiteralFraction.cpp
     LiteralPositiveInteger.cpp
     LiteralCharacter.cpp
-    LiteralValue.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    LiteralUndefined.cpp
+    LiteralValue.cpp
+    LiteralVoid.cpp
     MacroInvocationContext.cpp
     MetaType.cpp
     Method.cpp

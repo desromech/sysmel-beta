@@ -55,18 +55,26 @@ public:
         if(signature.argumentTypes.size() != arguments.size())
             throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
 
-        size_t index = 0;
+        return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
+    }
+private:
+
+    template<typename T, T... ArgIndices>
+    AnyValuePtr doRunWithArgumentsIn(std::integer_sequence<T, ArgIndices...> indicesSeq, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
+    {
+        (void)indicesSeq;
+
         if constexpr(std::is_same<ResultType, void>::value)
         {
-            functor(unwrapValue<ReceiverType> (receiver), unwrapValue<Args> (arguments[index++])...);
+            functor(unwrapValue<ReceiverType> (receiver), unwrapValue<Args> (arguments[ArgIndices])...);
             return getVoidConstant();
         }
         else
         {
-            return wrapValue(functor(unwrapValue<ReceiverType> (receiver), unwrapValue<Args> (arguments[index++])...));
+            return wrapValue(functor(unwrapValue<ReceiverType> (receiver), unwrapValue<Args> (arguments[ArgIndices])...));
         }
     }
-private:
+
     FT functor;
 };
 
@@ -98,20 +106,26 @@ public:
         if(signature.argumentTypes.size() != arguments.size())
             throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
 
-        size_t index = 0;
-        
+        return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
+    }
+private:
+    template<typename T, T... ArgIndices>
+    AnyValuePtr doRunWithArgumentsIn(std::integer_sequence<T, ArgIndices...> indicesSeq, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
+    {
+        (void)indicesSeq;
+
         auto unwrappedReceiver = unwrapValue<ReceiverType*> (receiver);
         if constexpr(std::is_same<ResultType, void>::value)
         {
-            (unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[index++])...);
+            (unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[ArgIndices])...);
             return getVoidConstant();
         }
         else
         {
-            return wrapValue((unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[index++])...));
+            return wrapValue((unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[ArgIndices])...));
         }
     }
-private:
+
     MemberFunctionPointerType memberFunctionPointer;
 };
 
@@ -142,20 +156,27 @@ public:
         if(signature.argumentTypes.size() != arguments.size())
             throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
 
-        size_t index = 0;
-        
-        auto unwrappedReceiver = unwrapValue<const ReceiverType*> (receiver);
+        return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
+    }
+
+private:
+    template<typename T, T... ArgIndices>
+    AnyValuePtr doRunWithArgumentsIn(std::integer_sequence<T, ArgIndices...> indicesSeq, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
+    {
+        (void)indicesSeq;
+
+        auto unwrappedReceiver = unwrapValue<ReceiverType*> (receiver);
         if constexpr(std::is_same<ResultType, void>::value)
         {
-            (unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[index++])...);
+            (unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[ArgIndices])...);
             return getVoidConstant();
         }
         else
         {
-            return wrapValue((unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[index++])...));
+            return wrapValue((unwrappedReceiver->*memberFunctionPointer)(unwrapValue<Args> (arguments[ArgIndices])...));
         }
     }
-private:
+
     MemberFunctionPointerType memberFunctionPointer;
 };
 

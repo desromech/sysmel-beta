@@ -43,6 +43,14 @@ void BootstrapModule::initialize()
     // We are skipping over BootstrapType because not everying is going to be one of them.
     AnyValue::__staticType__()->getType()->setSupertype(Type::__staticType__());
 
+    // Register each type with its supertype.
+    for(const auto &type : bootstrapDefinedTypeTable)
+    {
+        auto supertype = type->getSupertype();
+        if(supertype)
+            supertype->registerSubtype(type);
+    }
+
     // Third pass: apply the extension methods.
     for(const auto &[typeMetadata, extensionMethods] : getRegisteredBootstrapExtensionMethods())
     {

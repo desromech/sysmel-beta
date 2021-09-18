@@ -19,6 +19,8 @@ public:
 
     virtual bool isASTSequenceNode() const override;
 
+    virtual AnyValuePtr encodeAsSExpression() const override;
+
     ASTNodePtrList expressions;
 };
 

@@ -16,6 +16,12 @@ namespace ObjectModel
 //=============================================================================
 
 template<>
+struct WrapperTypeFor<bool>
+{
+    static TypePtr apply();
+};
+
+template<>
 struct WrapperTypeFor<LargeInteger> 
 {
     static TypePtr apply();
@@ -93,6 +99,12 @@ struct WrapperTypeFor<AnyValuePtr>
     }
 };
 
+template<>
+struct WrapperTypeFor<AnyValuePtrList>
+{
+    static TypePtr apply();
+};
+
 template<typename T>
 struct WrapperTypeFor<std::shared_ptr<T>> : std::enable_if<std::is_base_of<AnyValue, T>::value>
 {
@@ -119,6 +131,9 @@ struct WrapperTypeFor<const T*> : std::enable_if<std::is_base_of<AnyValue, T>::v
         return T::__staticType__();
     }
 };
+
+template<typename T>
+struct WrapperTypeFor<std::vector<T>> : WrapperTypeFor<std::vector<AnyValuePtr>> {};
 
 template<typename T>
 struct WrapperTypeFor<T&> : WrapperTypeFor<T> {};
@@ -153,6 +168,12 @@ TypePtr wrapperTypeForReturning()
 //=============================================================================
 // Wrap Value
 //=============================================================================
+template<>
+struct WrapValue<bool>
+{
+    static AnyValuePtr apply(bool value);
+};
+
 template<>
 struct WrapValue<uint32_t>
 {
@@ -245,6 +266,28 @@ struct WrapValue<AnyValuePtr>
     }
 };
 
+template<>
+struct WrapValue<AnyValuePtrList>
+{
+    static AnyValuePtr apply(const AnyValuePtrList &content);
+};
+
+template<typename T>
+struct WrapValue<std::vector<T>>
+{
+    static AnyValuePtr apply(const std::vector<T> &content)
+    {
+        AnyValuePtrList objectContent;
+        objectContent.reserve(content.size());
+        for(const auto &element : content)
+            objectContent.push_back(WrapValue<T>::apply(element));
+
+        return WrapValue<AnyValuePtrList>::apply(objectContent);
+    }
+};
+
+
+
 template<typename T>
 struct WrapValue<std::shared_ptr<T>>
     : std::enable_if<std::is_base_of<AnyValue, T>::value, WrapValue<AnyValuePtr>>::type {};
@@ -267,6 +310,15 @@ AnyValuePtr wrapValue(T &&value)
 //=============================================================================
 // Unwrap Value
 //=============================================================================
+
+template<>
+struct UnwrapValue<bool>
+{
+    static bool apply(const AnyValuePtr &value)
+    {
+        return value->unwrapAsBoolean();
+    }
+};
 
 template<>
 struct UnwrapValue<uint8_t>
@@ -460,7 +512,10 @@ struct UnwrapValue<const T*> : std::enable_if<std::is_base_of<AnyValue, T>::valu
 };
 
 template<typename T>
-T unwrapValue(const AnyValuePtr &value)
+struct UnwrapValue<const T &> : UnwrapValue<T> {};
+
+template<typename T>
+auto unwrapValue(const AnyValuePtr &value)
 {
     return UnwrapValue<T>::apply(value);
 }

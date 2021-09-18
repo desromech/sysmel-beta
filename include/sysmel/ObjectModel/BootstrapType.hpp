@@ -17,6 +17,8 @@ class BootstrapType : public SubtypeOf<Type, BootstrapType>
 public:
     static constexpr char const __typeName__[] = "BootstrapType";
 
+    virtual bool isBootstrapType() const override;
+
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
 
     std::string printString() const override;

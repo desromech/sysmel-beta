@@ -1,183 +1,39 @@
-#include "sysmel/Compiler/Sysmel/Parser.hpp"
-#include "sysmel/Compiler/Sysmel/Visitors.hpp"
+#include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
 #include "sysmel/ObjectModel/AnyValue.hpp"
+#include "sysmel/ObjectModel/ASTNode.hpp"
 #include "sysmel/ObjectModel/Wrappers.hpp"
 #include "sysmel/ObjectModel/RuntimeContext.hpp"
+#include "sysmel/ObjectModel/BootstrapModule.hpp"
+#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
+#include "sysmel/ObjectModel/Type.hpp"
 #include <fstream>
 #include <iostream>
-
-static std::string readContentFromFileNamed(const std::string &fileName)
-{
-    if(fileName == "-")
-    {
-        return std::string(std::istreambuf_iterator<char> (std::cin), std::istreambuf_iterator<char> ());
-    }
-
-    std::ifstream in(fileName);
-    if(!in.good())
-    {
-        std::cerr << "Failed to read file named: " << fileName << std::endl;
-        return std::string();
-    }
-
-    return std::string(std::istreambuf_iterator<char> (in), std::istreambuf_iterator<char> ());
-}
-
+/*
 namespace TestEvaluator
 {
 using namespace SysmelMoebius::Compiler::Sysmel;
 using namespace SysmelMoebius::ObjectModel;
 
-class BasicASTEvaluator : public ASTVisitor
+
+}
+*/
+
+using namespace SysmelMoebius::ObjectModel;
+
+void parseString(const std::string &sourceString, const std::string &sourceName)
 {
-public:
-    virtual std::any visitParseErrorNode(ASTParseErrorNode &) override
-    {
-        return std::any();
-    }
+    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto ast = language->parseSourceStringNamed(sourceString, sourceName);
 
-    virtual std::any visitExpressionListNode(ASTExpressionListNode &node) override
-    {
-        std::any result;
-        for(auto expr : node.expressions)
-        {
-            result = visitNode(*expr);
-        }
-
-        return result;
-    }
-    
-    virtual std::any visitPragmaNode(ASTPragmaNode &) override
-    {
-        return std::any();
-    }
-    
-    virtual std::any visitBlockNode(ASTBlockNode &) override
-    {
-        return std::any();
-    }
-    
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &)
-    {
-        return std::any();
-    }
-    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &)
-    {
-        return std::any();
-    }
-
-    virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
-    {
-        return wrapValue(node.value);
-    }
-
-    virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
-    {
-        return wrapValue(node.value);
-    }
-
-    virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
-    {
-        return wrapValue(node.value);
-    }
-
-    virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
-    {
-        return wrapValue(node.value);
-    }
-
-    virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
-    {
-        return internSymbol(node.value);
-    }
-
-    virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
-    {
-        auto receiver = std::any_cast<AnyValuePtr> (visitNode(*node.receiver));
-
-        auto selector = std::any_cast<AnyValuePtr> (visitNode(*node.selector));
-
-        std::vector<AnyValuePtr> arguments;
-        arguments.reserve(node.arguments.size());
-        for(auto &arg : node.arguments)
-        {
-            auto argValue = std::any_cast<AnyValuePtr> (visitNode(*arg));
-            arguments.push_back(argValue);
-        }
-
-        return receiver->performWithArguments(selector, arguments);
-    }
-
-    virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitCallNode(ASTCallNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitSubscriptNode(ASTSubscriptNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitQuoteNode(ASTQuoteNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &) override
-    {
-        return std::any();
-    }
-
-    virtual std::any visitSpliceNode(ASTSpliceNode &) override
-    {
-        return std::any();
-    }
-};
-
+    std::cout << ast->printString() << std::endl;
 }
 
 void evalString(const std::string &sourceString, const std::string &sourceName)
 {
+    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
+
+/*
     using namespace SysmelMoebius::Compiler::Sysmel;
     using namespace SysmelMoebius::ObjectModel;
     auto ast = parseString(sourceString, sourceName);
@@ -191,22 +47,35 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
     if(hasError)
         return;
 
-    auto result = std::any_cast<AnyValuePtr> (TestEvaluator::BasicASTEvaluator().visitNode(*ast));
+*/
+
     std::cout << result->printString() << std::endl;
+
 }
 
 void evalFileNamed(const std::string &fileName)
 {
-    auto content = readContentFromFileNamed(fileName);
-    if(content.empty())
-        return;
+    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto result = language->evaluateFileNamed(fileName);
+    std::cout << result->printString() << std::endl;
+}
 
-    evalString(content, fileName == "-" ? "stdin" : fileName);
+void dumpBootstrapEnvironment()
+{
+    auto bootstrapModule = RuntimeContext::getActive()->getBootstrapModule();
+    AnyValue::__staticType__()->withAllSubtypesDo([&](const TypePtr &type) {
+        std::cout << type->asString() << std::endl;
+        auto superType = type->getSupertype();
+        if(superType)
+            std::cout << "    supertype: " << superType->asString() << std::endl;
+    });
 }
 
 int main(int argc, const char *argv[])
 {
-    SysmelMoebius::ObjectModel::RuntimeContext::create()->activeDuring([&](){
+    int exitCode = 0;
+
+    RuntimeContext::create()->activeDuring([&](){
         for(int i = 1; i < argc; ++i)
         {
             std::string arg = argv[i];
@@ -214,12 +83,27 @@ int main(int argc, const char *argv[])
             {
                 evalString(argv[++i], "<command line arg>");
             }
-            else
+            else if(arg == "-parse-string")
+            {
+                parseString(argv[++i], "<command line arg>");
+            }
+            else if(arg == "-dump-bootstrap-env")
+            {
+                dumpBootstrapEnvironment();
+                return;
+            }
+            else if(!arg.empty() && arg[0] != '-')
             {
                 evalFileNamed(argv[i]);
+            }
+            else
+            {
+                std::cerr << "Unsupported command line argument " << arg << std::endl;
+                exitCode = 1;
+                return;
             }
         }
     });
 
-    return 0;
+    return exitCode;
 }
