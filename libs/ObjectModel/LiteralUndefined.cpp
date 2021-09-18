@@ -24,5 +24,10 @@ bool LiteralUndefined::isLiteralUndefined() const
     return true;
 }
 
+std::string LiteralUndefined::printString() const
+{
+    return "nil";
+}
+
 } // End of namespace ObjectModel
 } // End of namespace SysmelMoebius

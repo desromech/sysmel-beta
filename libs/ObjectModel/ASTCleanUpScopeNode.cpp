@@ -1,4 +1,5 @@
 #include "sysmel/ObjectModel/ASTCleanUpScopeNode.hpp"
+#include "sysmel/ObjectModel/BootstrapMethod.hpp"
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -11,6 +12,11 @@ static BootstrapTypeRegistration<ASTCleanUpScopeNode> ASTCleanUpScopeNodeRegistr
 bool ASTCleanUpScopeNode::isASTCleanUpScopeNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTCleanUpScopeNode::encodeAsSExpression() const
+{
+    return wrapValue(AnyValuePtrList{internSymbol("cleanUpScope"), body ? body->encodeAsSExpression() : getNilConstant()});
 }
 
 } // End of namespace ObjectModel

@@ -8,6 +8,8 @@ set(ObjectModel_Sources
     ASTIntrinsicOperationNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
+    ASTMessageChainMessageNode.cpp
+    ASTMessageChainNode.cpp
     ASTMessageSendNode.cpp
     ASTNode.cpp
     ASTParseErrorNode.cpp

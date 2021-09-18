@@ -9,6 +9,12 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
+enum class ASTClosureNodeKind : uint8_t
+{
+    Function = 0,
+    Block,
+};
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -18,6 +24,10 @@ public:
     static constexpr char const __typeName__[] = "ASTClosureNode";
 
     virtual bool isASTClosureNode() const override;
+
+    ASTClosureNodeKind kind = ASTClosureNodeKind::Function;
+    ASTNodePtr returnTypeExpression;
+    ASTNodePtr body;
 };
 
 } // End of namespace ObjectModel

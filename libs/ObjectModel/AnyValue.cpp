@@ -85,6 +85,16 @@ bool AnyValue::isASTIntrinsicOperationNode() const
     return false;
 }
 
+bool AnyValue::isASTMessageChainNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMessageChainMessageNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTMessageSendNode() const
 {
     return false;

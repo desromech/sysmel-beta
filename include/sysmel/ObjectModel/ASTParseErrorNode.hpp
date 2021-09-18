@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTParseErrorNode";
 
     virtual bool isASTParseErrorNode() const override;
+    virtual AnyValuePtr encodeAsSExpression() const override;
 
     std::string errorMessage;
 };

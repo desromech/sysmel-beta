@@ -18,8 +18,9 @@ public:
     static constexpr char const __typeName__[] = "ASTLexicalScopeNode";
 
     virtual bool isASTLexicalScopeNode() const override;
+    virtual AnyValuePtr encodeAsSExpression() const override;
 
-    AnyValuePtr body;
+    ASTNodePtr body;
 };
 
 } // End of namespace ObjectModel

@@ -24,6 +24,8 @@ public:
     static LiteralUndefinedPtr uniqueInstance();
 
     virtual bool isLiteralUndefined() const override;
+
+    virtual std::string printString() const override;
 };
 
 } // End of namespace ObjectModel

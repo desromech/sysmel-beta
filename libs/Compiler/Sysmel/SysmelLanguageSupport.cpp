@@ -5,8 +5,13 @@
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
 
+#include "sysmel/ObjectModel/ASTClosureNode.hpp"
 #include "sysmel/ObjectModel/ASTLiteralValueNode.hpp"
+#include "sysmel/ObjectModel/ASTLexicalScopeNode.hpp"
+#include "sysmel/ObjectModel/ASTCleanUpScopeNode.hpp"
 #include "sysmel/ObjectModel/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/ObjectModel/ASTMessageChainNode.hpp"
+#include "sysmel/ObjectModel/ASTMessageChainMessageNode.hpp"
 #include "sysmel/ObjectModel/ASTMessageSendNode.hpp"
 #include "sysmel/ObjectModel/ASTParseErrorNode.hpp"
 #include "sysmel/ObjectModel/ASTSequenceNode.hpp"
@@ -62,17 +67,41 @@ public:
         return std::any();
     }
     
-    virtual std::any visitBlockNode(ASTBlockNode &) override
+    virtual std::any visitBlockNode(ASTBlockNode &node) override
     {
-        return std::any();
+        auto convertedSequence = std::any_cast<ResultType> (visitNode(*node.expressionList));
+
+        auto blockPosition = convertSourcePosition(node.sourcePosition);
+
+        if(node.blockClosureSignature)
+        {
+            auto signature = std::static_pointer_cast<ASTBlockClosureSignatureNode> (node.blockClosureSignature);
+            auto blockClosureNode = std::make_shared<ObjectModel::ASTClosureNode> ();
+            blockClosureNode->kind = ObjectModel::ASTClosureNodeKind::Block;
+
+            return std::any();
+        }
+        else
+        {
+            auto lexicalScope = std::make_shared<ObjectModel::ASTLexicalScopeNode> ();
+            lexicalScope->sourcePosition = blockPosition;
+            lexicalScope->body = convertedSequence;
+
+            auto cleanUpScope = std::make_shared<ObjectModel::ASTCleanUpScopeNode> ();
+            cleanUpScope->sourcePosition = blockPosition;
+            cleanUpScope->body = lexicalScope;
+            return ResultType(cleanUpScope);
+        }
     }
     
     virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &)
     {
         return std::any();
     }
+    
     virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &)
     {
+        // This should be unreachable.
         return std::any();
     }
 
@@ -143,12 +172,31 @@ public:
 
     virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTMessageChainNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+
+        if(node.receiver)
+            convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.receiver));
+
+        convertedNode->messages.reserve(node.messages.size());
+        for(auto &message : node.messages)
+            convertedNode->messages.push_back(std::any_cast<ObjectModel::ASTMessageChainMessageNodePtr> (visitNode(*message)));
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &) override
+    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTMessageChainMessageNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+
+        convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
+
+        convertedNode->arguments.reserve(node.arguments.size());
+        for(auto &arg : node.arguments)
+            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+
+        return convertedNode;
     }
 
     virtual std::any visitCallNode(ASTCallNode &) override

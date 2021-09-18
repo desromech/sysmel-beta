@@ -226,6 +226,12 @@ public:
     /// Is this object an AST intrinsic operation node?
     virtual bool isASTIntrinsicOperationNode() const;
 
+    /// Is this object an AST message chain node?
+    virtual bool isASTMessageChainNode() const;
+
+    /// Is this object an AST single message in a chain node?
+    virtual bool isASTMessageChainMessageNode() const;
+
     /// Is this object an AST message send node?
     virtual bool isASTMessageSendNode() const;
 
