@@ -6,6 +6,7 @@ set(CompilerTests_Sources
     BootstrapModule.cpp
     Wrappers.cpp
     Type.cpp
+    StringUtilities.cpp
 )
 
 add_executable(BootstrapEnvironmentTests ${CompilerTests_Sources})

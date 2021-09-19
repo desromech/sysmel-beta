@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
+#include <iomanip>
 #include <sstream>
 
 namespace SysmelMoebius
@@ -121,9 +122,9 @@ static bool isValidBinaryOperator(const std::string &value)
     if(value.empty())
         return false;
 
-    for(size_t i = 1; i < value.size(); ++i)
+    for(auto c : value)
     {
-        if(!isOperatorCharacter(value[i]))
+        if(!isOperatorCharacter(c))
             return false;
     }
 
@@ -147,8 +148,63 @@ std::string formatSymbolLiteral(const std::string &value)
 
 std::string formatString(const std::string &format, const std::vector<std::string> &arguments)
 {
-    (void)arguments;
-    return format;
+    std::string result;
+    auto reservedSize = format.size();
+    for(const auto &arg : arguments)
+        reservedSize += arg.size();
+    result.reserve(reservedSize);
+
+    size_t currentParentCount = 0;
+    size_t openParentCount = 0;
+    size_t nextArgumentIndex = 0;
+    for(auto c : format)
+    {
+        if(openParentCount > 0)
+        {
+            if(c == '{')
+            {
+                ++currentParentCount;
+                ++openParentCount;
+                result.push_back(c);
+            }
+            else if(c == '}')
+            {
+                --openParentCount;
+                if(openParentCount > 0)
+                    result.push_back(c);
+                else
+                {
+                    if(currentParentCount == 1 && nextArgumentIndex < arguments.size())
+                        result += arguments[nextArgumentIndex];
+                }
+            }
+            else if(openParentCount > 1)
+            {
+                // Pass through escaped characters.
+                result.push_back(c);
+            }
+            else if(currentParentCount == 1 && isDigit(c))
+            {
+                // Parse the argument index digit.
+                nextArgumentIndex = nextArgumentIndex * 10 + c - '0';
+            }
+        }
+        else
+        {
+            if(c == '{')
+            {
+                ++openParentCount;
+                currentParentCount = 1;
+                nextArgumentIndex = 0;
+            }
+            else
+            {
+                result.push_back(c);
+            }
+        }
+    }
+
+    return result;
 }
 
 } // End of namespace BootstrapEnvironment
