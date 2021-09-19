@@ -57,6 +57,7 @@ set(BootstrapEnvironment_Sources
     Method.cpp
     MethodDictionary.cpp
     Module.cpp
+    ScriptModule.cpp
     ModuleReference.cpp
     PatternMatchingMethod.cpp
     ProgramEntity.cpp
@@ -64,9 +65,19 @@ set(BootstrapEnvironment_Sources
     SExpression.cpp
     SpecificMethod.cpp
     StringUtilities.cpp
-    TranslationUnitModule.cpp
+    ProgramModule.cpp
     Type.cpp
     Wrappers.cpp
 )
 
-add_library(SysmelBootstrapEnvironment SHARED ${BootstrapEnvironment_Sources})
+list(TRANSFORM BootstrapEnvironment_Sources PREPEND "BootstrapEnvironment/")
+
+set(Parser_Sources
+    Scanner.cpp
+    Parser.cpp
+    SysmelLanguageSupport.cpp
+)
+
+list(TRANSFORM Parser_Sources PREPEND "Compiler/Sysmel/")
+
+add_library(SysmelCompiler SHARED ${Parser_Sources} ${BootstrapEnvironment_Sources})

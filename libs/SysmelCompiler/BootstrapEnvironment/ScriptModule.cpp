@@ -1,13 +1,13 @@
-#include "sysmel/BootstrapEnvironment/TranslationUnitModule.hpp"
+#include "sysmel/BootstrapEnvironment/ScriptModule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
-static BootstrapTypeRegistration<TranslationUnitModule> translationUnitModuleTypeRegistration;
+static BootstrapTypeRegistration<ScriptModule> scriptModuleTypeRegistration;
 
-bool TranslationUnitModule::isTranslationUnitModule() const
+bool ScriptModule::isScriptModule() const
 {
     return true;
 }

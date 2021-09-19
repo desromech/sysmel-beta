@@ -43,7 +43,8 @@ public:
     }
     
     virtual bool isBootstrapModule() const;
-    virtual bool isTranslationUnitModule() const;
+    virtual bool isProgramModule() const;
+    virtual bool isScriptModule() const;
 
 };
 

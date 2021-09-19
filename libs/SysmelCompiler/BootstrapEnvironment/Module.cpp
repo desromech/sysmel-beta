@@ -25,7 +25,12 @@ bool Module::isBootstrapModule() const
     return false;
 }
 
-bool Module::isTranslationUnitModule() const
+bool Module::isProgramModule() const
+{
+    return false;
+}
+
+bool Module::isScriptModule() const
 {
     return false;
 }
