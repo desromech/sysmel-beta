@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeDictionaryNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMakeDictionaryNode> ASTMakeDictionaryNodeTyp
 bool ASTMakeDictionaryNode::isASTMakeDictionaryNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMakeDictionaryNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMakeDictionaryNode(shared_from_this());
 }
 
 SExpression ASTMakeDictionaryNode::asSExpression() const

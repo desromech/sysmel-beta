@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class Method;
-typedef std::shared_ptr<Method> MethodPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
 
 struct MethodPatternMatchingResult
 {

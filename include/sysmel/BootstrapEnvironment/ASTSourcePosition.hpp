@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class ASTSourcePosition;
-typedef std::shared_ptr<ASTSourcePosition> ASTSourcePositionPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
 
 /**
  * I am the interface for all of the language independent AST nodes.

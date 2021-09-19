@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTIntrinsicOperationNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -11,6 +12,11 @@ static BootstrapTypeRegistration<ASTIntrinsicOperationNode> ASTIntrinsicOperatio
 bool ASTIntrinsicOperationNode::isASTIntrinsicOperationNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTIntrinsicOperationNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitIntrinsicOperationNode(shared_from_this());
 }
 
 } // End of namespace BootstrapEnvironment

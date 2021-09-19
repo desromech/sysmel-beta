@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTLiteralValueNode";
 
     virtual bool isASTLiteralValueNode() const override;
+    virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
     void setValueAndType(const AnyValuePtr &theValue);

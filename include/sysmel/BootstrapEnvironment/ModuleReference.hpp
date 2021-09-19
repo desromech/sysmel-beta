@@ -11,6 +11,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ModuleReference);
+
 /**
  * I am a reference towards a particular module in the system
  */
@@ -23,8 +25,6 @@ protected:
     LiteralSymbolPtr name; 
     ModulePtr solvedModule;
 };
-
-typedef std::shared_ptr<ModuleReference> ModuleReferencePtr;
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

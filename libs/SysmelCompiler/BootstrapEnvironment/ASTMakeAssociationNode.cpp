@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeAssociationNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMakeAssociationNode> ASTMakeAssociationNodeT
 bool ASTMakeAssociationNode::isASTMakeAssociationNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMakeAssociationNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMakeAssociationNode(shared_from_this());
 }
 
 SExpression ASTMakeAssociationNode::asSExpression() const

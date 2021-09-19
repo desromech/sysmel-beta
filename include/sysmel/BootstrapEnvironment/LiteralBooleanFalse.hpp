@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralBooleanFalse;
-typedef std::shared_ptr<LiteralBooleanFalse> LiteralBooleanFalsePtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralBooleanFalse);
 
 
 /**

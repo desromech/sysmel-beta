@@ -9,16 +9,31 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class ASTSourcePosition;
-typedef std::shared_ptr<ASTSourcePosition> ASTSourcePositionPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTVisitor);
 
-class ASTArgumentDefinitionNode;
-typedef std::shared_ptr<ASTArgumentDefinitionNode> ASTArgumentDefinitionNodePtr;
-typedef std::vector<ASTArgumentDefinitionNodePtr> ASTArgumentDefinitionNodePtrList;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCleanUpScopeNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTClosureNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIntrinsicOperationNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLexicalScopeNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLiteralValueNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMakeAssociationNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMakeDictionaryNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMakeLiteralArrayNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMakeTupleNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainMessageNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTParseErrorNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPragmaNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuoteNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiUnquoteNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuoteNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequenceNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSpliceNode);
 
-class ASTMessageChainMessageNode;
-typedef std::shared_ptr<ASTMessageChainMessageNode> ASTMessageChainMessageNodePtr;
-typedef std::vector<ASTMessageChainMessageNodePtr> ASTMessageChainMessageNodePtrList;
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -31,6 +46,8 @@ public:
     ASTNode();
 
     virtual bool isASTNode() const override;
+
+    virtual AnyValuePtr accept(const ASTVisitorPtr &visitor);
 
     virtual std::string printString() const;
 

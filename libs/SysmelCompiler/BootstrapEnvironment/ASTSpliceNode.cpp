@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,10 @@ static BootstrapTypeRegistration<ASTSpliceNode> ASTSpliceNodeTypeRegistration;
 bool ASTSpliceNode::isASTSpliceNode() const
 {
     return true;
+}
+AnyValuePtr ASTSpliceNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitSpliceNode(shared_from_this());
 }
 
 SExpression ASTSpliceNode::asSExpression() const

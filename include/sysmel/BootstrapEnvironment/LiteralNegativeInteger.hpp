@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralNegativeInteger);
+
 /**
  * I am a literal negative integer value.
  */

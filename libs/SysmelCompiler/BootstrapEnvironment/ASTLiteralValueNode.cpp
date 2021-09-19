@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -14,6 +15,11 @@ static BootstrapTypeRegistration<ASTLiteralValueNode> ASTLiteralValueNodeTypeReg
 bool ASTLiteralValueNode::isASTLiteralValueNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTLiteralValueNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitLiteralValueNode(shared_from_this());
 }
 
 void ASTLiteralValueNode::setValueAndType(const AnyValuePtr &theValue)

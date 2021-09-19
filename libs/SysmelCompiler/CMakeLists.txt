@@ -1,5 +1,4 @@
 set(BootstrapEnvironment_Sources
-    LargeInteger.cpp
     AnyValue.cpp
     ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
@@ -28,6 +27,7 @@ set(BootstrapEnvironment_Sources
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
+    ASTVisitor.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
@@ -35,7 +35,10 @@ set(BootstrapEnvironment_Sources
     BootstrapTypeRegistration.cpp
     CompilerObject.cpp
     Fraction.cpp
+    IdentifierLookupScope.cpp
     LanguageSupport.cpp
+    LargeInteger.cpp
+    LexicalScope.cpp
     LiteralArray.cpp
     LiteralBoolean.cpp
     LiteralBooleanTrue.cpp

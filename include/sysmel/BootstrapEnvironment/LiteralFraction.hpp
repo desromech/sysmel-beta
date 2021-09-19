@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralFraction);
+
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */

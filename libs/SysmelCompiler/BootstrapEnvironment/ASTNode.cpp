@@ -16,6 +16,11 @@ ASTNode::ASTNode()
     sourcePosition = ASTSourcePosition::empty();
 }
 
+AnyValuePtr ASTNode::accept(const ASTVisitorPtr &)
+{
+    throw SubclassResponsibility();
+}
+
 bool ASTNode::isASTNode() const
 {
     return true;

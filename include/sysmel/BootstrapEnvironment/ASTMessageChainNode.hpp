@@ -18,10 +18,11 @@ public:
     static constexpr char const __typeName__[] = "ASTMessageChainNode";
 
     virtual bool isASTMessageChainNode() const override;
+    virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
     ASTNodePtr receiver;
-    ASTMessageChainMessageNodePtrList messages;
+    ASTNodePtrList messages;
 };
 
 } // End of namespace BootstrapEnvironment

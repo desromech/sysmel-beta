@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramModule);
+
 /**
  * I am a particular module in the system.
  */

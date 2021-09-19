@@ -10,8 +10,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class BootstrapModule;
-typedef std::shared_ptr<BootstrapModule> BootstrapModulePtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
 
 /**
  * I am the bootstrap module of the system. I am a

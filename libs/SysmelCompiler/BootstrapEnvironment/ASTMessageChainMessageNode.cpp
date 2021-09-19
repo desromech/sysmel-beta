@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMessageChainMessageNode> ASTMessageChainMess
 bool ASTMessageChainMessageNode::isASTMessageChainMessageNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMessageChainMessageNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMessageChainMessageNode(shared_from_this());
 }
 
 SExpression ASTMessageChainMessageNode::asSExpression() const

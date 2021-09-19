@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTMakeAssociationNode";
 
     virtual bool isASTMakeAssociationNode() const override;
+    virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
     ASTNodePtr key;

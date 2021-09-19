@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeLiteralArrayNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMakeLiteralArrayNode> ASTMakeLiteralArrayNod
 bool ASTMakeLiteralArrayNode::isASTMakeLiteralArrayNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMakeLiteralArrayNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMakeLiteralArrayNode(shared_from_this());
 }
 
 SExpression ASTMakeLiteralArrayNode::asSExpression() const

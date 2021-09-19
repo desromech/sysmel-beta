@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralNumber;
-typedef std::shared_ptr<LiteralNumber> LiteralNumberPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralNumber);
 
 
 /**

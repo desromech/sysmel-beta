@@ -200,6 +200,16 @@ bool AnyValue::isASTSpliceNode() const
     return false;
 }
 
+bool AnyValue::isIdentifierLookupScope() const
+{
+    return false;
+}
+
+bool AnyValue::isCleanUpScope() const
+{
+    return false;
+}
+
 bool AnyValue::isProgramEntity() const
 {
     return false;

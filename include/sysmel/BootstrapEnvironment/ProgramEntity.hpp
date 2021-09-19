@@ -9,14 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class Module;
-typedef std::shared_ptr<Module> ModulePtr;
-
-class BootstrapModule;
-typedef std::shared_ptr<BootstrapModule> BootstrapModulePtr;
-
-class RuntimeContext;
-typedef std::shared_ptr<RuntimeContext> RuntimeContextPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Module);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 
 /**
  * I am the base interface for any program metamodel entity

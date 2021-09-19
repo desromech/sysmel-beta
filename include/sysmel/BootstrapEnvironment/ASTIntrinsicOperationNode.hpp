@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTIntrinsicOperationNode";
 
     virtual bool isASTIntrinsicOperationNode() const override;
+    virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
 
     AnyValuePtr operation;
     ASTNodePtrList parameters;

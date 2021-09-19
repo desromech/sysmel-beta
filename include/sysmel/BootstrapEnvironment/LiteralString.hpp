@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralString;
-typedef std::shared_ptr<LiteralString> LiteralStringPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralString);
 
 /**
  * I am a literal string value.

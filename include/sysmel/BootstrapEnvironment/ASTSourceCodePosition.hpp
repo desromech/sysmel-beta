@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourceCodePosition);
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */

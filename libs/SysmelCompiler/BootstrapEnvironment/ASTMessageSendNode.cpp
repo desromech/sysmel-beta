@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMessageSendNode> ASTMessageSendNodeTypeRegis
 bool ASTMessageSendNode::isASTMessageSendNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMessageSendNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMessageSendNode(shared_from_this());
 }
 
 SExpression ASTMessageSendNode::asSExpression() const

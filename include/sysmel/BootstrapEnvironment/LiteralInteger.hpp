@@ -10,11 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralInteger;
-typedef std::shared_ptr<LiteralInteger> LiteralIntegerPtr;
-
-class LiteralCharacter;
-typedef std::shared_ptr<LiteralCharacter> LiteralCharacterPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralInteger);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralCharacter);
 
 /**
  * I am the base interface for compile time object that is passed through the interpreter.

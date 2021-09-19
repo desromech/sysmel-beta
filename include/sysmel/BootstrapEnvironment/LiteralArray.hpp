@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralArray;
-typedef std::shared_ptr<LiteralArray> LiteralArrayPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralArray);
 
 
 /**

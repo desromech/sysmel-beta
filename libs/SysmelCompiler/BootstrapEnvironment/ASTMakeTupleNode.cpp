@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeTupleNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTMakeTupleNode> ASTMakeTupleNodeTypeRegistrat
 bool ASTMakeTupleNode::isASTMakeTupleNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTMakeTupleNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitMakeTupleNode(shared_from_this());
 }
 
 SExpression ASTMakeTupleNode::asSExpression() const

@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralUndefined;
-typedef std::shared_ptr<LiteralUndefined> LiteralUndefinedPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralUndefined);
 
 
 /**

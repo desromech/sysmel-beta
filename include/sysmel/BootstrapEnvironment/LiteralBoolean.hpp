@@ -9,9 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralBoolean;
-typedef std::shared_ptr<LiteralBoolean> LiteralBooleanPtr;
-
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralBoolean);
 
 /**
  * I am literal number value.

@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralSymbol;
-typedef std::shared_ptr<LiteralSymbol> LiteralSymbolPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 
 /**
  * I am a literal symbol value.

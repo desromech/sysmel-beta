@@ -9,9 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class LiteralVoid;
-typedef std::shared_ptr<LiteralVoid> LiteralVoidPtr;
-
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralVoid);
 
 /**
  * I am literal number value.

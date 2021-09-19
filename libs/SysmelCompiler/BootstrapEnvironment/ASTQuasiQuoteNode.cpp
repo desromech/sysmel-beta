@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTQuasiQuoteNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTQuasiQuoteNode> ASTQuasiQuoteNodeTypeRegistr
 bool ASTQuasiQuoteNode::isASTQuasiQuoteNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTQuasiQuoteNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitQuasiQuoteNode(shared_from_this());
 }
 
 SExpression ASTQuasiQuoteNode::asSExpression() const

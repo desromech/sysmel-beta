@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTPragmaNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTPragmaNode> ASTPragmaNodeTypeRegistration;
 bool ASTPragmaNode::isASTPragmaNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTPragmaNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitPragmaNode(shared_from_this());
 }
 
 SExpression ASTPragmaNode::asSExpression() const

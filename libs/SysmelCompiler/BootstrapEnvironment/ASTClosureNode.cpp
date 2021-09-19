@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -14,6 +15,11 @@ static BootstrapTypeRegistration<ASTClosureNode> ASTClosureNodeTypeRegistration;
 bool ASTClosureNode::isASTClosureNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTClosureNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitClosureNode(shared_from_this());
 }
 
 SExpression ASTClosureNode::asSExpression() const

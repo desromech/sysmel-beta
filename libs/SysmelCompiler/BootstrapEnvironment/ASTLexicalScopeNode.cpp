@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ASTLexicalScopeNode> ASTLexicalScopeNodeTypeReg
 bool ASTLexicalScopeNode::isASTLexicalScopeNode() const
 {
     return true;
+}
+
+AnyValuePtr ASTLexicalScopeNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitLexicalScopeNode(shared_from_this());
 }
 
 SExpression ASTLexicalScopeNode::asSExpression() const

@@ -14,26 +14,21 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class AnyValue;
-typedef std::shared_ptr<AnyValue> AnyValuePtr;
-typedef std::vector<AnyValuePtr> AnyValuePtrList;
+#define SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
+    class className; \
+    typedef std::shared_ptr<className> className ##Ptr; \
+    typedef std::weak_ptr<className> className ##WeakPtr;
 
-class Type;
-typedef std::shared_ptr<Type> TypePtr;
-typedef std::vector<TypePtr> TypePtrList;
+#define SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(className) \
+    SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
+    typedef std::vector<className ##Ptr> className ##PtrList;
 
-class MethodDictionary;
-typedef std::shared_ptr<MethodDictionary> MethodDictionaryPtr;
-
-class ASTNode;
-typedef std::shared_ptr<ASTNode> ASTNodePtr;
-typedef std::vector<ASTNodePtr> ASTNodePtrList;
-
-class ASTBuilder;
-typedef std::shared_ptr<ASTBuilder> ASTBuilderPtr;
-
-class MacroInvocationContext;
-typedef std::shared_ptr<MacroInvocationContext> MacroInvocationContextPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(AnyValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(Type);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
@@ -294,6 +289,12 @@ public:
 
     /// Is this object an AST splice node?
     virtual bool isASTSpliceNode() const;
+
+    /// Is this object an identifier lookup scope?
+    virtual bool isIdentifierLookupScope() const;
+
+    /// Is this object clean-up scope?
+    virtual bool isCleanUpScope() const;
 
     /// Is this object a program entity?
     virtual bool isProgramEntity() const;

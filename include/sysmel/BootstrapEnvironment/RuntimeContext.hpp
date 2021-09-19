@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
+
 /**
  * I represent an active runtime context in the object model environment.
  */
