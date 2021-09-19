@@ -14,15 +14,17 @@ bool ASTMessageChainMessageNode::isASTMessageChainMessageNode() const
     return true;
 }
 
-AnyValuePtr ASTMessageChainMessageNode::encodeAsSExpression() const
+SExpression ASTMessageChainMessageNode::asSExpression() const
 {
-    AnyValuePtrList result;
-    result.reserve(1 + 1 +  arguments.size());
-    result.push_back(internSymbol("chainedMessage"));
-    result.push_back(selector->encodeAsSExpression());
-    for(const auto &arg : arguments)
-        result.push_back(arg->encodeAsSExpression());
-    return wrapValue(result);
+    SExpressionList argumentsSExpression;
+    argumentsSExpression.elements.reserve(arguments.size());
+    for(const auto &arg : arguments )
+        argumentsSExpression.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{SExpressionIdentifier{{"message"}},
+        selector->asSExpression(),
+        argumentsSExpression,
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

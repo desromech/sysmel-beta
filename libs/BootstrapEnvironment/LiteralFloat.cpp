@@ -110,5 +110,10 @@ double LiteralFloat::asFloat() const
     return value;
 }
 
+SExpression LiteralFloat::asSExpression() const
+{
+    return value;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

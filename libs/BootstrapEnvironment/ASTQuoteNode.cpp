@@ -14,9 +14,11 @@ bool ASTQuoteNode::isASTQuoteNode() const
     return true;
 }
 
-AnyValuePtr ASTQuoteNode::encodeAsSExpression() const
+SExpression ASTQuoteNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("quote"), expression->encodeAsSExpression()});
+    return SExpressionList{{SExpressionIdentifier{{"quote"}}, 
+        expression->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

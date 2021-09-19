@@ -18,7 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTArgumentDefinitionNode";
 
     virtual bool isASTArgumentDefinitionNode() const override;
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTNodePtr identifier;
     ASTNodePtr type;

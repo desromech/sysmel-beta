@@ -26,6 +26,7 @@ public:
     virtual bool isLiteralUndefined() const override;
 
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 };
 
 } // End of namespace BootstrapEnvironment

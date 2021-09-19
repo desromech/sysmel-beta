@@ -53,5 +53,10 @@ std::string LiteralSymbol::printString() const
     return out.str();
 }
 
+SExpression LiteralSymbol::asSExpression() const
+{
+    return SExpressionSymbol{value};
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

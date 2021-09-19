@@ -27,6 +27,7 @@ public:
     virtual std::string asString() const override;
     virtual std::string printString() const override;
     virtual std::string unwrapAsString() const override;
+    virtual SExpression asSExpression() const override;
     
 protected:
     std::string value;

@@ -22,6 +22,7 @@ public:
     virtual bool isLiteralCharacter() const override;
     virtual std::string asString() const override;
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 };
 
 } // End of namespace BootstrapEnvironment

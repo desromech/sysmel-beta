@@ -34,6 +34,7 @@ public:
     }
 
     virtual double asFloat() const override;
+    virtual SExpression asSExpression() const override;
 
 protected:
     Fraction value;

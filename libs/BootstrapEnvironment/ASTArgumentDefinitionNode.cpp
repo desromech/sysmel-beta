@@ -14,11 +14,12 @@ bool ASTArgumentDefinitionNode::isASTArgumentDefinitionNode() const
     return true;
 }
 
-AnyValuePtr ASTArgumentDefinitionNode::encodeAsSExpression() const
+SExpression ASTArgumentDefinitionNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("argument"),
-        identifier ? identifier->encodeAsSExpression() : getNilConstant(),
-        type ? type->encodeAsSExpression() : getNilConstant()});
+    return SExpressionList{{SExpressionIdentifier{{"argument"}}, 
+        identifier ? identifier->asSExpression() : nullptr,
+        type ? type->asSExpression() : nullptr,
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

@@ -14,20 +14,21 @@ bool ASTSequenceNode::isASTSequenceNode() const
     return true;
 }
 
-AnyValuePtr ASTSequenceNode::encodeAsSExpression() const
+SExpression ASTSequenceNode::asSExpression() const
 {
-    AnyValuePtrList resultPragmas;
-    resultPragmas.reserve(pragmas.size());
+    SExpressionList sexprPragmas;
+    sexprPragmas.elements.reserve(pragmas.size());
     for(const auto &pragma : pragmas)
-        resultPragmas.push_back(pragma->encodeAsSExpression());
+        sexprPragmas.elements.push_back(pragma->asSExpression());
 
-    AnyValuePtrList result;
-    result.reserve(2 + expressions.size());
-    result.push_back(internSymbol("sequence"));
-    result.push_back(wrapValue(resultPragmas));
+    SExpressionList sexpr;
+    sexpr.elements.reserve(2 + expressions.size());
+    sexpr.elements.push_back(SExpressionIdentifier{{"sequence"}});
+    sexpr.elements.push_back(sexprPragmas);
     for(const auto &expr : expressions)
-        result.push_back(expr->encodeAsSExpression());
-    return wrapValue(result);
+        sexpr.elements.push_back(expr->asSExpression());
+
+    return sexpr;
 }
 
 } // End of namespace BootstrapEnvironment

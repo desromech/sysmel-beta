@@ -29,5 +29,10 @@ std::string LiteralUndefined::printString() const
     return "nil";
 }
 
+SExpression LiteralUndefined::asSExpression() const
+{
+    return nullptr;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

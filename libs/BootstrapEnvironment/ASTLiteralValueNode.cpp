@@ -21,9 +21,12 @@ void ASTLiteralValueNode::setValueAndType(const AnyValuePtr &theValue)
     type = theValue->getType();
 }
 
-AnyValuePtr ASTLiteralValueNode::encodeAsSExpression() const
+SExpression ASTLiteralValueNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("literal"), value, type});
+    return SExpressionList{{SExpressionIdentifier{{"literal"}}, 
+        value ? value->asSExpression() : nullptr,
+        type ? (type->isASTNode() ? type->asSExpression() : SExpressionSymbol{type->asString()}) : nullptr
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

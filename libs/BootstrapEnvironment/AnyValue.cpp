@@ -330,6 +330,11 @@ std::string AnyValue::printString() const
     return "a " + getType()->printString();
 }
 
+SExpression AnyValue::asSExpression() const
+{
+    throw SubclassResponsibility();
+}
+
 bool AnyValue::unwrapAsBoolean() const
 {
     throw CannotUnwrap();

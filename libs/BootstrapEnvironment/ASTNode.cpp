@@ -15,14 +15,9 @@ bool ASTNode::isASTNode() const
     return true;
 }
 
-AnyValuePtr ASTNode::encodeAsSExpression() const
-{
-    throw SubclassResponsibility();
-}
-
 std::string ASTNode::printString() const
 {
-    return encodeAsSExpression()->printString();
+    return sexpressionToPrettyString(asSExpression());
 }
 
 

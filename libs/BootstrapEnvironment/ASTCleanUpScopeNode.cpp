@@ -14,9 +14,11 @@ bool ASTCleanUpScopeNode::isASTCleanUpScopeNode() const
     return true;
 }
 
-AnyValuePtr ASTCleanUpScopeNode::encodeAsSExpression() const
+SExpression ASTCleanUpScopeNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("cleanUpScope"), body ? body->encodeAsSExpression() : getNilConstant()});
+    return SExpressionList{{SExpressionIdentifier{{"cleanUpScope"}}, 
+        body->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

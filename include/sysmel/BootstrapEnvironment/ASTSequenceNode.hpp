@@ -18,8 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTSequenceNode";
 
     virtual bool isASTSequenceNode() const override;
-
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTNodePtrList pragmas;
     ASTNodePtrList expressions;

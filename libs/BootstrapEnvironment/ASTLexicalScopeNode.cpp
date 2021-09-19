@@ -13,11 +13,13 @@ bool ASTLexicalScopeNode::isASTLexicalScopeNode() const
 {
     return true;
 }
-AnyValuePtr ASTLexicalScopeNode::encodeAsSExpression() const
-{
-    return wrapValue(AnyValuePtrList{internSymbol("lexicalScope"), body ? body->encodeAsSExpression() : getNilConstant()});
-}
 
+SExpression ASTLexicalScopeNode::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"lexicalScope"}}, 
+        body->asSExpression()
+    }};
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

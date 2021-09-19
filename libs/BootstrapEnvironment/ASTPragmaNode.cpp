@@ -14,15 +14,17 @@ bool ASTPragmaNode::isASTPragmaNode() const
     return true;
 }
 
-AnyValuePtr ASTPragmaNode::encodeAsSExpression() const
+SExpression ASTPragmaNode::asSExpression() const
 {
-    AnyValuePtrList result;
-    result.reserve(1 + arguments.size());
-    result.push_back(internSymbol("pragma"));
-    result.push_back(selector->encodeAsSExpression());
-    for(const auto &arg : arguments)
-        result.push_back(arg->encodeAsSExpression());
-    return wrapValue(result);
+    SExpressionList argumentsSExpression;
+    argumentsSExpression.elements.reserve(arguments.size());
+    for(const auto &arg : arguments )
+        argumentsSExpression.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{SExpressionIdentifier{{"pragma"}},
+        selector->asSExpression(),
+        argumentsSExpression,
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

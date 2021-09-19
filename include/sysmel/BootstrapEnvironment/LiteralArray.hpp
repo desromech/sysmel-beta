@@ -30,6 +30,7 @@ public:
     virtual AnyValuePtrList unwrapAsArray() const override;
 
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
 protected:
     AnyValuePtrList content;

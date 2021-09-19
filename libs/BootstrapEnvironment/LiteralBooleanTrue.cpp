@@ -30,5 +30,10 @@ bool LiteralBooleanTrue::unwrapAsBoolean() const
     return true;
 }
 
+SExpression LiteralBooleanTrue::asSExpression() const
+{
+    return true;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

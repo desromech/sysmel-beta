@@ -7,7 +7,7 @@
 #include <vector>
 #include "LargeInteger.hpp"
 #include "Fraction.hpp"
-
+#include "SExpression.hpp"
 
 namespace SysmelMoebius
 {
@@ -372,6 +372,9 @@ public:
 
     /// Convert the object into a string for printing purposes.
     virtual std::string printString() const;
+
+    /// Convert the object into a SExpression.
+    virtual SExpression asSExpression() const;
 
     /// Reads the wrapped value as boolean.
     virtual bool unwrapAsBoolean() const;

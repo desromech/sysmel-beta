@@ -276,5 +276,10 @@ double LiteralInteger::asFloat() const
     return value.asDouble();
 }
 
+SExpression LiteralInteger::asSExpression() const
+{
+    return value;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

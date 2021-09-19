@@ -30,6 +30,7 @@ public:
     virtual double unwrapAsFloat64() const override;
 
     virtual double asFloat() const override;
+    virtual SExpression asSExpression() const override;
     
 protected:
     double value;

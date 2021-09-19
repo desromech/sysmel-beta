@@ -14,9 +14,11 @@ bool ASTSpliceNode::isASTSpliceNode() const
     return true;
 }
 
-AnyValuePtr ASTSpliceNode::encodeAsSExpression() const
+SExpression ASTSpliceNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("splice"), expression->encodeAsSExpression()});
+    return SExpressionList{{SExpressionIdentifier{{"splice"}}, 
+        expression->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

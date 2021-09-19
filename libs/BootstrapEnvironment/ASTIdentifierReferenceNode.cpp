@@ -14,9 +14,9 @@ bool ASTIdentifierReferenceNode::isASTIdentifierReferenceNode() const
     return true;
 }
 
-AnyValuePtr ASTIdentifierReferenceNode::encodeAsSExpression() const
+SExpression ASTIdentifierReferenceNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("identifier"), identifier});
+    return SExpressionList{{SExpressionIdentifier{{"identifier"}}, identifier->asSExpression()}};
 }
 
 } // End of namespace BootstrapEnvironment

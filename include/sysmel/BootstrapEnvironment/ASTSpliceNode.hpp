@@ -18,7 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTSpliceNode";
 
     virtual bool isASTSpliceNode() const override;
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTNodePtr expression;
 };

@@ -14,9 +14,9 @@ bool ASTParseErrorNode::isASTParseErrorNode() const
     return true;
 }
 
-AnyValuePtr ASTParseErrorNode::encodeAsSExpression() const
+SExpression ASTParseErrorNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("parseError"), wrapValue(errorMessage)});
+    return SExpressionList{{SExpressionIdentifier{{"parseError"}}, errorMessage}};
 }
 
 } // End of namespace BootstrapEnvironment

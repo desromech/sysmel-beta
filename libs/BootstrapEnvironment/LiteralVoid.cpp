@@ -24,5 +24,10 @@ bool LiteralVoid::isLiteralVoid() const
     return true;
 }
 
+SExpression LiteralVoid::asSExpression() const
+{
+    return SExpressionVoid{};
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -27,7 +27,7 @@ public:
     static constexpr char const __typeName__[] = "ASTClosureNode";
 
     virtual bool isASTClosureNode() const override;
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTClosureNodeKind kind = ASTClosureNodeKind::Function;
     ASTNodePtrList arguments;

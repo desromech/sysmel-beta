@@ -44,5 +44,10 @@ std::string LiteralCharacter::printString() const
     return out.str();
 }
 
+SExpression LiteralCharacter::asSExpression() const
+{
+    return unwrapAsChar32();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -14,16 +14,18 @@ bool ASTMessageSendNode::isASTMessageSendNode() const
     return true;
 }
 
-AnyValuePtr ASTMessageSendNode::encodeAsSExpression() const
+SExpression ASTMessageSendNode::asSExpression() const
 {
-    AnyValuePtrList result;
-    result.reserve(1 + (receiver ? 1 : 0) +  arguments.size());
-    result.push_back(internSymbol("send"));
-    result.push_back(selector->encodeAsSExpression());
-    result.push_back(receiver ? receiver->encodeAsSExpression() : getNilConstant());
-    for(const auto &arg : arguments)
-        result.push_back(arg->encodeAsSExpression());
-    return wrapValue(result);
+    SExpressionList argumentsSExpression;
+    argumentsSExpression.elements.reserve(arguments.size());
+    for(const auto &arg : arguments )
+        argumentsSExpression.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{SExpressionIdentifier{{"send"}},
+        selector->asSExpression(),
+        receiver ? receiver->asSExpression() : nullptr,
+        argumentsSExpression,
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

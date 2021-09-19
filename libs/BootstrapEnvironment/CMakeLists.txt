@@ -56,6 +56,7 @@ set(BootstrapEnvironment_Sources
     PatternMatchingMethod.cpp
     ProgramEntity.cpp
     RuntimeContext.cpp
+    SExpression.cpp
     SpecificMethod.cpp
     TranslationUnitModule.cpp
     Type.cpp

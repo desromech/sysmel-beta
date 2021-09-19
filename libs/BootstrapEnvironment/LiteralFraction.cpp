@@ -129,5 +129,10 @@ double LiteralFraction::asFloat() const
     return value.asDouble();
 }
 
+SExpression LiteralFraction::asSExpression() const
+{
+    return value;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

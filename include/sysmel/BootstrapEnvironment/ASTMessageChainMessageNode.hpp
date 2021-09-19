@@ -18,7 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTMessageChainMessageNode";
 
     virtual bool isASTMessageChainMessageNode() const override;
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTNodePtr selector;
     ASTNodePtrList arguments;

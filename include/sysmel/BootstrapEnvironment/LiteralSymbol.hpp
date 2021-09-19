@@ -26,6 +26,7 @@ public:
     virtual bool isLiteralSymbol() const override;
 
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 };
 
 typedef std::shared_ptr<LiteralSymbol> LiteralSymbolPtr;

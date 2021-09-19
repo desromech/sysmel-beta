@@ -15,19 +15,18 @@ bool ASTClosureNode::isASTClosureNode() const
     return true;
 }
 
-AnyValuePtr ASTClosureNode::encodeAsSExpression() const
+SExpression ASTClosureNode::asSExpression() const
 {
-    AnyValuePtrList result;
-    result.reserve(4);
-    result.push_back(internSymbol("closure"));
-
-    AnyValuePtrList resultArguments;
+    SExpressionList argumentsSExpression;
+    argumentsSExpression.elements.reserve(arguments.size());
     for(const auto &arg : arguments )
-        resultArguments.push_back(arg->encodeAsSExpression());
-    result.push_back(wrapValue(resultArguments));
-    result.push_back(returnType ? returnType->encodeAsSExpression() : getNilConstant());
-    result.push_back(body->encodeAsSExpression());
-    return wrapValue(result);
+        argumentsSExpression.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{SExpressionIdentifier{{"closure"}}, 
+        argumentsSExpression,
+        returnType ? returnType->asSExpression() : nullptr,
+        body->asSExpression(),
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

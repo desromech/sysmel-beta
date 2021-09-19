@@ -27,7 +27,7 @@ public:
     static constexpr char const __typeName__[] = "ASTMessageSendNode";
 
     virtual bool isASTMessageSendNode() const override;
-    virtual AnyValuePtr encodeAsSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     ASTMessageSendExpansionLevel expansionLevel = ASTMessageSendExpansionLevel::UnexpandedMacros;
     ASTNodePtr selector;

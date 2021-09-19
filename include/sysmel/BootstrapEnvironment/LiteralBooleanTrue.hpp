@@ -26,6 +26,7 @@ public:
     virtual bool isLiteralBooleanTrue() const override;
 
     virtual bool unwrapAsBoolean() const override;
+    virtual SExpression asSExpression() const override;
 };
 
 } // End of namespace BootstrapEnvironment

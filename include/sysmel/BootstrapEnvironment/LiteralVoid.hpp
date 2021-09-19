@@ -24,6 +24,7 @@ public:
     static LiteralVoidPtr uniqueInstance();
 
     virtual bool isLiteralVoid() const override;
+    virtual SExpression asSExpression() const override;
 };
 
 } // End of namespace BootstrapEnvironment

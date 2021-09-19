@@ -49,5 +49,9 @@ std::string LiteralString::unwrapAsString() const
     return value;
 }
 
+SExpression LiteralString::asSExpression() const
+{
+    return value;
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

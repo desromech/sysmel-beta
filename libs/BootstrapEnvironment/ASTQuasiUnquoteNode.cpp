@@ -14,9 +14,11 @@ bool ASTQuasiUnquoteNode::isASTQuasiUnquoteNode() const
     return true;
 }
 
-AnyValuePtr ASTQuasiUnquoteNode::encodeAsSExpression() const
+SExpression ASTQuasiUnquoteNode::asSExpression() const
 {
-    return wrapValue(AnyValuePtrList{internSymbol("quasiUnquote"), expression->encodeAsSExpression()});
+    return SExpressionList{{SExpressionIdentifier{{"quasiUnquote"}}, 
+        expression->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

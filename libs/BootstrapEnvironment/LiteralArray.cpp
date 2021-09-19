@@ -52,5 +52,14 @@ std::string LiteralArray::printString() const
     return out.str();
 }
 
+SExpression LiteralArray::asSExpression() const
+{
+    SExpressionList result;
+    result.elements.reserve(content.size());
+    for(const auto &el : content)
+        result.elements.push_back(el ? el->asSExpression() : nullptr);
+    return result;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

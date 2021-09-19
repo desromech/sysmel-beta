@@ -30,9 +30,6 @@ public:
 
     virtual bool isASTNode() const override;
 
-    /// This method encodes the AST node as a s-expression for debugging purposes.
-    virtual AnyValuePtr encodeAsSExpression() const;
-
     virtual std::string printString() const;
 
     ASTSourcePositionPtr sourcePosition;
