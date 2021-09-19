@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Token.hpp"
-#include "sysmel/ObjectModel/LargeInteger.hpp"
+#include "sysmel/BootstrapEnvironment/LargeInteger.hpp"
 #include <memory>
 #include <any>
 
@@ -14,7 +14,7 @@ namespace Compiler
 namespace Sysmel
 {
 
-using SysmelMoebius::ObjectModel::LargeInteger;
+using SysmelMoebius::BootstrapEnvironment::LargeInteger;
 
 struct ASTNode;
 struct ASTParseErrorNode;

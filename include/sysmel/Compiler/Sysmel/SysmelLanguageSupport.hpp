@@ -2,11 +2,11 @@
 #define SYSMEL_COMPILER_SYSMEL_LANGUAGE_SUPPORT_HPP
 #pragma once
 
-#include "sysmel/ObjectModel/LanguageSupport.hpp"
+#include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 
 namespace SysmelMoebius
 {
-namespace ObjectModel
+namespace BootstrapEnvironment
 {
 
 class SysmelLanguageSupport;
@@ -29,7 +29,7 @@ public:
     virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const override;
 };
 
-} // End of namespace ObjectModel
+} // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 
 #endif //SYSMEL_COMPILER_SYSMEL_LANGUAGE_SUPPORT_HPP

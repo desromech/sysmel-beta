@@ -1,26 +1,26 @@
 #include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
 #include "sysmel/Compiler/Sysmel/Parser.hpp"
 #include "sysmel/Compiler/Sysmel/Visitors.hpp"
-#include "sysmel/ObjectModel/Error.hpp"
-#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
-#include "sysmel/ObjectModel/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
-#include "sysmel/ObjectModel/ASTArgumentDefinitionNode.hpp"
-#include "sysmel/ObjectModel/ASTClosureNode.hpp"
-#include "sysmel/ObjectModel/ASTLiteralValueNode.hpp"
-#include "sysmel/ObjectModel/ASTLexicalScopeNode.hpp"
-#include "sysmel/ObjectModel/ASTCleanUpScopeNode.hpp"
-#include "sysmel/ObjectModel/ASTIdentifierReferenceNode.hpp"
-#include "sysmel/ObjectModel/ASTMessageChainNode.hpp"
-#include "sysmel/ObjectModel/ASTMessageChainMessageNode.hpp"
-#include "sysmel/ObjectModel/ASTMessageSendNode.hpp"
-#include "sysmel/ObjectModel/ASTPragmaNode.hpp"
-#include "sysmel/ObjectModel/ASTQuoteNode.hpp"
-#include "sysmel/ObjectModel/ASTQuasiQuoteNode.hpp"
-#include "sysmel/ObjectModel/ASTQuasiUnquoteNode.hpp"
-#include "sysmel/ObjectModel/ASTSpliceNode.hpp"
-#include "sysmel/ObjectModel/ASTParseErrorNode.hpp"
-#include "sysmel/ObjectModel/ASTSequenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageChainNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTPragmaNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTQuoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTQuasiQuoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTQuasiUnquoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
 
 
 #include <fstream>
@@ -33,15 +33,15 @@ namespace Compiler
 namespace Sysmel
 {
 
-using ObjectModel::wrapValue;
-using ObjectModel::internSymbol;
+using BootstrapEnvironment::wrapValue;
+using BootstrapEnvironment::internSymbol;
 
 class SysmelASTConverter : public ASTVisitor
 {
 public:
-    typedef ObjectModel::ASTNodePtr ResultType;
+    typedef BootstrapEnvironment::ASTNodePtr ResultType;
 
-    ObjectModel::ASTSourcePositionPtr convertSourcePosition(const SourcePosition &originalSourcePosition)
+    BootstrapEnvironment::ASTSourcePositionPtr convertSourcePosition(const SourcePosition &originalSourcePosition)
     {
         // TODO: Implement this part.
         return nullptr;
@@ -49,7 +49,7 @@ public:
 
     virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTParseErrorNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTParseErrorNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->errorMessage = node.errorMessage;
         return ResultType(convertedNode);
@@ -57,7 +57,7 @@ public:
 
     virtual std::any visitExpressionListNode(ASTExpressionListNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTSequenceNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTSequenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expressions.reserve(node.expressions.size());
         for(auto expr : node.expressions)
@@ -70,7 +70,7 @@ public:
     
     virtual std::any visitPragmaNode(ASTPragmaNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTPragmaNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTPragmaNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
@@ -83,7 +83,7 @@ public:
     
     virtual std::any visitBlockNode(ASTBlockNode &node) override
     {
-        auto convertedSequence = std::static_pointer_cast<ObjectModel::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
+        auto convertedSequence = std::static_pointer_cast<BootstrapEnvironment::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
         auto blockPosition = convertSourcePosition(node.sourcePosition);
 
         convertedSequence->pragmas.reserve(node.pragmas.size());
@@ -93,8 +93,8 @@ public:
         if(node.blockClosureSignature)
         {
             auto signature = std::static_pointer_cast<ASTBlockClosureSignatureNode> (node.blockClosureSignature);
-            auto blockClosureNode = std::make_shared<ObjectModel::ASTClosureNode> ();
-            blockClosureNode->kind = ObjectModel::ASTClosureNodeKind::Block;
+            auto blockClosureNode = std::make_shared<BootstrapEnvironment::ASTClosureNode> ();
+            blockClosureNode->kind = BootstrapEnvironment::ASTClosureNodeKind::Block;
             blockClosureNode->arguments.reserve(signature->arguments.size());
             for(const auto &arg : signature->arguments)
                 blockClosureNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
@@ -107,11 +107,11 @@ public:
         }
         else
         {
-            auto lexicalScope = std::make_shared<ObjectModel::ASTLexicalScopeNode> ();
+            auto lexicalScope = std::make_shared<BootstrapEnvironment::ASTLexicalScopeNode> ();
             lexicalScope->sourcePosition = blockPosition;
             lexicalScope->body = convertedSequence;
 
-            auto cleanUpScope = std::make_shared<ObjectModel::ASTCleanUpScopeNode> ();
+            auto cleanUpScope = std::make_shared<BootstrapEnvironment::ASTCleanUpScopeNode> ();
             cleanUpScope->sourcePosition = blockPosition;
             cleanUpScope->body = lexicalScope;
             return ResultType(cleanUpScope);
@@ -120,7 +120,7 @@ public:
     
     virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node)
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTArgumentDefinitionNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTArgumentDefinitionNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         if(node.identifier)
             convertedNode->identifier = std::any_cast<ResultType> (visitNode(*node.identifier));
@@ -137,7 +137,7 @@ public:
 
     virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTLiteralValueNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -145,7 +145,7 @@ public:
 
     virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTLiteralValueNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -153,7 +153,7 @@ public:
 
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTLiteralValueNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -161,7 +161,7 @@ public:
 
     virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTLiteralValueNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -169,7 +169,7 @@ public:
 
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTLiteralValueNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(internSymbol(node.value));
         return ResultType(convertedNode);
@@ -177,7 +177,7 @@ public:
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTIdentifierReferenceNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTIdentifierReferenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->identifier = internSymbol(node.identifier);
         return ResultType(convertedNode);
@@ -185,7 +185,7 @@ public:
 
     virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTMessageSendNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
@@ -202,7 +202,7 @@ public:
 
     virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTMessageChainNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageChainNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
@@ -210,14 +210,14 @@ public:
 
         convertedNode->messages.reserve(node.messages.size());
         for(auto &message : node.messages)
-            convertedNode->messages.push_back(std::any_cast<ObjectModel::ASTMessageChainMessageNodePtr> (visitNode(*message)));
+            convertedNode->messages.push_back(std::any_cast<BootstrapEnvironment::ASTMessageChainMessageNodePtr> (visitNode(*message)));
 
         return ResultType(convertedNode);
     }
 
     virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTMessageChainMessageNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageChainMessageNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
@@ -261,7 +261,7 @@ public:
 
     virtual std::any visitQuoteNode(ASTQuoteNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTQuoteNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
         return ResultType(convertedNode);
@@ -269,7 +269,7 @@ public:
 
     virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTQuasiQuoteNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuasiQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
         return ResultType(convertedNode);
@@ -277,7 +277,7 @@ public:
 
     virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTQuasiUnquoteNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuasiUnquoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
         return ResultType(convertedNode);
@@ -285,7 +285,7 @@ public:
 
     virtual std::any visitSpliceNode(ASTSpliceNode &node) override
     {
-        auto convertedNode = std::make_shared<ObjectModel::ASTSpliceNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTSpliceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
         return ResultType(convertedNode);
@@ -296,7 +296,7 @@ public:
 } // End of namespace Compiler
 
 
-namespace ObjectModel
+namespace BootstrapEnvironment
 {
 
 static BootstrapTypeRegistration<SysmelLanguageSupport> sysmelLanguageSupportTypeRegistration;
@@ -324,5 +324,5 @@ ASTNodePtr SysmelLanguageSupport::parseSourceStringNamed(const std::string &sour
     return std::any_cast<ASTNodePtr> (SysmelMoebius::Compiler::Sysmel::SysmelASTConverter().visitNode(*sysmelAST));
 }
 
-} // End of namespace ObjectModel
+} // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

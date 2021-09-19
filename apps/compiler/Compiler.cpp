@@ -1,28 +1,28 @@
 #include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
-#include "sysmel/ObjectModel/AnyValue.hpp"
-#include "sysmel/ObjectModel/ASTNode.hpp"
-#include "sysmel/ObjectModel/Wrappers.hpp"
-#include "sysmel/ObjectModel/RuntimeContext.hpp"
-#include "sysmel/ObjectModel/BootstrapModule.hpp"
-#include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
-#include "sysmel/ObjectModel/Type.hpp"
+#include "sysmel/BootstrapEnvironment/AnyValue.hpp"
+#include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/Wrappers.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include <fstream>
 #include <iostream>
 /*
 namespace TestEvaluator
 {
 using namespace SysmelMoebius::Compiler::Sysmel;
-using namespace SysmelMoebius::ObjectModel;
+using namespace SysmelMoebius::BootstrapEnvironment;
 
 
 }
 */
 
-using namespace SysmelMoebius::ObjectModel;
+using namespace SysmelMoebius::BootstrapEnvironment;
 
 void parseString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
     auto ast = language->parseSourceStringNamed(sourceString, sourceName);
 
     std::cout << ast->printString() << std::endl;
@@ -30,12 +30,12 @@ void parseString(const std::string &sourceString, const std::string &sourceName)
 
 void evalString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
     auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
 
 /*
     using namespace SysmelMoebius::Compiler::Sysmel;
-    using namespace SysmelMoebius::ObjectModel;
+    using namespace SysmelMoebius::BootstrapEnvironment;
     auto ast = parseString(sourceString, sourceName);
     bool hasError = false;
     validateASTParseErrors(ast, [&](ASTParseErrorNode &parseErrorNode) {
@@ -55,7 +55,7 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
 
 void evalFileNamed(const std::string &fileName)
 {
-    auto language = SysmelMoebius::ObjectModel::SysmelLanguageSupport::uniqueInstance();
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
     auto result = language->evaluateFileNamed(fileName);
     std::cout << result->printString() << std::endl;
 }

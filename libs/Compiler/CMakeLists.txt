@@ -9,4 +9,4 @@ set(Compiler_Sources
 )
 
 add_library(SysmelCompiler SHARED ${Compiler_Sources})
-target_link_libraries(SysmelCompiler SysmelObjectModel)
+target_link_libraries(SysmelCompiler SysmelBootstrapEnvironment)
