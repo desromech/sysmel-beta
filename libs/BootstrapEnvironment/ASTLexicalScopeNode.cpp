@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTLexicalScopeNode::isASTLexicalScopeNode() const
 
 SExpression ASTLexicalScopeNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"lexicalScope"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"lexicalScope"}},
+        sourcePosition->asSExpression(),
         body->asSExpression()
     }};
 }

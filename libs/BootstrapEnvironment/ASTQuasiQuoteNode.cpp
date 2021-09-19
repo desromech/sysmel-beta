@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTQuasiQuoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTQuasiQuoteNode::isASTQuasiQuoteNode() const
 
 SExpression ASTQuasiQuoteNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"quasiQuote"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"quasiQuote"}},
+        sourcePosition->asSExpression(),
         expression->asSExpression()
     }};
 }

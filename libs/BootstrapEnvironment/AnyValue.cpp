@@ -90,6 +90,26 @@ bool AnyValue::isASTIntrinsicOperationNode() const
     return false;
 }
 
+bool AnyValue::isASTMakeTupleNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMakeLiteralArrayNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMakeDictionaryNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMakeAssociationNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTMessageChainNode() const
 {
     return false;
@@ -161,6 +181,11 @@ bool AnyValue::isASTSourceCode() const
 }
 
 bool AnyValue::isASTSourcePosition() const
+{
+    return false;
+}
+
+bool AnyValue::isASTEmptySourcePosition() const
 {
     return false;
 }

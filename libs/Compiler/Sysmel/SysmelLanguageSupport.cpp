@@ -11,6 +11,10 @@
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMakeAssociationNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMakeDictionaryNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMakeLiteralArrayNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMakeTupleNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageChainNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
@@ -21,6 +25,9 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTSourceCode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourceCodePosition.hpp"
 
 
 #include <fstream>
@@ -41,10 +48,48 @@ class SysmelASTConverter : public ASTVisitor
 public:
     typedef BootstrapEnvironment::ASTNodePtr ResultType;
 
+    std::unordered_map<SourceCollectionPtr, BootstrapEnvironment::ASTSourceCodePtr> convertedSourceCollectionMap;
+    std::unordered_map<SourcePosition, BootstrapEnvironment::ASTSourcePositionPtr> convertedSourcePositionMap;
+
+
+    BootstrapEnvironment::ASTSourceCodePtr convertSourceCollection(const SourceCollectionPtr &originalSourceCollection)
+    {
+        auto it = convertedSourceCollectionMap.find(originalSourceCollection);
+        if(it != convertedSourceCollectionMap.end())
+            return it->second;
+
+        auto result = std::make_shared<BootstrapEnvironment::ASTSourceCode> ();
+        result->name = originalSourceCollection->name;
+        result->contents = originalSourceCollection->text;
+        convertedSourceCollectionMap.insert(std::make_pair(originalSourceCollection, result));
+        return result;
+    }
+
     BootstrapEnvironment::ASTSourcePositionPtr convertSourcePosition(const SourcePosition &originalSourcePosition)
     {
-        // TODO: Implement this part.
-        return nullptr;
+        if(!originalSourcePosition.collection)
+            return BootstrapEnvironment::ASTSourcePosition::empty();
+
+        auto it = convertedSourcePositionMap.find(originalSourcePosition);
+        if(it != convertedSourcePositionMap.end())
+            return it->second;
+
+        auto result = std::make_shared<BootstrapEnvironment::ASTSourceCodePosition> ();
+        result->sourceCode = convertSourceCollection(originalSourcePosition.collection);
+        result->startPosition = originalSourcePosition.startPosition;
+
+        auto startLineColumn = originalSourcePosition.startLineColumn();
+        result->startLine = startLineColumn.line;
+        result->startColumn = startLineColumn.column;
+
+        result->endPosition = originalSourcePosition.endPosition;
+
+        auto endLineColumn = originalSourcePosition.endLineColumn();
+        result->endLine = endLineColumn.line;
+        result->endColumn = endLineColumn.column;
+
+        convertedSourcePositionMap.insert(std::make_pair(originalSourcePosition, result));
+        return result;
     }
 
     virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
@@ -229,34 +274,95 @@ public:
         return convertedNode;
     }
 
-    virtual std::any visitCallNode(ASTCallNode &) override
+    virtual std::any visitCallNode(ASTCallNode &node) override
     {
-        return std::any();
+        auto sourcePosition = convertSourcePosition(node.sourcePosition);
+
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
+        convertedNode->sourcePosition = sourcePosition;
+
+        auto selector = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode>  ();
+        selector->sourcePosition = sourcePosition;
+        selector->setValueAndType(internSymbol("()"));
+
+        auto tuple = std::make_shared<BootstrapEnvironment::ASTMakeTupleNode>  ();
+        tuple->sourcePosition = sourcePosition;
+        tuple->elements.reserve(node.arguments.size());
+        for(auto &arg : node.arguments)
+            tuple->elements.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+
+        convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.callable));
+        convertedNode->selector = selector;
+
+        convertedNode->arguments.reserve(1);
+        convertedNode->arguments.push_back(tuple);
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitSubscriptNode(ASTSubscriptNode &) override
+    virtual std::any visitSubscriptNode(ASTSubscriptNode &node) override
     {
-        return std::any();
+        auto sourcePosition = convertSourcePosition(node.sourcePosition);
+
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
+        convertedNode->sourcePosition = sourcePosition;
+
+        auto selector = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode>  ();
+        selector->sourcePosition = sourcePosition;
+        selector->setValueAndType(internSymbol("[]"));
+
+        convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.array));
+        convertedNode->selector = selector;
+
+        convertedNode->arguments.reserve(1);
+        convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*node.index)));
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &) override
+    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeTupleNode>  ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->elements.reserve(node.elements.size());
+        for(auto &element : node.elements)
+            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &) override
+    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeDictionaryNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->elements.reserve(node.elements.size());
+        for(const auto &element : node.elements)
+            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &) override
+    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeAssociationNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        if(node.key)
+            convertedNode->key = std::any_cast<ResultType> (visitNode(*node.key));
+        if(node.value)
+            convertedNode->value = std::any_cast<ResultType> (visitNode(*node.value));
+
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &) override
+    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeLiteralArrayNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->elements.reserve(node.elements.size());
+        for(const auto &element : node.elements)
+            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+
+        return ResultType(convertedNode);
     }
 
     virtual std::any visitQuoteNode(ASTQuoteNode &node) override
@@ -294,7 +400,6 @@ public:
 
 } // End of namespace Sysmel
 } // End of namespace Compiler
-
 
 namespace BootstrapEnvironment
 {

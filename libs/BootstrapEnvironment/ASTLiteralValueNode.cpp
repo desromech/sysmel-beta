@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -23,7 +24,8 @@ void ASTLiteralValueNode::setValueAndType(const AnyValuePtr &theValue)
 
 SExpression ASTLiteralValueNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"literal"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"literal"}},
+        sourcePosition->asSExpression(),
         value ? value->asSExpression() : nullptr,
         type ? (type->isASTNode() ? type->asSExpression() : SExpressionSymbol{type->asString()}) : nullptr
     }};

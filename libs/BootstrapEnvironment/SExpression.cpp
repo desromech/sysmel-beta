@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/SExpression.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
@@ -40,12 +41,14 @@ struct SExpressionPrinterVisitor
 
     void operator()(char32_t value)
     {
-        out << '\'' << value << '\'';
+        out << '\'';
+        formatUtf32Character(value, out);
+        out << '\'';
     }
 
     void operator()(const std::string &value)
     {
-        out << '"' << value << '"';
+        out << formatStringLiteral(value);
     }
 
     void operator()(const SExpressionIdentifier &value)
@@ -55,7 +58,7 @@ struct SExpressionPrinterVisitor
 
     void operator()(const SExpressionSymbol &value)
     {
-        out << "#\"" << value.value << '\"';
+        out << formatSymbolLiteral(value.value);
     }
 
     void operator()(const SExpressionList &value)

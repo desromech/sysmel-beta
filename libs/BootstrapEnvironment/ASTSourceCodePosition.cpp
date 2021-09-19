@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTSourceCodePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourceCode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -11,6 +12,21 @@ static BootstrapTypeRegistration<ASTSourceCodePosition> ASTSourceCodePositionTyp
 bool ASTSourceCodePosition::isASTSourceCodePosition() const
 {
     return true;
+}
+
+SExpression ASTSourceCodePosition::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"position"}},
+        sourceCode->asSExpression(),
+        LargeInteger{startPosition},
+        LargeInteger{endPosition},
+
+        LargeInteger{startLine},
+        LargeInteger{startColumn},
+
+        LargeInteger{endLine},
+        LargeInteger{endColumn},
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

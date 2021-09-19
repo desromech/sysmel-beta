@@ -2,7 +2,6 @@
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
-#include <sstream>
 
 namespace SysmelMoebius
 {
@@ -34,14 +33,7 @@ std::string LiteralString::asString() const
 
 std::string LiteralString::printString() const
 {
-    std::ostringstream out;
-    out << '"';
-    for(auto c : value)
-    {
-        formatUtf8Character(c, out);
-    }
-    out << '"';
-    return out.str();
+    return formatStringLiteral(value);
 }
 
 std::string LiteralString::unwrapAsString() const

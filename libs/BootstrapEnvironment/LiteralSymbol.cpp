@@ -2,7 +2,6 @@
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <unordered_map>
-#include <sstream>
 
 namespace SysmelMoebius
 {
@@ -43,14 +42,7 @@ bool LiteralSymbol::isLiteralSymbol() const
 
 std::string LiteralSymbol::printString() const
 {
-    std::ostringstream out;
-    out << "#\"";
-    for(auto c : value)
-    {
-        formatUtf8Character(c, out);
-    }
-    out << '"';
-    return out.str();
+    return formatSymbolLiteral(value);
 }
 
 SExpression LiteralSymbol::asSExpression() const

@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -22,6 +23,7 @@ SExpression ASTMessageSendNode::asSExpression() const
         argumentsSExpression.elements.push_back(arg->asSExpression());
 
     return SExpressionList{{SExpressionIdentifier{{"send"}},
+        sourcePosition->asSExpression(),
         selector->asSExpression(),
         receiver ? receiver->asSExpression() : nullptr,
         argumentsSExpression,

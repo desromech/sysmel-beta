@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTCleanUpScopeNode::isASTCleanUpScopeNode() const
 
 SExpression ASTCleanUpScopeNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"cleanUpScope"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"cleanUpScope"}},
+        sourcePosition->asSExpression(),
         body->asSExpression()
     }};
 }

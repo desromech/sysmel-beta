@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -22,8 +23,9 @@ SExpression ASTSequenceNode::asSExpression() const
         sexprPragmas.elements.push_back(pragma->asSExpression());
 
     SExpressionList sexpr;
-    sexpr.elements.reserve(2 + expressions.size());
+    sexpr.elements.reserve(3 + expressions.size());
     sexpr.elements.push_back(SExpressionIdentifier{{"sequence"}});
+    sexpr.elements.push_back(sourcePosition->asSExpression());
     sexpr.elements.push_back(sexprPragmas);
     for(const auto &expr : expressions)
         sexpr.elements.push_back(expr->asSExpression());

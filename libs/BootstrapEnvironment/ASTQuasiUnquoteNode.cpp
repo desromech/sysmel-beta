@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTQuasiUnquoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTQuasiUnquoteNode::isASTQuasiUnquoteNode() const
 
 SExpression ASTQuasiUnquoteNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"quasiUnquote"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"quasiUnquote"}},
+        sourcePosition->asSExpression(),
         expression->asSExpression()
     }};
 }

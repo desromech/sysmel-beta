@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTArgumentDefinitionNode::isASTArgumentDefinitionNode() const
 
 SExpression ASTArgumentDefinitionNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"argument"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"argument"}},
+        sourcePosition->asSExpression(),
         identifier ? identifier->asSExpression() : nullptr,
         type ? type->asSExpression() : nullptr,
     }};

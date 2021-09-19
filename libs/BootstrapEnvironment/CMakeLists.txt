@@ -5,10 +5,15 @@ set(BootstrapEnvironment_Sources
     ASTBuilder.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
+    ASTEmptySourcePosition.cpp
     ASTIdentifierReferenceNode.cpp
     ASTIntrinsicOperationNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
+    ASTMakeAssociationNode.cpp
+    ASTMakeDictionaryNode.cpp
+    ASTMakeLiteralArrayNode.cpp
+    ASTMakeTupleNode.cpp
     ASTMessageChainMessageNode.cpp
     ASTMessageChainNode.cpp
     ASTMessageSendNode.cpp
@@ -58,6 +63,7 @@ set(BootstrapEnvironment_Sources
     RuntimeContext.cpp
     SExpression.cpp
     SpecificMethod.cpp
+    StringUtilities.cpp
     TranslationUnitModule.cpp
     Type.cpp
     Wrappers.cpp

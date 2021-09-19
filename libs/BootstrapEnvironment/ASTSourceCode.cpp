@@ -13,5 +13,12 @@ bool ASTSourceCode::isASTSourceCode() const
     return true;
 }
 
+SExpression ASTSourceCode::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"sourceCode"}},
+        name
+    }};
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTQuoteNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTQuoteNode::isASTQuoteNode() const
 
 SExpression ASTQuoteNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"quote"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"quote"}},
+        sourcePosition->asSExpression(),
         expression->asSExpression()
     }};
 }

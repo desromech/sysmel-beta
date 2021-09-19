@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/Error.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -9,6 +10,11 @@ namespace BootstrapEnvironment
 {
 
 static BootstrapTypeRegistration<ASTNode> ASTNodeTypeRegistration;
+
+ASTNode::ASTNode()
+{
+    sourcePosition = ASTSourcePosition::empty();
+}
 
 bool ASTNode::isASTNode() const
 {

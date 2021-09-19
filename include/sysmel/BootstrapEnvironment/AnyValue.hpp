@@ -229,6 +229,18 @@ public:
     /// Is this object an AST intrinsic operation node?
     virtual bool isASTIntrinsicOperationNode() const;
 
+    /// Is this object an AST message a make tuple node?
+    virtual bool isASTMakeTupleNode() const;
+
+    /// Is this object an AST message a make literal array node?
+    virtual bool isASTMakeLiteralArrayNode() const;
+
+    /// Is this object an AST message a make dictionary node?
+    virtual bool isASTMakeDictionaryNode() const;
+
+    /// Is this object an AST message a make association node?
+    virtual bool isASTMakeAssociationNode() const;
+
     /// Is this object an AST message chain node?
     virtual bool isASTMessageChainNode() const;
 
@@ -273,6 +285,9 @@ public:
 
     /// Is this object an AST source position?
     virtual bool isASTSourcePosition() const;
+
+    /// Is this object an empty AST source position?
+    virtual bool isASTEmptySourcePosition() const;
 
     /// Is this object an AST source code position?
     virtual bool isASTSourceCodePosition() const;

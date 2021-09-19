@@ -111,6 +111,23 @@ struct CollectionRange
         while(f(peek()))
             advance();
     }
+
+    bool operator==(const SelfType &o) const
+    {
+        return collection == o.collection && startPosition == o.startPosition && endPosition == o.endPosition;
+    }
+
+    bool operator!=(const SelfType &o) const
+    {
+        return collection != o.collection || startPosition != o.startPosition || endPosition != o.endPosition;;
+    }
+
+    size_t hash() const
+    {
+        return std::hash<CollectionPtr> ()(collection) ^
+            std::hash<size_t> ()(startPosition) ^
+            std::hash<size_t> ()(endPosition);
+    }
 };
 
 } // End of namespace Compiler

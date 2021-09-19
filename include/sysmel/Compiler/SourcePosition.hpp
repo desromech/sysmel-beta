@@ -5,6 +5,7 @@
 #include "SourceCollection.hpp"
 #include "CollectionRange.hpp"
 #include <ostream>
+#include <functional>
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -53,5 +54,17 @@ struct SourcePosition : CollectionRange<SourcePosition, SourceCollectionPtr, std
 
 } // End of namespace Compiler
 } // End of namespace SysmelMoebius
+
+namespace std
+{
+template<>
+struct hash<SysmelMoebius::Compiler::SourcePosition>
+{
+    size_t operator()(const SysmelMoebius::Compiler::SourcePosition &position) const
+    {
+        return position.hash();
+    }
+};
+}
 
 #endif //SYSMEL_COMPILER_SOURCE_POSITION_HPP

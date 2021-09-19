@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,9 @@ bool ASTIdentifierReferenceNode::isASTIdentifierReferenceNode() const
 
 SExpression ASTIdentifierReferenceNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"identifier"}}, identifier->asSExpression()}};
+    return SExpressionList{{SExpressionIdentifier{{"identifier"}},
+        sourcePosition->asSExpression(),
+        identifier->asSExpression()}};
 }
 
 } // End of namespace BootstrapEnvironment

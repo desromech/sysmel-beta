@@ -28,6 +28,8 @@ class ASTNode : public SubtypeOf<CompilerObject, ASTNode>
 public:
     static constexpr char const __typeName__[] = "ASTNode";
 
+    ASTNode();
+
     virtual bool isASTNode() const override;
 
     virtual std::string printString() const;

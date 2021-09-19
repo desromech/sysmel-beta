@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,8 @@ bool ASTSpliceNode::isASTSpliceNode() const
 
 SExpression ASTSpliceNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"splice"}}, 
+    return SExpressionList{{SExpressionIdentifier{{"splice"}},
+        sourcePosition->asSExpression(),
         expression->asSExpression()
     }};
 }

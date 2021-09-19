@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -16,7 +17,9 @@ bool ASTParseErrorNode::isASTParseErrorNode() const
 
 SExpression ASTParseErrorNode::asSExpression() const
 {
-    return SExpressionList{{SExpressionIdentifier{{"parseError"}}, errorMessage}};
+    return SExpressionList{{SExpressionIdentifier{{"parseError"}},
+        sourcePosition->asSExpression(),
+        errorMessage}};
 }
 
 } // End of namespace BootstrapEnvironment

@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_HPP
+#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_POSITION_HPP
+#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_POSITION_HPP
 #pragma once
 
 #include "ASTSourceCode.hpp"
@@ -19,9 +19,19 @@ public:
     static constexpr char const __typeName__[] = "ASTSourceCodePosition";
 
     virtual bool isASTSourceCodePosition() const override;
+    virtual SExpression asSExpression() const override;
+
+    ASTSourceCodePtr sourceCode;
+    size_t startPosition = 0;
+    size_t startLine = 0;
+    size_t startColumn = 0;
+
+    size_t endPosition = 0;
+    size_t endLine = 0;
+    size_t endColumn = 0;
 };
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_HPP
+#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_SOURCE_CODE_POSITION_HPP
