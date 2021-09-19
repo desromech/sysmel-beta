@@ -75,6 +75,11 @@ bool AnyValue::isASTBuilder() const
     return false;
 }
 
+bool AnyValue::isASTArgumentDefinitionNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTIdentifierReferenceNode() const
 {
     return false;
@@ -130,6 +135,26 @@ bool AnyValue::isASTParseErrorNode() const
     return false;
 }
 
+bool AnyValue::isASTPragmaNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTQuasiQuoteNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTQuasiUnquoteNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTQuoteNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTSourceCode() const
 {
     return false;
@@ -141,6 +166,11 @@ bool AnyValue::isASTSourcePosition() const
 }
 
 bool AnyValue::isASTSourceCodePosition() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSpliceNode() const
 {
     return false;
 }

@@ -12,6 +12,14 @@ namespace ObjectModel
 class ASTSourcePosition;
 typedef std::shared_ptr<ASTSourcePosition> ASTSourcePositionPtr;
 
+class ASTArgumentDefinitionNode;
+typedef std::shared_ptr<ASTArgumentDefinitionNode> ASTArgumentDefinitionNodePtr;
+typedef std::vector<ASTArgumentDefinitionNodePtr> ASTArgumentDefinitionNodePtrList;
+
+class ASTMessageChainMessageNode;
+typedef std::shared_ptr<ASTMessageChainMessageNode> ASTMessageChainMessageNodePtr;
+typedef std::vector<ASTMessageChainMessageNodePtr> ASTMessageChainMessageNodePtrList;
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */

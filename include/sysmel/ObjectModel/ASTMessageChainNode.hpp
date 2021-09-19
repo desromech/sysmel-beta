@@ -9,10 +9,6 @@ namespace SysmelMoebius
 namespace ObjectModel
 {
 
-class ASTMessageChainMessageNode;
-typedef std::shared_ptr<ASTMessageChainMessageNode> ASTMessageChainMessageNodePtr;
-typedef std::vector<ASTMessageChainMessageNodePtr> ASTMessageChainMessageNodePtrList;
-
 /**
  * I am represent a message chain AST node.
  */

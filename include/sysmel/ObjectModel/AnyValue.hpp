@@ -220,6 +220,9 @@ public:
     /// Is this object an AST builder?
     virtual bool isASTBuilder() const;
 
+    /// Is this object an AST argument definition node?
+    virtual bool isASTArgumentDefinitionNode() const;
+
     /// Is this object an AST identifier reference node?
     virtual bool isASTIdentifierReferenceNode() const;
 
@@ -253,6 +256,18 @@ public:
     /// Is this object an AST parse error node?
     virtual bool isASTParseErrorNode() const;
 
+    /// Is this object an AST pragma node?
+    virtual bool isASTPragmaNode() const;
+
+    /// Is this object an AST quasi-quote node?
+    virtual bool isASTQuasiQuoteNode() const;
+
+    /// Is this object an AST quasi-unquote node?
+    virtual bool isASTQuasiUnquoteNode() const;
+
+    /// Is this object an AST quote node?
+    virtual bool isASTQuoteNode() const;
+
     /// Is this object an AST source code?
     virtual bool isASTSourceCode() const;
 
@@ -261,6 +276,9 @@ public:
 
     /// Is this object an AST source code position?
     virtual bool isASTSourceCodePosition() const;
+
+    /// Is this object an AST splice node?
+    virtual bool isASTSpliceNode() const;
 
     /// Is this object a program entity?
     virtual bool isProgramEntity() const;

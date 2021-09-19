@@ -5,6 +5,7 @@
 #include "sysmel/ObjectModel/BootstrapTypeRegistration.hpp"
 #include "sysmel/ObjectModel/BootstrapMethod.hpp"
 
+#include "sysmel/ObjectModel/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/ObjectModel/ASTClosureNode.hpp"
 #include "sysmel/ObjectModel/ASTLiteralValueNode.hpp"
 #include "sysmel/ObjectModel/ASTLexicalScopeNode.hpp"
@@ -13,6 +14,11 @@
 #include "sysmel/ObjectModel/ASTMessageChainNode.hpp"
 #include "sysmel/ObjectModel/ASTMessageChainMessageNode.hpp"
 #include "sysmel/ObjectModel/ASTMessageSendNode.hpp"
+#include "sysmel/ObjectModel/ASTPragmaNode.hpp"
+#include "sysmel/ObjectModel/ASTQuoteNode.hpp"
+#include "sysmel/ObjectModel/ASTQuasiQuoteNode.hpp"
+#include "sysmel/ObjectModel/ASTQuasiUnquoteNode.hpp"
+#include "sysmel/ObjectModel/ASTSpliceNode.hpp"
 #include "sysmel/ObjectModel/ASTParseErrorNode.hpp"
 #include "sysmel/ObjectModel/ASTSequenceNode.hpp"
 
@@ -62,24 +68,42 @@ public:
         return ResultType(convertedNode);
     }
     
-    virtual std::any visitPragmaNode(ASTPragmaNode &) override
+    virtual std::any visitPragmaNode(ASTPragmaNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTPragmaNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+
+        convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
+        convertedNode->arguments.reserve(node.arguments.size());
+        for(auto &arg : node.arguments)
+            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+
+        return ResultType(convertedNode);
     }
     
     virtual std::any visitBlockNode(ASTBlockNode &node) override
     {
-        auto convertedSequence = std::any_cast<ResultType> (visitNode(*node.expressionList));
-
+        auto convertedSequence = std::static_pointer_cast<ObjectModel::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
         auto blockPosition = convertSourcePosition(node.sourcePosition);
+
+        convertedSequence->pragmas.reserve(node.pragmas.size());
+        for(const auto &pragma : node.pragmas)
+            convertedSequence->pragmas.push_back(std::any_cast<ResultType> (visitNode(*pragma)));
 
         if(node.blockClosureSignature)
         {
             auto signature = std::static_pointer_cast<ASTBlockClosureSignatureNode> (node.blockClosureSignature);
             auto blockClosureNode = std::make_shared<ObjectModel::ASTClosureNode> ();
             blockClosureNode->kind = ObjectModel::ASTClosureNodeKind::Block;
+            blockClosureNode->arguments.reserve(signature->arguments.size());
+            for(const auto &arg : signature->arguments)
+                blockClosureNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
 
-            return std::any();
+            if(signature->returnType)
+                blockClosureNode->returnType = std::any_cast<ResultType> (visitNode(*signature->returnType));
+            blockClosureNode->body = convertedSequence;
+            
+            return ResultType(blockClosureNode);
         }
         else
         {
@@ -94,9 +118,15 @@ public:
         }
     }
     
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &)
+    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node)
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTArgumentDefinitionNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        if(node.identifier)
+            convertedNode->identifier = std::any_cast<ResultType> (visitNode(*node.identifier));
+        if(node.type)
+            convertedNode->type = std::any_cast<ResultType> (visitNode(*node.type));
+        return ResultType(convertedNode);
     }
     
     virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &)
@@ -229,24 +259,36 @@ public:
         return std::any();
     }
 
-    virtual std::any visitQuoteNode(ASTQuoteNode &) override
+    virtual std::any visitQuoteNode(ASTQuoteNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTQuoteNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &) override
+    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTQuasiQuoteNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &) override
+    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTQuasiUnquoteNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
+        return ResultType(convertedNode);
     }
 
-    virtual std::any visitSpliceNode(ASTSpliceNode &) override
+    virtual std::any visitSpliceNode(ASTSpliceNode &node) override
     {
-        return std::any();
+        auto convertedNode = std::make_shared<ObjectModel::ASTSpliceNode> ();
+        convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
+        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
+        return ResultType(convertedNode);
     }
 };
 

@@ -1,6 +1,7 @@
 set(ObjectModel_Sources
     LargeInteger.cpp
     AnyValue.cpp
+    ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
@@ -13,10 +14,15 @@ set(ObjectModel_Sources
     ASTMessageSendNode.cpp
     ASTNode.cpp
     ASTParseErrorNode.cpp
+    ASTPragmaNode.cpp
+    ASTQuasiQuoteNode.cpp
+    ASTQuasiUnquoteNode.cpp
+    ASTQuoteNode.cpp
     ASTSequenceNode.cpp
     ASTSourceCode.cpp
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
+    ASTSpliceNode.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp

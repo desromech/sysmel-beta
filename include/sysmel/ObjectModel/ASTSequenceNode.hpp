@@ -21,6 +21,7 @@ public:
 
     virtual AnyValuePtr encodeAsSExpression() const override;
 
+    ASTNodePtrList pragmas;
     ASTNodePtrList expressions;
 };
 
