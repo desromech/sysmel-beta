@@ -4,6 +4,7 @@
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
+#include "sysmel/BootstrapEnvironment/ScriptModule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include <fstream>
@@ -76,33 +77,35 @@ int main(int argc, const char *argv[])
     int exitCode = 0;
 
     RuntimeContext::create()->activeDuring([&](){
-        for(int i = 1; i < argc; ++i)
-        {
-            std::string arg = argv[i];
-            if(arg == "-eval")
+        ScriptModule::create()->activeDuring([&](){
+            for(int i = 1; i < argc; ++i)
             {
-                evalString(argv[++i], "<command line arg>");
+                std::string arg = argv[i];
+                if(arg == "-eval")
+                {
+                    evalString(argv[++i], "<command line arg>");
+                }
+                else if(arg == "-parse-string")
+                {
+                    parseString(argv[++i], "<command line arg>");
+                }
+                else if(arg == "-dump-bootstrap-env")
+                {
+                    dumpBootstrapEnvironment();
+                    return;
+                }
+                else if(!arg.empty() && arg[0] != '-')
+                {
+                    evalFileNamed(argv[i]);
+                }
+                else
+                {
+                    std::cerr << "Unsupported command line argument " << arg << std::endl;
+                    exitCode = 1;
+                    return;
+                }
             }
-            else if(arg == "-parse-string")
-            {
-                parseString(argv[++i], "<command line arg>");
-            }
-            else if(arg == "-dump-bootstrap-env")
-            {
-                dumpBootstrapEnvironment();
-                return;
-            }
-            else if(!arg.empty() && arg[0] != '-')
-            {
-                evalFileNamed(argv[i]);
-            }
-            else
-            {
-                std::cerr << "Unsupported command line argument " << arg << std::endl;
-                exitCode = 1;
-                return;
-            }
-        }
+        });
     });
 
     return exitCode;

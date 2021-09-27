@@ -19,6 +19,8 @@ class ScriptModule : public SubtypeOf<ProgramModule, ScriptModule>
 public:
     static constexpr char const __typeName__[] = "ScriptModule";
 
+    static ScriptModulePtr create();
+
     virtual bool isScriptModule() const override;
 };
 

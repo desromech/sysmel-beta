@@ -23,6 +23,8 @@ void BootstrapModule::initialize()
     {
         auto type = std::make_shared<BootstrapType> ();
         auto metaType = std::make_shared<MetaType> ();
+        type->registerInCurrentModule();
+        metaType->registerInCurrentModule();
         type->setType(metaType);
         metaType->setThisType(type);
 

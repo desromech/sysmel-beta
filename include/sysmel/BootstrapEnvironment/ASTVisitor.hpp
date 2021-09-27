@@ -17,6 +17,7 @@ class ASTVisitor : public SubtypeOf<CompilerObject, ASTVisitor>
 public:
     static constexpr char const __typeName__[] = "ASTVisitor";
 
+    virtual AnyValuePtr visitNode(const ASTNodePtr &node);
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);

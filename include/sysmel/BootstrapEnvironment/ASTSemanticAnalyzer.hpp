@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment)
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -17,6 +19,7 @@ class ASTSemanticAnalyzer : public SubtypeOf<ASTVisitor, ASTSemanticAnalyzer>
 public:
     static constexpr char const __typeName__[] = "ASTSemanticAnalyzer";
 
+    ASTAnalysisEnvironmentPtr environment;
 };
 
 } // End of namespace BootstrapEnvironment

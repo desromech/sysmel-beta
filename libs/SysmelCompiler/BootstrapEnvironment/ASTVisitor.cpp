@@ -10,6 +10,11 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<ASTVisitor> ASTVisitorTypeRegistration;
 
+AnyValuePtr ASTVisitor::visitNode(const ASTNodePtr &node)
+{
+    return node->accept(shared_from_this());
+}
+
 AnyValuePtr ASTVisitor::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &)
 {
     throw SubclassResponsibility();

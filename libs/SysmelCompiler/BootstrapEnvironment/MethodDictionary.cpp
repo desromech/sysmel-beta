@@ -45,6 +45,7 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &selector, const 
             auto newPatternMatchingMethod = std::make_shared<PatternMatchingMethod> (selector);
             newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (existent));
             newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (method));
+            newPatternMatchingMethod->registerInCurrentModule();
             dictionary[selector] = newPatternMatchingMethod;
         }
         else

@@ -1,9 +1,11 @@
 set(BootstrapEnvironment_Sources
     AnyValue.cpp
+    ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
+    ASTCompileTimeEvaluator.cpp
     ASTEmptySourcePosition.cpp
     ASTIdentifierReferenceNode.cpp
     ASTIntrinsicOperationNode.cpp
@@ -22,6 +24,7 @@ set(BootstrapEnvironment_Sources
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
+    ASTSemanticAnalyzer.cpp
     ASTSequenceNode.cpp
     ASTSourceCode.cpp
     ASTSourceCodePosition.cpp
@@ -33,6 +36,7 @@ set(BootstrapEnvironment_Sources
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
+    CompiledMethod.cpp
     CompilerObject.cpp
     Fraction.cpp
     IdentifierLookupScope.cpp
@@ -60,6 +64,7 @@ set(BootstrapEnvironment_Sources
     Method.cpp
     MethodDictionary.cpp
     Module.cpp
+    ModuleDefinedProgramEntity.cpp
     ScriptModule.cpp
     ModuleReference.cpp
     PatternMatchingMethod.cpp

@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_TYPE_HPP
 #pragma once
 
-#include "ProgramEntity.hpp"
+#include "ModuleDefinedProgramEntity.hpp"
 #include <functional>
 
 namespace SysmelMoebius
@@ -15,7 +15,7 @@ typedef std::function<void (TypePtr)> TypeIterationBlock;
 /**
  * I am the base interface for all of the types that are defined in the system.
  */
-class Type : public SubtypeOf<ProgramEntity, Type>
+class Type : public SubtypeOf<ModuleDefinedProgramEntity, Type>
 {
 public:
     static constexpr char const __typeName__[] = "Type";

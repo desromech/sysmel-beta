@@ -3,6 +3,9 @@
 #include "sysmel/BootstrapEnvironment/Error.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
+#include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
+#include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -39,6 +42,13 @@ MethodCategories LanguageSupport::__instanceMethods__()
     };
 }
 
+ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment() const
+{
+    auto result = std::make_shared<ASTAnalysisEnvironment> ();
+    result->identifierLookupScope = std::make_shared<IdentifierLookupScope> ();
+    return result;
+}
+
 ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const
 {
     (void)sourceString;
@@ -54,13 +64,23 @@ ASTNodePtr LanguageSupport::parseFileNamed(const std::string &fileName) const
 AnyValuePtr LanguageSupport::evaluateSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const
 {
     auto ast = parseSourceStringNamed(sourceString, sourceStringName);
-    return ast;
+    auto compiledMethod = analyzeASTInEnvironment(ast, createDefaultAnalysisEnvironment());
+    return compiledMethod->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
+}
+
+CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment) const
+{
+    auto scriptMethod = std::make_shared<CompiledMethod> ();
+    scriptMethod->setDefinition(ast, ast, environment);
+    scriptMethod->ensureSemanticAnalysis();
+    return scriptMethod;
 }
 
 AnyValuePtr LanguageSupport::evaluateFileNamed(const std::string &fileName) const
 {
     auto ast = parseFileNamed(fileName);
-    return ast;
+    auto compiledMethod = analyzeASTInEnvironment(ast, createDefaultAnalysisEnvironment());
+    return compiledMethod->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
 }
 
 } // End of namespace BootstrapEnvironment

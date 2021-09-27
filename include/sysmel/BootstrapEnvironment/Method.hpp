@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_METHOD_HPP
 #pragma once
 
-#include "ProgramEntity.hpp"
+#include "ModuleDefinedProgramEntity.hpp"
 
 namespace SysmelMoebius
 {
@@ -20,7 +20,7 @@ struct MethodPatternMatchingResult
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class Method : public SubtypeOf<ProgramEntity, Method>
+class Method : public SubtypeOf<ModuleDefinedProgramEntity, Method>
 {
 public:
     static constexpr char const __typeName__[] = "Method";

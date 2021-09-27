@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ProgramEntity.hpp"
+#include <unordered_set>
 
 namespace SysmelMoebius
 {
@@ -46,6 +47,16 @@ public:
     virtual bool isProgramModule() const;
     virtual bool isScriptModule() const;
 
+    bool isLockedForNewDefinitions();
+    void lockForNewDefinitions();
+
+    virtual void registerProgramEntity(const ProgramEntityPtr &programEntity);
+    virtual void enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &programEntity);
+    virtual void analyzeAllPendingProgramEntities(const ProgramEntityPtr &programEntity);
+
+protected:
+    bool lockedForNewDefinitions = false;
+    std::unordered_set<ProgramEntityPtr> registeredProgramEntities;
 };
 
 } // End of namespace BootstrapEnvironment

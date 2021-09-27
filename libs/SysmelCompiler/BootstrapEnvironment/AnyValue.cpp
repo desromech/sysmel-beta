@@ -260,6 +260,11 @@ bool AnyValue::isSpecificMethod() const
     return false;
 }
 
+bool AnyValue::isCompiledMethod() const
+{
+    return false;
+}
+
 bool AnyValue::isBootstrapMethod() const
 {
     return false;

@@ -7,6 +7,11 @@ namespace BootstrapEnvironment
 {
 static BootstrapTypeRegistration<ScriptModule> scriptModuleTypeRegistration;
 
+ScriptModulePtr ScriptModule::create()
+{
+    return std::make_shared<ScriptModule> ();
+}
+
 bool ScriptModule::isScriptModule() const
 {
     return true;

@@ -52,6 +52,7 @@ public:
     virtual std::string printString() const;
 
     ASTSourcePositionPtr sourcePosition;
+    TypePtr analyzedType;
 };
 
 } // End of namespace BootstrapEnvironment

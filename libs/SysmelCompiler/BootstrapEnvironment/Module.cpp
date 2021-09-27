@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+#include "sysmel/BootstrapEnvironment/Error.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -33,6 +34,34 @@ bool Module::isProgramModule() const
 bool Module::isScriptModule() const
 {
     return false;
+}
+
+bool Module::isLockedForNewDefinitions()
+{
+    return lockedForNewDefinitions;
+}
+
+void Module::lockForNewDefinitions()
+{
+    lockedForNewDefinitions = true;
+}
+
+void Module::registerProgramEntity(const ProgramEntityPtr &programEntity)
+{
+    if(isLockedForNewDefinitions())
+        throw UnsupportedOperation("Module is locked for new definitions.");
+
+    registeredProgramEntities.insert(programEntity);
+}
+
+void Module::enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &)
+{
+    throw UnsupportedOperation();
+}
+
+void Module::analyzeAllPendingProgramEntities(const ProgramEntityPtr &)
+{
+    // Nothing is required here by default.
 }
 
 } // End of namespace BootstrapEnvironment

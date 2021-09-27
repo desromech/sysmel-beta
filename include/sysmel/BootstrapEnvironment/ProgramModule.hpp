@@ -20,9 +20,13 @@ class ProgramModule : public SubtypeOf<Module, ProgramModule>
 public:
     static constexpr char const __typeName__[] = "ProgramModule";
 
+    static ProgramModulePtr create(const std::string &name);
+
     virtual bool isProgramModule() const override;
 
-private:
+protected:
+    std::string name;
+
     std::vector<ModuleReferencePtr> importedModules;
     std::vector<ModuleReferencePtr> indirectlyImportedModules;
 };

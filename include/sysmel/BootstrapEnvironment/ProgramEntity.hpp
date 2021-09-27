@@ -9,6 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Module);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 

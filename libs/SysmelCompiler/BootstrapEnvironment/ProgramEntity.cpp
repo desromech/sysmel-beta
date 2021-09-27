@@ -1,4 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ProgramEntity.hpp"
+#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius

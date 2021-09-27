@@ -186,6 +186,7 @@ MethodBinding makeMethodBinding(const std::string &selector, FT &&functor)
 {
     auto selectorSymbol = internSymbol(selector);
     auto bootstrapMethod = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
@@ -194,6 +195,7 @@ MethodBinding makeMethodBinding(const std::string &selector, FT &&functor)
 {
     auto selectorSymbol = internSymbol(selector);
     auto bootstrapMethod = std::make_shared<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 

@@ -23,6 +23,20 @@ public:
         : Error(message) {}
 };
 
+class CannotEvaluateUndefinedMessage : public CannotEvaluateMessage
+{
+public:
+    CannotEvaluateUndefinedMessage(const std::string &message = "Undefined message cannot be evaluated.")
+        : CannotEvaluateMessage(message) {}
+};
+
+class CannotEvaluateMessageInCompileTime : public CannotEvaluateMessage
+{
+public:
+    CannotEvaluateMessageInCompileTime(const std::string &message = "This message cannot be evaluated in compile time.")
+        : CannotEvaluateMessage(message) {}
+};
+
 class MessageNotUnderstood : public Error
 {
 public:
@@ -94,6 +108,13 @@ class SubclassResponsibility : public Error
 {
 public:
     SubclassResponsibility(const std::string &message = "This method should be implemented in a subclass.")
+        : Error(message) {}
+};
+
+class UnsupportedOperation : public Error
+{
+public:
+    UnsupportedOperation(const std::string &message = "The specified operation is unsupported.")
         : Error(message) {}
 };
 
