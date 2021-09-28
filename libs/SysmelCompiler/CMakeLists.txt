@@ -93,6 +93,7 @@ set(BootstrapEnvironment_Sources
     StringUtilities.cpp
     SubclassResponsibility.cpp
     ProgramModule.cpp
+    ResultTypeInferenceSlot.cpp
     Type.cpp
     Wrappers.cpp
 )

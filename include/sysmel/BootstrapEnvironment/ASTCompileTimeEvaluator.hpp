@@ -17,6 +17,19 @@ class ASTCompileTimeEvaluator : public SubtypeOf<ASTVisitor, ASTCompileTimeEvalu
 public:
     static constexpr char const __typeName__[] = "ASTCompileTimeEvaluator";
 
+    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
+    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
+    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
+    virtual AnyValuePtr visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node);
+    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
+    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node);
+    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node);
+    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node);
+    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node);
+    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node);
+    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node);
+    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node);
+    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment
