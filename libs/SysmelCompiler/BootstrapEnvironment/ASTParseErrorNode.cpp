@@ -28,5 +28,11 @@ SExpression ASTParseErrorNode::asSExpression() const
         errorMessage}};
 }
 
+ParseErrorPtr ASTParseErrorNode::asParseError()
+{
+    auto result = std::make_shared<ParseError> ();
+    result->parseErrorNode = shared_from_this();
+    return result;
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

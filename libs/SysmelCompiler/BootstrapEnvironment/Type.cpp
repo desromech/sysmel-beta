@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <algorithm>
@@ -144,7 +144,7 @@ AnyValuePtr Type::runWithArgumentsIn(const AnyValuePtr &selector, const std::vec
     if(method)
         return method->runWithArgumentsIn(selector, arguments, receiver);
 
-    throw MessageNotUnderstood("Message " + selector->printString() + " is not understood by " + receiver->printString() + ".");
+    signalNewWithMessage<MessageNotUnderstood> ("Message " + selector->printString() + " is not understood by " + receiver->printString() + ".");
 }
 
 void Type::subtypesDo(const TypeIterationBlock &aBlock)

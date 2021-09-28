@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/CannotEvaluateMessageInCompileTime.hpp"
+#include "sysmel/BootstrapEnvironment/CannotEvaluateUndefinedMessage.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluator.hpp"
@@ -67,9 +68,9 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
     (void)receiver;
     
     if(!isDefined())
-        throw CannotEvaluateUndefinedMessage();
+        signalNew<CannotEvaluateUndefinedMessage> ();
     if(!isDefinedForCompileTime())
-        throw CannotEvaluateMessageInCompileTime();
+        signalNew<CannotEvaluateMessageInCompileTime> ();
     ensureSemanticAnalysis();
 
     auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();

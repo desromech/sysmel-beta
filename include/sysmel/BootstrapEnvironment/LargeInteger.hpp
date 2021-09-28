@@ -1,5 +1,5 @@
-#ifndef SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP
-#define SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP
+#ifndef SYSMEL_BOOTSTRAP_ENVIRONMENT_LARGE_INTEGER_HPP
+#define SYSMEL_BOOTSTRAP_ENVIRONMENT_LARGE_INTEGER_HPP
 #pragma once
 
 #include <stdint.h>
@@ -166,4 +166,4 @@ struct LargeInteger
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_OBJECT_MODEL_LARGE_INTEGER_HPP
+#endif //SYSMEL_BOOTSTRAP_ENVIRONMENT_LARGE_INTEGER_HPP

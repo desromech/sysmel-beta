@@ -23,11 +23,11 @@ void ModuleDefinedProgramEntity::registerInCurrentModule()
 {
     auto existentDefinition = definitionModule.lock();
     if(existentDefinition)
-        throw Error("Module defined program entities can only be registered once.");
+        signalNewWithMessage<Error> ("Module defined program entities can only be registered once.");
     
     auto currentModule = Module::getActive();
     if(!currentModule)
-        throw Error("An active module is required here.");
+        signalNewWithMessage<Error> ("An active module is required here.");
 
     currentModule->registerProgramEntity(shared_from_this());
     definitionModule = currentModule;

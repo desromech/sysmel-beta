@@ -1,5 +1,5 @@
-#ifndef SYSMEL_OBJECT_MODEL_FRACTION_HPP
-#define SYSMEL_OBJECT_MODEL_FRACTION_HPP
+#ifndef SYSMEL_BOOTSTRAP_ENVIRONMENT_FRACTION_HPP
+#define SYSMEL_BOOTSTRAP_ENVIRONMENT_FRACTION_HPP
 #pragma once
 
 #include "LargeInteger.hpp"
@@ -55,4 +55,4 @@ struct Fraction
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_OBJECT_MODEL_FRACTION_HPP
+#endif //SYSMEL_BOOTSTRAP_ENVIRONMENT_FRACTION_HPP

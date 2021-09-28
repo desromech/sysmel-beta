@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -18,7 +18,7 @@ ASTNode::ASTNode()
 
 AnyValuePtr ASTNode::accept(const ASTVisitorPtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 bool ASTNode::isASTNode() const

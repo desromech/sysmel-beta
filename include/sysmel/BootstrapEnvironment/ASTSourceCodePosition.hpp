@@ -23,6 +23,8 @@ public:
     virtual bool isASTSourceCodePosition() const override;
     virtual SExpression asSExpression() const override;
 
+    virtual std::string printString() const override;
+
     ASTSourceCodePtr sourceCode;
     size_t startPosition = 0;
     size_t startLine = 0;

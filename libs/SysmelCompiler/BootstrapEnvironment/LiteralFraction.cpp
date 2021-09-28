@@ -2,7 +2,7 @@
 #include "sysmel/BootstrapEnvironment/LiteralInteger.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/DivisionByZeroError.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
@@ -88,7 +88,7 @@ MethodCategories LiteralFraction::__instanceMethods__()
 LiteralNumberPtr LiteralFraction::makeFor(const Fraction &value)
 {
     if(value.denominator.isZero())
-        throw DivisionByZeroError();
+        signalNew<DivisionByZeroError> ();
     else if(value.denominator.isOne())
         return LiteralInteger::makeFor(value.numerator);
     

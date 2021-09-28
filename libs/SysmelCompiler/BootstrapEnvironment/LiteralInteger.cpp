@@ -5,7 +5,7 @@
 
 #include "sysmel/BootstrapEnvironment/LiteralSymbol.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralFraction.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/DivisionByZeroError.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <algorithm>
@@ -85,14 +85,14 @@ MethodCategories LiteralInteger::__instanceMethods__()
             // Division
             makeMethodBinding<Fraction (LargeInteger, LargeInteger)> ("/", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
-                    throw DivisionByZeroError();
+                    signalNew<DivisionByZeroError> ();
 
                 return Fraction{a, b}.reduced();
             }),
 
             makeMethodBinding<Fraction (LargeInteger, Fraction)> ("/", +[](const LargeInteger &a, const Fraction &b) {
                 if(b.numerator.isZero())
-                    throw DivisionByZeroError();
+                    signalNew<DivisionByZeroError> ();
 
                 return Fraction(a) / b;
             }),
@@ -104,21 +104,21 @@ MethodCategories LiteralInteger::__instanceMethods__()
             // Integer division
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("//", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
-                    throw DivisionByZeroError();
+                    signalNew<DivisionByZeroError> ();
                 return a / b;
             }),
 
             // Remainder
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("%", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
-                    throw DivisionByZeroError();
+                    signalNew<DivisionByZeroError> ();
 
                 return a % b;
             }),
 
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("\\\\", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
-                    throw DivisionByZeroError();
+                    signalNew<DivisionByZeroError> ();
 
                 return a % b;
             }),
@@ -174,56 +174,56 @@ std::string LiteralInteger::printString() const
 uint8_t LiteralInteger::unwrapAsUInt8() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint8_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return uint8_t(value.wordAt(0));
 }
 
 int8_t LiteralInteger::unwrapAsInt8() const
 {
     if(value < LargeInteger{std::numeric_limits<int8_t>::min()} || value > LargeInteger{std::numeric_limits<int8_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return value.isNegative() ? int8_t(-value.wordAt(0)) : int8_t(value.wordAt(0));
 }
 
 uint16_t LiteralInteger::unwrapAsUInt16() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint16_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return uint16_t(value.wordAt(0));
 }
 
 int16_t LiteralInteger::unwrapAsInt16() const
 {
     if(value < LargeInteger{std::numeric_limits<int16_t>::min()} || value > LargeInteger{std::numeric_limits<int16_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return value.isNegative() ? int16_t(-value.wordAt(0)) : int16_t(value.wordAt(0));
 }
 
 uint32_t LiteralInteger::unwrapAsUInt32() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint32_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return value.wordAt(0);
 }
 
 int32_t LiteralInteger::unwrapAsInt32() const
 {
     if(value < LargeInteger{std::numeric_limits<int32_t>::min()} || value > LargeInteger{std::numeric_limits<int32_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return value.isNegative() ? int32_t(-value.wordAt(0)) : int32_t(value.wordAt(0));
 }
 
 uint64_t LiteralInteger::unwrapAsUInt64() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<uint64_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return value.wordAt(0) | uint64_t(value.wordAt(1)) << 32;
 }
 
 int64_t LiteralInteger::unwrapAsInt64() const
 {
     if(value < LargeInteger{std::numeric_limits<int64_t>::min()} || value > LargeInteger{std::numeric_limits<int64_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
 
     auto magnitude = int64_t(value.wordAt(0) | uint64_t(value.wordAt(1)) << 32);
     return value.isNegative() ? -magnitude : magnitude;
@@ -237,21 +237,21 @@ LargeInteger LiteralInteger::unwrapAsLargeInteger() const
 char LiteralInteger::unwrapAsChar8() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<char>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return char(value.wordAt(0));
 }
 
 char16_t LiteralInteger::unwrapAsChar16() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<char16_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return char16_t(value.wordAt(0));
 }
 
 char32_t LiteralInteger::unwrapAsChar32() const
 {
     if(value.isNegative() || value > LargeInteger{std::numeric_limits<char32_t>::max()})
-        throw CannotUnwrap();
+        signalNew<CannotUnwrap> ();
     return char32_t(value.wordAt(0));
 }
 
@@ -263,7 +263,7 @@ Fraction LiteralInteger::unwrapAsFraction() const
 float LiteralInteger::unwrapAsFloat32() const
 {
 
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 double LiteralInteger::unwrapAsFloat64() const

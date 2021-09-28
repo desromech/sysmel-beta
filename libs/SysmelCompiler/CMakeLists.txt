@@ -1,4 +1,7 @@
 set(BootstrapEnvironment_Sources
+    AmbiguousMatchingPatternsFound.cpp
+    ArgumentCountError.cpp
+    ArithmeticError.cpp
     AnyValue.cpp
     ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
@@ -20,6 +23,7 @@ set(BootstrapEnvironment_Sources
     ASTMessageSendNode.cpp
     ASTNode.cpp
     ASTParseErrorNode.cpp
+    ASTParseErrorValidator.cpp
     ASTPragmaNode.cpp
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
@@ -36,8 +40,19 @@ set(BootstrapEnvironment_Sources
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
+    CannotEvaluateMessage.cpp
+    CannotEvaluateMessageInCompileTime.cpp
+    CannotEvaluateUndefinedMessage.cpp
+    CannotOverloadPatternMatchingMethod.cpp
+    CannotUnwrap.cpp
+    CompilationError.cpp
+    CompilationErrors.cpp
     CompiledMethod.cpp
     CompilerObject.cpp
+    DivisionByZeroError.cpp
+    DomainError.cpp
+    Error.cpp
+    Exception.cpp
     Fraction.cpp
     IdentifierLookupScope.cpp
     LanguageSupport.cpp
@@ -60,11 +75,14 @@ set(BootstrapEnvironment_Sources
     LiteralValue.cpp
     LiteralVoid.cpp
     MacroInvocationContext.cpp
+    MessageNotUnderstood.cpp
     MetaType.cpp
     Method.cpp
     MethodDictionary.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp
+    NotMatchingPatternFound.cpp
+    ParseError.cpp
     ScriptModule.cpp
     ModuleReference.cpp
     PatternMatchingMethod.cpp
@@ -73,6 +91,7 @@ set(BootstrapEnvironment_Sources
     SExpression.cpp
     SpecificMethod.cpp
     StringUtilities.cpp
+    SubclassResponsibility.cpp
     ProgramModule.cpp
     Type.cpp
     Wrappers.cpp

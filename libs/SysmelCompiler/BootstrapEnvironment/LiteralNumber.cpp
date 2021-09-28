@@ -1,7 +1,7 @@
 #include "sysmel/BootstrapEnvironment/LiteralNumber.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -26,7 +26,7 @@ bool LiteralNumber::isLiteralNumber() const
 
 double LiteralNumber::asFloat() const
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 } // End of namespace BootstrapEnvironment

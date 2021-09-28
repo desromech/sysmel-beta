@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTVisitor.hpp"
+#include "CompilationError.hpp"
 
 namespace SysmelMoebius
 {
@@ -16,6 +17,31 @@ class ASTParseErrorValidator : public SubtypeOf<ASTVisitor, ASTParseErrorValidat
 {
 public:
     static constexpr char const __typeName__[] = "ASTParseErrorValidator";
+
+    virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
+    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
+    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
+    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
+    virtual AnyValuePtr visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node);
+    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
+    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node);
+    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node);
+    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node);
+    virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node);
+    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node);
+    virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node);
+    virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node);
+    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node);
+    virtual AnyValuePtr visitParseErrorNode(const ASTParseErrorNodePtr &node);
+    virtual AnyValuePtr visitPragmaNode(const ASTPragmaNodePtr &node);
+    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node);
+    virtual AnyValuePtr visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node);
+    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node);
+    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
+    virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
+
+    CompilationErrorPtr makeCompilationError();
+    std::vector<ASTParseErrorNodePtr> parseErrorNodes;
 
 };
 

@@ -1,7 +1,7 @@
 #include "sysmel/BootstrapEnvironment/LiteralFloat.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -96,7 +96,7 @@ std::string LiteralFloat::printString() const
 float LiteralFloat::unwrapAsFloat32() const
 {
     if(float(value) != value)
-        throw CannotUnwrap("Cannot unwrap float32 because of loss of precision.");
+        signalNewWithMessage<CannotUnwrap> ("Cannot unwrap float32 because of loss of precision.");
     return value;
 }
 

@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/PatternMatchingMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/AmbiguousMatchingPatternsFound.hpp"
+#include "sysmel/BootstrapEnvironment/NotMatchingPatternFound.hpp"
 #include <limits>
 
 namespace SysmelMoebius
@@ -51,11 +52,11 @@ AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selecto
 
     if(matchingCandidates.empty())
     {
-        throw NotMatchingPatternFound();
+        signalNew<NotMatchingPatternFound> ();
     }
     else if(matchingCandidates.size() > 1)
     {
-        throw AmbiguousMatchingPatternsFound();
+        signalNew<AmbiguousMatchingPatternsFound> ();
     }
 
     return matchingCandidates.front()->runWithArgumentsIn(selector, arguments, receiver);

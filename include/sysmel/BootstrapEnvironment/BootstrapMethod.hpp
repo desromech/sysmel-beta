@@ -4,7 +4,7 @@
 
 #include "SpecificMethod.hpp"
 #include "Wrappers.hpp"
-#include "Error.hpp"
+#include "ArgumentCountError.hpp"
 #include <type_traits>
 
 namespace SysmelMoebius
@@ -53,7 +53,12 @@ public:
         (void)selector;
         
         if(signature.argumentTypes.size() != arguments.size())
-            throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
+        {
+            auto error = std::make_shared<ArgumentCountError> ();
+            error->expectedCount = signature.argumentTypes.size();
+            error->callCount = arguments.size();
+            error->signal();
+        }
 
         return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
     }
@@ -104,7 +109,12 @@ public:
         (void)selector;
         
         if(signature.argumentTypes.size() != arguments.size())
-            throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
+        {
+            auto error = std::make_shared<ArgumentCountError> ();
+            error->expectedCount = signature.argumentTypes.size();
+            error->callCount = arguments.size();
+            error->signal();
+        }
 
         return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
     }
@@ -154,7 +164,12 @@ public:
         (void)selector;
         
         if(signature.argumentTypes.size() != arguments.size())
-            throw ArgumentsCountMismatch(signature.argumentTypes.size(), arguments.size());
+        {
+            auto error = std::make_shared<ArgumentCountError> ();
+            error->expectedCount = signature.argumentTypes.size();
+            error->callCount = arguments.size();
+            error->signal();
+        }
 
         return doRunWithArgumentsIn(std::make_index_sequence<sizeof...(Args)> {}, arguments, receiver);
     }

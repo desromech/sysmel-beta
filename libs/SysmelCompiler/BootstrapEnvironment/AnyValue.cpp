@@ -1,7 +1,10 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
+#include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
+#include "sysmel/BootstrapEnvironment/CannotEvaluateMessage.hpp"
+#include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
@@ -372,97 +375,97 @@ std::string AnyValue::printString() const
 
 SExpression AnyValue::asSExpression() const
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 bool AnyValue::unwrapAsBoolean() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 uint8_t AnyValue::unwrapAsUInt8() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 int8_t AnyValue::unwrapAsInt8() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 uint16_t AnyValue::unwrapAsUInt16() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 int16_t AnyValue::unwrapAsInt16() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 uint32_t AnyValue::unwrapAsUInt32() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 int32_t AnyValue::unwrapAsInt32() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 uint64_t AnyValue::unwrapAsUInt64() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 int64_t AnyValue::unwrapAsInt64() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 LargeInteger AnyValue::unwrapAsLargeInteger() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 Fraction AnyValue::unwrapAsFraction() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 float AnyValue::unwrapAsFloat32() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 double AnyValue::unwrapAsFloat64() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 char AnyValue::unwrapAsChar8() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 char16_t AnyValue::unwrapAsChar16() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 char32_t AnyValue::unwrapAsChar32() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 std::string AnyValue::unwrapAsString() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 AnyValuePtrList AnyValue::unwrapAsArray() const
 {
-    throw CannotUnwrap();
+    signalNew<CannotUnwrap> ();
 }
 
 AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
@@ -470,14 +473,14 @@ AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std:
     (void)selector;
     (void)receiver;
     (void)arguments;
-    throw CannotEvaluateMessage();
+    signalNew<CannotEvaluateMessage> ();
 }
 
 AnyValuePtr AnyValue::performWithArguments(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments)
 {
     auto type = getType();
     if(!type)
-        throw MessageNotUnderstood("Message " + selector->printString() + " is not understood by " + printString() + ".");
+        signalNewWithMessage<MessageNotUnderstood> ("Message " + selector->printString() + " is not understood by " + printString() + ".");
     return type->runWithArgumentsIn(selector, arguments, shared_from_this());
 }
 } // End of namespace BootstrapEnvironment

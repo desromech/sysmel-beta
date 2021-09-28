@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTNode.hpp"
+#include "ParseError.hpp"
 
 namespace SysmelMoebius
 {
@@ -20,6 +21,8 @@ public:
     virtual bool isASTParseErrorNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+
+    ParseErrorPtr asParseError();
 
     std::string errorMessage;
 };

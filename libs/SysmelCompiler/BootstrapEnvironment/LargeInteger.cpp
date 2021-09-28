@@ -1,5 +1,5 @@
 #include "sysmel/BootstrapEnvironment/LargeInteger.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/DivisionByZeroError.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <math.h>
 #include <algorithm>
@@ -714,7 +714,7 @@ double LargeInteger::asDouble() const
 void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const
 {
     if(divisor.isZero())
-        throw DivisionByZeroError();
+        signalNew<DivisionByZeroError> ();
 
     // Compare the magnitude to rule out the easy cases.
     auto magnitudeComparison = compareMagnitudes(*this, divisor);

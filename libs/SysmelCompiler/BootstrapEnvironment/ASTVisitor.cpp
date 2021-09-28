@@ -1,5 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -17,107 +17,107 @@ AnyValuePtr ASTVisitor::visitNode(const ASTNodePtr &node)
 
 AnyValuePtr ASTVisitor::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitClosureNode(const ASTClosureNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitLiteralValueNode(const ASTLiteralValueNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMakeTupleNode(const ASTMakeTupleNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMessageChainNode(const ASTMessageChainNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitMessageSendNode(const ASTMessageSendNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitParseErrorNode(const ASTParseErrorNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitPragmaNode(const ASTPragmaNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitQuoteNode(const ASTQuoteNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitSequenceNode(const ASTSequenceNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr ASTVisitor::visitSpliceNode(const ASTSpliceNodePtr &)
 {
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 } // End of namespace BootstrapEnvironment

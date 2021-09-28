@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AnyValue.hpp"
-#include "Error.hpp"
+#include "CannotUnwrap.hpp"
 #include <utility>
 
 namespace SysmelMoebius
@@ -482,7 +482,7 @@ struct UnwrapValue<std::shared_ptr<T>> : std::enable_if<std::is_base_of<AnyValue
     {
         auto castedValue = std::dynamic_pointer_cast<T> (value);
         if(!castedValue)
-            throw CannotUnwrap();
+            signalNew<CannotUnwrap> ();
         return castedValue;
     }
 };
@@ -494,7 +494,7 @@ struct UnwrapValue<T*> : std::enable_if<std::is_base_of<AnyValue, T>::value, Unw
     {
         auto castedValue = dynamic_cast<T*> (value.get());
         if(!castedValue)
-            throw CannotUnwrap();
+            signalNew<CannotUnwrap> ();
         return castedValue;
     }
 };
@@ -506,7 +506,7 @@ struct UnwrapValue<const T*> : std::enable_if<std::is_base_of<AnyValue, T>::valu
     {
         auto castedValue = dynamic_cast<const T*> (value.get());
         if(!castedValue)
-            throw CannotUnwrap();
+            signalNew<CannotUnwrap> ();
         return castedValue;
     }
 };

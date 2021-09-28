@@ -1,5 +1,5 @@
 #include "sysmel/BootstrapEnvironment/Fraction.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/DivisionByZeroError.hpp"
 #include <assert.h>
 
 namespace SysmelMoebius
@@ -44,7 +44,7 @@ Fraction Fraction::operator*(const Fraction &other) const
 Fraction Fraction::operator/(const Fraction &other) const
 {
     if(other.numerator.isZero())
-        throw DivisionByZeroError();
+        signalNew<DivisionByZeroError> ();
     return Fraction{numerator * other.denominator, denominator * other.numerator}.reduced();
 }
 

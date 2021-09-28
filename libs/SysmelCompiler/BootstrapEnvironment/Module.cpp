@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -49,14 +49,14 @@ void Module::lockForNewDefinitions()
 void Module::registerProgramEntity(const ProgramEntityPtr &programEntity)
 {
     if(isLockedForNewDefinitions())
-        throw UnsupportedOperation("Module is locked for new definitions.");
+        signalNewWithMessage<UnsupportedOperation> ("Module is locked for new definitions.");
 
     registeredProgramEntities.insert(programEntity);
 }
 
 void Module::enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &)
 {
-    throw UnsupportedOperation();
+    signalNew<UnsupportedOperation> ();
 }
 
 void Module::analyzeAllPendingProgramEntities(const ProgramEntityPtr &)

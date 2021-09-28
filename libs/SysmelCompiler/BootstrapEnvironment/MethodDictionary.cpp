@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/PatternMatchingMethod.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/CannotOverloadPatternMatchingMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 
@@ -35,7 +35,7 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &selector, const 
     }
 
     if(method->isPatternMatchingMethod())
-        throw CannotOverloadPatternMatchingMethod();
+        signalNew<CannotOverloadPatternMatchingMethod> ();
 
     auto existent = it->second;
     if(method->isMethod() && existent->isMethod())
@@ -56,7 +56,7 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &selector, const 
         return;
     }
 
-    throw CannotOverloadPatternMatchingMethod();
+    signalNew<CannotOverloadPatternMatchingMethod> ();
 }
 
 } // End of namespace BootstrapEnvironment

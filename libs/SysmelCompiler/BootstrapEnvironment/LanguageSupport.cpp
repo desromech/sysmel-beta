@@ -1,9 +1,10 @@
 #include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
+#include "sysmel/BootstrapEnvironment/ASTParseErrorValidator.hpp"
 #include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include <fstream>
@@ -26,7 +27,7 @@ static std::string readContentFromFileNamed(const std::string &fileName)
     std::ifstream in(fileName);
     if(!in.good())
     {
-        throw Error("Failed to read file named: " + fileName);
+        signalNewWithMessage<Error> ("Failed to read file named: " + fileName);
     }
 
     return std::string(std::istreambuf_iterator<char> (in), std::istreambuf_iterator<char> ());
@@ -53,7 +54,7 @@ ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceStri
 {
     (void)sourceString;
     (void)sourceStringName;
-    throw SubclassResponsibility();
+    SysmelSelfSubclassResponsibility();
 }
 
 ASTNodePtr LanguageSupport::parseFileNamed(const std::string &fileName) const
@@ -70,6 +71,15 @@ AnyValuePtr LanguageSupport::evaluateSourceStringNamed(const std::string &source
 
 CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment) const
 {
+    // Validate the AST.
+    {
+        auto parseErrorValidator = std::make_shared<ASTParseErrorValidator> ();
+        parseErrorValidator->visitNode(ast);
+        auto parseError = parseErrorValidator->makeCompilationError();
+        if(parseError)
+            parseError->signal();
+    }
+
     auto scriptMethod = std::make_shared<CompiledMethod> ();
     scriptMethod->setDefinition(ast, ast, environment);
     scriptMethod->ensureSemanticAnalysis();

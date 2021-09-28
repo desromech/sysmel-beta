@@ -1,5 +1,5 @@
 #include "sysmel/BootstrapEnvironment/LargeInteger.hpp"
-#include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/Exception.hpp"
 #include "UnitTest++/UnitTest++.h"
 #include <limits>
 
@@ -219,8 +219,8 @@ SUITE(LargeInteger)
 
     TEST(DivisionByZeroError)
     {
-        CHECK_THROW(LargeInteger{1}/LargeInteger{0}, DivisionByZeroError);
-        CHECK_THROW(LargeInteger{0}/LargeInteger{0}, DivisionByZeroError);
+        CHECK_THROW(LargeInteger{1}/LargeInteger{0}, ExceptionWrapper);
+        CHECK_THROW(LargeInteger{0}/LargeInteger{0}, ExceptionWrapper);
     }
 
     TEST(ShiftLeft)
