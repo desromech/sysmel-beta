@@ -30,6 +30,10 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
+
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
 
@@ -201,6 +205,9 @@ public:
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
 
+    /// Is this a kind of the specified type?
+    virtual bool isKindOf(const TypePtr &type) const;
+
     virtual ~AnyValue();
 
     /// Generic method for initializing the object.
@@ -260,8 +267,17 @@ public:
     /// Is this object an AST cleanup scope node?
     virtual bool isASTClosureNode() const;
 
+    /// Is this object an AST error node?
+    virtual bool isASTErrorNode() const;
+
     /// Is this object an AST parse error node?
     virtual bool isASTParseErrorNode() const;
+
+    /// Is this object an AST semantic error node?
+    virtual bool isASTSemanticErrorNode() const;
+
+    /// Is this object an AST compile time error node?
+    virtual bool isASTCompileTimeEvaluationErrorNode() const;
 
     /// Is this object an AST pragma node?
     virtual bool isASTPragmaNode() const;
@@ -307,6 +323,9 @@ public:
 
     /// Is this object a basic type?
     virtual bool isBasicType() const;
+
+    /// Is this object a program entity?
+    virtual bool isPragma() const;
 
     /// Is this object a bootstrap defined type?
     virtual bool isBootstrapType() const;
@@ -380,11 +399,11 @@ public:
     /// Is this object a literal boolean false?
     virtual bool isLiteralBooleanFalse() const;
 
-    /// Is this object a literal void?
-    virtual bool isLiteralVoid() const;
+    /// Is this the void object?
+    virtual bool isVoid() const;
 
-    /// Is this object a literal undefined?
-    virtual bool isLiteralUndefined() const;
+    /// Is this object undefined?
+    virtual bool isUndefined() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;
@@ -394,6 +413,9 @@ public:
 
     /// Convert the object into a SExpression.
     virtual SExpression asSExpression() const;
+
+    /// Convert the object into an AST node which is required in the specified source position.
+    virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition);
 
     /// Reads the wrapped value as boolean.
     virtual bool unwrapAsBoolean() const;
@@ -449,6 +471,9 @@ public:
     /// Convert the object into an array.
     virtual AnyValuePtrList unwrapAsArray() const;
 
+    /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
+    virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
 
@@ -471,6 +496,11 @@ public:
     }
 
 };
+
+inline AnyValuePtr validAnyValue(const AnyValuePtr &value)
+{
+    return value ? value : getNilConstant();
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -1,4 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluationErrorNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSemanticErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -26,6 +29,16 @@ AnyValuePtr ASTVisitor::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &)
 }
 
 AnyValuePtr ASTVisitor::visitClosureNode(const ASTClosureNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitCompileTimeEvaluationErrorNode(const ASTCompileTimeEvaluationErrorNodePtr &node)
+{
+    return visitErrorNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitErrorNode(const ASTErrorNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }
@@ -85,9 +98,9 @@ AnyValuePtr ASTVisitor::visitMessageSendNode(const ASTMessageSendNodePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
-AnyValuePtr ASTVisitor::visitParseErrorNode(const ASTParseErrorNodePtr &)
+AnyValuePtr ASTVisitor::visitParseErrorNode(const ASTParseErrorNodePtr &node)
 {
-    SysmelSelfSubclassResponsibility();
+    return visitErrorNode(node);
 }
 
 AnyValuePtr ASTVisitor::visitPragmaNode(const ASTPragmaNodePtr &)
@@ -108,6 +121,11 @@ AnyValuePtr ASTVisitor::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &)
 AnyValuePtr ASTVisitor::visitQuoteNode(const ASTQuoteNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node)
+{
+    return visitErrorNode(node);
 }
 
 AnyValuePtr ASTVisitor::visitSequenceNode(const ASTSequenceNodePtr &)

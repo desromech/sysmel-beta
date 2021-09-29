@@ -24,6 +24,8 @@ public:
     [[noreturn]] virtual void signalWithMessage(const std::string &message);
 
     virtual const std::string &getMessageText() const;
+    virtual void setMessageText(const std::string &message);
+
     virtual std::string getDescription() const;
 
 protected:

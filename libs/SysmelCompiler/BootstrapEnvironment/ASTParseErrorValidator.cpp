@@ -186,11 +186,11 @@ CompilationErrorPtr ASTParseErrorValidator::makeCompilationError()
         return nullptr;
 
     if(parseErrorNodes.size() == 1)
-        return parseErrorNodes.back()->asParseError();
+        return parseErrorNodes.back()->asCompilationError();
 
     auto errors = std::make_shared<CompilationErrors> ();
     for(const auto &node : parseErrorNodes)
-        errors->errors.push_back(node->asParseError());
+        errors->errors.push_back(node->asCompilationError());
 
     return errors;
 }

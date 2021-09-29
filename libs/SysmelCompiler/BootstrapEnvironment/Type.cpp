@@ -1,6 +1,9 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <algorithm>
@@ -21,12 +24,32 @@ MethodCategories Type::__instanceMethods__()
     };
 }
 
+bool Type::isUndefinedType() const
+{
+    return isSubtypeOf(getUndefinedType());
+}
+
+bool Type::isVoidType() const
+{
+    return isSubtypeOf(getVoidType());
+}
+
+bool Type::isReturnType() const
+{
+    return isSubtypeOf(getReturnType());
+}
+
+bool Type::isLiteralValueType() const
+{
+    return isSubtypeOf(getLiteralValueType());
+}
+
 bool Type::isType() const
 {
     return true;
 }
 
-TypePtr Type::getSupertype()
+TypePtr Type::getSupertype() const
 {
     return supertype;
 }
@@ -52,6 +75,30 @@ AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
+
+AnyValuePtr Type::lookupLocalMacroSelector(const AnyValuePtr &selector)
+{
+    return macroMethodDictionary ? macroMethodDictionary->lookupSelector(selector) : AnyValuePtr();
+}
+
+AnyValuePtr Type::lookupLocalMacroFallbackSelector(const AnyValuePtr &selector)
+{
+    return macroMethodDictionary ? macroFallbackMethodDictionary->lookupSelector(selector) : AnyValuePtr();
+}
+
+AnyValuePtr Type::lookupMacroSelector(const AnyValuePtr &selector)
+{
+    auto localMethod = lookupLocalMacroSelector(selector);
+    if(localMethod)
+        return localMethod;
+
+    auto superType = getSupertype();
+    if(superType)
+        return superType->lookupMacroSelector(selector);
+
+    return AnyValuePtr();
+}
+
 AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
 {
     auto localMethod = lookupLocalSelector(selector);
@@ -63,6 +110,62 @@ AnyValuePtr Type::lookupSelector(const AnyValuePtr &selector)
         return superType->lookupSelector(selector);
 
     return AnyValuePtr();
+}
+
+AnyValuePtr Type::lookupMacroFallbackSelector(const AnyValuePtr &selector)
+{
+    auto localMethod = lookupLocalMacroFallbackSelector(selector);
+    if(localMethod)
+        return localMethod;
+
+    auto superType = getSupertype();
+    if(superType)
+        return superType->lookupMacroFallbackSelector(selector);
+
+    return AnyValuePtr();
+}
+
+AnyValuePtr Type::lookupSelectorInReceiverNodeWithExpansionLevel(const AnyValuePtr &selector, const ASTNodePtr &receiverNode, MessageSendExpansionLevel expansionLevel)
+{
+    (void)receiverNode;
+
+    switch(expansionLevel)
+    {
+    case MessageSendExpansionLevel::UnexpandedMacros:
+        return lookupMacroSelector(selector);
+    case MessageSendExpansionLevel::ExpandedMacros:
+        return lookupSelector(selector);
+    case MessageSendExpansionLevel::FallbackMacros:
+        return lookupMacroFallbackSelector(selector);
+    default:
+        return nullptr;
+    }
+}
+
+ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    assert(node->receiver && node->receiver->analyzedType);
+    assert(node->selector && node->selector->analyzedType);
+
+    AnyValuePtr directSelectorValue;
+    if(node->selector->isASTLiteralSymbolValue())
+        directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+
+    // Attempt going through the different expansion levels
+    while(uint8_t(node->expansionLevel) < uint8_t(MessageSendExpansionLevel::Count))
+    {
+        if(directSelectorValue)
+        {
+            auto macroOrMethod = lookupSelectorInReceiverNodeWithExpansionLevel(directSelectorValue, node->receiver, node->expansionLevel);
+            if(macroOrMethod)
+                return macroOrMethod->analyzeMessageSendNode(node, semanticAnalyzer);
+        }
+
+        node->expansionLevel = MessageSendExpansionLevel(uint8_t(node->expansionLevel) + 1);
+    }
+
+    // Nothing is found. This is a message not understood.
+    assert(false);
 }
 
 void Type::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
@@ -107,14 +210,14 @@ TypePtr Type::getMetaType()
     return getType();
 }
 
-bool Type::isKindOf(const TypePtr &otherType)
+bool Type::isSubtypeOf(const TypePtr &otherType) const
 {
     if(this == otherType.get())
         return true;
     
     auto supertype = getSupertype();
     if(supertype)
-        return supertype->isKindOf(otherType);
+        return supertype->isSubtypeOf(otherType);
 
     return false;
 }

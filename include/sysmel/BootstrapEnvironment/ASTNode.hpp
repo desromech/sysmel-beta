@@ -15,6 +15,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTVisitor);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCleanUpScopeNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTClosureNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCompileTimeEvaluationErrorNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTErrorNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIntrinsicOperationNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLexicalScopeNode);
@@ -32,6 +34,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuoteNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiUnquoteNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuoteNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequenceNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticErrorNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSpliceNode);
 
 
@@ -46,6 +49,9 @@ public:
     ASTNode();
 
     virtual bool isASTNode() const override;
+    virtual bool isASTLiteralSymbolValue() const;
+    
+    virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor);
 

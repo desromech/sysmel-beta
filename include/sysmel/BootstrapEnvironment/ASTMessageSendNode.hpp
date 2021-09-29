@@ -3,20 +3,12 @@
 #pragma once
 
 #include "ASTNode.hpp"
+#include "Type.hpp"
 
 namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
-
-/**
- * The diferent levels for a message send expansion.
- */
-enum class ASTMessageSendExpansionLevel : uint8_t
-{
-    UnexpandedMacros = 0,
-    ExpandedMacros
-};
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -30,10 +22,13 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
-    ASTMessageSendExpansionLevel expansionLevel = ASTMessageSendExpansionLevel::UnexpandedMacros;
+    MessageSendExpansionLevel expansionLevel = MessageSendExpansionLevel::UnexpandedMacros;
     ASTNodePtr selector;
     ASTNodePtr receiver;
     ASTNodePtrList arguments;
+
+    AnyValuePtr analyzedBoundMessage;
+    bool analyzedBoundMessageIsDirect = false;
 };
 
 } // End of namespace BootstrapEnvironment

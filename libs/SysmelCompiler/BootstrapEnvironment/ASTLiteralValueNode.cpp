@@ -17,6 +17,11 @@ bool ASTLiteralValueNode::isASTLiteralValueNode() const
     return true;
 }
 
+bool ASTLiteralValueNode::isASTLiteralSymbolValue() const
+{
+    return value && value->isLiteralSymbol();
+}
+
 AnyValuePtr ASTLiteralValueNode::accept(const ASTVisitorPtr &visitor)
 {
     return visitor->visitLiteralValueNode(shared_from_this());

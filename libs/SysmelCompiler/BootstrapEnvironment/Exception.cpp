@@ -26,6 +26,11 @@ const std::string &Exception::getMessageText() const
     return messageText;
 }
 
+void Exception::setMessageText(const std::string &message)
+{
+    messageText = message;
+}
+
 std::string Exception::getDescription() const
 {
     return getType()->asString() + ": " + messageText;

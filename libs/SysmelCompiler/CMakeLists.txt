@@ -8,8 +8,10 @@ set(BootstrapEnvironment_Sources
     ASTBuilder.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
+    ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
     ASTEmptySourcePosition.cpp
+    ASTErrorNode.cpp
     ASTIdentifierReferenceNode.cpp
     ASTIntrinsicOperationNode.cpp
     ASTLexicalScopeNode.cpp
@@ -29,6 +31,7 @@ set(BootstrapEnvironment_Sources
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
     ASTSemanticAnalyzer.cpp
+    ASTSemanticErrorNode.cpp
     ASTSequenceNode.cpp
     ASTSourceCode.cpp
     ASTSourceCodePosition.cpp
@@ -48,6 +51,7 @@ set(BootstrapEnvironment_Sources
     CompilationError.cpp
     CompilationErrors.cpp
     CompiledMethod.cpp
+    CompileTimeEvaluationError.cpp
     CompilerObject.cpp
     DivisionByZeroError.cpp
     DomainError.cpp
@@ -71,9 +75,7 @@ set(BootstrapEnvironment_Sources
     LiteralCharacter.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
-    LiteralUndefined.cpp
     LiteralValue.cpp
-    LiteralVoid.cpp
     MacroInvocationContext.cpp
     MessageNotUnderstood.cpp
     MetaType.cpp
@@ -81,13 +83,17 @@ set(BootstrapEnvironment_Sources
     MethodDictionary.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp
+    ModuleReference.cpp
     NotMatchingPatternFound.cpp
     ParseError.cpp
-    ScriptModule.cpp
-    ModuleReference.cpp
     PatternMatchingMethod.cpp
+    Pragma.cpp
     ProgramEntity.cpp
+    ResultTypeInferenceSlot.cpp
+    ReturnType.cpp
     RuntimeContext.cpp
+    ScriptModule.cpp
+    SemanticError.cpp
     SExpression.cpp
     SpecificMethod.cpp
     StringUtilities.cpp
@@ -95,6 +101,9 @@ set(BootstrapEnvironment_Sources
     ProgramModule.cpp
     ResultTypeInferenceSlot.cpp
     Type.cpp
+    Undefined.cpp
+    UnsupportedOperation
+    Void.cpp
     Wrappers.cpp
 )
 

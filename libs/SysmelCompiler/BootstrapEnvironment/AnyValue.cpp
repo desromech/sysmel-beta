@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
@@ -61,6 +62,11 @@ AnyValue::~AnyValue()
 
 void AnyValue::initialize()
 {
+}
+
+bool AnyValue::isKindOf(const TypePtr &type) const
+{
+    return getType()->isSubtypeOf(type);
 }
 
 bool AnyValue::isCompilerObject() const
@@ -153,7 +159,22 @@ bool AnyValue::isASTClosureNode() const
     return false;
 }
 
+bool AnyValue::isASTErrorNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTParseErrorNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSemanticErrorNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTCompileTimeEvaluationErrorNode() const
 {
     return false;
 }
@@ -283,6 +304,11 @@ bool AnyValue::isTemplateMethod() const
     return false;
 }
 
+bool AnyValue::isPragma() const
+{
+    return false;
+}
+
 bool AnyValue::isLiteralValue() const
 {
     return false;
@@ -353,12 +379,12 @@ bool AnyValue::isLiteralBooleanFalse() const
     return false;
 }
 
-bool AnyValue::isLiteralVoid() const
+bool AnyValue::isVoid() const
 {
     return false;
 }
 
-bool AnyValue::isLiteralUndefined() const
+bool AnyValue::isUndefined() const
 {
     return false;
 }
@@ -376,6 +402,15 @@ std::string AnyValue::printString() const
 SExpression AnyValue::asSExpression() const
 {
     SysmelSelfSubclassResponsibility();
+}
+
+ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    auto result = std::make_shared<ASTLiteralValueNode> ();
+    result->sourcePosition = requiredSourcePosition;
+    result->value = shared_from_this();
+    result->type = getType();
+    return result;
 }
 
 bool AnyValue::unwrapAsBoolean() const
@@ -466,6 +501,13 @@ std::string AnyValue::unwrapAsString() const
 AnyValuePtrList AnyValue::unwrapAsArray() const
 {
     signalNew<CannotUnwrap> ();
+}
+
+ASTNodePtr AnyValue::analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    (void)partiallyAnalyzedNode;
+    (void)semanticAnalyzer;
+    signalNew<CannotEvaluateMessage> ();
 }
 
 AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)

@@ -21,6 +21,8 @@ public:
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
+    virtual AnyValuePtr visitCompileTimeEvaluationErrorNode(const ASTCompileTimeEvaluationErrorNodePtr &node);
+    virtual AnyValuePtr visitErrorNode(const ASTErrorNodePtr &node);
     virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
     virtual AnyValuePtr visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node);
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
@@ -37,6 +39,7 @@ public:
     virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node);
     virtual AnyValuePtr visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node);
     virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node);
+    virtual AnyValuePtr visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node);
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
 };

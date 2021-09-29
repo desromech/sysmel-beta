@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/ParseError.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -28,7 +29,7 @@ SExpression ASTParseErrorNode::asSExpression() const
         errorMessage}};
 }
 
-ParseErrorPtr ASTParseErrorNode::asParseError()
+CompilationErrorPtr ASTParseErrorNode::asCompilationError()
 {
     auto result = std::make_shared<ParseError> ();
     result->parseErrorNode = shared_from_this();

@@ -9,7 +9,9 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -19,7 +21,16 @@ class ASTSemanticAnalyzer : public SubtypeOf<ASTVisitor, ASTSemanticAnalyzer>
 public:
     static constexpr char const __typeName__[] = "ASTSemanticAnalyzer";
 
-    ASTNodePtr analyzeNodeIfNeeded(const ASTNodePtr &node);
+    ASTNodePtr recordSemanticErrorInNode(const ASTNodePtr &errorNode, const std::string &message);
+
+    ASTNodePtr analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot);
+    ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType);
+    ASTNodePtr analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node);
+    ASTNodePtr analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node);
+
+    AnyValuePtr adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType);
+
+    MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node);
 
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
@@ -44,6 +55,8 @@ public:
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
 
     ASTAnalysisEnvironmentPtr environment;
+    ResultTypeInferenceSlotPtr currentExpectedType;
+    ASTErrorNodePtrList recordedErrors;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -38,6 +38,8 @@ public:
 
     virtual bool isMacroMethod() const override;
 
+    virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
 protected:
     MethodSignature signature;
 };

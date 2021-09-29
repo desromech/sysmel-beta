@@ -77,7 +77,18 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMessageSendNode(const ASTMessageSendNodePtr &node)
 {
-    assert(false);
+    AnyValuePtr receiver = node->receiver ? visitNode(node->receiver) : nullptr;
+    AnyValuePtr selector = visitNode(node->selector);
+
+    AnyValuePtrList arguments;
+    arguments.reserve(node->arguments.size());
+    for(const auto &arg : node->arguments)
+        arguments.push_back(visitNode(arg));
+
+    if(node->analyzedBoundMessage && node->analyzedBoundMessageIsDirect)
+        return node->analyzedBoundMessage->runWithArgumentsIn(selector, arguments, receiver);
+    
+    return validAnyValue(receiver)->performWithArguments(selector, arguments);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)

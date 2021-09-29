@@ -26,6 +26,16 @@ bool ASTNode::isASTNode() const
     return true;
 }
 
+bool ASTNode::isASTLiteralSymbolValue() const
+{
+    return false;
+}
+
+ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    return shared_from_this();
+}
+
 std::string ASTNode::printString() const
 {
     return sexpressionToPrettyString(asSExpression());

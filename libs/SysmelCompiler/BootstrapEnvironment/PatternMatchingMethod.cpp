@@ -62,5 +62,10 @@ AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selecto
     return matchingCandidates.front()->runWithArgumentsIn(selector, arguments, receiver);
 }
 
+ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    assert(false);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

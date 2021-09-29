@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
+
 /**
  * I am the interface for an expected type inference slot. I am used for bidirectional propagation of the result type.
  */
@@ -16,6 +18,9 @@ class ResultTypeInferenceSlot : public SubtypeOf<CompilerObject, ResultTypeInfer
 {
 public:
     static constexpr char const __typeName__[] = "ResultTypeInferenceSlot";
+
+    static ResultTypeInferenceSlotPtr makeForType(const TypePtr &expectedType);
+    static ResultTypeInferenceSlotPtr makeForAuto();
 };
 
 } // End of namespace BootstrapEnvironment
