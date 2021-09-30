@@ -29,6 +29,8 @@
 #include "sysmel/BootstrapEnvironment/ASTSourceCode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourceCodePosition.hpp"
 
+#include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
+#include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -423,7 +425,25 @@ SysmelLanguageSupportPtr SysmelLanguageSupport::uniqueInstance()
     return singleton;
 }
 
-ASTNodePtr SysmelLanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const
+IdentifierLookupScopePtr SysmelLanguageSupport::createDefaultTopLevelIdentifierLookupScope()
+{
+    return createMakeLiteralArrayTopLevelIdentifierLookupScope();
+}
+
+IdentifierLookupScopePtr SysmelLanguageSupport::createMakeLiteralArrayTopLevelIdentifierLookupScope()
+{
+    if(keywordScope)
+        return keywordScope;
+
+    auto result = std::make_shared<LexicalScope> ();
+    result->setSymbolBinding(internSymbol("true"), getTrueConstant());
+    result->setSymbolBinding(internSymbol("false"), getFalseConstant());
+    result->setSymbolBinding(internSymbol("nil"), getNilConstant());
+    result->setSymbolBinding(internSymbol("void"), getVoidConstant());
+    return keywordScope = result;
+}
+
+ASTNodePtr SysmelLanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)
 {
     auto sysmelAST = SysmelMoebius::Compiler::Sysmel::parseString(sourceString, sourceStringName);
     return std::any_cast<ASTNodePtr> (SysmelMoebius::Compiler::Sysmel::SysmelASTConverter().visitNode(*sysmelAST));

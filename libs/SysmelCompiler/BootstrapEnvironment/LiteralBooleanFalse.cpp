@@ -30,6 +30,11 @@ bool LiteralBooleanFalse::unwrapAsBoolean() const
     return false;
 }
 
+std::string LiteralBooleanFalse::printString() const
+{
+    return "false";
+}
+
 SExpression LiteralBooleanFalse::asSExpression() const
 {
     return false;

@@ -25,6 +25,8 @@ public:
     /// This method performs a symbol lookup locally.
     virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol);
 
+    virtual void setSymbolBinding(const AnyValuePtr &symbol, const AnyValuePtr &binding);
+
 private:
     std::unordered_map<AnyValuePtr, AnyValuePtr> boundSymbols;
 };

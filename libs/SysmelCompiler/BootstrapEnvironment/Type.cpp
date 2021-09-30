@@ -83,7 +83,7 @@ AnyValuePtr Type::lookupLocalMacroSelector(const AnyValuePtr &selector)
 
 AnyValuePtr Type::lookupLocalMacroFallbackSelector(const AnyValuePtr &selector)
 {
-    return macroMethodDictionary ? macroFallbackMethodDictionary->lookupSelector(selector) : AnyValuePtr();
+    return macroFallbackMethodDictionary ? macroFallbackMethodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
 AnyValuePtr Type::lookupMacroSelector(const AnyValuePtr &selector)

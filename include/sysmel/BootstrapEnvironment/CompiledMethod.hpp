@@ -19,7 +19,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompiledMethod);
 class CompiledMethod : public SubtypeOf<SpecificMethod, CompiledMethod>
 {
 public:
-    static constexpr char const __typeName__[] = "SpecificMethod";
+    static constexpr char const __typeName__[] = "CompiledMethod";
 
     virtual bool isCompiledMethod() const override;
 
@@ -30,6 +30,9 @@ public:
     void setDefinition(const ASTNodePtr &node, const ASTNodePtr &bodyNode, const ASTAnalysisEnvironmentPtr &environment);
 
     virtual void ensureSemanticAnalysis() override;
+
+    virtual std::string fullPrintString() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 

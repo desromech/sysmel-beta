@@ -5,6 +5,7 @@
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
 #include "sysmel/BootstrapEnvironment/ScriptModule.hpp"
+#include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/Exception.hpp"
@@ -25,9 +26,29 @@ using namespace SysmelMoebius::BootstrapEnvironment;
 void parseString(const std::string &sourceString, const std::string &sourceName)
 {
     auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
-    auto ast = language->parseSourceStringNamed(sourceString, sourceName);
+    try
+    {
+        auto ast = language->parseSourceStringNamed(sourceString, sourceName);
+        std::cout << ast->printString() << std::endl;
+    }
+    catch(ExceptionWrapper &exception)
+    {
+        std::cerr << exception.what() << std::endl;
+    }
+}
 
-    std::cout << ast->printString() << std::endl;
+void semanticAnalyzeString(const std::string &sourceString, const std::string &sourceName)
+{
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    try
+    {
+        auto analyzed = language->semanticAnalyzeStringNamed(sourceString, sourceName);
+        std::cout << analyzed->fullPrintString() << std::endl;
+    }
+    catch(ExceptionWrapper &exception)
+    {
+        std::cerr << exception.what() << std::endl;
+    }
 }
 
 void evalString(const std::string &sourceString, const std::string &sourceName)
@@ -85,6 +106,10 @@ int main(int argc, const char *argv[])
                 else if(arg == "-parse-string")
                 {
                     parseString(argv[++i], "<command line arg>");
+                }
+                else if(arg == "-semantic-analyze-string")
+                {
+                    semanticAnalyzeString(argv[++i], "<command line arg>");
                 }
                 else if(arg == "-dump-bootstrap-env")
                 {

@@ -1,6 +1,9 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
@@ -9,6 +12,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -399,9 +403,19 @@ std::string AnyValue::printString() const
     return "a " + getType()->printString();
 }
 
+std::string AnyValue::fullPrintString() const
+{
+    return printString();
+}
+
 SExpression AnyValue::asSExpression() const
 {
     SysmelSelfSubclassResponsibility();
+}
+
+SExpression AnyValue::asFullDefinitionSExpression() const
+{
+    return asSExpression();
 }
 
 ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
@@ -411,6 +425,11 @@ ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &req
     result->value = shared_from_this();
     result->type = getType();
     return result;
+}
+
+ASTNodePtr AnyValue::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(asASTNodeRequiredInPosition(partiallyAnalyzedNode->sourcePosition));
 }
 
 bool AnyValue::unwrapAsBoolean() const
@@ -505,9 +524,7 @@ AnyValuePtrList AnyValue::unwrapAsArray() const
 
 ASTNodePtr AnyValue::analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    (void)partiallyAnalyzedNode;
-    (void)semanticAnalyzer;
-    signalNew<CannotEvaluateMessage> ();
+    return semanticAnalyzer->recordSemanticErrorInNode(partiallyAnalyzedNode, formatString("Message send node cannot be analyzed by compile time value ({0}).", {{printString()}}));
 }
 
 AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)

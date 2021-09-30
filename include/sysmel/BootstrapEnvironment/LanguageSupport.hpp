@@ -10,7 +10,9 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompiledMethod);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
 /**
  * I am the interface for all of the language adapters. A language adapters takes care of actually
@@ -24,15 +26,23 @@ public:
 
     static MethodCategories __instanceMethods__();
 
-    virtual ASTAnalysisEnvironmentPtr createDefaultAnalysisEnvironment() const;
+    virtual ASTAnalysisEnvironmentPtr createDefaultAnalysisEnvironment();
+    virtual IdentifierLookupScopePtr createDefaultTopLevelIdentifierLookupScope();
+
+    virtual ASTAnalysisEnvironmentPtr createMakeLiteralArrayAnalysisEnvironment();
+    virtual IdentifierLookupScopePtr createMakeLiteralArrayTopLevelIdentifierLookupScope();
+
     
-    virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const;
-    virtual ASTNodePtr parseFileNamed(const std::string &fileName) const;
+    virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName);
+    virtual ASTNodePtr parseFileNamed(const std::string &fileName);
 
-    virtual CompiledMethodPtr analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment) const;
+    virtual CompiledMethodPtr analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment);
 
-    virtual AnyValuePtr evaluateSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const;
-    virtual AnyValuePtr evaluateFileNamed(const std::string &fileName) const;
+    virtual CompiledMethodPtr semanticAnalyzeStringNamed(const std::string &sourceString, const std::string &sourceStringName);
+    virtual CompiledMethodPtr semanticAnalyzeFileNamed(const std::string &fileName);
+
+    virtual AnyValuePtr evaluateSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName);
+    virtual AnyValuePtr evaluateFileNamed(const std::string &fileName);
 
 };
 

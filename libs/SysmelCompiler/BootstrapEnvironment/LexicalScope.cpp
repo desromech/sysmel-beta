@@ -19,5 +19,10 @@ AnyValuePtr LexicalScope::lookupSymbolLocally(const AnyValuePtr &symbol)
     return it != boundSymbols.end() ? it->second : nullptr;
 }
 
+void LexicalScope::setSymbolBinding(const AnyValuePtr &symbol, const AnyValuePtr &binding)
+{
+    boundSymbols[symbol] = binding;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

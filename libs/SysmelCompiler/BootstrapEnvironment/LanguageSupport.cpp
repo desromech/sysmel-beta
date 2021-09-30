@@ -43,33 +43,45 @@ MethodCategories LanguageSupport::__instanceMethods__()
     };
 }
 
-ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment() const
+ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
-    result->identifierLookupScope = std::make_shared<IdentifierLookupScope> ();
+    result->identifierLookupScope = createDefaultTopLevelIdentifierLookupScope();
+    result->languageSupport = shared_from_this();
     return result;
 }
 
-ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const
+IdentifierLookupScopePtr LanguageSupport::createDefaultTopLevelIdentifierLookupScope()
+{
+    return std::make_shared<IdentifierLookupScope> ();
+}
+
+ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnvironment()
+{
+    auto result = std::make_shared<ASTAnalysisEnvironment> ();
+    result->identifierLookupScope = createDefaultTopLevelIdentifierLookupScope();
+    result->languageSupport = shared_from_this();
+    return result;
+}
+
+IdentifierLookupScopePtr LanguageSupport::createMakeLiteralArrayTopLevelIdentifierLookupScope()
+{
+    return std::make_shared<IdentifierLookupScope> ();
+}
+
+ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)
 {
     (void)sourceString;
     (void)sourceStringName;
     SysmelSelfSubclassResponsibility();
 }
 
-ASTNodePtr LanguageSupport::parseFileNamed(const std::string &fileName) const
+ASTNodePtr LanguageSupport::parseFileNamed(const std::string &fileName)
 {
     return parseSourceStringNamed(readContentFromFileNamed(fileName), fileName);
 }
 
-AnyValuePtr LanguageSupport::evaluateSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const
-{
-    auto ast = parseSourceStringNamed(sourceString, sourceStringName);
-    auto compiledMethod = analyzeASTInEnvironment(ast, createDefaultAnalysisEnvironment());
-    return compiledMethod->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
-}
-
-CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment) const
+CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment)
 {
     // Validate the AST.
     {
@@ -86,11 +98,24 @@ CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast
     return scriptMethod;
 }
 
-AnyValuePtr LanguageSupport::evaluateFileNamed(const std::string &fileName) const
+CompiledMethodPtr LanguageSupport::semanticAnalyzeStringNamed(const std::string &sourceString, const std::string &sourceStringName)
 {
-    auto ast = parseFileNamed(fileName);
-    auto compiledMethod = analyzeASTInEnvironment(ast, createDefaultAnalysisEnvironment());
-    return compiledMethod->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
+    return analyzeASTInEnvironment(parseSourceStringNamed(sourceString, sourceStringName), createDefaultAnalysisEnvironment());
+}
+
+CompiledMethodPtr LanguageSupport::semanticAnalyzeFileNamed(const std::string &fileName)
+{
+    return analyzeASTInEnvironment(parseFileNamed(fileName), createDefaultAnalysisEnvironment());
+}
+
+AnyValuePtr LanguageSupport::evaluateSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)
+{
+    return semanticAnalyzeStringNamed(sourceString, sourceStringName)->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
+}
+
+AnyValuePtr LanguageSupport::evaluateFileNamed(const std::string &fileName)
+{
+    return semanticAnalyzeFileNamed(fileName)->runWithArgumentsIn(internSymbol("script"), AnyValuePtrList{}, getNilConstant());
 }
 
 } // End of namespace BootstrapEnvironment

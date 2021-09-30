@@ -61,6 +61,19 @@ void CompiledMethod::ensureSemanticAnalysis()
     analyzedBodyNode = std::static_pointer_cast<ASTNode> (analyzedBodyValue);
 }
 
+std::string CompiledMethod::fullPrintString() const
+{
+    return sexpressionToPrettyString(asFullDefinitionSExpression());
+}
+
+SExpression CompiledMethod::asFullDefinitionSExpression() const
+{
+    if(analyzedBodyNode)
+        return analyzedBodyNode->asSExpression();
+
+    return SExpressionVoid{};
+}
+
 AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     (void)selector;

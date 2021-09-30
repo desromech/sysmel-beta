@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
 /**
  * I specify an AST analysis environment.
@@ -21,6 +22,7 @@ public:
     static constexpr char const __typeName__[] = "ASTAnalysisEnvironment";
 
     IdentifierLookupScopePtr identifierLookupScope;
+    LanguageSupportPtr languageSupport;
 };
 
 } // End of namespace BootstrapEnvironment

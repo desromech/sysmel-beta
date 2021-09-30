@@ -26,7 +26,13 @@ public:
 
     static SysmelLanguageSupportPtr uniqueInstance();
 
-    virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) const override;
+    virtual IdentifierLookupScopePtr createDefaultTopLevelIdentifierLookupScope() override;
+    virtual IdentifierLookupScopePtr createMakeLiteralArrayTopLevelIdentifierLookupScope() override;
+
+    virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) override;
+
+protected:
+    IdentifierLookupScopePtr keywordScope;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -31,6 +31,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
 
@@ -411,8 +412,14 @@ public:
     /// Convert the object into a string for printing purposes.
     virtual std::string printString() const;
 
+    /// Convert the object into a string for printing purposes.
+    virtual std::string fullPrintString() const;
+
     /// Convert the object into a SExpression.
     virtual SExpression asSExpression() const;
+
+    /// Convert the object into a SExpression with its full definition.
+    virtual SExpression asFullDefinitionSExpression() const;
 
     /// Convert the object into an AST node which is required in the specified source position.
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition);
@@ -473,6 +480,9 @@ public:
 
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
+    /// This method performs the semantic analysis of an identifier reference with the specified semantic analyzer.
+    virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);

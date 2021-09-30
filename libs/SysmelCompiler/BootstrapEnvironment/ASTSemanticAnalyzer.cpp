@@ -3,6 +3,7 @@
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIntrinsicOperationNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
@@ -25,11 +26,15 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
+#include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
+
 #include "sysmel/BootstrapEnvironment/ResultTypeInferenceSlot.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 
 namespace SysmelMoebius
 {
@@ -120,7 +125,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node)
 {
-    assert(false);
+    auto boundSymbol = environment->identifierLookupScope->lookupSymbolRecursively(node->identifier);
+    if(!boundSymbol)
+        return recordSemanticErrorInNode(node, formatString("Failed to find binding identifier {0}.", {{node->identifier->printString()}}));
+
+    auto analyzedNode = std::make_shared<ASTIdentifierReferenceNode> (*node);
+    return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node)
@@ -180,8 +190,19 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
         analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
         return analyzedNode->receiver->analyzedType->analyzeMessageSendNode(analyzedNode, shared_from_this());
     }
+    else
+    {
+        if(!analyzedNode->selector->isASTLiteralValueNode())
+            return recordSemanticErrorInNode(node, "Cannot analyze message send without receiver that has a non-literal selector.");
 
-    assert(false);
+        auto literalSelectorNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->selector);
+        auto literalSelector = literalSelectorNode->value;
+        auto boundSymbol = environment->identifierLookupScope->lookupSymbolRecursively(literalSelectorNode->value);
+        if(!boundSymbol)
+            return recordSemanticErrorInNode(node, formatString("Failed to find a definition for a message without receiver using the {0} selector.", {{literalSelector->printString()}}));
+
+        return boundSymbol->analyzeMessageSendNode(analyzedNode, shared_from_this());
+    }
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr &node)
