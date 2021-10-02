@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "BootstrapType";
 
     virtual bool isBootstrapType() const override;
+    virtual bool supportsDynamicCompileTimeMessageSend() const override;
 
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
 

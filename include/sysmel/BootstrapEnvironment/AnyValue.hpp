@@ -54,6 +54,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*typeMethods)();
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
+    bool isDynamicCompileTimeType;
     size_t bootstrapTypeID;
 };
 
@@ -78,6 +79,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__typeMethods__,
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
+    T::__isDynamicCompileTimeType__,
     0
 };
 
@@ -188,6 +190,7 @@ public:
     typedef AnyValue SelfType;
 
     static constexpr char const __typeName__[] = "AnyValue";
+    static constexpr bool __isDynamicCompileTimeType__ = true;
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();

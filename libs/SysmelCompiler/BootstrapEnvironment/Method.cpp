@@ -14,11 +14,24 @@ bool Method::isMethod() const
     return true;
 }
 
+TypePtr Method::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
+{
+    (void)argumentIndex;
+    return nullptr;
+}
+
 MethodPatternMatchingResult Method::matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     (void)selector;
     (void)arguments;
     (void)receiver;
+    return MethodPatternMatchingResult{};
+}
+
+MethodPatternMatchingResult Method::matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    (void)node;
+    (void)semanticAnalyzer;
     return MethodPatternMatchingResult{};
 }
 

@@ -27,6 +27,8 @@ public:
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
 protected:
+    void ensureArgumentsAreAnalyzed(ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    
     std::vector<MethodPtr> patterns;
 };
 

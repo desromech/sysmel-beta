@@ -14,6 +14,12 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForType(const TypePtr &e
     return std::make_shared<ResultTypeInferenceSlot> ();
 }
 
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtrList &expectedTypeSet)
+{
+    (void)expectedTypeSet;
+    return std::make_shared<ResultTypeInferenceSlot> ();
+}
+
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
 {
     return std::make_shared<ResultTypeInferenceSlot> ();

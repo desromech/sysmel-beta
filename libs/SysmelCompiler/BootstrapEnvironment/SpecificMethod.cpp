@@ -30,13 +30,62 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
     PatternMatchingRank totalRank = 0;
 
     // TODO: Handle the void receiver type special case.
-    totalRank = signature.receiverType->rankToMatchValue(receiver);
-    if(totalRank < 0)
-        return MethodPatternMatchingResult{};
+    if(signature.receiverType->isVoidType())
+    {
+        // Ignore the receiver that we got.
+    }
+    else
+    {
+        totalRank = signature.receiverType->rankToMatchValue(receiver);
+        if(totalRank < 0)
+            return MethodPatternMatchingResult{};
+    }
 
     for(size_t i = 0; i < arguments.size(); ++i)
     {
         auto argumentRank = signature.argumentTypes[i]->rankToMatchValue(arguments[i]);
+        if(argumentRank < 0)
+            return MethodPatternMatchingResult{};
+        totalRank += argumentRank;
+    }
+
+    return MethodPatternMatchingResult{shared_from_this(), totalRank};
+}
+
+TypePtr SpecificMethod::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
+{
+    return argumentIndex < signature.argumentTypes.size() ? signature.argumentTypes[argumentIndex] : nullptr;
+
+}
+
+MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    // Make sure the argument count matches.
+    if(node->arguments.size() != signature.argumentTypes.size())
+        return MethodPatternMatchingResult{};
+
+    PatternMatchingRank totalRank = 0;
+
+    // TODO: Handle the void receiver type special case.
+    if(signature.receiverType->isVoidType())
+    {
+        // Ignore the receiver that we got.
+    }
+    else
+    {
+        // A receiver is required in this case.
+        if(!node->receiver)
+            return MethodPatternMatchingResult{};
+
+        totalRank = semanticAnalyzer->rankForMatchingTypeWithNode(signature.receiverType, node->receiver);
+        if(totalRank < 0)
+            return MethodPatternMatchingResult{};
+    }
+
+    for(size_t i = 0; i < node->arguments.size(); ++i)
+    {
+        auto expectedArgumentType = signature.argumentTypes[i];
+        auto argumentRank = semanticAnalyzer->rankForMatchingTypeWithNode(expectedArgumentType, node->arguments[i]);
         if(argumentRank < 0)
             return MethodPatternMatchingResult{};
         totalRank += argumentRank;

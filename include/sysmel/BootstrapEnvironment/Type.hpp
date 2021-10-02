@@ -71,8 +71,17 @@ public:
     /// This method performs the lookup for a macro message or message with the specified selector and expansion level.
     virtual AnyValuePtr lookupSelectorInReceiverNodeWithExpansionLevel(const AnyValuePtr &selector, const ASTNodePtr &receiverNode, MessageSendExpansionLevel expansionLevel);
 
+    /// This method performs the lookup of the doesNotUnderstand: macro
+    virtual AnyValuePtr lookupDoesNotUnderstandMacro();
+
+    /// Does this type support dynamic compile time message sends?
+    virtual bool supportsDynamicCompileTimeMessageSend() const;
+
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+    /// This method performs the semantic analysis of a message send node whose selector was not found.
+    virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;

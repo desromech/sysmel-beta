@@ -12,6 +12,7 @@ namespace BootstrapEnvironment
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationError);
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -25,12 +26,19 @@ public:
 
     ASTNodePtr analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot);
     ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType);
+    ASTNodePtr analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
     ASTNodePtr analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node);
     ASTNodePtr analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node);
 
     AnyValuePtr adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType);
 
     MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node);
+
+    PatternMatchingRank rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType);
+    PatternMatchingRank rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node);
+
+    ASTNodePtr analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node);
+    ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
 
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
@@ -56,6 +64,8 @@ public:
 
     ASTAnalysisEnvironmentPtr environment;
     ResultTypeInferenceSlotPtr currentExpectedType;
+
+    CompilationErrorPtr makeCompilationError();
     ASTErrorNodePtrList recordedErrors;
 };
 

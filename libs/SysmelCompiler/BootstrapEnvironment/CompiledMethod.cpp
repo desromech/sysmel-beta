@@ -3,6 +3,7 @@
 #include "sysmel/BootstrapEnvironment/CannotEvaluateMessageInCompileTime.hpp"
 #include "sysmel/BootstrapEnvironment/CannotEvaluateUndefinedMessage.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluator.hpp"
 #include <assert.h>
@@ -59,6 +60,10 @@ void CompiledMethod::ensureSemanticAnalysis()
     assert(analyzedBodyValue->isASTNode());
 
     analyzedBodyNode = std::static_pointer_cast<ASTNode> (analyzedBodyValue);
+
+    auto compilationError = analyzer->makeCompilationError();
+    if(compilationError)
+        compilationError->signal();
 }
 
 std::string CompiledMethod::fullPrintString() const

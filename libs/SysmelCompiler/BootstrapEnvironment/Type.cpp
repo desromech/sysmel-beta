@@ -6,6 +6,7 @@
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -164,8 +165,37 @@ ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const
         node->expansionLevel = MessageSendExpansionLevel(uint8_t(node->expansionLevel) + 1);
     }
 
-    // Nothing is found. This is a message not understood.
-    assert(false);
+    return analyzeUnboundMessageSendNode(node, semanticAnalyzer);
+}
+
+bool Type::supportsDynamicCompileTimeMessageSend() const
+{
+    return false;
+}
+
+ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(supportsDynamicCompileTimeMessageSend())
+        return semanticAnalyzer->analyzeDynamicCompileTimeMessageSendNode(node);
+
+    // Support the does not understand macro.
+    auto dnuMacro = lookupDoesNotUnderstandMacro();
+    if(dnuMacro)
+        return semanticAnalyzer->analyzeMessageSendNodeViaDNUMacro(node, dnuMacro);
+
+    if(node->selector->isASTLiteralSymbolValue())
+    {
+        auto directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+        return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Failed to find matching message for {0} selector.", {{directSelectorValue->printString()}}));
+
+    }
+    
+    return semanticAnalyzer->recordSemanticErrorInNode(node, "");
+}
+
+AnyValuePtr Type::lookupDoesNotUnderstandMacro()
+{
+    return nullptr;
 }
 
 void Type::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)

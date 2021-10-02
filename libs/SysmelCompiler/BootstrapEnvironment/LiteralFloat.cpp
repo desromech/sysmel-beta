@@ -3,6 +3,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
 #include <algorithm>
+#include <cmath>
 #include <sstream>
 
 namespace SysmelMoebius
@@ -90,6 +91,9 @@ std::string LiteralFloat::printString() const
 {
     std::ostringstream out;
     out << value;
+    if(value == floor(value))
+        out << ".0";
+
     return out.str();
 }
 

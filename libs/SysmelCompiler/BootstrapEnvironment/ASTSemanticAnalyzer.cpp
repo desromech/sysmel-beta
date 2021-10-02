@@ -36,6 +36,9 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 
+#include "sysmel/BootstrapEnvironment/CompilationError.hpp"
+#include "sysmel/BootstrapEnvironment/CompilationErrors.hpp"
+
 namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
@@ -85,6 +88,11 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNod
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForType(expectedType));
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
+{
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTypeSet(expectedTypeSet));
+}
+
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node)
 {
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAuto());
@@ -106,6 +114,37 @@ AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr
         return node;
     
     assert("TODO: Support non-node macro parameters" && false);
+}
+
+PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType)
+{
+    // TODO: Introduce support for implicit casting here.
+    return expectedType->rankToMatchType(valueType);
+}
+
+PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node)
+{
+    assert(node->analyzedType);
+    return rankForMatchingTypeWithValueOfType(expectedType, node->analyzedType);
+}
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node)
+{
+    auto anyValueType = AnyValue::__staticType__();
+    node->analyzedType = anyValueType;
+    node->analyzedBoundMessage.reset();
+    node->analyzedBoundMessageIsDirect = false;
+
+    if(node->receiver)
+        node->receiver = analyzeNodeIfNeededWithAutoType(node->receiver);
+    for(auto &arg : node->arguments)
+        arg = analyzeNodeIfNeededWithAutoType(arg);
+    return node;
+}
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro)
+{
+    assert("TODO: Invoke DNU macro" && false);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
@@ -270,6 +309,21 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
 AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 {
     assert(false);
+}
+
+CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()
+{
+    if(recordedErrors.empty())
+        return nullptr;
+
+    if(recordedErrors.size() == 1)
+        return recordedErrors.back()->asCompilationError();
+
+    auto errors = std::make_shared<CompilationErrors> ();
+    for(const auto &node : recordedErrors)
+        errors->errors.push_back(node->asCompilationError());
+
+    return errors;
 }
 
 } // End of namespace BootstrapEnvironment
