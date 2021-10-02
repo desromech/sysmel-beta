@@ -50,6 +50,7 @@ public:
 
     virtual bool isASTNode() const override;
     virtual bool isASTLiteralSymbolValue() const;
+    virtual bool isPureCompileTimeLiteralValueNode() const;
     
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 

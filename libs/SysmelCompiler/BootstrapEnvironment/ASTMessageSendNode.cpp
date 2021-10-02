@@ -21,6 +21,28 @@ AnyValuePtr ASTMessageSendNode::accept(const ASTVisitorPtr &visitor)
     return visitor->visitMessageSendNode(shared_from_this());
 }
 
+bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
+{
+    if(receiver)
+    {
+        if(!receiver->isPureCompileTimeLiteralValueNode())
+            return false;
+    }
+    else
+    {
+        if(!analyzedBoundMessage || !analyzedBoundMessageIsDirect)
+            return false;
+    }
+
+    for(const auto &argument : arguments)
+    {
+        if(!argument->isPureCompileTimeLiteralValueNode())
+            return false;
+    }
+
+    return true;
+}
+
 SExpression ASTMessageSendNode::asSExpression() const
 {
     SExpressionList argumentsSExpression;

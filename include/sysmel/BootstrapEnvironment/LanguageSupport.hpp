@@ -10,7 +10,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompiledMethod);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
@@ -27,12 +27,11 @@ public:
     static MethodCategories __instanceMethods__();
 
     virtual ASTAnalysisEnvironmentPtr createDefaultAnalysisEnvironment();
-    virtual IdentifierLookupScopePtr createDefaultTopLevelIdentifierLookupScope();
+    virtual LexicalScopePtr createDefaultTopLevelLexicalScope();
 
     virtual ASTAnalysisEnvironmentPtr createMakeLiteralArrayAnalysisEnvironment();
-    virtual IdentifierLookupScopePtr createMakeLiteralArrayTopLevelIdentifierLookupScope();
+    virtual LexicalScopePtr createMakeLiteralArrayTopLevelLexicalScope();
 
-    
     virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName);
     virtual ASTNodePtr parseFileNamed(const std::string &fileName);
 

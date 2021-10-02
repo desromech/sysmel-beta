@@ -22,6 +22,8 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
+    bool isPureCompileTimeLiteralMessage() const;
+
     MessageSendExpansionLevel expansionLevel = MessageSendExpansionLevel::UnexpandedMacros;
     ASTNodePtr selector;
     ASTNodePtr receiver;

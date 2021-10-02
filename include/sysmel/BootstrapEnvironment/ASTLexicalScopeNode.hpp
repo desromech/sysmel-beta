@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
+
 /**
  * I an AST node that introduces a new lexical scope used for identifier reference lookup.
  */
@@ -22,6 +24,7 @@ public:
     virtual SExpression asSExpression() const override;
 
     ASTNodePtr body;
+    LexicalScopePtr analyzedScope;
 };
 
 } // End of namespace BootstrapEnvironment

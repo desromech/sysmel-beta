@@ -55,7 +55,6 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
 TypePtr SpecificMethod::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
 {
     return argumentIndex < signature.argumentTypes.size() ? signature.argumentTypes[argumentIndex] : nullptr;
-
 }
 
 MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
@@ -134,9 +133,14 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         if(errorNode)
             return errorNode;
 
-        auto macroDirectResult = runWithArgumentsIn(macroSelector, macroArguments, macroInvocationContext);
-        auto resultingNode = validAnyValue(macroDirectResult)->asASTNodeRequiredInPosition(node->sourcePosition);
-        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(resultingNode);
+        // Evaluate the macro macro method.
+        auto macroResultNode = semanticAnalyzer->guardCompileTimeEvaluationForNode(node, [&]() {
+            auto macroDirectResult = runWithArgumentsIn(macroSelector, macroArguments, macroInvocationContext);
+            return validAnyValue(macroDirectResult)->asASTNodeRequiredInPosition(node->sourcePosition);
+        });
+
+        // Analyze the macro expanded node.
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(macroResultNode);
     }
 
     // Analyze the receiver.
@@ -164,7 +168,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
 
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = signature.resultType;
-    return node;
+    return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
 }
 
 } // End of namespace BootstrapEnvironment

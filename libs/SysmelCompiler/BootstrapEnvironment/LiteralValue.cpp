@@ -19,5 +19,10 @@ bool LiteralValue::isLiteralValue() const
     return true;
 }
 
+bool LiteralValue::isPureCompileTimeLiteralValue() const
+{
+    return true;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

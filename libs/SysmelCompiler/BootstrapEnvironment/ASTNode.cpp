@@ -31,6 +31,11 @@ bool ASTNode::isASTLiteralSymbolValue() const
     return false;
 }
 
+bool ASTNode::isPureCompileTimeLiteralValueNode() const
+{
+    return false;
+}
+
 ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
     return shared_from_this();

@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CleanUpScope);
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -22,6 +24,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     ASTNodePtr body;
+
+    CleanUpScopePtr analyzedScope;
 };
 
 } // End of namespace BootstrapEnvironment

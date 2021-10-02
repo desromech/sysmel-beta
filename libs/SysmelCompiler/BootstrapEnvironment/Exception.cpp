@@ -33,6 +33,8 @@ void Exception::setMessageText(const std::string &message)
 
 std::string Exception::getDescription() const
 {
+    if(messageText.empty())
+        return getType()->asString();
     return getType()->asString() + ": " + messageText;
 }
 

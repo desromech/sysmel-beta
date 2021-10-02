@@ -26,13 +26,13 @@ public:
 
     static SysmelLanguageSupportPtr uniqueInstance();
 
-    virtual IdentifierLookupScopePtr createDefaultTopLevelIdentifierLookupScope() override;
-    virtual IdentifierLookupScopePtr createMakeLiteralArrayTopLevelIdentifierLookupScope() override;
+    virtual LexicalScopePtr createDefaultTopLevelLexicalScope() override;
+    virtual LexicalScopePtr createMakeLiteralArrayTopLevelLexicalScope() override;
 
     virtual ASTNodePtr parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName) override;
 
 protected:
-    IdentifierLookupScopePtr keywordScope;
+    LexicalScopePtr keywordScope;
 };
 
 } // End of namespace BootstrapEnvironment

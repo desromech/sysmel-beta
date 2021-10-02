@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTVisitor.hpp"
+#include <functional>
 
 namespace SysmelMoebius
 {
@@ -12,7 +13,10 @@ namespace BootstrapEnvironment
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Error);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationError);
+
+typedef std::function<ASTNodePtr ()> ASTNodeSemanticAnalysisBlock;
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -23,6 +27,7 @@ public:
     static constexpr char const __typeName__[] = "ASTSemanticAnalyzer";
 
     ASTNodePtr recordSemanticErrorInNode(const ASTNodePtr &errorNode, const std::string &message);
+    ASTNodePtr recordCompileTimeEvaluationErrorInNode(const ASTNodePtr &errorNode, const ErrorPtr &evaluationError);
 
     ASTNodePtr analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot);
     ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType);
@@ -32,6 +37,8 @@ public:
 
     AnyValuePtr adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType);
 
+    ASTNodePtr withEnvironmentDoAnalysis(const ASTAnalysisEnvironmentPtr &newEnvironment, const ASTNodeSemanticAnalysisBlock &aBlock);
+
     MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node);
 
     PatternMatchingRank rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType);
@@ -39,6 +46,7 @@ public:
 
     ASTNodePtr analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node);
     ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
+    ASTNodePtr optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node);
 
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
@@ -62,11 +70,17 @@ public:
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
 
+    AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
+    ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);
+
+    ASTNodePtr guardCompileTimeEvaluationForNode(const ASTNodePtr &node, const ASTNodeSemanticAnalysisBlock &aBlock);
+
     ASTAnalysisEnvironmentPtr environment;
     ResultTypeInferenceSlotPtr currentExpectedType;
 
     CompilationErrorPtr makeCompilationError();
     ASTErrorNodePtrList recordedErrors;
+
 };
 
 } // End of namespace BootstrapEnvironment

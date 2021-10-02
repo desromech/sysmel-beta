@@ -37,6 +37,7 @@ public:
     virtual bool isType() const;
 
     static TypePtr getLiteralValueType();
+    static TypePtr getLiteralSymbolValue();
     static TypePtr getUndefinedType();
     static TypePtr getVoidType();
     static TypePtr getPragmaType();

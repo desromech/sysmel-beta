@@ -212,6 +212,12 @@ public:
     /// Is this a kind of the specified type?
     virtual bool isKindOf(const TypePtr &type) const;
 
+    template<typename T>
+    bool isKindOf() const
+    {
+        return isKindOf(StaticBootstrapDefinedTypeFor<T>::get());
+    }
+
     virtual ~AnyValue();
 
     /// Generic method for initializing the object.
@@ -408,6 +414,9 @@ public:
 
     /// Is this object undefined?
     virtual bool isUndefined() const;
+
+    /// Is this a pure compile time literal value?
+    virtual bool isPureCompileTimeLiteralValue() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;

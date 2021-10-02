@@ -10,7 +10,8 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment)
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CleanUpScope)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
 /**
@@ -21,7 +22,11 @@ class ASTAnalysisEnvironment : public SubtypeOf<CompilerObject, ASTAnalysisEnvir
 public:
     static constexpr char const __typeName__[] = "ASTAnalysisEnvironment";
 
-    IdentifierLookupScopePtr identifierLookupScope;
+    ASTAnalysisEnvironmentPtr copyWithLexicalScope(const LexicalScopePtr &newScope);
+    ASTAnalysisEnvironmentPtr copyWithCleanUpcope(const CleanUpScopePtr &cleanUpScope);
+
+    LexicalScopePtr lexicalScope;
+    CleanUpScopePtr cleanUpScope;
     LanguageSupportPtr languageSupport;
 };
 

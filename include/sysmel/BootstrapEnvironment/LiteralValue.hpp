@@ -20,6 +20,7 @@ public:
     static constexpr char const __typeName__[] = "LiteralValue";
 
     virtual bool isLiteralValue() const override;
+    virtual bool isPureCompileTimeLiteralValue() const override;
 };
 
 } // End of namespace BootstrapEnvironment

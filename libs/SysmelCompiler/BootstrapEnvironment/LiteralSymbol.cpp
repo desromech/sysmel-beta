@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/LiteralSymbol.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <unordered_map>
@@ -10,6 +11,11 @@ namespace BootstrapEnvironment
 static BootstrapTypeRegistration<LiteralSymbol> literalSymbolTypeRegistration;
 
 static std::unordered_map<std::string, std::shared_ptr<LiteralSymbol>> SymbolInternTable;
+
+TypePtr Type::getLiteralSymbolValue()
+{
+    return LiteralSymbol::__staticType__();
+}
 
 std::shared_ptr<LiteralSymbol> LiteralSymbol::intern(const std::string &value)
 {

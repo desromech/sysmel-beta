@@ -393,6 +393,11 @@ bool AnyValue::isUndefined() const
     return false;
 }
 
+bool AnyValue::isPureCompileTimeLiteralValue() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

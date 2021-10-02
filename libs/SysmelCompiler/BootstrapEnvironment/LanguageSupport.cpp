@@ -5,7 +5,8 @@
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/ASTParseErrorValidator.hpp"
-#include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
+#include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
+#include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include <fstream>
 #include <iostream>
@@ -46,27 +47,29 @@ MethodCategories LanguageSupport::__instanceMethods__()
 ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
-    result->identifierLookupScope = createDefaultTopLevelIdentifierLookupScope();
+    result->lexicalScope = createDefaultTopLevelLexicalScope();
+    result->cleanUpScope = CleanUpScope::makeEmpty();
     result->languageSupport = shared_from_this();
     return result;
 }
 
-IdentifierLookupScopePtr LanguageSupport::createDefaultTopLevelIdentifierLookupScope()
+LexicalScopePtr LanguageSupport::createDefaultTopLevelLexicalScope()
 {
-    return std::make_shared<IdentifierLookupScope> ();
+    return std::make_shared<LexicalScope> ();
 }
 
 ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnvironment()
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
-    result->identifierLookupScope = createDefaultTopLevelIdentifierLookupScope();
+    result->lexicalScope = createMakeLiteralArrayTopLevelLexicalScope();
+    result->cleanUpScope = CleanUpScope::makeEmpty();
     result->languageSupport = shared_from_this();
     return result;
 }
 
-IdentifierLookupScopePtr LanguageSupport::createMakeLiteralArrayTopLevelIdentifierLookupScope()
+LexicalScopePtr LanguageSupport::createMakeLiteralArrayTopLevelLexicalScope()
 {
-    return std::make_shared<IdentifierLookupScope> ();
+    return std::make_shared<LexicalScope> ();
 }
 
 ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)

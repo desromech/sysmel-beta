@@ -33,6 +33,11 @@ void ASTLiteralValueNode::setValueAndType(const AnyValuePtr &theValue)
     type = theValue->getType();
 }
 
+bool ASTLiteralValueNode::isPureCompileTimeLiteralValueNode() const
+{
+    return value && value->isPureCompileTimeLiteralValue();
+}
+
 SExpression ASTLiteralValueNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"literal"}},

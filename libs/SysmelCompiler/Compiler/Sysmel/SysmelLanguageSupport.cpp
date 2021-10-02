@@ -425,12 +425,13 @@ SysmelLanguageSupportPtr SysmelLanguageSupport::uniqueInstance()
     return singleton;
 }
 
-IdentifierLookupScopePtr SysmelLanguageSupport::createDefaultTopLevelIdentifierLookupScope()
+
+LexicalScopePtr SysmelLanguageSupport::createDefaultTopLevelLexicalScope()
 {
-    return createMakeLiteralArrayTopLevelIdentifierLookupScope();
+    return SysmelLanguageSupport::createMakeLiteralArrayTopLevelLexicalScope();
 }
 
-IdentifierLookupScopePtr SysmelLanguageSupport::createMakeLiteralArrayTopLevelIdentifierLookupScope()
+LexicalScopePtr SysmelLanguageSupport::createMakeLiteralArrayTopLevelLexicalScope()
 {
     if(keywordScope)
         return keywordScope;

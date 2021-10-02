@@ -2,6 +2,7 @@
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluationErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 
 namespace SysmelMoebius
 {
@@ -12,7 +13,10 @@ static BootstrapTypeRegistration<CompileTimeEvaluationError> CompileTimeEvaluati
 
 std::string CompileTimeEvaluationError::getDescription() const
 {
-    return compileTimeEvaluationErrorNode->sourcePosition->printString() + ": " + compileTimeEvaluationErrorNode->errorMessage;
+    return formatString("{0}: Error caught during compile time evaluation. {1}", {{
+        compileTimeEvaluationErrorNode->sourcePosition->printString(),
+        compileTimeEvaluationErrorNode->errorMessage
+    }});
 }
 
 } // End of namespace BootstrapEnvironment

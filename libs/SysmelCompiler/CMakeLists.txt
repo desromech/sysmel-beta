@@ -48,6 +48,7 @@ set(BootstrapEnvironment_Sources
     CannotEvaluateUndefinedMessage.cpp
     CannotOverloadPatternMatchingMethod.cpp
     CannotUnwrap.cpp
+    CleanUpScope.cpp
     CompilationError.cpp
     CompilationErrors.cpp
     CompiledMethod.cpp

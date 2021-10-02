@@ -32,7 +32,7 @@ static BootstrapTypeRegistration<ASTCompileTimeEvaluator> ASTCompileTimeEvaluato
 
 AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
 {
-    assert(false);
+    return visitNode(node->body);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &node)
@@ -52,7 +52,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitIntrinsicOperationNode(const ASTIntrin
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
-    assert(false);
+    return visitNode(node->body);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)

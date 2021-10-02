@@ -1,8 +1,10 @@
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluator.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluationErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIntrinsicOperationNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
@@ -27,7 +29,8 @@
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
-#include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
+#include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
+#include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 
 #include "sysmel/BootstrapEnvironment/ResultTypeInferenceSlot.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
@@ -56,6 +59,17 @@ ASTNodePtr ASTSemanticAnalyzer::recordSemanticErrorInNode(const ASTNodePtr &erro
     return semanticErrorNode;
 }
 
+ASTNodePtr ASTSemanticAnalyzer::recordCompileTimeEvaluationErrorInNode(const ASTNodePtr &errorNode, const ErrorPtr &evaluationError)
+{
+    auto compileTimeErrorNode = std::make_shared<ASTCompileTimeEvaluationErrorNode> ();
+    compileTimeErrorNode->sourcePosition = errorNode->sourcePosition;
+    compileTimeErrorNode->errorMessage = evaluationError->getDescription();
+    compileTimeErrorNode->caughtError = evaluationError;
+    compileTimeErrorNode->analyzedType = Type::getUndefinedType();
+    recordedErrors.push_back(compileTimeErrorNode);
+    return compileTimeErrorNode;
+}
+
 MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node)
 {
     auto result = std::make_shared<MacroInvocationContext> ();
@@ -65,6 +79,16 @@ MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(con
         result->selfType = node->receiver->analyzedType;
     result->astBuilder = std::make_shared<ASTBuilder> ();
     return result;
+}
+
+ASTNodePtr ASTSemanticAnalyzer::withEnvironmentDoAnalysis(const ASTAnalysisEnvironmentPtr &newEnvironment, const ASTNodeSemanticAnalysisBlock &aBlock)
+{
+    auto oldEnvironment = environment;
+    environment = newEnvironment;
+
+    return doWithEnsure(aBlock, [&](){
+        environment = oldEnvironment;
+    });
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot)
@@ -147,6 +171,44 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessa
     assert("TODO: Invoke DNU macro" && false);
 }
 
+AnyValuePtr ASTSemanticAnalyzer::evaluateInCompileTime(const ASTNodePtr &node)
+{
+    auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();
+    return evaluator->visitNode(analyzeNodeIfNeededWithAutoType(node));
+}
+
+ASTNodePtr ASTSemanticAnalyzer::guardCompileTimeEvaluationForNode(const ASTNodePtr &node, const ASTNodeSemanticAnalysisBlock &aBlock)
+{
+    try
+    {
+        return aBlock();
+    }
+    catch(ExceptionWrapper &exceptionWrapper)
+    {
+        auto exception = exceptionWrapper.getException();
+        if(exception->isKindOf<Error> ())
+            return recordCompileTimeEvaluationErrorInNode(node, std::static_pointer_cast<Error> (exception));
+
+        // Propagate the exception.
+        throw exceptionWrapper;
+    }
+}
+
+ASTNodePtr ASTSemanticAnalyzer::evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node)
+{
+    return guardCompileTimeEvaluationForNode(node, [&](){
+        return analyzeNodeIfNeededWithCurrentExpectedType(evaluateInCompileTime(node)->asASTNodeRequiredInPosition(node->sourcePosition));
+    });
+}
+
+ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node)
+{
+    if(node->isPureCompileTimeLiteralMessage())
+        return evaluateLiteralExpressionInCompileTime(node);
+
+    return node;
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
     assert(false);
@@ -154,7 +216,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDe
 
 AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTCleanUpScopeNode> (*node);
+    analyzedNode->analyzedScope = CleanUpScope::makeWithParent(environment->cleanUpScope);
+
+    auto newEnvironment = environment->copyWithCleanUpcope(analyzedNode->analyzedScope);
+    analyzedNode->body = withEnvironmentDoAnalysis(newEnvironment, [&]() {
+        return analyzeNodeIfNeededWithCurrentExpectedType(analyzedNode->body);
+    });
+    
+    analyzedNode->analyzedType = analyzedNode->body->analyzedType;
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
@@ -164,7 +235,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node)
 {
-    auto boundSymbol = environment->identifierLookupScope->lookupSymbolRecursively(node->identifier);
+    auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(node->identifier);
     if(!boundSymbol)
         return recordSemanticErrorInNode(node, formatString("Failed to find binding identifier {0}.", {{node->identifier->printString()}}));
 
@@ -179,7 +250,17 @@ AnyValuePtr ASTSemanticAnalyzer::visitIntrinsicOperationNode(const ASTIntrinsicO
 
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTLexicalScopeNode> (*node);
+    analyzedNode->analyzedScope = std::make_shared<LexicalScope> ();
+    analyzedNode->analyzedScope->parent = environment->lexicalScope;
+
+    auto newEnvironment = environment->copyWithLexicalScope(analyzedNode->analyzedScope);
+    analyzedNode->body = withEnvironmentDoAnalysis(newEnvironment, [&]() {
+        return analyzeNodeIfNeededWithCurrentExpectedType(analyzedNode->body);
+    });
+    
+    analyzedNode->analyzedType = analyzedNode->body->analyzedType;
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)
@@ -236,7 +317,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
 
         auto literalSelectorNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->selector);
         auto literalSelector = literalSelectorNode->value;
-        auto boundSymbol = environment->identifierLookupScope->lookupSymbolRecursively(literalSelectorNode->value);
+        auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(literalSelectorNode->value);
         if(!boundSymbol)
             return recordSemanticErrorInNode(node, formatString("Failed to find a definition for a message without receiver using the {0} selector.", {{literalSelector->printString()}}));
 
@@ -246,12 +327,21 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
 
 AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr &node)
 {
-    assert(false);
+    auto result = std::make_shared<ASTParseErrorNode> (*node);
+    result->analyzedType = Type::getUndefinedType();
+    recordedErrors.push_back(result);
+    return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitPragmaNode(const ASTPragmaNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTPragmaNode> (*node);
+    analyzedNode->selector = analyzeNodeIfNeededWithExpectedType(analyzedNode->selector, Type::getLiteralSymbolValue());
+    for(auto &argument : node->arguments)
+        argument = analyzeNodeIfNeededWithExpectedType(argument, Type::getLiteralValueType());
+
+    analyzedNode->analyzedType = Type::getPragmaType();
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)
@@ -261,12 +351,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr 
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node)
 {
-    assert(false);
+    return recordSemanticErrorInNode(node, "Invalid location for a quasi-unquote expression");
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuoteNode(const ASTQuoteNodePtr &node)
 {
-    assert(false);
+    auto result = std::make_shared<ASTQuoteNode> (*node);
+    result->analyzedType = ASTNode::__staticType__();
+    return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &node)
@@ -308,7 +400,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
 
 AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 {
-    assert(false);
+    return recordSemanticErrorInNode(node, "Invalid location for a splice expression");
 }
 
 CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()
