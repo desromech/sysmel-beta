@@ -98,7 +98,7 @@ bool AnyValue::isASTIdentifierReferenceNode() const
     return false;
 }
 
-bool AnyValue::isASTIntrinsicOperationNode() const
+bool AnyValue::isASTCallNode() const
 {
     return false;
 }

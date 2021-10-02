@@ -239,7 +239,7 @@ public:
     virtual bool isASTIdentifierReferenceNode() const;
 
     /// Is this object an AST intrinsic operation node?
-    virtual bool isASTIntrinsicOperationNode() const;
+    virtual bool isASTCallNode() const;
 
     /// Is this object an AST message a make tuple node?
     virtual bool isASTMakeTupleNode() const;

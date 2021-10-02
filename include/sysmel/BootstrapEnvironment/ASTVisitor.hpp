@@ -19,12 +19,12 @@ public:
 
     virtual AnyValuePtr visitNode(const ASTNodePtr &node);
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
+    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node);
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
     virtual AnyValuePtr visitCompileTimeEvaluationErrorNode(const ASTCompileTimeEvaluationErrorNodePtr &node);
     virtual AnyValuePtr visitErrorNode(const ASTErrorNodePtr &node);
     virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
-    virtual AnyValuePtr visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node);
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node);
     virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node);

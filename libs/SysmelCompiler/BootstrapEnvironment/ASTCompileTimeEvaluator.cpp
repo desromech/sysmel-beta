@@ -2,7 +2,7 @@
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
-#include "sysmel/BootstrapEnvironment/ASTIntrinsicOperationNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMakeAssociationNode.hpp"
@@ -45,7 +45,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitIdentifierReferenceNode(const ASTIdent
     assert(false);
 }
 
-AnyValuePtr ASTCompileTimeEvaluator::visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node)
+AnyValuePtr ASTCompileTimeEvaluator::visitCallNode(const ASTCallNodePtr &node)
 {
     assert(false);
 }

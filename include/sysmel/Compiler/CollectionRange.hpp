@@ -78,7 +78,13 @@ struct CollectionRange
     SelfType until(const SelfType &other) const
     {
         assert(collection == other.collection);
-        return SelfType {{collection, startPosition, other.startPosition}};
+        return SelfType{{collection, startPosition, other.startPosition}};
+    }
+
+    SelfType untilEndOf(const SelfType &other) const
+    {
+        assert(collection == other.collection);
+        return SelfType{{collection, startPosition, other.endPosition}};
     }
 
     PeekType peek(size_t offset = 0) const

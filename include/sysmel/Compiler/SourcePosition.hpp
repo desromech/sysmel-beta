@@ -42,7 +42,7 @@ struct SourcePosition : CollectionRange<SourcePosition, SourceCollectionPtr, std
 
     SourceLineColumn endLineColumn() const
     {
-        return collection->lineAndColumnForIndex(startPosition);
+        return collection->lineAndColumnForIndex(endPosition);
     }
 
     friend std::ostream &operator<<(std::ostream &out, SourcePosition &position)

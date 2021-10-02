@@ -6,7 +6,7 @@
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluationErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
-#include "sysmel/BootstrapEnvironment/ASTIntrinsicOperationNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMakeAssociationNode.hpp"
@@ -243,7 +243,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
     return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, shared_from_this());
 }
 
-AnyValuePtr ASTSemanticAnalyzer::visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &node)
+AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 {
     assert(false);
 }

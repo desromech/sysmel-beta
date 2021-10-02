@@ -48,7 +48,7 @@ AnyValuePtr ASTVisitor::visitIdentifierReferenceNode(const ASTIdentifierReferenc
     SysmelSelfSubclassResponsibility();
 }
 
-AnyValuePtr ASTVisitor::visitIntrinsicOperationNode(const ASTIntrinsicOperationNodePtr &)
+AnyValuePtr ASTVisitor::visitCallNode(const ASTCallNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

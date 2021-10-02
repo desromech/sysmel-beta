@@ -6,6 +6,7 @@ set(BootstrapEnvironment_Sources
     ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
+    ASTCallNode.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
     ASTCompileTimeEvaluationErrorNode.cpp
@@ -13,7 +14,6 @@ set(BootstrapEnvironment_Sources
     ASTEmptySourcePosition.cpp
     ASTErrorNode.cpp
     ASTIdentifierReferenceNode.cpp
-    ASTIntrinsicOperationNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
     ASTMakeAssociationNode.cpp

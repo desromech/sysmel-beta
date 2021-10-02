@@ -95,7 +95,7 @@ struct TokenRange : CollectionRange<TokenRange, TokenListPtr, TokenList, Token>
     {
         if(startPosition + 1 >= endPosition)
             return front().sourcePosition;
-        return front().sourcePosition.until(back().sourcePosition);
+        return front().sourcePosition.untilEndOf(back().sourcePosition);
     }
 };
 
