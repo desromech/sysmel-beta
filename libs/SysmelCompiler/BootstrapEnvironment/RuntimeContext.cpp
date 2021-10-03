@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
 
 namespace SysmelMoebius
 {
@@ -26,6 +27,9 @@ void RuntimeContext::initialize()
     bootstrapModule = std::make_shared<BootstrapModule> ();
     bootstrapModule->activeDuring([&](){
         bootstrapModule->initialize();
+
+        sysmelLanguageSupport = std::make_shared<SysmelLanguageSupport> ();
+        sysmelLanguageSupport->initialize();
     });
 }
 

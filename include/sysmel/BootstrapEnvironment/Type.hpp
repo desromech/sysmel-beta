@@ -78,8 +78,14 @@ public:
     /// Does this type support dynamic compile time message sends?
     virtual bool supportsDynamicCompileTimeMessageSend() const;
 
+    /// Does this type support delegating the analysis of messages into literal value receivers?
+    virtual bool supportsMessageAnalysisByLiteralValueReceivers() const;
+
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+    /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
+    virtual ASTNodePtr analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method performs the semantic analysis of a message send node whose selector was not found.
     virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

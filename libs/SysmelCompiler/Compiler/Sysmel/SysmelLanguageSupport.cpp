@@ -29,8 +29,13 @@
 #include "sysmel/BootstrapEnvironment/ASTSourceCode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourceCodePosition.hpp"
 
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+
 #include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
+
+#include "sysmel/BootstrapEnvironment/MetaBuilderFactory.hpp"
+#include "sysmel/BootstrapEnvironment/LetMetaBuilder.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -421,27 +426,38 @@ MethodCategories SysmelLanguageSupport::__typeMethods__()
 
 SysmelLanguageSupportPtr SysmelLanguageSupport::uniqueInstance()
 {
-    static SysmelLanguageSupportPtr singleton = std::make_shared<SysmelLanguageSupport> ();
-    return singleton;
+    return std::static_pointer_cast<SysmelLanguageSupport> (RuntimeContext::getActive()->getSysmelLanguageSupport());
 }
 
+void SysmelLanguageSupport::initialize()
+{
+    SuperType::initialize();
+
+    {
+        keywordScope = std::make_shared<LexicalScope> ();
+        keywordScope->setSymbolBinding(internSymbol("true"), getTrueConstant());
+        keywordScope->setSymbolBinding(internSymbol("false"), getFalseConstant());
+        keywordScope->setSymbolBinding(internSymbol("nil"), getNilConstant());
+        keywordScope->setSymbolBinding(internSymbol("void"), getVoidConstant());
+    }
+
+    {
+        topLevelScope = std::make_shared<LexicalScope> ();
+        topLevelScope->parent = keywordScope;
+
+        // Meta builders
+        topLevelScope->setSymbolBinding(internSymbol("let"), metaBuilderFactoryFor<LetMetaBuilder> ("let"));
+    }
+}
 
 LexicalScopePtr SysmelLanguageSupport::createDefaultTopLevelLexicalScope()
 {
-    return SysmelLanguageSupport::createMakeLiteralArrayTopLevelLexicalScope();
+    return topLevelScope;
 }
 
 LexicalScopePtr SysmelLanguageSupport::createMakeLiteralArrayTopLevelLexicalScope()
 {
-    if(keywordScope)
-        return keywordScope;
-
-    auto result = std::make_shared<LexicalScope> ();
-    result->setSymbolBinding(internSymbol("true"), getTrueConstant());
-    result->setSymbolBinding(internSymbol("false"), getFalseConstant());
-    result->setSymbolBinding(internSymbol("nil"), getNilConstant());
-    result->setSymbolBinding(internSymbol("void"), getVoidConstant());
-    return keywordScope = result;
+    return keywordScope;
 }
 
 ASTNodePtr SysmelLanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)

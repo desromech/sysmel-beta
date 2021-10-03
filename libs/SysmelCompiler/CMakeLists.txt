@@ -63,6 +63,7 @@ set(BootstrapEnvironment_Sources
     LanguageSupport.cpp
     LargeInteger.cpp
     LexicalScope.cpp
+    LetMetaBuilder.cpp
     LiteralArray.cpp
     LiteralBoolean.cpp
     LiteralBooleanTrue.cpp
@@ -79,6 +80,7 @@ set(BootstrapEnvironment_Sources
     LiteralValue.cpp
     MacroInvocationContext.cpp
     MessageNotUnderstood.cpp
+    MetaBuilder.cpp
     MetaType.cpp
     Method.cpp
     MethodDictionary.cpp

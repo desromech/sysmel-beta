@@ -148,6 +148,21 @@ ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const
     assert(node->receiver && node->receiver->analyzedType);
     assert(node->selector && node->selector->analyzedType);
 
+    // Allow the actual instance to analyze the message. This is typically used by metabuilders.
+    if(supportsMessageAnalysisByLiteralValueReceivers() && node->receiver->isASTLiteralValueNode())
+    {
+        auto literalValue = std::static_pointer_cast<ASTLiteralValueNode> (node->receiver)->value;
+        return literalValue->analyzeMessageSendNode(node, semanticAnalyzer);
+    }
+
+    return analyzeMessageSendNodeWithTypeDefinedMethods(node, semanticAnalyzer);
+}
+
+ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    assert(node->receiver && node->receiver->analyzedType);
+    assert(node->selector && node->selector->analyzedType);
+
     AnyValuePtr directSelectorValue;
     if(node->selector->isASTLiteralSymbolValue())
         directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
@@ -173,6 +188,11 @@ bool Type::supportsDynamicCompileTimeMessageSend() const
     return false;
 }
 
+bool Type::supportsMessageAnalysisByLiteralValueReceivers() const
+{
+    return false;
+}
+
 ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(supportsDynamicCompileTimeMessageSend())
@@ -186,8 +206,7 @@ ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node
     if(node->selector->isASTLiteralSymbolValue())
     {
         auto directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
-        return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Failed to find matching message for {0} selector.", {{directSelectorValue->printString()}}));
-
+        return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Failed to find matching message for selector {0} in receiver of type '{1}'.", {{directSelectorValue->printString(), printString()}}));
     }
     
     return semanticAnalyzer->recordSemanticErrorInNode(node, "");

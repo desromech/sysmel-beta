@@ -21,6 +21,11 @@ bool BootstrapType::supportsDynamicCompileTimeMessageSend() const
     return staticMetadata->isDynamicCompileTimeType;
 }
 
+bool BootstrapType::supportsMessageAnalysisByLiteralValueReceivers() const
+{
+    return staticMetadata->isLiteralValueMessageAnalyzer;
+}
+
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;

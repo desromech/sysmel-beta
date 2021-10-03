@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CompilerObject.hpp"
+#include "MacroInvocationContext.hpp"
 
 namespace SysmelMoebius
 {
@@ -18,6 +19,19 @@ class MetaBuilder : public SubtypeOf<CompilerObject, MetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "MetaBuilder";
+
+    static constexpr bool __isDynamicCompileTimeType__ = false;
+    static constexpr bool __isLiteralValueMessageAnalyzer__ = true;
+
+    virtual bool isMetaBuilder() const;
+
+    virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual void setMetaBuilderInstanceContext(const MacroInvocationContextPtr &context);
+
+protected:
+    virtual ASTNodePtr concretizeMetaBuilderWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    
+    MacroInvocationContextPtr instanceContext;
 };
 
 } // End of namespace BootstrapEnvironment

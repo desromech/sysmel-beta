@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
@@ -169,6 +170,25 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = signature.resultType;
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
+}
+
+ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(isMacroMethod() && signature.argumentTypes.empty())
+    {
+        auto macroInvocationContext = semanticAnalyzer->makeMacroInvocationContextFor(node);
+
+        // Evaluate the macro macro method.
+        auto macroResultNode = semanticAnalyzer->guardCompileTimeEvaluationForNode(node, [&]() {
+            auto macroDirectResult = runWithArgumentsIn(node->identifier, {}, macroInvocationContext);
+            return validAnyValue(macroDirectResult)->asASTNodeRequiredInPosition(node->sourcePosition);
+        });
+
+        // Analyze the macro expanded node.
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(macroResultNode);
+    }
+
+    return SuperType::analyzeIdentifierReferenceNode(node, semanticAnalyzer);
 }
 
 } // End of namespace BootstrapEnvironment

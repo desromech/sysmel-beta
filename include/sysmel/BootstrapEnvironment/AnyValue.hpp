@@ -55,6 +55,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
     bool isDynamicCompileTimeType;
+    bool isLiteralValueMessageAnalyzer;
     size_t bootstrapTypeID;
 };
 
@@ -80,6 +81,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
     T::__isDynamicCompileTimeType__,
+    T::__isLiteralValueMessageAnalyzer__,
     0
 };
 
@@ -191,6 +193,7 @@ public:
 
     static constexpr char const __typeName__[] = "AnyValue";
     static constexpr bool __isDynamicCompileTimeType__ = true;
+    static constexpr bool __isLiteralValueMessageAnalyzer__ = false;
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
@@ -366,6 +369,9 @@ public:
 
     /// Is this object a template method?
     virtual bool isTemplateMethod() const;
+
+    /// Is this object a meta builder?
+    virtual bool isMetaBuilder() const;
 
     /// Is this object a literal value?
     virtual bool isLiteralValue() const;

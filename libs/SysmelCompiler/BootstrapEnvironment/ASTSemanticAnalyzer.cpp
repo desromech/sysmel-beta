@@ -70,6 +70,15 @@ ASTNodePtr ASTSemanticAnalyzer::recordCompileTimeEvaluationErrorInNode(const AST
     return compileTimeErrorNode;
 }
 
+MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTIdentifierReferenceNodePtr &node)
+{
+    auto result = std::make_shared<MacroInvocationContext> ();
+    result->receiverNode = node;
+    result->selfType = Type::getVoidType();
+    result->astBuilder = std::make_shared<ASTBuilder> ();
+    return result;
+}
+
 MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node)
 {
     auto result = std::make_shared<MacroInvocationContext> ();
@@ -237,7 +246,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
 {
     auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(node->identifier);
     if(!boundSymbol)
-        return recordSemanticErrorInNode(node, formatString("Failed to find binding identifier {0}.", {{node->identifier->printString()}}));
+        return recordSemanticErrorInNode(node, formatString("Failed to find binding for identifier {0}.", {{node->identifier->printString()}}));
 
     auto analyzedNode = std::make_shared<ASTIdentifierReferenceNode> (*node);
     return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, shared_from_this());
@@ -308,6 +317,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
     if(analyzedNode->receiver)
     {
         analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
+
+        // Delegate to the receiver type.
         return analyzedNode->receiver->analyzedType->analyzeMessageSendNode(analyzedNode, shared_from_this());
     }
     else

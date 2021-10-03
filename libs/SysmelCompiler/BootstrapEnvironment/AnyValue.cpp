@@ -308,6 +308,11 @@ bool AnyValue::isTemplateMethod() const
     return false;
 }
 
+bool AnyValue::isMetaBuilder() const
+{
+    return false;
+}
+
 bool AnyValue::isPragma() const
 {
     return false;

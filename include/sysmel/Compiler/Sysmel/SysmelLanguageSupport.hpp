@@ -26,6 +26,8 @@ public:
 
     static SysmelLanguageSupportPtr uniqueInstance();
 
+    virtual void initialize() override;
+
     virtual LexicalScopePtr createDefaultTopLevelLexicalScope() override;
     virtual LexicalScopePtr createMakeLiteralArrayTopLevelLexicalScope() override;
 
@@ -33,6 +35,7 @@ public:
 
 protected:
     LexicalScopePtr keywordScope;
+    LexicalScopePtr topLevelScope;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -10,6 +10,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
 /**
  * I represent an active runtime context in the object model environment.
@@ -53,9 +54,15 @@ public:
         return bootstrapModule;
     }
 
+    const LanguageSupportPtr &getSysmelLanguageSupport()
+    {
+        return sysmelLanguageSupport;
+    }
+
 protected:
     
     BootstrapModulePtr bootstrapModule;
+    LanguageSupportPtr sysmelLanguageSupport;
 };
 
 } // End of namespace BootstrapEnvironment

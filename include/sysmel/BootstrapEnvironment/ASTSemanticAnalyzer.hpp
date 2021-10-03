@@ -39,6 +39,7 @@ public:
 
     ASTNodePtr withEnvironmentDoAnalysis(const ASTAnalysisEnvironmentPtr &newEnvironment, const ASTNodeSemanticAnalysisBlock &aBlock);
 
+    MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTIdentifierReferenceNodePtr &node);
     MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node);
 
     PatternMatchingRank rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType);

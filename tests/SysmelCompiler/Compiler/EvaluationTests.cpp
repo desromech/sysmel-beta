@@ -1,9 +1,9 @@
-#include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
 #include "sysmel/BootstrapEnvironment/ScriptModule.hpp"
+#include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 
 #include "UnitTest++/UnitTest++.h"
 
@@ -11,7 +11,7 @@ using namespace SysmelMoebius::BootstrapEnvironment;
 
 static AnyValuePtr evaluateString(const std::string &source)
 {
-    return SysmelLanguageSupport::uniqueInstance()->evaluateSourceStringNamed(source, "unit-test");
+    return RuntimeContext::getActive()->getSysmelLanguageSupport()->evaluateSourceStringNamed(source, "unit-test");
 }
 
 template<typename T>
@@ -62,7 +62,9 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42. a"));
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("let a := 42. a + 1"));
             });
         });
     }

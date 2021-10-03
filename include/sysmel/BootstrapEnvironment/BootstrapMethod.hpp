@@ -12,6 +12,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapMethodBase);
+
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
  */
@@ -195,6 +197,13 @@ private:
     MemberFunctionPointerType memberFunctionPointer;
 };
 
+
+template<typename MethodSignature, typename FT>
+BootstrapMethodBasePtr makeBootstrapMethod(const std::string &selector, FT &&functor)
+{
+    auto selectorSymbol = internSymbol(selector);
+    return std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+}
 
 template<typename MethodSignature, typename FT>
 MethodBinding makeMethodBinding(const std::string &selector, FT &&functor)
