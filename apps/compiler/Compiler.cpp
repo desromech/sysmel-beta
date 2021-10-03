@@ -11,15 +11,6 @@
 #include "sysmel/BootstrapEnvironment/Exception.hpp"
 #include <fstream>
 #include <iostream>
-/*
-namespace TestEvaluator
-{
-using namespace SysmelMoebius::Compiler::Sysmel;
-using namespace SysmelMoebius::BootstrapEnvironment;
-
-
-}
-*/
 
 using namespace SysmelMoebius::BootstrapEnvironment;
 

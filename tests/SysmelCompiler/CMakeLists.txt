@@ -13,6 +13,7 @@ list(TRANSFORM BootstrapEnvironmentTests_Sources PREPEND "BootstrapEnvironment/"
 set(CompilerTests_Sources
     ScannerTests.cpp
     ParserTests.cpp
+    EvaluationTests.cpp
 )
 
 list(TRANSFORM CompilerTests_Sources PREPEND "Compiler/")

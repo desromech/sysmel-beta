@@ -393,7 +393,7 @@ static void scanNextToken(SourcePosition &currentPosition, TokenList &result)
     }
 
     // Numbers
-    if(isDigit(tokenFirst) || (isSign(tokenFirst) && isDigit(currentPosition.peek(1))))
+    if(isDigit(tokenFirst) || (isSign(tokenFirst) && isDigit(currentPosition.peek(1)) && !isDigit(currentPosition.peek(-1)) ))
     {
         auto tokenType = skipNumber(currentPosition);
         result.push_back(Token {tokenType, tokenStart.until(currentPosition)});

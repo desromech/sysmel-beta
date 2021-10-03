@@ -87,9 +87,10 @@ struct CollectionRange
         return SelfType{{collection, startPosition, other.endPosition}};
     }
 
-    PeekType peek(size_t offset = 0) const
+    PeekType peek(intptr_t offset = 0) const
     {
-        return offset < size() ? (*collection)[startPosition + offset] : static_cast<const SelfType*> (this)->eofValue();
+        auto resultingPosition = size_t(startPosition + offset);
+        return resultingPosition < collection->size() ? (*collection)[resultingPosition] : static_cast<const SelfType*> (this)->eofValue();
     }
 
     PeekType front() const
