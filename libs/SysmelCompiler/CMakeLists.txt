@@ -16,6 +16,7 @@ set(BootstrapEnvironment_Sources
     ASTIdentifierReferenceNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
+    ASTLocalVariableNode.cpp
     ASTMakeAssociationNode.cpp
     ASTMakeDictionaryNode.cpp
     ASTMakeLiteralArrayNode.cpp
@@ -27,6 +28,7 @@ set(BootstrapEnvironment_Sources
     ASTParseErrorNode.cpp
     ASTParseErrorValidator.cpp
     ASTPragmaNode.cpp
+    ASTProgramEntityNode.cpp
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
@@ -37,6 +39,7 @@ set(BootstrapEnvironment_Sources
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
+    ASTVariableNode.cpp
     ASTVisitor.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
@@ -81,12 +84,14 @@ set(BootstrapEnvironment_Sources
     MacroInvocationContext.cpp
     MessageNotUnderstood.cpp
     MetaBuilder.cpp
+    MetaBuilderInstanceContext.cpp
     MetaType.cpp
     Method.cpp
     MethodDictionary.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp
     ModuleReference.cpp
+    NamedProgramEntityMetaBuilder.cpp
     NotMatchingPatternFound.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp
@@ -106,6 +111,7 @@ set(BootstrapEnvironment_Sources
     Type.cpp
     Undefined.cpp
     UnsupportedOperation
+    VariableMetaBuilder.cpp
     Void.cpp
     Wrappers.cpp
 )

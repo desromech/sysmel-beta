@@ -20,6 +20,8 @@
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -107,6 +109,25 @@ AnyValuePtr ASTCompileTimeEvaluator::visitSequenceNode(const ASTSequenceNodePtr 
     for(const auto &expression : node->expressions)
         result = visitNode(expression);
     return result;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
+{
+    AnyValuePtr initialValue;
+
+    if(node->initialValue)
+    {
+        initialValue = visitNode(node->initialValue);
+    }
+    else
+    {
+        initialValue = getNilConstant();
+        // TODO: Ask the type for the proper default value here.
+    }
+
+    // TODO: Create an slot for the local variable in the current lexical scope.
+
+    return initialValue;
 }
 
 } // End of namespace BootstrapEnvironment

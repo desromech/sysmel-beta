@@ -319,6 +319,21 @@ public:
     /// Is this object an AST splice node?
     virtual bool isASTSpliceNode() const;
 
+    /// Is this object an AST program entity node?
+    virtual bool isASTProgramEntityNode() const;
+
+    /// Is this object an AST variable node?
+    virtual bool isASTVariableNode() const;
+
+    /// Is this object an AST local variable node?
+    virtual bool isASTLocalVariableNode() const;
+
+    /// Is this object an AST global variable node?
+    virtual bool isASTGlobalVariableNode() const;
+
+    /// Is this object an AST field variable node?
+    virtual bool isASTFieldVariableNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 
@@ -405,6 +420,9 @@ public:
 
     /// Is this object a literal symbol?
     virtual bool isLiteralSymbol() const;
+
+    /// Is this object a literal identifier symbol?
+    virtual bool isLiteralIdentifierSymbol() const;
 
     /// Is this object a literal boolean?
     virtual bool isLiteralBoolean() const;

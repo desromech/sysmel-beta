@@ -25,6 +25,8 @@
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
@@ -41,6 +43,8 @@
 
 #include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/CompilationErrors.hpp"
+
+#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -126,6 +130,11 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedTypeSet(const AST
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTypeSet(expectedTypeSet));
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoTypeInferenceMode(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable)
+{
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAutoWithMode(mode, isMutable));
+}
+
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node)
 {
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAuto());
@@ -201,6 +210,20 @@ ASTNodePtr ASTSemanticAnalyzer::guardCompileTimeEvaluationForNode(const ASTNodeP
         // Propagate the exception.
         throw exceptionWrapper;
     }
+}
+
+ASTNodePtr ASTSemanticAnalyzer::evaluateTypeExpression(const ASTNodePtr &node)
+{
+    if(node->isASTLiteralTypeNode())
+        return node;
+
+    return guardCompileTimeEvaluationForNode(node, [&](){
+        auto evaluatedValue = evaluateInCompileTime(node);
+        if(!evaluatedValue->isType())
+            return recordSemanticErrorInNode(node, "Expected an expression that evaluates to a type.");
+
+        return evaluatedValue->asASTNodeRequiredInPosition(node->sourcePosition);
+    });
 }
 
 ASTNodePtr ASTSemanticAnalyzer::evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node)
@@ -412,6 +435,43 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
 AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 {
     return recordSemanticErrorInNode(node, "Invalid location for a splice expression");
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTLocalVariableNode> (*node);
+
+    // TODO: Check the symbol on the current lexical scope.
+    // TODO: Make sure the name is not reserved.
+
+    if(analyzedNode->type)
+    {
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+    }
+    else
+    {
+        if(analyzedNode->initialValue)
+        {
+            analyzedNode->initialValue = analyzeNodeIfNeededWithAutoTypeInferenceMode(analyzedNode->initialValue, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+            analyzedNode->type = analyzedNode->initialValue->analyzedType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            assert("TODO: Support deferred and/or default type " && false);    
+        }
+    }
+
+    auto valueType = Type::getUndefinedType();
+    if(analyzedNode->type->isASTLiteralValueNode())
+    {
+        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        assert(literalTypeNode->value->isType());
+
+        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+    }
+
+    analyzedNode->analyzedType = valueType;
+    return analyzedNode;
 }
 
 CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()

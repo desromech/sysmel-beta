@@ -19,6 +19,8 @@ public:
 
     virtual bool isASTLiteralValueNode() const override;
     virtual bool isASTLiteralSymbolValue() const override;
+    virtual bool isASTIdentifierSymbolValue() const override;
+    virtual bool isASTLiteralTypeNode() const override;
     virtual bool isPureCompileTimeLiteralValueNode() const override;
 
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;

@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+bool isValidIdentifierString(const std::string &string);
+
 void formatUtf8Character(char c, std::ostream &out);
 void formatUtf32Character(char32_t c, std::ostream &out);
 

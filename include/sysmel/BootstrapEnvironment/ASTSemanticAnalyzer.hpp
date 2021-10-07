@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTVisitor.hpp"
+#include "TypeInferenceMode.hpp"
 #include <functional>
 
 namespace SysmelMoebius
@@ -33,6 +34,7 @@ public:
     ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType);
     ASTNodePtr analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
     ASTNodePtr analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node);
+    ASTNodePtr analyzeNodeIfNeededWithAutoTypeInferenceMode(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable);
     ASTNodePtr analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node);
 
     AnyValuePtr adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType);
@@ -49,30 +51,33 @@ public:
     ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
     ASTNodePtr optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node);
 
-    virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
-    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
-    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
-    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
-    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node);
-    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
-    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node);
-    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node);
-    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node);
-    virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node);
-    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node);
-    virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node);
-    virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node);
-    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node);
-    virtual AnyValuePtr visitParseErrorNode(const ASTParseErrorNodePtr &node);
-    virtual AnyValuePtr visitPragmaNode(const ASTPragmaNodePtr &node);
-    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node);
-    virtual AnyValuePtr visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node);
-    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node);
-    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
-    virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
+    virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node) override;
+    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
+    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;
+    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node) override;
+    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
+    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
+    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node) override;
+    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
+    virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
+    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
+    virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node) override;
+    virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node) override;
+    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
+    virtual AnyValuePtr visitParseErrorNode(const ASTParseErrorNodePtr &node) override;
+    virtual AnyValuePtr visitPragmaNode(const ASTPragmaNodePtr &node) override;
+    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node) override;
+    virtual AnyValuePtr visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node) override;
+    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
+    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
+    virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node) override;
+
+    virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
 
     AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);
+    ASTNodePtr evaluateTypeExpression(const ASTNodePtr &node);
 
     ASTNodePtr guardCompileTimeEvaluationForNode(const ASTNodePtr &node, const ASTNodeSemanticAnalysisBlock &aBlock);
 

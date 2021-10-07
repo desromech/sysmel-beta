@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CompilerObject.hpp"
-#include "MacroInvocationContext.hpp"
+#include "MetaBuilderInstanceContext.hpp"
 
 namespace SysmelMoebius
 {
@@ -26,12 +26,15 @@ public:
     virtual bool isMetaBuilder() const;
 
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
-    virtual void setMetaBuilderInstanceContext(const MacroInvocationContextPtr &context);
+    virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context);
 
 protected:
-    virtual ASTNodePtr concretizeMetaBuilderWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr concretizeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr concretizeMetaBuilder();
+    virtual ASTNodePtr concretizeMetaBuilderAndAnalyzeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     
-    MacroInvocationContextPtr instanceContext;
+    MetaBuilderInstanceContextPtr instanceContext;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CompilerObject.hpp"
+#include "TypeInferenceMode.hpp"
 
 namespace SysmelMoebius
 {
@@ -22,6 +23,7 @@ public:
     static ResultTypeInferenceSlotPtr makeForType(const TypePtr &expectedType);
     static ResultTypeInferenceSlotPtr makeForTypeSet(const TypePtrList &expectedTypeSet);
     static ResultTypeInferenceSlotPtr makeForAuto();
+    static ResultTypeInferenceSlotPtr makeForAutoWithMode(TypeInferenceMode mode, bool isMutable);
 };
 
 } // End of namespace BootstrapEnvironment

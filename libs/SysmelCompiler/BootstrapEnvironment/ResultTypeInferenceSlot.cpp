@@ -25,5 +25,12 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
     return std::make_shared<ResultTypeInferenceSlot> ();
 }
 
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable)
+{
+    (void)mode;
+    (void)isMutable;
+    return std::make_shared<ResultTypeInferenceSlot> ();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

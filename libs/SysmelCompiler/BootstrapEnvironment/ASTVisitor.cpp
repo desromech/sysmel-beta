@@ -2,6 +2,10 @@
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluationErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTParseErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticErrorNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -136,6 +140,31 @@ AnyValuePtr ASTVisitor::visitSequenceNode(const ASTSequenceNodePtr &)
 AnyValuePtr ASTVisitor::visitSpliceNode(const ASTSpliceNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitProgramEntityNode(const ASTProgramEntityNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitVariableNode(const ASTVariableNodePtr &node)
+{
+    return visitProgramEntityNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
+{
+    return visitVariableNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
+{
+    return visitVariableNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
+{
+    return visitVariableNode(node);
 }
 
 } // End of namespace BootstrapEnvironment

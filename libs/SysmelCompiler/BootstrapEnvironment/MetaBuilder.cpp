@@ -1,5 +1,7 @@
 #include "sysmel/BootstrapEnvironment/MetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -15,20 +17,43 @@ bool MetaBuilder::isMetaBuilder() const
     return true;
 }
 
-void MetaBuilder::setMetaBuilderInstanceContext(const MacroInvocationContextPtr &context)
+void MetaBuilder::setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context)
 {
     instanceContext = context;
 }
 
-ASTNodePtr MetaBuilder::analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+ASTNodePtr MetaBuilder::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    (void)partiallyAnalyzedNode;
-    return concretizeMetaBuilderWith(semanticAnalyzer);
+    if(node && node->selector->isASTLiteralSymbolValue())
+    {
+        auto selector = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value->asString();
+        return analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
+    }
+
+    return concretizeMessageSendNode(node, semanticAnalyzer);
 }
 
-ASTNodePtr MetaBuilder::concretizeMetaBuilderWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+ASTNodePtr MetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(getVoidConstant()->asASTNodeRequiredInPosition(instanceContext->receiverNode->sourcePosition));
+    (void)selectorValue;
+    return concretizeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
+ASTNodePtr MetaBuilder::concretizeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    auto newNode = std::make_shared<ASTMessageSendNode> (*partiallyAnalyzedNode);
+    newNode->receiver = concretizeMetaBuilder();
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(newNode);
+}
+
+ASTNodePtr MetaBuilder::concretizeMetaBuilder()
+{
+    return getVoidConstant()->asASTNodeRequiredInPosition(instanceContext->concreteSourcePosition());
+}
+
+ASTNodePtr MetaBuilder::concretizeMetaBuilderAndAnalyzeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(concretizeMetaBuilder());
 }
 
 } // End of namespace BootstrapEnvironment

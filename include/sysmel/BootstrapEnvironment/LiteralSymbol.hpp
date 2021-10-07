@@ -23,6 +23,7 @@ public:
     static LiteralSymbolPtr intern(const std::string &value);
     
     virtual bool isLiteralSymbol() const override;
+    virtual bool isLiteralIdentifierSymbol() const override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

@@ -38,7 +38,18 @@ bool ASTNode::isPureCompileTimeLiteralValueNode() const
 
 ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
+    (void)requiredSourcePosition;
     return shared_from_this();
+}
+
+bool ASTNode::isASTIdentifierSymbolValue() const
+{
+    return false;
+}
+
+bool ASTNode::isASTLiteralTypeNode() const
+{
+    return false;
 }
 
 std::string ASTNode::printString() const

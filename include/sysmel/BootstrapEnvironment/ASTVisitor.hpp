@@ -42,6 +42,12 @@ public:
     virtual AnyValuePtr visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node);
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
+
+    virtual AnyValuePtr visitProgramEntityNode(const ASTProgramEntityNodePtr &node);
+    virtual AnyValuePtr visitVariableNode(const ASTVariableNodePtr &node);
+    virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node);
+    virtual AnyValuePtr visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node);
+    virtual AnyValuePtr visitFieldVariableNode(const ASTFieldVariableNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

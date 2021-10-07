@@ -17,19 +17,21 @@ class ASTCompileTimeEvaluator : public SubtypeOf<ASTVisitor, ASTCompileTimeEvalu
 public:
     static constexpr char const __typeName__[] = "ASTCompileTimeEvaluator";
 
-    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node);
-    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node);
-    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node);
-    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node);
-    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node);
-    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node);
-    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node);
-    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node);
-    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node);
-    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node);
-    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node);
-    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node);
-    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
+    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
+    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;
+    virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node) override;
+    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
+    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
+    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node) override;
+    virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
+    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
+    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
+    virtual AnyValuePtr visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node) override;
+    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
+    virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
+
+    virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
 };
 
 } // End of namespace BootstrapEnvironment

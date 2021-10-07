@@ -37,6 +37,12 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticErrorNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSpliceNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTProgramEntityNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTVariableNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLocalVariableNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTGlobalVariableNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableNode);
+
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -50,6 +56,8 @@ public:
 
     virtual bool isASTNode() const override;
     virtual bool isASTLiteralSymbolValue() const;
+    virtual bool isASTIdentifierSymbolValue() const;
+    virtual bool isASTLiteralTypeNode() const;
     virtual bool isPureCompileTimeLiteralValueNode() const;
     
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;

@@ -7,6 +7,36 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+static inline bool isDigit(char c)
+{
+    return '0' <= c && c <= '9';
+}
+
+static inline bool isIdentifierStart(char c)
+{
+    return ('A' <= c && c <= 'Z') ||
+        ('a' <= c && c <= 'z') ||
+        '_' == c;
+}
+
+static inline bool isIdentifierMiddle(char c)
+{
+    return isIdentifierStart(c) || isDigit(c);
+}
+
+bool isValidIdentifierString(const std::string &string)
+{
+    if(string.empty() || !isIdentifierStart(string[0]))
+        return false;
+    
+    for(auto c : string)
+    {
+        if(!isIdentifierMiddle(c))
+            return false;
+    }
+    return true;
+}
+
 void formatUtf8Character(char c, std::ostream &out)
 {
     switch(c)
@@ -58,23 +88,6 @@ std::string formatStringLiteral(const std::string &value)
     }
     out << '"';
     return out.str();
-}
-
-static inline bool isDigit(char c)
-{
-    return '0' <= c && c <= '9';
-}
-
-static inline bool isIdentifierStart(char c)
-{
-    return ('A' <= c && c <= 'Z') ||
-        ('a' <= c && c <= 'z') ||
-        '_' == c;
-}
-
-static inline bool isIdentifierMiddle(char c)
-{
-    return isIdentifierStart(c) || isDigit(c);
 }
 
 static bool isValidIdentifier(const std::string &value)

@@ -228,6 +228,31 @@ bool AnyValue::isASTSpliceNode() const
     return false;
 }
 
+bool AnyValue::isASTProgramEntityNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTVariableNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTLocalVariableNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTGlobalVariableNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTFieldVariableNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;
@@ -369,6 +394,11 @@ bool AnyValue::isLiteralString() const
 }
 
 bool AnyValue::isLiteralSymbol() const
+{
+    return false;
+}
+
+bool AnyValue::isLiteralIdentifierSymbol() const
 {
     return false;
 }

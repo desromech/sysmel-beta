@@ -46,6 +46,11 @@ bool LiteralSymbol::isLiteralSymbol() const
     return true;
 }
 
+bool LiteralSymbol::isLiteralIdentifierSymbol() const
+{
+    return isValidIdentifierString(value);
+}
+
 std::string LiteralSymbol::printString() const
 {
     return formatSymbolLiteral(value);
