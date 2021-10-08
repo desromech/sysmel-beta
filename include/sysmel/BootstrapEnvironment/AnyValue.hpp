@@ -388,6 +388,18 @@ public:
     /// Is this object a meta builder?
     virtual bool isMetaBuilder() const;
 
+    /// Is this object a variable?
+    virtual bool isVariable() const;
+
+    /// Is this object a local variable?
+    virtual bool isLocalVariable() const;
+
+    /// Is this object a field variable?
+    virtual bool isFieldVariable() const;
+
+    /// Is this object a global variable?
+    virtual bool isGlobalVariable() const;
+
     /// Is this object a literal value?
     virtual bool isLiteralValue() const;
 

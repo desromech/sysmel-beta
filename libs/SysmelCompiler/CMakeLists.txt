@@ -81,6 +81,7 @@ set(BootstrapEnvironment_Sources
     LiteralString.cpp
     LiteralSymbol.cpp
     LiteralValue.cpp
+    LocalVariable.cpp
     MacroInvocationContext.cpp
     MessageNotUnderstood.cpp
     MetaBuilder.cpp
@@ -111,6 +112,7 @@ set(BootstrapEnvironment_Sources
     Type.cpp
     Undefined.cpp
     UnsupportedOperation
+    Variable.cpp
     VariableMetaBuilder.cpp
     Void.cpp
     Wrappers.cpp

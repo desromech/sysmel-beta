@@ -338,6 +338,26 @@ bool AnyValue::isMetaBuilder() const
     return false;
 }
 
+bool AnyValue::isVariable() const
+{
+    return false;
+}
+
+bool AnyValue::isLocalVariable() const
+{
+    return false;
+}
+
+bool AnyValue::isFieldVariable() const
+{
+    return false;
+}
+
+bool AnyValue::isGlobalVariable() const
+{
+    return false;
+}
+
 bool AnyValue::isPragma() const
 {
     return false;

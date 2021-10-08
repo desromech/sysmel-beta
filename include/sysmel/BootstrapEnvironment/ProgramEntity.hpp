@@ -13,6 +13,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Module);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
+
 /**
  * I am the base interface for any program metamodel entity
  */

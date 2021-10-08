@@ -44,6 +44,8 @@
 #include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/CompilationErrors.hpp"
 
+#include "sysmel/BootstrapEnvironment/LocalVariable.hpp"
+
 #include <iostream>
 
 namespace SysmelMoebius
@@ -440,6 +442,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
     auto analyzedNode = std::make_shared<ASTLocalVariableNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
 
     // TODO: Check the symbol on the current lexical scope.
     // TODO: Make sure the name is not reserved.
