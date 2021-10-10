@@ -26,6 +26,7 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
@@ -60,7 +61,7 @@ ASTNodePtr ASTSemanticAnalyzer::recordSemanticErrorInNode(const ASTNodePtr &erro
     auto semanticErrorNode = std::make_shared<ASTSemanticErrorNode> ();
     semanticErrorNode->sourcePosition = errorNode->sourcePosition;
     semanticErrorNode->errorMessage = message;
-    semanticErrorNode->analyzedType = Type::getUndefinedType();
+    semanticErrorNode->analyzedType = Type::getCompilationErrorValueType();
     recordedErrors.push_back(semanticErrorNode);
     return semanticErrorNode;
 }
@@ -71,7 +72,7 @@ ASTNodePtr ASTSemanticAnalyzer::recordCompileTimeEvaluationErrorInNode(const AST
     compileTimeErrorNode->sourcePosition = errorNode->sourcePosition;
     compileTimeErrorNode->errorMessage = evaluationError->getDescription();
     compileTimeErrorNode->caughtError = evaluationError;
-    compileTimeErrorNode->analyzedType = Type::getUndefinedType();
+    compileTimeErrorNode->analyzedType = Type::getCompilationErrorValueType();
     recordedErrors.push_back(compileTimeErrorNode);
     return compileTimeErrorNode;
 }
@@ -452,7 +453,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
-    // TODO: Check the symbol on the current lexical scope.
+    // Check the symbol on the current lexical scope.
+    {
+        auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+        if(previousLocalDefinition)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Local variable definition ({1}) overrides previous definition in the same lexical scope ({2}).",
+                {{name->printString(), previousLocalDefinition->printString()}}));
+    }
     // TODO: Make sure the name is not reserved.
 
     if(analyzedNode->type)
@@ -481,7 +488,27 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
         valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
     }
 
-    analyzedNode->analyzedType = valueType;
+    // Create the local variable.
+    auto localVariable = std::make_shared<LocalVariable> ();
+    localVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+
+    // Record the program entity.
+    environment->localDefinitionsOwner->recordChildProgramEntityDefinition(localVariable);
+
+    // Bind the local variable in the current lexical scope.
+    environment->lexicalScope->setSymbolBinding(name, localVariable);
+
+    // Set it in the analyzed node.
+    analyzedNode->analyzedType = localVariable->getReferenceType();
+    analyzedNode->analyzedProgramEntity = localVariable;
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTVariableAccessNode> (*node);
+    auto variable = analyzedNode->variable;
+    analyzedNode->analyzedType = analyzedNode->isAccessedByReference ? variable->getReferenceType() : variable->getValueType();
     return analyzedNode;
 }
 

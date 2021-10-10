@@ -39,6 +39,7 @@ set(BootstrapEnvironment_Sources
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
+    ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVisitor.cpp
     BootstrapExtensionMethods.cpp
@@ -54,7 +55,9 @@ set(BootstrapEnvironment_Sources
     CleanUpScope.cpp
     CompilationError.cpp
     CompilationErrors.cpp
+    CompilationErrorValue.cpp
     CompiledMethod.cpp
+    CompileTimeCleanUpScope.cpp
     CompileTimeEvaluationError.cpp
     CompilerObject.cpp
     DivisionByZeroError.cpp
@@ -111,7 +114,8 @@ set(BootstrapEnvironment_Sources
     ResultTypeInferenceSlot.cpp
     Type.cpp
     Undefined.cpp
-    UnsupportedOperation
+    UnsupportedOperation.cpp
+    ValueBox.cpp
     Variable.cpp
     VariableMetaBuilder.cpp
     Void.cpp

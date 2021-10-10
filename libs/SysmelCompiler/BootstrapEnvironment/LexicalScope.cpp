@@ -8,6 +8,18 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<LexicalScope> LexicalScopeRegistration;
 
+LexicalScopePtr LexicalScope::makeEmpty()
+{
+    return std::make_shared<LexicalScope> ();
+}
+
+LexicalScopePtr LexicalScope::makeWithParent(const LexicalScopePtr &parent)
+{
+    auto result = std::make_shared<LexicalScope> ();
+    result->parent = parent;
+    return result;
+}
+
 bool LexicalScope::isLexicalScope() const
 {
     return true;

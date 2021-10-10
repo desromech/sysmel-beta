@@ -38,6 +38,47 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(CompileTimeTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("LiteralValue")->isType());
+                CHECK(evaluateString("LiteralInteger")->isType());
+                CHECK(evaluateString("UndefinedType")->isType());
+                CHECK(evaluateString("AnyValue")->isType());
+                CHECK(evaluateString("Type")->isType());
+                CHECK(evaluateString("Void")->isType());
+            });
+        });
+    }
+
+    TEST(PrimitiveTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("Boolean8")->isType());
+
+                CHECK(evaluateString("UInt8")->isType());
+                CHECK(evaluateString("UInt16")->isType());
+                CHECK(evaluateString("UInt32")->isType());
+                CHECK(evaluateString("UInt64")->isType());
+
+                CHECK(evaluateString("Int8")->isType());
+                CHECK(evaluateString("Int16")->isType());
+                CHECK(evaluateString("Int32")->isType());
+                CHECK(evaluateString("Int64")->isType());
+
+                CHECK(evaluateString("Char8")->isType());
+                CHECK(evaluateString("Char16")->isType());
+                CHECK(evaluateString("Char32")->isType());
+
+                CHECK(evaluateString("Float16")->isType());
+                CHECK(evaluateString("Float32")->isType());
+                CHECK(evaluateString("Float64")->isType());
+            });
+        });
+    }
+
     TEST(Arithmetic)
     {
         RuntimeContext::create()->activeDuring([&](){
@@ -65,6 +106,78 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42. a"));
                 CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("let a := 42. a + 1"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42"));
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42. a"));
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42. a + 1"));
+            });
+        });
+    }
+
+    TEST(NullaryFunction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("function f() => LiteralInteger := 42")->isMethod());
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("function f() => LiteralInteger := 42. f()."));
+
+                CHECK(evaluateString("function f() := 42")->isMethod());
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("function f() := 42. f()."));
+            });
+        });
+    }
+
+    TEST(SingleArgumentFunction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isMethod());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1. f(42)."));
+
+                CHECK(evaluateString("function plusOne(x: LiteralInteger) := x + 1")->isMethod());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) := x + 1. f(42)."));
+            });
+        });
+    }
+
+    TEST(Struct)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDeclaration = evaluateString("public struct TestStruct.");
+                CHECK(structDeclaration->isType());
+                
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isType());
+                CHECK_EQUAL(structDeclaration, structDefinition);
+            });
+        });
+    }
+
+    TEST(Union)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto unionDeclaration = evaluateString("public union TestUnion.");
+                CHECK(unionDeclaration->isType());
+                
+                auto unionDefinition = evaluateString("public union TestUnion definition: {}.");
+                CHECK(unionDefinition->isType());
+                CHECK_EQUAL(unionDeclaration, unionDefinition);
+            });
+        });
+    }
+
+    TEST(Class)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto classDeclaration = evaluateString("public class TestClas.");
+                CHECK(classDeclaration->isType());
+                
+                auto classDefinition = evaluateString("public class TestClass definition: {}.");
+                CHECK(classDefinition->isType());
+                CHECK_EQUAL(classDeclaration, classDefinition);
             });
         });
     }

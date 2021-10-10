@@ -167,5 +167,10 @@ AnyValuePtr ASTVisitor::visitFieldVariableNode(const ASTFieldVariableNodePtr &no
     return visitVariableNode(node);
 }
 
+AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

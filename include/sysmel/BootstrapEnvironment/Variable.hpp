@@ -23,6 +23,8 @@ public:
     virtual void setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType,
         TypeInferenceMode typeInferenceMode, bool definitionMutability, uint64_t definitionMinimalAlignment = 0);
 
+    virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
     const AnyValuePtr &getName() const
     {
         return name;

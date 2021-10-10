@@ -6,6 +6,10 @@
 #include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluator.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
+#include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
+#include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 #include <assert.h>
 
 namespace SysmelMoebius
@@ -47,6 +51,14 @@ void CompiledMethod::setDefinition(const ASTNodePtr &node, const ASTNodePtr &bod
     definitionBodyNode = bodyNode;
 }
 
+ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
+{
+    auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
+    result->lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
+    result->localDefinitionsOwner = shared_from_this();
+    return result;
+}
+
 void CompiledMethod::ensureSemanticAnalysis()
 {
     if(analyzedBodyNode || !isDefined())
@@ -54,7 +66,7 @@ void CompiledMethod::ensureSemanticAnalysis()
 
     // FIXME: Use the correct environment here.
     auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
-    analyzer->environment = definitionEnvironment;
+    analyzer->environment = createSemanticAnalysisEnvironment();
     
     auto analyzedBodyValue = analyzer->visitNode(definitionBodyNode);
     assert(analyzedBodyValue->isASTNode());
@@ -91,8 +103,12 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
         signalNew<CannotEvaluateMessageInCompileTime> ();
     ensureSemanticAnalysis();
 
-    auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();
-    return evaluator->visitNode(analyzedBodyNode);
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+}
+
+void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
+{
+    children.push_back(newChild);
 }
 
 } // End of namespace BootstrapEnvironment

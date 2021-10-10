@@ -45,6 +45,11 @@ bool Type::isLiteralValueType() const
     return isSubtypeOf(getLiteralValueType());
 }
 
+bool Type::isCompilationErrorValueType() const
+{
+    return isSubtypeOf(getCompilationErrorValueType());
+}
+
 bool Type::isType() const
 {
     return true;
@@ -162,6 +167,16 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
 {
     assert(node->receiver && node->receiver->analyzedType);
     assert(node->selector && node->selector->analyzedType);
+
+    // In case the receiver is an error, analyze the arguments to
+    // further discover more error, and then return the receiver to propagate an error node.
+    if(isCompilationErrorValueType())
+    {
+        assert(node->receiver->analyzedType->isCompilationErrorValueType());
+        for(const auto &arg : node->arguments)
+            semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+        return node->receiver;
+    }
 
     AnyValuePtr directSelectorValue;
     if(node->selector->isASTLiteralSymbolValue())

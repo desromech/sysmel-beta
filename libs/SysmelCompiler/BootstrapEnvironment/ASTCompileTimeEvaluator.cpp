@@ -21,9 +21,16 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
+#include "sysmel/BootstrapEnvironment/ValueBox.hpp"
+#include "sysmel/BootstrapEnvironment/Variable.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+
+#include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 
 namespace SysmelMoebius
 {
@@ -34,7 +41,22 @@ static BootstrapTypeRegistration<ASTCompileTimeEvaluator> ASTCompileTimeEvaluato
 
 AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
 {
-    return visitNode(node->body);
+    auto oldCleanUpScope = currentCleanUpScope;
+    currentCleanUpScope = CompileTimeCleanUpScope::makeWithParent(currentCleanUpScope);
+
+    return doWithEnsure([&](){
+        return visitNode(node->body);
+    }, [&](){
+        currentCleanUpScope = oldCleanUpScope;
+    });
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const ASTNodePtr &node)
+{
+    assert(!currentCleanUpScope);
+    currentCleanUpScope = CompileTimeCleanUpScope::makeEmpty();
+
+    return visitNode(node);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &node)
@@ -113,6 +135,8 @@ AnyValuePtr ASTCompileTimeEvaluator::visitSequenceNode(const ASTSequenceNodePtr 
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
+    assert(currentCleanUpScope);
+
     AnyValuePtr initialValue;
 
     if(node->initialValue)
@@ -125,9 +149,29 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
         // TODO: Ask the type for the proper default value here.
     }
 
-    // TODO: Create an slot for the local variable in the current lexical scope.
+    // If the variable is mutable, we have to wrap the value in a box.
+    auto storeValue = validAnyValue(initialValue);
+    if(node->isMutable)
+    {
+        auto box = std::make_shared<ValueBox> ();
+        box->value = initialValue;
+        box->type = std::static_pointer_cast<Variable> (node->analyzedProgramEntity)->getValueType();
+        storeValue = box;
+    }
 
-    return initialValue;
+    currentCleanUpScope->setStoreBinding(node->analyzedProgramEntity, storeValue);
+
+    return storeValue;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
+{
+    auto storeBinding = currentCleanUpScope->lookupStoreBindingRecursively(node->variable);
+    assert(storeBinding);
+    
+    return node->isAccessedByReference ?
+        storeBinding->accessVariableAsReferenceWithType(node->analyzedType)
+        : storeBinding->accessVariableAsValueWithType(node->analyzedType);
 }
 
 } // End of namespace BootstrapEnvironment

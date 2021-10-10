@@ -48,7 +48,6 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
     result->lexicalScope = createDefaultTopLevelLexicalScope();
-    result->cleanUpScope = CleanUpScope::makeEmpty();
     result->languageSupport = shared_from_this();
     return result;
 }
@@ -62,7 +61,6 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnviron
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
     result->lexicalScope = createMakeLiteralArrayTopLevelLexicalScope();
-    result->cleanUpScope = CleanUpScope::makeEmpty();
     result->languageSupport = shared_from_this();
     return result;
 }

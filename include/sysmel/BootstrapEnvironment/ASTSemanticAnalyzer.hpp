@@ -77,6 +77,8 @@ public:
 
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
 
+    virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
+
     AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateTypeExpression(const ASTNodePtr &node);

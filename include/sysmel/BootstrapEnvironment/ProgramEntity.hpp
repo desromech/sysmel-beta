@@ -9,7 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ProgramEntity);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Module);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 
@@ -27,6 +27,8 @@ public:
     virtual bool isProgramEntity() const override;
 
     virtual ModulePtr getDefinitionModule() const;
+
+    virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild);
 };
 
 } // End of namespace BootstrapEnvironment

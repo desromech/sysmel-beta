@@ -11,7 +11,7 @@ namespace BootstrapEnvironment
 {
 
 /**
- * I am a node that is used for declaring or defining a program entity.
+ * I am a node that is used for declaring or defining a variable.
  */
 class ASTVariableNode : public SubtypeOf<ASTProgramEntityNode, ASTVariableNode>
 {

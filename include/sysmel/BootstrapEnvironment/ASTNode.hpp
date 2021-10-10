@@ -43,6 +43,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLocalVariableNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTGlobalVariableNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTVariableAccessNode);
+
 
 /**
  * I am the interface for all of the language independent AST nodes.

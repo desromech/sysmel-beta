@@ -13,6 +13,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CleanUpScope)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 
 /**
  * I specify an AST analysis environment.
@@ -28,6 +29,9 @@ public:
     LexicalScopePtr lexicalScope;
     CleanUpScopePtr cleanUpScope;
     LanguageSupportPtr languageSupport;
+
+    ProgramEntityPtr programEntityForPublicDefinitions;
+    ProgramEntityPtr localDefinitionsOwner;
 };
 
 } // End of namespace BootstrapEnvironment

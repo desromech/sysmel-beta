@@ -183,6 +183,11 @@ AnyValuePtr getTrueConstant();
 AnyValuePtr getFalseConstant();
 
 /**
+ * Retrieves the singleton compilation error value constant.
+ */
+AnyValuePtr getCompilationErrorValueConstant();
+
+/**
  * I am the base interface for any value that is passed through the interpreter.
  */
 class AnyValue : public std::enable_shared_from_this<AnyValue>
@@ -334,6 +339,9 @@ public:
     /// Is this object an AST field variable node?
     virtual bool isASTFieldVariableNode() const;
 
+    /// Is this object an AST variable access node?
+    virtual bool isASTVariableAccessNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 
@@ -451,11 +459,17 @@ public:
     /// Is this object undefined?
     virtual bool isUndefined() const;
 
+    /// Is this object a compilation error value?
+    virtual bool isCompilationErrorValue() const;
+
     /// Is this a pure compile time literal value?
     virtual bool isPureCompileTimeLiteralValue() const;
 
     /// Is this object an anonymouse name?
     virtual bool isAnonymousNameSymbol() const;
+
+    // Is this object a value box?
+    virtual bool isValueBox() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;
@@ -540,6 +554,12 @@ public:
 
     /// Evaluates the requested message with the given arguments.
     virtual AnyValuePtr performWithArguments(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments);
+
+    // Access the value box (e.g. variable binding slot) as a reference with the specified type.
+    virtual AnyValuePtr accessVariableAsReferenceWithType(const TypePtr &referenceType);
+
+    // Access the value box (e.g. variable binding slot) as a value with the specified type.
+    virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType);
 
     template<typename ResultType, typename... Args>
     ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)

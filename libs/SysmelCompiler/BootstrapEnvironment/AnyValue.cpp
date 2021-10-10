@@ -253,6 +253,11 @@ bool AnyValue::isASTFieldVariableNode() const
     return false;
 }
 
+bool AnyValue::isASTVariableAccessNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;
@@ -448,12 +453,22 @@ bool AnyValue::isUndefined() const
     return false;
 }
 
+bool AnyValue::isCompilationErrorValue() const
+{
+    return false;
+}
+
 bool AnyValue::isPureCompileTimeLiteralValue() const
 {
     return false;
 }
 
 bool AnyValue::isAnonymousNameSymbol() const
+{
+    return false;
+}
+
+bool AnyValue::isValueBox() const
 {
     return false;
 }
@@ -607,5 +622,18 @@ AnyValuePtr AnyValue::performWithArguments(const AnyValuePtr &selector, const st
         signalNewWithMessage<MessageNotUnderstood> ("Message " + selector->printString() + " is not understood by " + printString() + ".");
     return type->runWithArgumentsIn(selector, arguments, shared_from_this());
 }
+
+AnyValuePtr AnyValue::accessVariableAsReferenceWithType(const TypePtr &referenceType)
+{
+    (void)referenceType;
+    return shared_from_this();
+}
+
+AnyValuePtr AnyValue::accessVariableAsValueWithType(const TypePtr &valueType)
+{
+    (void)valueType;
+    return shared_from_this();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

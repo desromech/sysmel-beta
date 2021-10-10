@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
+
 /**
  * I am a node that is used for declaring or defining a program entity.
  */
@@ -19,7 +21,7 @@ public:
 
     virtual bool isASTProgramEntityNode() const override;
 
-    ASTProgramEntityNodePtr analyzedProgramEntity;
+    ProgramEntityPtr analyzedProgramEntity;
 };
 
 } // End of namespace BootstrapEnvironment

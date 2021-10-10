@@ -42,11 +42,13 @@ public:
     static TypePtr getVoidType();
     static TypePtr getPragmaType();
     static TypePtr getReturnType();
+    static TypePtr getCompilationErrorValueType();
 
     bool isUndefinedType() const;
     bool isVoidType() const;
     bool isReturnType() const;
     bool isLiteralValueType() const;
+    bool isCompilationErrorValueType() const;
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual TypePtr getSupertype() const;

@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeCleanUpScope)
+
 /**
  * I am a compile time evaluator of a previously analyzed AST.
  */
@@ -32,6 +34,11 @@ public:
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
 
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
+
+    AnyValuePtr evaluateMethodBodyNode(const ASTNodePtr &node);
+
+    CompileTimeCleanUpScopePtr currentCleanUpScope;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -36,7 +36,11 @@ public:
 
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 
+    virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
+
 protected:
+    ASTAnalysisEnvironmentPtr createSemanticAnalysisEnvironment();
+
     ASTSourcePositionPtr declarationPosition;
     ASTNodePtr declarationNode;
 
@@ -46,6 +50,8 @@ protected:
 
     ASTAnalysisEnvironmentPtr definitionEnvironment;
     ASTNodePtr analyzedBodyNode;
+
+    ProgramEntityPtrList children;
 };
 
 } // End of namespace BootstrapEnvironment

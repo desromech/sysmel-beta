@@ -51,7 +51,7 @@ bool LiteralSymbol::isLiteralIdentifierSymbol() const
     return isValidIdentifierString(value);
 }
 
-bool isAnonymousNameSymbol() const
+bool LiteralSymbol::isAnonymousNameSymbol() const
 {
     return value.empty() || value == "_";
 }

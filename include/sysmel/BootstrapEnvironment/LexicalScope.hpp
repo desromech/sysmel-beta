@@ -20,6 +20,9 @@ class LexicalScope : public SubtypeOf<IdentifierLookupScope, LexicalScope>
 public:
     static constexpr char const __typeName__[] = "LexicalScope";
 
+    static LexicalScopePtr makeEmpty();
+    static LexicalScopePtr makeWithParent(const LexicalScopePtr &parent);
+
     virtual bool isLexicalScope() const override;
 
     /// This method performs a symbol lookup locally.
@@ -27,7 +30,10 @@ public:
 
     virtual void setSymbolBinding(const AnyValuePtr &symbol, const AnyValuePtr &binding);
 
+    void lockForNewDefinitions();
+
 private:
+    bool lockedForNewDefinitions;
     std::unordered_map<AnyValuePtr, AnyValuePtr> boundSymbols;
 };
 
