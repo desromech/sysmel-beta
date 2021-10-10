@@ -30,6 +30,11 @@ bool Undefined::isUndefined() const
     return true;
 }
 
+bool Undefined::isAnonymousNameSymbol() const
+{
+    return false;
+}
+
 std::string Undefined::printString() const
 {
     return "nil";

@@ -453,6 +453,11 @@ bool AnyValue::isPureCompileTimeLiteralValue() const
     return false;
 }
 
+bool AnyValue::isAnonymousNameSymbol() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

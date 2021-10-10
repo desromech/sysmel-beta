@@ -243,6 +243,13 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMessageSend(const ASTMessageSend
     return node;
 }
 
+AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
+{
+    assert(node->isASTLiteralValueNode());
+    auto result = std::static_pointer_cast<ASTLiteralValueNode> (node)->value;
+    return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
     assert(false);

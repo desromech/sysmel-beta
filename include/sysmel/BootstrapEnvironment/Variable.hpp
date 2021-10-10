@@ -30,12 +30,12 @@ public:
 
     const TypePtr &getValueType() const
     {
-        return name;
+        return valueType;
     }
 
     const TypePtr &getReferenceType() const
     {
-        return name;
+        return referenceType;
     }
 
     bool isMutable() const

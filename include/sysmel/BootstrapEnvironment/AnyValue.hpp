@@ -454,6 +454,9 @@ public:
     /// Is this a pure compile time literal value?
     virtual bool isPureCompileTimeLiteralValue() const;
 
+    /// Is this object an anonymouse name?
+    virtual bool isAnonymousNameSymbol() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 

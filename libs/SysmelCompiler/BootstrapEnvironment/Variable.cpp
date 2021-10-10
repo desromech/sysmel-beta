@@ -17,7 +17,7 @@ bool Variable::isVariable() const
 void Variable::setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType, TypeInferenceMode typeInferenceMode, bool definitionMutability, uint64_t definitionMinimalAlignment)
 {
     name = definitionName;
-    valueType = definitionValue;
+    valueType = definitionValueType;
     isMutable_ = definitionMutability;
     minimalAlignment = definitionMinimalAlignment;
 }

@@ -51,6 +51,11 @@ bool LiteralSymbol::isLiteralIdentifierSymbol() const
     return isValidIdentifierString(value);
 }
 
+bool isAnonymousNameSymbol() const
+{
+    return value.empty() || value == "_";
+}
+
 std::string LiteralSymbol::printString() const
 {
     return formatSymbolLiteral(value);

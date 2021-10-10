@@ -51,6 +51,8 @@ public:
     ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
     ASTNodePtr optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node);
 
+    AnyValuePtr evaluateNameSymbolValue(const ASTNodePtr &node);
+
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node) override;
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;

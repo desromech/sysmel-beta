@@ -24,6 +24,7 @@ public:
     
     virtual bool isLiteralSymbol() const override;
     virtual bool isLiteralIdentifierSymbol() const override;
+    virtual bool isAnonymousNameSymbol() const override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
