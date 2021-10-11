@@ -18,6 +18,7 @@ class LiteralString : public SubtypeOf<LiteralValue, LiteralString>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralString";
+    static constexpr char const __sysmelTypeName__[] = "LiteralString";
 
     static LiteralStringPtr makeFor(const std::string &value);
         

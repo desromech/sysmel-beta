@@ -18,6 +18,7 @@ class LiteralSymbol : public SubtypeOf<LiteralString, LiteralSymbol>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralSymbol";
+    static constexpr char const __sysmelTypeName__[] = "LiteralSymbol";
 
     static LiteralSymbolPtr makeFor(const std::string &value);
     static LiteralSymbolPtr intern(const std::string &value);
@@ -25,6 +26,8 @@ public:
     virtual bool isLiteralSymbol() const override;
     virtual bool isLiteralIdentifierSymbol() const override;
     virtual bool isAnonymousNameSymbol() const override;
+    
+    virtual AnyValuePtr asUnarySelectorConvertedToIdentifier() const override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

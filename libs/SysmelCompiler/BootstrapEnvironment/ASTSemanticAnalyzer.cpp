@@ -244,6 +244,26 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMessageSend(const ASTMessageSend
     return node;
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeByConvertingToMessageSend(const ASTCallNodePtr &node)
+{
+    auto messageSendNode = std::make_shared<ASTMessageSendNode> ();
+    messageSendNode->sourcePosition = node->sourcePosition;
+
+    auto selector = std::make_shared<ASTLiteralValueNode> ();
+    selector->sourcePosition = node->sourcePosition;
+    selector->setValueAndType(internSymbol("()"));
+
+    auto argumentsNode = std::make_shared<ASTMakeTupleNode> ();
+    argumentsNode->sourcePosition = node->sourcePosition;
+    argumentsNode->elements = node->arguments;
+
+    messageSendNode->selector = selector;
+    messageSendNode->receiver = node->function;
+    messageSendNode->arguments.push_back(argumentsNode);
+
+    return analyzeNodeIfNeededWithCurrentExpectedType(messageSendNode);
+}
+
 AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
 {
     assert(node->isASTLiteralValueNode());
@@ -287,7 +307,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
 
 AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTCallNode> (*node);
+    analyzedNode->function = analyzeNodeIfNeededWithAutoType(analyzedNode->function);
+    return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
@@ -372,7 +394,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
 AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr &node)
 {
     auto result = std::make_shared<ASTParseErrorNode> (*node);
-    result->analyzedType = Type::getUndefinedType();
+    result->analyzedType = Type::getCompilationErrorValueType();
     recordedErrors.push_back(result);
     return result;
 }

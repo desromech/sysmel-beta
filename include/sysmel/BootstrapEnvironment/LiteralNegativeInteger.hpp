@@ -18,6 +18,7 @@ class LiteralNegativeInteger : public SubtypeOf<LiteralInteger, LiteralNegativeI
 {
 public:
     static constexpr char const __typeName__[] = "LiteralNegativeInteger";
+    static constexpr char const __sysmelTypeName__[] = "LiteralNegativeInteger";
 
     virtual bool isLiteralNegativeInteger() const override;
 };

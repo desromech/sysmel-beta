@@ -16,6 +16,7 @@ class LiteralCharacter : public SubtypeOf<LiteralPositiveInteger, LiteralCharact
 {
 public:
     static constexpr char const __typeName__[] = "LiteralCharacter";
+    static constexpr char const __sysmelTypeName__[] = "LiteralCharacter";
 
     static MethodCategories __instanceMethods__();
     

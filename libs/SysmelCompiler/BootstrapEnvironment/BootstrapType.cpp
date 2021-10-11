@@ -29,6 +29,9 @@ bool BootstrapType::supportsMessageAnalysisByLiteralValueReceivers() const
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;
+    if(!staticMetadata->typeName.empty())
+        name = internSymbol(staticMetadata->typeName);
+
     if(staticMetadata->supertype)
     {
         supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype->bootstrapTypeID);

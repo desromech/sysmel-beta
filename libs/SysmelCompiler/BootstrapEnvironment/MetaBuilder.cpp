@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/MetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
@@ -22,6 +23,11 @@ void MetaBuilder::setMetaBuilderInstanceContext(const MetaBuilderInstanceContext
     instanceContext = context;
 }
 
+ASTNodePtr MetaBuilder::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return concretizeCallNode(node, semanticAnalyzer);
+}
+
 ASTNodePtr MetaBuilder::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(node && node->selector->isASTLiteralSymbolValue())
@@ -37,6 +43,13 @@ ASTNodePtr MetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &se
 {
     (void)selectorValue;
     return concretizeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
+ASTNodePtr MetaBuilder::concretizeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    auto newNode = std::make_shared<ASTCallNode> (*partiallyAnalyzedNode);
+    newNode->function = concretizeMetaBuilder();
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(newNode);
 }
 
 ASTNodePtr MetaBuilder::concretizeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

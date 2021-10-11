@@ -4,7 +4,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapType.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapExtensionMethods.hpp"
-#include <iostream>
+#include "sysmel/BootstrapEnvironment/Namespace.hpp"
 
 namespace SysmelMoebius
 {
@@ -19,7 +19,7 @@ void BootstrapModule::initialize()
 
     // First pass: create all of the bootstrap type instances.
     bootstrapDefinedTypeTable.reserve(bootstrapDefinedTypeTable.size());
-    for(auto metadata : bootstrapMetadataList)
+    for(const auto &metadata : bootstrapMetadataList)
     {
         auto type = std::make_shared<BootstrapType> ();
         auto metaType = std::make_shared<MetaType> ();
@@ -57,6 +57,37 @@ void BootstrapModule::initialize()
     for(const auto &[typeMetadata, extensionMethods] : getRegisteredBootstrapExtensionMethods())
     {
         extensionMethods.applyToType(getBootstrapDefinedType(typeMetadata->bootstrapTypeID));
+    }
+
+    // Create namespaces.
+    globalNamespace = Namespace::makeWithName(nullptr);
+    globalNamespace->registerInCurrentModule();
+
+    // Create the bootstrap environemnt namespace.
+    bootstrapEnvironmentNamespace = Namespace::makeWithName(internSymbol("__BootstrapEnvironment__"));
+    bootstrapEnvironmentNamespace->registerInCurrentModule();
+    globalNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentNamespace);
+    globalNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapEnvironmentNamespace);
+
+    // Create the bootstrap environment sysmel language namespace.
+    bootstrapEnvironmentSysmelLanguageNamespace = Namespace::makeWithName(internSymbol("SysmelLanguage"));
+    bootstrapEnvironmentSysmelLanguageNamespace->registerInCurrentModule();
+    bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentSysmelLanguageNamespace);
+    bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapEnvironmentSysmelLanguageNamespace);
+
+    // Register the bootstrap types on the namespaces.
+    for(const auto &metadata : bootstrapMetadataList)
+    {
+        if(metadata->typeName.empty())
+            continue;
+
+        auto bootstrapType = getBootstrapDefinedType(metadata->bootstrapTypeID);
+        assert(bootstrapType);
+        bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapType);
+        bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapType);
+
+        if(!metadata->sysmelLanguageTopLevelName.empty())
+            bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol(metadata->sysmelLanguageTopLevelName), ProgramEntityVisibility::Public, bootstrapType);
     }
 }
 

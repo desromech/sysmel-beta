@@ -18,6 +18,7 @@ class LiteralValue : public SubtypeOf<AnyValue, LiteralValue>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralValue";
+    static constexpr char const __sysmelTypeName__[] = "LiteralValue";
 
     virtual bool isLiteralValue() const override;
     virtual bool isPureCompileTimeLiteralValue() const override;

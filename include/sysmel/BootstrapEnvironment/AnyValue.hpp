@@ -30,6 +30,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCallNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
@@ -56,6 +57,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*typeMacroMethods)();
     bool isDynamicCompileTimeType;
     bool isLiteralValueMessageAnalyzer;
+    std::string sysmelLanguageTopLevelName;
     size_t bootstrapTypeID;
 };
 
@@ -82,6 +84,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__typeMacroMethods__,
     T::__isDynamicCompileTimeType__,
     T::__isLiteralValueMessageAnalyzer__,
+    T::__sysmelTypeName__,
     0
 };
 
@@ -111,6 +114,7 @@ public:
     typedef ST SelfType;
 
     static constexpr char const __typeName__[] = "";
+    static constexpr char const __sysmelTypeName__[] = "";
 
     static MethodCategories __instanceMethods__()
     {
@@ -197,6 +201,7 @@ public:
     typedef AnyValue SelfType;
 
     static constexpr char const __typeName__[] = "AnyValue";
+    static constexpr char const __sysmelTypeName__[] = "AnyValue";
     static constexpr bool __isDynamicCompileTimeType__ = true;
     static constexpr bool __isLiteralValueMessageAnalyzer__ = false;
 
@@ -393,6 +398,9 @@ public:
     /// Is this object a template method?
     virtual bool isTemplateMethod() const;
 
+    /// Is this object a namespace?
+    virtual bool isNamespace() const;
+
     /// Is this object a meta builder?
     virtual bool isMetaBuilder() const;
 
@@ -489,6 +497,9 @@ public:
     /// Convert the object into an AST node which is required in the specified source position.
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition);
 
+    /// Convert this value from unary selector into an identifier value. Null if the conversion is not valid.
+    virtual AnyValuePtr asUnarySelectorConvertedToIdentifier() const;
+
     /// Reads the wrapped value as boolean.
     virtual bool unwrapAsBoolean() const;
 
@@ -542,6 +553,9 @@ public:
 
     /// Convert the object into an array.
     virtual AnyValuePtrList unwrapAsArray() const;
+
+    /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

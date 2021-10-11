@@ -18,6 +18,7 @@ class LiteralFraction : public SubtypeOf<LiteralNumber, LiteralFraction>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralFraction";
+    static constexpr char const __sysmelTypeName__[] = "LiteralFraction";
 
     static MethodCategories __instanceMethods__();
 

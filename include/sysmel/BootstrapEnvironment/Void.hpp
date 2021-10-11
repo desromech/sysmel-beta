@@ -18,6 +18,7 @@ class Void : public SubtypeOf<AnyValue, Void>
 {
 public:
     static constexpr char const __typeName__[] = "Void";
+    static constexpr char const __sysmelTypeName__[] = "Void";
     static constexpr bool __isDynamicCompileTimeType__ = false;
     
     static VoidPtr uniqueInstance();

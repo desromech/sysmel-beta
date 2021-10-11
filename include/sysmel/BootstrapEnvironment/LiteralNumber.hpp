@@ -19,6 +19,7 @@ class LiteralNumber : public SubtypeOf<LiteralValue, LiteralNumber>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralNumber";
+    static constexpr char const __sysmelTypeName__[] = "LiteralNumber";
 
     static MethodCategories __instanceMethods__();
 

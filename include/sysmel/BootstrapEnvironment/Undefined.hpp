@@ -19,6 +19,7 @@ class Undefined : public SubtypeOf<AnyValue, Undefined>
 {
 public:
     static constexpr char const __typeName__[] = "Undefined";
+    static constexpr char const __sysmelTypeName__[] = "Undefined";
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     static UndefinedPtr uniqueInstance();

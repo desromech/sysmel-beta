@@ -31,10 +31,12 @@ class Type : public SubtypeOf<ModuleDefinedProgramEntity, Type>
 {
 public:
     static constexpr char const __typeName__[] = "Type";
+    static constexpr char const __sysmelTypeName__[] = "Type";
 
     static MethodCategories __instanceMethods__();
 
-    virtual bool isType() const;
+    virtual bool isType() const override;
+    virtual AnyValuePtr getName() const override;
 
     static TypePtr getLiteralValueType();
     static TypePtr getLiteralSymbolValue();
@@ -82,6 +84,9 @@ public:
 
     /// Does this type support delegating the analysis of messages into literal value receivers?
     virtual bool supportsMessageAnalysisByLiteralValueReceivers() const;
+
+    /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
@@ -136,6 +141,7 @@ protected:
     virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector);
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector);
 
+    AnyValuePtr name;
     TypePtr supertype;
     TypePtrList subtypes;
 

@@ -19,6 +19,7 @@ class LiteralArray : public SubtypeOf<LiteralValue, LiteralArray>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralArray";
+    static constexpr char const __sysmelTypeName__[] = "LiteralArray";
 
     static LiteralArrayPtr makeFor(const AnyValuePtrList &content);
 

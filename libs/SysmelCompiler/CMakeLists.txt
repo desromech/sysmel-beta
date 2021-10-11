@@ -65,6 +65,7 @@ set(BootstrapEnvironment_Sources
     Error.cpp
     Exception.cpp
     Fraction.cpp
+    FunctionMetaBuilder.cpp
     IdentifierLookupScope.cpp
     LanguageSupport.cpp
     LargeInteger.cpp
@@ -96,6 +97,7 @@ set(BootstrapEnvironment_Sources
     ModuleDefinedProgramEntity.cpp
     ModuleReference.cpp
     NamedProgramEntityMetaBuilder.cpp
+    Namespace.cpp
     NotMatchingPatternFound.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp

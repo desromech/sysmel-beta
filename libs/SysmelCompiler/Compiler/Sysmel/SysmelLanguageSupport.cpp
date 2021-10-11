@@ -6,6 +6,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClosureNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLexicalScopeNode.hpp"
@@ -30,11 +31,14 @@
 #include "sysmel/BootstrapEnvironment/ASTSourceCodePosition.hpp"
 
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
+#include "sysmel/BootstrapEnvironment/Namespace.hpp"
 
 #include "sysmel/BootstrapEnvironment/IdentifierLookupScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 
 #include "sysmel/BootstrapEnvironment/MetaBuilderFactory.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/LetMetaBuilder.hpp"
 
 #include <fstream>
@@ -285,24 +289,13 @@ public:
     {
         auto sourcePosition = convertSourcePosition(node.sourcePosition);
 
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
+        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTCallNode> ();
         convertedNode->sourcePosition = sourcePosition;
+        convertedNode->function = std::any_cast<ResultType> (visitNode(*node.callable));
 
-        auto selector = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode>  ();
-        selector->sourcePosition = sourcePosition;
-        selector->setValueAndType(internSymbol("()"));
-
-        auto tuple = std::make_shared<BootstrapEnvironment::ASTMakeTupleNode>  ();
-        tuple->sourcePosition = sourcePosition;
-        tuple->elements.reserve(node.arguments.size());
+        convertedNode->arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
-            tuple->elements.push_back(std::any_cast<ResultType> (visitNode(*arg)));
-
-        convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.callable));
-        convertedNode->selector = selector;
-
-        convertedNode->arguments.reserve(1);
-        convertedNode->arguments.push_back(tuple);
+            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
 
         return ResultType(convertedNode);
     }
@@ -445,8 +438,12 @@ void SysmelLanguageSupport::initialize()
         topLevelScope = std::make_shared<LexicalScope> ();
         topLevelScope->parent = keywordScope;
 
+        // Use the language namespace.
+        topLevelScope->useNamespace(RuntimeContext::getActive()->getBootstrapModule()->getBootstrapEnvironmentSysmelLanguageNamespace());
+
         // Meta builders
         topLevelScope->setSymbolBinding(internSymbol("let"), metaBuilderFactoryFor<LetMetaBuilder> ("let"));
+        topLevelScope->setSymbolBinding(internSymbol("function"), metaBuilderFactoryFor<FunctionMetaBuilder> ("function"));
     }
 }
 

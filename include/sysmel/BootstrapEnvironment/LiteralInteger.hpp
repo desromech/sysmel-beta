@@ -20,6 +20,7 @@ class LiteralInteger : public SubtypeOf<LiteralNumber, LiteralInteger>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralInteger";
+    static constexpr char const __sysmelTypeName__[] = "LiteralInteger";
 
     static MethodCategories __instanceMethods__();
 

@@ -66,5 +66,17 @@ SExpression LiteralSymbol::asSExpression() const
     return SExpressionSymbol{value};
 }
 
+AnyValuePtr LiteralSymbol::asUnarySelectorConvertedToIdentifier() const
+{
+    if(value.size() >= 2 && value.back() == ':')
+    {
+        auto withoutColon = value.substr(0, value.size() - 1);
+        if(isValidIdentifierString(withoutColon))
+            return internSymbol(withoutColon);
+    }
+    
+    return SuperType::asUnarySelectorConvertedToIdentifier();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -18,6 +18,7 @@ class LiteralPositiveInteger : public SubtypeOf<LiteralInteger, LiteralPositiveI
 {
 public:
     static constexpr char const __typeName__[] = "LiteralPositiveInteger";
+    static constexpr char const __sysmelTypeName__[] = "LiteralPositiveInteger";
 
     virtual bool isLiteralPositiveInteger() const override;
 };

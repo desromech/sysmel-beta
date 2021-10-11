@@ -14,6 +14,11 @@ bool Method::isMethod() const
     return true;
 }
 
+AnyValuePtr Method::getName() const
+{
+    return name;
+}
+
 TypePtr Method::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
 {
     (void)argumentIndex;

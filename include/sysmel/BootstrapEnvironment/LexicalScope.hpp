@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 
 /**
  * I am the interface for the scope that is used for the identifier lookup.
@@ -25,16 +26,18 @@ public:
 
     virtual bool isLexicalScope() const override;
 
-    /// This method performs a symbol lookup locally.
-    virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol);
+    virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol) override;
+    virtual AnyValuePtr lookupSymbolRecursively(const AnyValuePtr &symbol) override;
 
     virtual void setSymbolBinding(const AnyValuePtr &symbol, const AnyValuePtr &binding);
 
     void lockForNewDefinitions();
 
+    void useNamespace(const ProgramEntityPtr &namespaceProgramEntity);
 private:
     bool lockedForNewDefinitions;
     std::unordered_map<AnyValuePtr, AnyValuePtr> boundSymbols;
+    std::vector<ProgramEntityPtr> usedNamespaces;
 };
 
 } // End of namespace BootstrapEnvironment

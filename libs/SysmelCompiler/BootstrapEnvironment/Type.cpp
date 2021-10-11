@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
@@ -53,6 +54,11 @@ bool Type::isCompilationErrorValueType() const
 bool Type::isType() const
 {
     return true;
+}
+
+AnyValuePtr Type::getName() const
+{
+    return name;
 }
 
 TypePtr Type::getSupertype() const
@@ -146,6 +152,32 @@ AnyValuePtr Type::lookupSelectorInReceiverNodeWithExpansionLevel(const AnyValueP
     default:
         return nullptr;
     }
+}
+
+/// This method performs the semantic analysis of a call node with the specified semantic analyzer.
+ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    assert(node->function && node->function->analyzedType);
+
+    // In case the fuction is an error, analyze the arguments to
+    // further discover more error, and then return the receiver to propagate an error node.
+    if(isCompilationErrorValueType())
+    {
+        assert(node->function->analyzedType->isCompilationErrorValueType());
+        for(const auto &arg : node->arguments)
+            semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+        return node->function;
+    }
+
+    // Allow the actual function to analyze the call. This is typically used by metabuilders.
+    if(supportsMessageAnalysisByLiteralValueReceivers() && node->function->isASTLiteralValueNode())
+    {
+        auto literalValue = std::static_pointer_cast<ASTLiteralValueNode> (node->function)->value;
+        return literalValue->analyzeCallNode(node, semanticAnalyzer);
+    }
+
+    // By default, convert the call into a message send, and then analyze back.
+    return semanticAnalyzer->analyzeCallNodeByConvertingToMessageSend(node);
 }
 
 ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

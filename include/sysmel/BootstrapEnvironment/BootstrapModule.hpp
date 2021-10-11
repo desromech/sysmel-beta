@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Namespace);
 
 /**
  * I am the bootstrap module of the system. I am a
@@ -27,9 +28,28 @@ public:
     TypePtr getBootstrapDefinedTypeNamed(const std::string &typeName);
     TypePtr getBootstrapDefinedType(size_t id);
 
+    const NamespacePtr &getGlobalNamespace() const
+    {
+        return globalNamespace;
+    }
+
+    const NamespacePtr &getBootstrapEnvironmentNamespace() const
+    {
+        return bootstrapEnvironmentNamespace;
+    }
+
+    const NamespacePtr &getBootstrapEnvironmentSysmelLanguageNamespace() const
+    {
+        return bootstrapEnvironmentSysmelLanguageNamespace;
+    }
+
 private:
     std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
+
+    NamespacePtr globalNamespace;
+    NamespacePtr bootstrapEnvironmentNamespace;
+    NamespacePtr bootstrapEnvironmentSysmelLanguageNamespace;
 };
 
 

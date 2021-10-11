@@ -1,4 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
@@ -56,6 +58,29 @@ SExpression ASTMessageSendNode::asSExpression() const
         receiver ? receiver->asSExpression() : nullptr,
         argumentsSExpression,
     }};
+}
+
+ASTNodePtr ASTMessageSendNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(!receiver && arguments.size() == 1 && selector->isASTLiteralSymbolValue())
+    {
+        auto rawIdentifierValue = std::static_pointer_cast<ASTLiteralValueNode> (selector)->value;
+        auto identifier = rawIdentifierValue->asUnarySelectorConvertedToIdentifier();
+        if(identifier && !identifier->isUndefined())
+        {
+            auto identifierNode = std::make_shared<ASTLiteralValueNode> ();
+            identifierNode->sourcePosition = selector->sourcePosition;
+            identifierNode->setValueAndType(identifier);
+
+            auto result = std::make_shared<ASTArgumentDefinitionNode> ();
+            result->sourcePosition = sourcePosition;
+            result->identifier = identifierNode;
+            result->type = arguments[0];
+            return result;
+        }
+    }
+
+    return SuperType::parseAsArgumentNodeWith(semanticAnalyzer);
 }
 
 } // End of namespace BootstrapEnvironment

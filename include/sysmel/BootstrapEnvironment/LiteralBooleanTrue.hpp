@@ -19,6 +19,7 @@ class LiteralBooleanTrue : public SubtypeOf<LiteralBoolean, LiteralBooleanTrue>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralBooleanTrue";
+    static constexpr char const __sysmelTypeName__[] = "LiteralBooleanTrue";
 
     static LiteralBooleanTruePtr uniqueInstance();
 

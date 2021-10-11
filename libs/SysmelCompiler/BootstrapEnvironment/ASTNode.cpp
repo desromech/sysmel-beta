@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
@@ -50,6 +51,11 @@ bool ASTNode::isASTIdentifierSymbolValue() const
 bool ASTNode::isASTLiteralTypeNode() const
 {
     return false;
+}
+
+ASTNodePtr ASTNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(shared_from_this(), "This is not a valid argument argument specification.");
 }
 
 std::string ASTNode::printString() const

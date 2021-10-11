@@ -61,6 +61,8 @@ public:
     virtual bool isASTIdentifierSymbolValue() const;
     virtual bool isASTLiteralTypeNode() const;
     virtual bool isPureCompileTimeLiteralValueNode() const;
+
+    virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 

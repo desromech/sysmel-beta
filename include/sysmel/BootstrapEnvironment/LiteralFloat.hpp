@@ -18,6 +18,7 @@ class LiteralFloat : public SubtypeOf<LiteralNumber, LiteralFloat>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralFloat";
+    static constexpr char const __sysmelTypeName__[] = "LiteralFloat";
     
     static MethodCategories __instanceMethods__();
 

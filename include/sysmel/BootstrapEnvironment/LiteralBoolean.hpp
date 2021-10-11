@@ -18,6 +18,7 @@ class LiteralBoolean : public SubtypeOf<LiteralValue, LiteralBoolean>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralBoolean";
+    static constexpr char const __sysmelTypeName__[] = "LiteralBoolean";
 
     virtual bool isLiteralBoolean() const override;
 };

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CompilerObject.hpp"
+#include "ProgramEntityVisibility.hpp"
+#include <utility>
 
 namespace SysmelMoebius
 {
@@ -15,6 +17,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
+
+typedef std::pair<ProgramEntityVisibility, ProgramEntityPtr> ProgramEntityVisibilityWithBinding;
 
 /**
  * I am the base interface for any program metamodel entity
@@ -27,8 +32,13 @@ public:
     virtual bool isProgramEntity() const override;
 
     virtual ModulePtr getDefinitionModule() const;
+    virtual AnyValuePtr getName() const;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild);
+    virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);
+    virtual void bindProgramEntityWithVisibility(ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);
+
+    virtual AnyValuePtr lookupExportedSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope);
 };
 
 } // End of namespace BootstrapEnvironment

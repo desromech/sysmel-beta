@@ -44,7 +44,7 @@ SUITE(SysmelCompileTimeEvaluation)
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("LiteralValue")->isType());
                 CHECK(evaluateString("LiteralInteger")->isType());
-                CHECK(evaluateString("UndefinedType")->isType());
+                CHECK(evaluateString("Undefined")->isType());
                 CHECK(evaluateString("AnyValue")->isType());
                 CHECK(evaluateString("Type")->isType());
                 CHECK(evaluateString("Void")->isType());
@@ -140,6 +140,16 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(Namespace)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("namespace TestNamespace")->isNamespace());
+                CHECK(evaluateString("namespace TestNamespace definition: {}")->isNamespace());
+            });
+        });
+    }
+
     TEST(Struct)
     {
         RuntimeContext::create()->activeDuring([&](){
@@ -172,7 +182,7 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
-                auto classDeclaration = evaluateString("public class TestClas.");
+                auto classDeclaration = evaluateString("public class TestClass.");
                 CHECK(classDeclaration->isType());
                 
                 auto classDefinition = evaluateString("public class TestClass definition: {}.");

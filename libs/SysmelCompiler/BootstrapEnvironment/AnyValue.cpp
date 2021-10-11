@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
@@ -338,6 +339,11 @@ bool AnyValue::isTemplateMethod() const
     return false;
 }
 
+bool AnyValue::isNamespace() const
+{
+    return false;
+}
+
 bool AnyValue::isMetaBuilder() const
 {
     return false;
@@ -507,6 +513,11 @@ ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &req
     return result;
 }
 
+AnyValuePtr AnyValue::asUnarySelectorConvertedToIdentifier() const
+{
+    return nullptr;
+}
+
 ASTNodePtr AnyValue::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(asASTNodeRequiredInPosition(partiallyAnalyzedNode->sourcePosition));
@@ -600,6 +611,11 @@ std::string AnyValue::unwrapAsString() const
 AnyValuePtrList AnyValue::unwrapAsArray() const
 {
     signalNew<CannotUnwrap> ();
+}
+
+ASTNodePtr AnyValue::analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(partiallyAnalyzedNode, formatString("Call node cannot be analyzed by compile time value ({0}).", {{printString()}}));
 }
 
 ASTNodePtr AnyValue::analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

@@ -27,10 +27,7 @@ public:
 
     virtual bool isMethod() const override;
 
-    const AnyValuePtr &getName() const
-    {
-        return name;
-    }
+    virtual AnyValuePtr getName() const override;
 
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex);
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);

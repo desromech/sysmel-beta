@@ -50,6 +50,8 @@ public:
     ASTNodePtr analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node);
     ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
     ASTNodePtr optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node);
+    
+    ASTNodePtr analyzeCallNodeByConvertingToMessageSend(const ASTCallNodePtr &node);
 
     AnyValuePtr evaluateNameSymbolValue(const ASTNodePtr &node);
 

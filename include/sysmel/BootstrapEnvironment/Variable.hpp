@@ -25,10 +25,7 @@ public:
 
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
-    const AnyValuePtr &getName() const
-    {
-        return name;
-    }
+    virtual AnyValuePtr getName() const override;
 
     const TypePtr &getValueType() const
     {
