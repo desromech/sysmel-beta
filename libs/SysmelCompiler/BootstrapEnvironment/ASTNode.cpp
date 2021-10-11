@@ -43,6 +43,11 @@ ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requ
     return shared_from_this();
 }
 
+ASTNodePtr ASTNode::asInlinedBlockBodyNode()
+{
+    return shared_from_this();
+}
+
 bool ASTNode::isASTIdentifierSymbolValue() const
 {
     return false;

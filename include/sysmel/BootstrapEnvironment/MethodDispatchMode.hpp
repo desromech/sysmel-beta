@@ -20,6 +20,19 @@ enum class MethodDispatchMode : uint8_t
     Static,
 };
 
+inline const char *methodDispatchModeToString(MethodDispatchMode mode)
+{
+    switch(mode)
+    {
+    case MethodDispatchMode::VirtualNew: return "virtual";
+    case MethodDispatchMode::VirtualOverride: return "override";
+    case MethodDispatchMode::Static: return "static";
+    case MethodDispatchMode::Default:
+    default:
+        return "default";
+    }
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 

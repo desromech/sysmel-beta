@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Namespace);
+
 /**
  * I am a particular module in the system.
  */
@@ -53,6 +55,8 @@ public:
     virtual void registerProgramEntity(const ProgramEntityPtr &programEntity);
     virtual void enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &programEntity);
     virtual void analyzeAllPendingProgramEntities(const ProgramEntityPtr &programEntity);
+
+    virtual NamespacePtr getGlobalNamespace() const;
 
 protected:
     bool lockedForNewDefinitions = false;

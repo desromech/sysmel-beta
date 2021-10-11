@@ -347,6 +347,18 @@ public:
     /// Is this object an AST variable access node?
     virtual bool isASTVariableAccessNode() const;
 
+    /// Is this object an AST functional node?
+    virtual bool isASTFunctionalNode() const;
+
+    /// Is this object an AST function node?
+    virtual bool isASTFunctionNode() const;
+
+    /// Is this object an AST method node?
+    virtual bool isASTMethodNode() const;
+
+    /// Is this object an AST namespace node?
+    virtual bool isASTNamespaceNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

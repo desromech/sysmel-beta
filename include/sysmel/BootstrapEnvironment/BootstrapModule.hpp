@@ -24,14 +24,11 @@ public:
 
     virtual void initialize() override;
     virtual bool isBootstrapModule() const override;
+    
+    virtual NamespacePtr getGlobalNamespace() const override;
 
     TypePtr getBootstrapDefinedTypeNamed(const std::string &typeName);
     TypePtr getBootstrapDefinedType(size_t id);
-
-    const NamespacePtr &getGlobalNamespace() const
-    {
-        return globalNamespace;
-    }
 
     const NamespacePtr &getBootstrapEnvironmentNamespace() const
     {

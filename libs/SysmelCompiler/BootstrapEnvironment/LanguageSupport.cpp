@@ -8,6 +8,8 @@
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
+#include "sysmel/BootstrapEnvironment/Module.hpp"
+#include "sysmel/BootstrapEnvironment/Namespace.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -49,6 +51,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
     result->lexicalScope = createDefaultTopLevelLexicalScope();
     result->languageSupport = shared_from_this();
+    result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
     return result;
 }
 

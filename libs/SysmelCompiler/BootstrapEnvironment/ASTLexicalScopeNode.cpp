@@ -29,5 +29,10 @@ SExpression ASTLexicalScopeNode::asSExpression() const
     }};
 }
 
+ASTNodePtr ASTLexicalScopeNode::asInlinedBlockBodyNode()
+{
+    return body ? body->asInlinedBlockBodyNode() : nullptr;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

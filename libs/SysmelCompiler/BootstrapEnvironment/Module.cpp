@@ -64,5 +64,10 @@ void Module::analyzeAllPendingProgramEntities(const ProgramEntityPtr &)
     // Nothing is required here by default.
 }
 
+NamespacePtr Module::getGlobalNamespace() const
+{
+    return nullptr;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

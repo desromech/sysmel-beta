@@ -96,6 +96,11 @@ bool BootstrapModule::isBootstrapModule() const
     return true;
 }
 
+NamespacePtr BootstrapModule::getGlobalNamespace() const
+{
+    return globalNamespace;
+}
+
 TypePtr BootstrapModule::getBootstrapDefinedTypeNamed(const std::string &typeName)
 {
     auto it = bootstrapDefinedTypeNameMap.find(typeName);

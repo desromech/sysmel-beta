@@ -43,6 +43,7 @@ public:
     static TypePtr getUndefinedType();
     static TypePtr getVoidType();
     static TypePtr getPragmaType();
+    static TypePtr getNamespaceType();
     static TypePtr getReturnType();
     static TypePtr getCompilationErrorValueType();
 

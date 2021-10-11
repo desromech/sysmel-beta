@@ -28,6 +28,10 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
@@ -37,6 +41,7 @@
 
 #include "sysmel/BootstrapEnvironment/ResultTypeInferenceSlot.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/Namespace.hpp"
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -475,14 +480,17 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
-    // Check the symbol on the current lexical scope.
+    if(name)
     {
-        auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
-        if(previousLocalDefinition)
-            return recordSemanticErrorInNode(analyzedNode, formatString("Local variable definition ({1}) overrides previous definition in the same lexical scope ({2}).",
-                {{name->printString(), previousLocalDefinition->printString()}}));
+        // Check the symbol on the current lexical scope.
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Local variable definition ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+        // TODO: Make sure the name is not reserved.
     }
-    // TODO: Make sure the name is not reserved.
 
     if(analyzedNode->type)
     {
@@ -531,6 +539,56 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
     auto analyzedNode = std::make_shared<ASTVariableAccessNode> (*node);
     auto variable = analyzedNode->variable;
     analyzedNode->analyzedType = analyzedNode->isAccessedByReference ? variable->getReferenceType() : variable->getValueType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTNamespaceNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+
+    // We must be inside another namespace.
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+    if(!ownerEntity || !ownerEntity->isNamespace())
+        return recordSemanticErrorInNode(analyzedNode, "Namespaces can only be defined inside other namespaces.");
+
+    NamespacePtr namespaceEntity;
+    if(name)
+    {
+        {
+
+        }
+
+        // Check the symbol on the current lexical scope.
+        if(!namespaceEntity)
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Namespace definition ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+        
+        // TODO: Make sure the name is not reserved.
+    }
+
+    if(!namespaceEntity)
+    {
+        // Create the namespace.
+        namespaceEntity = Namespace::makeWithName(name);
+    }
+
+    // If the namespace is anonymous, use it in the current lexical scope.
+    if(!name)
+        environment->lexicalScope->useNamespace(namespaceEntity);
+
+    // Analyze the body.
+    //if(analyzedNode->body)
+
+
+    // Finish the node analysis.
+    analyzedNode->analyzedProgramEntity = namespaceEntity;
+    analyzedNode->analyzedType = Type::getNamespaceType();
     return analyzedNode;
 }
 

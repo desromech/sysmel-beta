@@ -6,6 +6,10 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -167,7 +171,26 @@ AnyValuePtr ASTVisitor::visitFieldVariableNode(const ASTFieldVariableNodePtr &no
     return visitVariableNode(node);
 }
 
-AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
+AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitFunctionalNode(const ASTFunctionalNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitFunctionNode(const ASTFunctionNodePtr &node)
+{
+    return visitFunctionalNode(node);
+}
+AnyValuePtr ASTVisitor::visitMethodNode(const ASTMethodNodePtr &node)
+{
+    return visitFunctionalNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitNamespaceNode(const ASTNamespaceNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

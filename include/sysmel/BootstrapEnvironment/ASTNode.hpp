@@ -45,6 +45,12 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableNode);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTVariableAccessNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFunctionalNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFunctionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMethodNode);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTNamespaceNode);
+
 
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -65,6 +71,7 @@ public:
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+    virtual ASTNodePtr asInlinedBlockBodyNode();
 
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor);
 

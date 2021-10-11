@@ -13,6 +13,8 @@ set(BootstrapEnvironment_Sources
     ASTCompileTimeEvaluator.cpp
     ASTEmptySourcePosition.cpp
     ASTErrorNode.cpp
+    ASTFunctionalNode.cpp
+    ASTFunctionNode.cpp
     ASTIdentifierReferenceNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
@@ -24,6 +26,8 @@ set(BootstrapEnvironment_Sources
     ASTMessageChainMessageNode.cpp
     ASTMessageChainNode.cpp
     ASTMessageSendNode.cpp
+    ASTMethodNode.cpp
+    ASTNamespace.cpp
     ASTNode.cpp
     ASTParseErrorNode.cpp
     ASTParseErrorValidator.cpp
@@ -98,6 +102,7 @@ set(BootstrapEnvironment_Sources
     ModuleReference.cpp
     NamedProgramEntityMetaBuilder.cpp
     Namespace.cpp
+    NamespaceMetaBuilder.cpp
     NotMatchingPatternFound.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp

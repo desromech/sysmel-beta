@@ -19,6 +19,8 @@ class ASTCompileTimeEvaluator : public SubtypeOf<ASTVisitor, ASTCompileTimeEvalu
 public:
     static constexpr char const __typeName__[] = "ASTCompileTimeEvaluator";
 
+    AnyValuePtr visitNodeInNewCleanUpScope(const ASTNodePtr &node);
+
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;
     virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node) override;
@@ -35,6 +37,9 @@ public:
 
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
+
+    virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node) override;
+    virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
 
     AnyValuePtr evaluateMethodBodyNode(const ASTNodePtr &node);
 

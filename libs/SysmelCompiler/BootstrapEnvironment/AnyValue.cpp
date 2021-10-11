@@ -259,6 +259,26 @@ bool AnyValue::isASTVariableAccessNode() const
     return false;
 }
 
+bool AnyValue::isASTFunctionalNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTFunctionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTMethodNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTNamespaceNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;

@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/FunctionMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -34,7 +35,7 @@ ASTNodePtr FunctionMetaBuilder::analyzeMessageSendNodeWithSelector(const std::st
         }
         else if(selector == ":=")
         {
-            bodyNode = node->arguments[0];
+            bodyNode = node->arguments[0]->asInlinedBlockBodyNode();
             return concretizeMetaBuilderAndAnalyzeWith(semanticAnalyzer);
         }
     }
@@ -42,6 +43,18 @@ ASTNodePtr FunctionMetaBuilder::analyzeMessageSendNodeWithSelector(const std::st
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
 }
 
+ASTNodePtr FunctionMetaBuilder::concretizeMetaBuilder()
+{
+    auto result = std::make_shared<ASTFunctionNode> ();
+    result->sourcePosition = instanceContext->concreteSourcePosition();
+    result->visibility = instanceContext->programEntityVisibility;
+    result->dispatchMode = instanceContext->methodDispatchMode;
 
+    result->name = nameNode;
+    result->arguments = argumentsNode;
+    result->resultType = resultTypeNode;
+    result->body = bodyNode;
+    return result;
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

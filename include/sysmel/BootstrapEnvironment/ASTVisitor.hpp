@@ -50,6 +50,12 @@ public:
     virtual AnyValuePtr visitFieldVariableNode(const ASTFieldVariableNodePtr &node);
 
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node);
+
+    virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node);
+    virtual AnyValuePtr visitFunctionNode(const ASTFunctionNodePtr &node);
+    virtual AnyValuePtr visitMethodNode(const ASTMethodNodePtr &node);
+
+    virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

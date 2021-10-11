@@ -23,6 +23,9 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTFunctionalNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
@@ -39,16 +42,21 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<ASTCompileTimeEvaluator> ASTCompileTimeEvaluatorTypeRegistration;
 
-AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
+AnyValuePtr ASTCompileTimeEvaluator::visitNodeInNewCleanUpScope(const ASTNodePtr &node)
 {
     auto oldCleanUpScope = currentCleanUpScope;
     currentCleanUpScope = CompileTimeCleanUpScope::makeWithParent(currentCleanUpScope);
 
     return doWithEnsure([&](){
-        return visitNode(node->body);
+        return visitNode(node);
     }, [&](){
         currentCleanUpScope = oldCleanUpScope;
     });
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
+{
+    return visitNodeInNewCleanUpScope(node->body);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const ASTNodePtr &node)
@@ -172,6 +180,20 @@ AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAc
     return node->isAccessedByReference ?
         storeBinding->accessVariableAsReferenceWithType(node->analyzedType)
         : storeBinding->accessVariableAsValueWithType(node->analyzedType);
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNodePtr &node)
+{
+    // TODO: Store the closure if needed.
+    return node->analyzedProgramEntity;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePtr &node)
+{
+    if(node->body)
+        visitNodeInNewCleanUpScope(node->body);
+
+    return node->analyzedProgramEntity;
 }
 
 } // End of namespace BootstrapEnvironment

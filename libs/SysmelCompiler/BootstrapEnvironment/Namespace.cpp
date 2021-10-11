@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/Error.hpp"
 
@@ -8,6 +9,11 @@ namespace BootstrapEnvironment
 {
 
 static BootstrapTypeRegistration<Namespace> namespaceTypeRegistration;
+
+TypePtr Type::getNamespaceType()
+{
+    return Namespace::__staticType__();
+}
 
 NamespacePtr Namespace::makeWithName(const AnyValuePtr &name)
 {

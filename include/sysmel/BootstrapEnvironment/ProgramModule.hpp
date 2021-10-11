@@ -21,11 +21,16 @@ public:
     static constexpr char const __typeName__[] = "ProgramModule";
 
     static ProgramModulePtr create(const std::string &name);
+    virtual void initialize() override;
+
+    virtual NamespacePtr getGlobalNamespace() const override;
 
     virtual bool isProgramModule() const override;
+    
 
 protected:
     std::string name;
+    NamespacePtr globalNamespace;
 
     std::vector<ModuleReferencePtr> importedModules;
     std::vector<ModuleReferencePtr> indirectlyImportedModules;

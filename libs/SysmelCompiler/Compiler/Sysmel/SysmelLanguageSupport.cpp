@@ -40,6 +40,7 @@
 #include "sysmel/BootstrapEnvironment/MetaBuilderFactory.hpp"
 #include "sysmel/BootstrapEnvironment/FunctionMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/LetMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/NamespaceMetaBuilder.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -444,6 +445,7 @@ void SysmelLanguageSupport::initialize()
         // Meta builders
         topLevelScope->setSymbolBinding(internSymbol("let"), metaBuilderFactoryFor<LetMetaBuilder> ("let"));
         topLevelScope->setSymbolBinding(internSymbol("function"), metaBuilderFactoryFor<FunctionMetaBuilder> ("function"));
+        topLevelScope->setSymbolBinding(internSymbol("namespace"), metaBuilderFactoryFor<NamespaceMetaBuilder> ("namespace"));
     }
 }
 
