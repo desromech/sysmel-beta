@@ -108,6 +108,7 @@ set(BootstrapEnvironment_Sources
     PatternMatchingMethod.cpp
     Pragma.cpp
     ProgramEntity.cpp
+    ProgramEntityScope.cpp
     ResultTypeInferenceSlot.cpp
     ReturnType.cpp
     RuntimeContext.cpp

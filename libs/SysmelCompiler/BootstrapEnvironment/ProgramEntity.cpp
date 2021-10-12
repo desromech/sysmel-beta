@@ -46,6 +46,15 @@ void ProgramEntity::bindProgramEntityWithVisibility(ProgramEntityVisibility visi
 
 AnyValuePtr ProgramEntity::lookupExportedSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
 {
+    (void)symbol;
+    (void)accessingScope;
+    return nullptr;
+}
+
+AnyValuePtr ProgramEntity::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    (void)symbol;
+    (void)accessingScope;
     return nullptr;
 }
 

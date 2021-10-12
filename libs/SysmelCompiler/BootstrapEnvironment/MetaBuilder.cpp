@@ -64,6 +64,13 @@ ASTNodePtr MetaBuilder::concretizeMetaBuilder()
     return getVoidConstant()->asASTNodeRequiredInPosition(instanceContext->concreteSourcePosition());
 }
 
+ASTNodePtr MetaBuilder::concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    (void)node;
+    assert(node->value == shared_from_this());
+    return concretizeMetaBuilderAndAnalyzeWith(semanticAnalyzer);
+}
+
 ASTNodePtr MetaBuilder::concretizeMetaBuilderAndAnalyzeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(concretizeMetaBuilder());

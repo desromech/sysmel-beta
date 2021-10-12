@@ -20,7 +20,8 @@ public:
     virtual bool isBootstrapType() const override;
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
     virtual bool supportsMessageAnalysisByLiteralValueReceivers() const override;
-
+    virtual bool isEphemeralCompileTimeObject() const override;
+    
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
 
     std::string printString() const override;

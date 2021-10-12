@@ -240,6 +240,11 @@ bool Type::supportsMessageAnalysisByLiteralValueReceivers() const
     return false;
 }
 
+bool Type::isEphemeralCompileTimeObject() const
+{
+    return false;
+}
+
 ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(supportsDynamicCompileTimeMessageSend())
@@ -257,6 +262,13 @@ ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node
     }
     
     return semanticAnalyzer->recordSemanticErrorInNode(node, "");
+}
+
+ASTNodePtr Type::concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(supportsMessageAnalysisByLiteralValueReceivers())
+        return node->value->concretizeEphemeralCompileTimeObject(node, semanticAnalyzer);
+    return SuperType::concretizeEphemeralCompileTimeObject(node, semanticAnalyzer);
 }
 
 AnyValuePtr Type::lookupDoesNotUnderstandMacro()

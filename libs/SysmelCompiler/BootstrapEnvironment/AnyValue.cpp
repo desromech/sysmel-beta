@@ -543,6 +543,11 @@ ASTNodePtr AnyValue::analyzeIdentifierReferenceNode(const ASTIdentifierReference
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(asASTNodeRequiredInPosition(partiallyAnalyzedNode->sourcePosition));
 }
 
+ASTNodePtr AnyValue::concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(partiallyAnalyzedNode, formatString("Cannot concretize ephemeral compile time object ({0}).", {{printString()}}));
+}
+
 bool AnyValue::unwrapAsBoolean() const
 {
     signalNew<CannotUnwrap> ();

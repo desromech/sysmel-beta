@@ -39,6 +39,7 @@ public:
     virtual void bindProgramEntityWithVisibility(ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);
 
     virtual AnyValuePtr lookupExportedSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope);
+    virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope);
 };
 
 } // End of namespace BootstrapEnvironment

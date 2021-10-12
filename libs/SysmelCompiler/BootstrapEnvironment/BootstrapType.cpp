@@ -26,6 +26,11 @@ bool BootstrapType::supportsMessageAnalysisByLiteralValueReceivers() const
     return staticMetadata->isLiteralValueMessageAnalyzer;
 }
 
+bool BootstrapType::isEphemeralCompileTimeObject() const
+{
+    return staticMetadata->isEphemeralCompileTimeObject;
+}
+
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;

@@ -14,7 +14,7 @@ LexicalScopePtr LexicalScope::makeEmpty()
     return std::make_shared<LexicalScope> ();
 }
 
-LexicalScopePtr LexicalScope::makeWithParent(const LexicalScopePtr &parent)
+LexicalScopePtr LexicalScope::makeWithParent(const IdentifierLookupScopePtr &parent)
 {
     auto result = std::make_shared<LexicalScope> ();
     result->parent = parent;

@@ -62,5 +62,11 @@ AnyValuePtr Namespace::lookupExportedSymbolFromScope(const AnyValuePtr &symbol, 
     }
 }
 
+AnyValuePtr Namespace::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    auto it = bindings.find(symbol);
+    return it != bindings.end() ? it->second.second : nullptr;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

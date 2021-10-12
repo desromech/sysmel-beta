@@ -25,6 +25,7 @@ public:
 
     ASTAnalysisEnvironmentPtr copyWithLexicalScope(const LexicalScopePtr &newScope);
     ASTAnalysisEnvironmentPtr copyWithCleanUpcope(const CleanUpScopePtr &cleanUpScope);
+    ASTAnalysisEnvironmentPtr copyForPublicProgramEntityBody(const ProgramEntityPtr &publicProgramEntity);
 
     LexicalScopePtr lexicalScope;
     CleanUpScopePtr cleanUpScope;

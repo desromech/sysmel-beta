@@ -22,7 +22,7 @@ public:
     static constexpr char const __typeName__[] = "LexicalScope";
 
     static LexicalScopePtr makeEmpty();
-    static LexicalScopePtr makeWithParent(const LexicalScopePtr &parent);
+    static LexicalScopePtr makeWithParent(const IdentifierLookupScopePtr &parent);
 
     virtual bool isLexicalScope() const override;
 

@@ -31,5 +31,18 @@ AnyValuePtr IdentifierLookupScope::lookupSymbolRecursively(const AnyValuePtr &sy
     return parent ? parent->lookupSymbolRecursively(symbol) : nullptr;
 }
 
+bool IdentifierLookupScope::isNameReservedLocally(const AnyValuePtr &)
+{
+    return false;
+}
+
+bool IdentifierLookupScope::isNameReserved(const AnyValuePtr &symbol)
+{
+    if(isNameReservedLocally(symbol))
+        return true;
+
+    return parent ? parent->isNameReserved(symbol) : false;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

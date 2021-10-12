@@ -112,13 +112,14 @@ ASTNodePtr ASTSemanticAnalyzer::withEnvironmentDoAnalysis(const ASTAnalysisEnvir
     });
 }
 
-ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot)
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot, bool concretizeEphemeralObjects)
 {
     auto oldExpectedType = currentExpectedType;
     currentExpectedType = typeInferenceSlot;
     
     auto analyzedNode = doWithEnsure([&](){
-       return analyzeNodeIfNeededWithCurrentExpectedType(node);
+       return analyzeNodeIfNeededWithCurrentExpectedType(node, concretizeEphemeralObjects);
     },
     [&](){
         currentExpectedType = oldExpectedType;
@@ -128,19 +129,19 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNo
     return analyzedNode;
 }
 
-ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType)
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects)
 {
-    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForType(expectedType));
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForType(expectedType), concretizeEphemeralObjects);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
 {
-    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTypeSet(expectedTypeSet));
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTypeSet(expectedTypeSet), true);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoTypeInferenceMode(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable)
 {
-    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAutoWithMode(mode, isMutable));
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAutoWithMode(mode, isMutable), true);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node)
@@ -148,14 +149,21 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoType(const ASTNodePtr
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAuto());
 }
 
-ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node)
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node, bool concretizeEphemeralObjects)
 {
     if(node->analyzedType)
         return node;
     
     auto analysisResult = visitNode(node);
     assert(analysisResult->isASTNode());
-    return std::static_pointer_cast<ASTNode> (analysisResult);
+
+    auto analysisResultNode = std::static_pointer_cast<ASTNode> (analysisResult);
+    assert(analysisResultNode->analyzedType);
+
+    if(concretizeEphemeralObjects && analysisResultNode->isASTLiteralValueNode() && analysisResultNode->analyzedType->isEphemeralCompileTimeObject())
+        return analysisResultNode->analyzedType->concretizeEphemeralCompileTimeObject(std::static_pointer_cast<ASTLiteralValueNode> (analysisResultNode), shared_from_this());
+
+    return analysisResultNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType)
@@ -274,6 +282,11 @@ AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
     assert(node->isASTLiteralValueNode());
     auto result = std::static_pointer_cast<ASTLiteralValueNode> (node)->value;
     return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
+}
+
+bool ASTSemanticAnalyzer::isNameReserved(const AnyValuePtr &name)
+{
+    return environment->lexicalScope->isNameReserved(name);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
@@ -457,11 +470,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
             auto &expression = analyzedNode->expressions[i];
 
             if(isLast && !hasReturnType)
-                expression = analyzeNodeIfNeededWithTypeInference(expression, currentExpectedType);
+                expression = analyzeNodeIfNeededWithTypeInference(expression, currentExpectedType, true);
             else
-                expression = analyzeNodeIfNeededWithExpectedType(expression, voidType);
-            
-
+                expression = analyzeNodeIfNeededWithExpectedType(expression, voidType, true);
         }
         analyzedNode->analyzedType = analyzedNode->expressions.back()->analyzedType;
     }
@@ -518,6 +529,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
         valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
     }
 
+    // Make sure the initial value is analyzed.
+    if(analyzedNode->initialValue)
+        analyzedNode->initialValue = analyzeNodeIfNeededWithExpectedType(analyzedNode->initialValue, valueType, true);
+
     // Create the local variable.
     auto localVariable = std::make_shared<LocalVariable> ();
     localVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
@@ -556,8 +571,21 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
     NamespacePtr namespaceEntity;
     if(name)
     {
-        {
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Namespace ({1}) overrides reserved name.",
+                    {{name->printString()}}));
 
+        // Find an existing namespace with the same name.
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isNamespace())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Namespace ({1}) overrides previous non-namespace definition in its parent namespace ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                namespaceEntity = std::static_pointer_cast<Namespace> (boundSymbol);
+            }
         }
 
         // Check the symbol on the current lexical scope.
@@ -565,17 +593,18 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
         {
             auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
             if(previousLocalDefinition)
-                return recordSemanticErrorInNode(analyzedNode, formatString("Namespace definition ({1}) overrides previous definition in the same lexical scope ({2}).",
+                return recordSemanticErrorInNode(analyzedNode, formatString("Namespace ({1}) overrides previous definition in the same lexical scope ({2}).",
                     {{name->printString(), previousLocalDefinition->printString()}}));
         }
-        
-        // TODO: Make sure the name is not reserved.
     }
 
+    // Create the namespace if required.
     if(!namespaceEntity)
     {
-        // Create the namespace.
         namespaceEntity = Namespace::makeWithName(name);
+        ownerEntity->recordChildProgramEntityDefinition(namespaceEntity);
+        if(name)
+            ownerEntity->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, namespaceEntity);
     }
 
     // If the namespace is anonymous, use it in the current lexical scope.
@@ -583,8 +612,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
         environment->lexicalScope->useNamespace(namespaceEntity);
 
     // Analyze the body.
-    //if(analyzedNode->body)
-
+    if(analyzedNode->body)
+        analyzedNode->body = withEnvironmentDoAnalysis(environment->copyForPublicProgramEntityBody(namespaceEntity), [&]() {
+            return analyzeNodeIfNeededWithExpectedType(analyzedNode->body, Type::getVoidType());
+        });
 
     // Finish the node analysis.
     analyzedNode->analyzedProgramEntity = namespaceEntity;

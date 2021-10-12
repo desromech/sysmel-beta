@@ -32,6 +32,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCallNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLiteralValueNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
@@ -57,6 +58,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*typeMacroMethods)();
     bool isDynamicCompileTimeType;
     bool isLiteralValueMessageAnalyzer;
+    bool isEphemeralCompileTimeObject;
     std::string sysmelLanguageTopLevelName;
     size_t bootstrapTypeID;
 };
@@ -84,6 +86,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__typeMacroMethods__,
     T::__isDynamicCompileTimeType__,
     T::__isLiteralValueMessageAnalyzer__,
+    T::__isEphemeralCompileTimeObject__,
     T::__sysmelTypeName__,
     0
 };
@@ -204,6 +207,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "AnyValue";
     static constexpr bool __isDynamicCompileTimeType__ = true;
     static constexpr bool __isLiteralValueMessageAnalyzer__ = false;
+    static constexpr bool __isEphemeralCompileTimeObject__ = false;
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
@@ -574,6 +578,9 @@ public:
 
     /// This method performs the semantic analysis of an identifier reference with the specified semantic analyzer.
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
+    /// This method performs the concretion of an ephemeral compile time object.
+    virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);

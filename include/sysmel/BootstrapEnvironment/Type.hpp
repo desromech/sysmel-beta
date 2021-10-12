@@ -86,6 +86,9 @@ public:
     /// Does this type support delegating the analysis of messages into literal value receivers?
     virtual bool supportsMessageAnalysisByLiteralValueReceivers() const;
 
+    /// Is this a type that should be concretized always?
+    virtual bool isEphemeralCompileTimeObject() const;
+
     /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
@@ -97,6 +100,9 @@ public:
 
     /// This method performs the semantic analysis of a message send node whose selector was not found.
     virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
+    /// This method performs the concretion of an ephemeral compile time object.
+    virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;

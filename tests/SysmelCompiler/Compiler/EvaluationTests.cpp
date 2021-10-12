@@ -144,8 +144,13 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
-                CHECK(evaluateString("namespace TestNamespace")->isNamespace());
-                CHECK(evaluateString("namespace TestNamespace definition: {}")->isNamespace());
+                auto first = evaluateString("namespace TestNamespace");
+                CHECK(first->isNamespace());
+
+                auto second = evaluateString("namespace TestNamespace definition: {}");
+                CHECK(second->isNamespace());
+
+                CHECK_EQUAL(first, second);
             });
         });
     }

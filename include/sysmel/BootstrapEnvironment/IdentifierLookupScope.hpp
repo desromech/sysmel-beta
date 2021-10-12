@@ -30,6 +30,12 @@ public:
     /// This method performs a recursive symbol lookup.
     virtual AnyValuePtr lookupSymbolRecursively(const AnyValuePtr &symbol);
 
+    /// Is the name reserved in this specific scope so that it cannot be overriden?
+    virtual bool isNameReservedLocally(const AnyValuePtr &symbol);
+
+    /// Is the name reserved so that it cannot be overriden?
+    virtual bool isNameReserved(const AnyValuePtr &symbol);
+
     IdentifierLookupScopePtr parent;
 };
 
