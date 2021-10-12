@@ -41,6 +41,8 @@
 
 #include "sysmel/BootstrapEnvironment/ResultTypeInferenceSlot.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
@@ -62,6 +64,14 @@ namespace BootstrapEnvironment
 {
 
 static BootstrapTypeRegistration<ASTSemanticAnalyzer> ASTSemanticAnalyzerTypeRegistration;
+
+static TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
+{
+    assert(node->isASTLiteralTypeNode());
+    return std::static_pointer_cast<Type> (
+        std::static_pointer_cast<ASTLiteralValueNode> (node)->value
+    );
+}
 
 ASTNodePtr ASTSemanticAnalyzer::recordSemanticErrorInNode(const ASTNodePtr &errorNode, const std::string &message)
 {
@@ -293,12 +303,53 @@ bool ASTSemanticAnalyzer::isNameReserved(const AnyValuePtr &name)
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
+    return recordSemanticErrorInNode(node, "Unexpected location for argument node.");
+}
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType)
+{
     auto analyzedNode = std::make_shared<ASTArgumentDefinitionNode> (*node);
-    analyzedNode->analyzedIdentifier = evaluateNameSymbolValue(analyzedNode->identifier);
+    auto name = evaluateNameSymbolValue(analyzedNode->identifier);
+    analyzedNode->analyzedIdentifier = name;
+
+    // Analyze the argument type.
     if(analyzedNode->type)
+    {
         analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
-    
-    analyzedNode->analyzedType = Type::getArgumentVariableType();
+    }
+    else
+    {
+        if(expectedType)
+        {
+            analyzedNode->type = expectedType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            if(!environment->defaultArgumentType)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Argument {0} requires a explicit type specification.", {{validAnyValue(name)->printString()}}));
+            analyzedNode->type = environment->defaultArgumentType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+    }
+
+
+    // Make sure the type is not an error.
+    if(analyzedNode->type->isASTErrorNode())
+        return analyzedNode->type;
+
+    // Extract the argument type.
+    if(analyzedNode->type->isASTLiteralTypeNode())
+        return recordSemanticErrorInNode(analyzedNode, formatString("Failed to define a type for argument {0}.", {{validAnyValue(name)->printString()}}));
+
+    analyzedNode->analyzedType = unwrapTypeFromLiteralValue(analyzedNode->type);
+
+    // Make sure that we have the expected type.
+    if(expectedType && (analyzedNode->analyzedType != expectedType))
+        return recordSemanticErrorInNode(analyzedNode, formatString("Argument {0} type {1} is not the expected type {2}.", {{
+            validAnyValue(name)->printString(),
+            analyzedNode->analyzedType->printString(),
+            expectedType->printString(),
+        }}));
+
     return analyzedNode;
 }
 
@@ -581,16 +632,38 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
     // Analyze the arguments node.
     bool hasError = false;
-    for(auto &arg : analyzedNode->arguments)
+    for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
-        arg = analyzeNodeIfNeededWithExpectedType(arg, Type::getArgumentVariableType());
+        auto &arg = analyzedNode->arguments[i];
+        assert(arg->isASTArgumentDefinitionNode());
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
 
     // Evaluate the result type.
+    auto expectedResultType = currentExpectedType->getExpectedFunctionalResultType();
+    if(!analyzedNode->resultType)
+    {
+        if(expectedResultType)
+        {
+            analyzedNode->resultType = expectedResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else if(environment->defaultResultType)
+        {
+            analyzedNode->resultType = environment->defaultResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            analyzedNode->resultType = recordSemanticErrorInNode(analyzedNode, "Function definition requires an explicit result type specification.");
+            hasError = true;
+        }
+    }
+
     if(analyzedNode->resultType)
     {
-        analyzedNode->resultType = evaluateTypeExpression(analyzedNode->resultType);
+        if(!analyzedNode->resultType->isASTErrorNode())
+            analyzedNode->resultType = evaluateTypeExpression(analyzedNode->resultType);
+
         hasError = hasError || analyzedNode->resultType->isASTErrorNode();
     }
 
@@ -643,13 +716,22 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         return analyzedNode;
     }
 
-    // TODO: Add the function type.
+    // Create the function type.
+    MethodSignature signature;
+    signature.receiverType = Type::getVoidType();
+    signature.argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        signature.argumentTypes.push_back(arg->analyzedType);
+    signature.resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
+
+    auto functionType = FunctionType::makeForMethodSignature(signature);
 
     // Create the compiled method if missing.
     if(!compiledMethod)
     {
         compiledMethod = std::make_shared<CompiledMethod> ();
         compiledMethod->setDeclaration(analyzedNode);
+        compiledMethod->setFunctionalType(functionType);
     }
 
     // Set the definition body.

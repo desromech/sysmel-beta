@@ -50,16 +50,6 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
     metaType->addMethodCategories(staticMetadata->typeMethods());
 }
 
-TypePtr BootstrapType::getType() const
-{
-    return metaType;
-}
-
-void BootstrapType::setType(const TypePtr &theMetaType)
-{
-    metaType = theMetaType;
-}
-
 std::string BootstrapType::printString() const
 {
     return staticMetadata->typeName;

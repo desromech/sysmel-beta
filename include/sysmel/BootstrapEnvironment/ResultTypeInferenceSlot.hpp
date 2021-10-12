@@ -24,6 +24,9 @@ public:
     static ResultTypeInferenceSlotPtr makeForTypeSet(const TypePtrList &expectedTypeSet);
     static ResultTypeInferenceSlotPtr makeForAuto();
     static ResultTypeInferenceSlotPtr makeForAutoWithMode(TypeInferenceMode mode, bool isMutable);
+
+    virtual TypePtr getExpectedFunctionalArgumentType(size_t index) const;
+    virtual TypePtr getExpectedFunctionalResultType() const;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -70,7 +70,7 @@ void CompiledMethod::ensureSemanticAnalysis()
     auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
     analyzer->environment = createSemanticAnalysisEnvironment();
     
-    auto analyzedBodyValue = analyzer->visitNode(definitionBodyNode);
+    auto analyzedBodyValue = analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->result);
     assert(analyzedBodyValue->isASTNode());
 
     analyzedBodyNode = std::static_pointer_cast<ASTNode> (analyzedBodyValue);
@@ -118,7 +118,7 @@ void CompiledMethod::setFunctionalType(const FunctionalTypePtr &newFunctionalTyp
     functionalType = newFunctionalType;
 }
 
-const TypePtr &CompiledMethod::getFunctionalType() const
+const FunctionalTypePtr &CompiledMethod::getFunctionalType() const
 {
     return functionalType;
 }

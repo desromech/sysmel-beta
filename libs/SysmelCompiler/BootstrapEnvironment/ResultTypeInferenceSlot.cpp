@@ -32,5 +32,17 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInfe
     return std::make_shared<ResultTypeInferenceSlot> ();
 }
 
+TypePtr ResultTypeInferenceSlot::getExpectedFunctionalArgumentType(size_t index) const
+{
+    (void)index;
+    return nullptr;
+}
+
+TypePtr ResultTypeInferenceSlot::getExpectedFunctionalResultType() const
+{
+    return nullptr;
+}
+
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

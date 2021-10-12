@@ -7,7 +7,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-static SimpleTypeRegistration<SimpleType> bootstrapTypeTypeRegistration;
+static BootstrapTypeRegistration<SimpleType> bootstrapTypeTypeRegistration;
 
 bool SimpleType::isSimpleType() const
 {

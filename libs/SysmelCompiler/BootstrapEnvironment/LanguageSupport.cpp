@@ -11,6 +11,7 @@
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -53,6 +54,9 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
     result->languageSupport = shared_from_this();
     result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
     result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions));
+    result->defaultArgumentType = Type::getAnyValueType();
+    result->defaultResultType = Type::getAnyValueType();
+    result->defaultVariableType = Type::getAnyValueType();
     return result;
 }
 

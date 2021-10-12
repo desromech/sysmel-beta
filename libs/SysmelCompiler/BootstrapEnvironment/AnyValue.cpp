@@ -23,6 +23,11 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<AnyValue> anyValueTypeRegistration;
 
+TypePtr Type::getAnyValueType()
+{
+    return AnyValue::__staticType__();
+}
+
 MethodCategories AnyValue::__instanceMethods__()
 {
     return MethodCategories{
@@ -304,7 +309,7 @@ bool AnyValue::isMetaType() const
     return false;
 }
 
-bool AnyValue::isBasicType() const
+bool AnyValue::isSimpleType() const
 {
     return false;
 }
@@ -500,6 +505,36 @@ bool AnyValue::isAnonymousNameSymbol() const
 }
 
 bool AnyValue::isValueBox() const
+{
+    return false;
+}
+
+bool AnyValue::isFunctionalType() const
+{
+    return false;
+}
+
+bool AnyValue::isFunctionalTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isFunctionType() const
+{
+    return false;
+}
+
+bool AnyValue::isFunctionTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isClosureType() const
+{
+    return false;
+}
+
+bool AnyValue::isClosureTypeValue() const
 {
     return false;
 }

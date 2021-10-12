@@ -3,6 +3,7 @@
 #pragma once
 
 #include "FunctionalType.hpp"
+#include "SpecificMethod.hpp"
 
 namespace SysmelMoebius
 {
@@ -10,17 +11,28 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionTypeValue);
 
 /**
- * I am the base interface for compile time object that is passed through the interpreter.
+ * I am an instance of a function type object.
  */
 class FunctionType : public SubtypeOf<FunctionalType, FunctionType>
 {
 public:
-    static constexpr char const __typeName__[] = "FunctionType";
-    static constexpr char const __sysmelTypeName__[] = "_FunctionType";
-
     virtual bool isFunctionType() const override;
+
+    static FunctionTypePtr makeForMethodSignature(const MethodSignature &signature);
+};
+
+/**
+ * I am an instance of a function type object.
+ */
+class FunctionTypeValue : public SubtypeOf<FunctionalTypeValue, FunctionTypeValue>
+{
+public:
+    virtual bool isFunctionTypeValue() const override;
+
+    virtual TypePtr getType() const override;
 };
 
 } // End of namespace BootstrapEnvironment

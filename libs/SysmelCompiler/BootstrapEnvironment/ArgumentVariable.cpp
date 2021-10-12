@@ -10,11 +10,6 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<ArgumentVariable> localVariableTypeRegistration;
 
-TypePtr Type::getArgumentVariableType()
-{
-    return ArgumentVariable::__staticType__();
-}
-
 bool ArgumentVariable::isArgumentVariable() const
 {
     return true;

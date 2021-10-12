@@ -70,6 +70,8 @@ set(BootstrapEnvironment_Sources
     Error.cpp
     Exception.cpp
     Fraction.cpp
+    FunctionType.cpp
+    FunctionalType.cpp
     FunctionMetaBuilder.cpp
     IdentifierLookupScope.cpp
     LanguageSupport.cpp

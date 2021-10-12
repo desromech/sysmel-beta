@@ -38,6 +38,7 @@ public:
     virtual bool isType() const override;
     virtual AnyValuePtr getName() const override;
 
+    static TypePtr getAnyValueType();
     static TypePtr getLiteralValueType();
     static TypePtr getLiteralSymbolValue();
     static TypePtr getUndefinedType();

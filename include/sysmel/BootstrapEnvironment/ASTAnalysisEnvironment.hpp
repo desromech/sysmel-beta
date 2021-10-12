@@ -33,6 +33,10 @@ public:
 
     ProgramEntityPtr programEntityForPublicDefinitions;
     ProgramEntityPtr localDefinitionsOwner;
+
+    TypePtr defaultArgumentType;
+    TypePtr defaultResultType;
+    TypePtr defaultVariableType;
 };
 
 } // End of namespace BootstrapEnvironment

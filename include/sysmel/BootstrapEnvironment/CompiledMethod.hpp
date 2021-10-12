@@ -41,7 +41,7 @@ public:
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
 
-    virtual const TypePtr &getFunctionalType() const;
+    virtual const FunctionalTypePtr &getFunctionalType() const;
 
 protected:
     ASTAnalysisEnvironmentPtr createSemanticAnalysisEnvironment();

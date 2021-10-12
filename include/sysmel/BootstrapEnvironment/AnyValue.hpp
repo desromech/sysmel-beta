@@ -375,11 +375,11 @@ public:
     /// Is this object a type?
     virtual bool isType() const;
 
+    /// Is this object a simple type?
+    virtual bool isSimpleType() const;
+
     /// Is this object a meta type?
     virtual bool isMetaType() const;
-
-    /// Is this object a basic type?
-    virtual bool isBasicType() const;
 
     /// Is this object a program entity?
     virtual bool isPragma() const;
@@ -497,6 +497,24 @@ public:
 
     // Is this object a value box?
     virtual bool isValueBox() const;
+
+    // Is this a functional type?
+    virtual bool isFunctionalType() const;
+
+    // Is this a functional type value?
+    virtual bool isFunctionalTypeValue() const;
+
+    // Is this a function type?
+    virtual bool isFunctionType() const;
+
+    // Is this a function type value?
+    virtual bool isFunctionTypeValue() const;
+
+    // Is this a closure type?
+    virtual bool isClosureType() const;
+
+    // Is this a closure type value?
+    virtual bool isClosureTypeValue() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;

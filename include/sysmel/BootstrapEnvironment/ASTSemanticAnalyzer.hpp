@@ -55,6 +55,8 @@ public:
 
     AnyValuePtr evaluateNameSymbolValue(const ASTNodePtr &node);
 
+    ASTNodePtr analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType);
+
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node) override;
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;

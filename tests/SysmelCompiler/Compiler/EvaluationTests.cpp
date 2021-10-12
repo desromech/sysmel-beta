@@ -150,7 +150,11 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto second = evaluateString("namespace TestNamespace definition: {}");
                 CHECK(second->isNamespace());
 
+                auto third = evaluateString("TestNamespace");
+                CHECK(third->isNamespace());
+
                 CHECK_EQUAL(first, second);
+                CHECK_EQUAL(second, third);
             });
         });
     }
