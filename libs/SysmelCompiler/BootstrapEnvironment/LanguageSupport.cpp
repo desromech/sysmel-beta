@@ -7,6 +7,7 @@
 #include "sysmel/BootstrapEnvironment/ASTParseErrorValidator.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
+#include "sysmel/BootstrapEnvironment/ProgramEntityScope.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
@@ -49,9 +50,9 @@ MethodCategories LanguageSupport::__instanceMethods__()
 ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 {
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
-    result->lexicalScope = createDefaultTopLevelLexicalScope();
     result->languageSupport = shared_from_this();
     result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
+    result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions));
     return result;
 }
 

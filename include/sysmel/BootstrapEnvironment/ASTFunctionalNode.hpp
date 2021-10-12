@@ -21,10 +21,13 @@ public:
 
     virtual bool isASTFunctionalNode() const override;
 
+    bool isRegisteredInLexicalScope() const;
+    
     ASTNodePtr name;
     ASTNodePtr resultType;
     ASTNodePtrList arguments;
     ASTNodePtr body;
+
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
     MethodDispatchMode dispatchMode = MethodDispatchMode::Default;

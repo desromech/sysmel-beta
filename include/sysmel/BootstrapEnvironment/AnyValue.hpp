@@ -423,6 +423,9 @@ public:
     /// Is this object a variable?
     virtual bool isVariable() const;
 
+    /// Is this object an argument variable?
+    virtual bool isArgumentVariable() const;
+
     /// Is this object a local variable?
     virtual bool isLocalVariable() const;
 

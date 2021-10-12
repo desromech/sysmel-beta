@@ -42,8 +42,10 @@ public:
     static TypePtr getLiteralSymbolValue();
     static TypePtr getUndefinedType();
     static TypePtr getVoidType();
-    static TypePtr getPragmaType();
     static TypePtr getNamespaceType();
+
+    static TypePtr getPragmaType();
+    static TypePtr getArgumentVariableType();
     static TypePtr getReturnType();
     static TypePtr getCompilationErrorValueType();
 

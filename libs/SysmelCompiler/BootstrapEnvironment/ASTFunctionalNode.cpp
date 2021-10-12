@@ -13,5 +13,9 @@ bool ASTFunctionalNode::isASTFunctionalNode() const
     return true;
 }
 
+bool ASTFunctionalNode::isRegisteredInLexicalScope() const
+{
+    return visibility == ProgramEntityVisibility::LexicalScope;
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

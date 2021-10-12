@@ -23,6 +23,8 @@ public:
 
     ASTNodePtr identifier;
     ASTNodePtr type;
+
+    AnyValuePtr analyzedIdentifier;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -51,6 +51,8 @@
 #include "sysmel/BootstrapEnvironment/CompilationErrors.hpp"
 
 #include "sysmel/BootstrapEnvironment/LocalVariable.hpp"
+#include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
+#include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 
 #include <iostream>
 
@@ -291,7 +293,13 @@ bool ASTSemanticAnalyzer::isNameReserved(const AnyValuePtr &name)
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTArgumentDefinitionNode> (*node);
+    analyzedNode->analyzedIdentifier = evaluateNameSymbolValue(analyzedNode->identifier);
+    if(analyzedNode->type)
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+    
+    analyzedNode->analyzedType = Type::getArgumentVariableType();
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
@@ -500,7 +508,11 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
                 return recordSemanticErrorInNode(analyzedNode, formatString("Local variable definition ({1}) overrides previous definition in the same lexical scope ({2}).",
                     {{name->printString(), previousLocalDefinition->printString()}}));
         }
-        // TODO: Make sure the name is not reserved.
+
+        // Make sure the name is not reserved.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Local variable {1} overrides reserved name.",
+                    {{name->printString()}}));
     }
 
     if(analyzedNode->type)
@@ -557,6 +569,115 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
     return analyzedNode;
 }
 
+AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTFunctionNode> (*node);
+
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::LexicalScope;
+
+    // TODO: Use the current expected type to assist the function type inference.
+
+    // Analyze the arguments node.
+    bool hasError = false;
+    for(auto &arg : analyzedNode->arguments)
+    {
+        arg = analyzeNodeIfNeededWithExpectedType(arg, Type::getArgumentVariableType());
+        hasError = hasError || arg->isASTErrorNode();
+    }
+
+    // Evaluate the result type.
+    if(analyzedNode->resultType)
+    {
+        analyzedNode->resultType = evaluateTypeExpression(analyzedNode->resultType);
+        hasError = hasError || analyzedNode->resultType->isASTErrorNode();
+    }
+
+    // Evaluate the name.
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+
+    CompiledMethodPtr compiledMethod;
+    bool alreadyRegistered = false;
+    bool isLocalDefinition = analyzedNode->isRegisteredInLexicalScope();
+    auto ownerEntity = isLocalDefinition ? environment->localDefinitionsOwner : environment->programEntityForPublicDefinitions;
+
+    // Check the name.
+    if(name)
+    {
+        // Forbid reversed names.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides reserved name.", {{name->printString()}}));
+
+        // Check on the lexical scope, or the public entity owner.
+        if(isLocalDefinition)
+        {
+            auto boundSymbol = environment->lexicalScope->lookupSymbolLocally(name);
+            if(boundSymbol)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides locally defined symbol ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+        }
+        else
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isCompiledMethod())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-namespace definition in its parent program entity ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                compiledMethod = std::static_pointer_cast<CompiledMethod> (boundSymbol);
+                alreadyRegistered = true;
+            }
+        }
+    }
+
+    // The local definition must have a body
+    if(isLocalDefinition && !analyzedNode->body)
+        return recordSemanticErrorInNode(analyzedNode, formatString("Locally defined function {1} must have a body.", {{name->printString()}}));
+
+    // Abort the remaining of the function error.
+    if(hasError)
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // TODO: Add the function type.
+
+    // Create the compiled method if missing.
+    if(!compiledMethod)
+    {
+        compiledMethod = std::make_shared<CompiledMethod> ();
+        compiledMethod->setDeclaration(analyzedNode);
+    }
+
+    // Set the definition body.
+    if(analyzedNode->body)
+    {
+        compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
+    }
+
+    // Register the compiled method.
+    if(name)
+    {
+        if(isLocalDefinition)
+        {
+            ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
+            environment->lexicalScope->setSymbolBinding(name, compiledMethod);
+        }
+        else if(!alreadyRegistered)
+        {
+            ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
+            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, compiledMethod);
+        }
+    }
+
+    analyzedNode->analyzedProgramEntity = compiledMethod;
+    analyzedNode->analyzedType = compiledMethod->getFunctionalType();
+    return analyzedNode;
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &node)
 {
     auto analyzedNode = std::make_shared<ASTNamespaceNode> (*node);
@@ -572,7 +693,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
     if(name)
     {
         if(isNameReserved(name))
-            return recordSemanticErrorInNode(analyzedNode, formatString("Namespace ({1}) overrides reserved name.",
+            return recordSemanticErrorInNode(analyzedNode, formatString("Namespace {1} overrides reserved name.",
                     {{name->printString()}}));
 
         // Find an existing namespace with the same name.

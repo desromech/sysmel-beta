@@ -1,6 +1,7 @@
 set(BootstrapEnvironment_Sources
     AmbiguousMatchingPatternsFound.cpp
     ArgumentCountError.cpp
+    ArgumentVariable.cpp
     ArithmeticError.cpp
     AnyValue.cpp
     ASTAnalysisEnvironment.cpp
@@ -115,6 +116,7 @@ set(BootstrapEnvironment_Sources
     ScriptModule.cpp
     SemanticError.cpp
     SExpression.cpp
+    SimpleType.cpp
     SpecificMethod.cpp
     StringUtilities.cpp
     SubclassResponsibility.cpp

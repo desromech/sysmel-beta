@@ -10,6 +10,8 @@
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
+
+#include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
 #include <assert.h>
 
 namespace SysmelMoebius
@@ -109,6 +111,16 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
 void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
+}
+
+void CompiledMethod::setFunctionalType(const FunctionalTypePtr &newFunctionalType)
+{
+    functionalType = newFunctionalType;
+}
+
+const TypePtr &CompiledMethod::getFunctionalType() const
+{
+    return functionalType;
 }
 
 } // End of namespace BootstrapEnvironment

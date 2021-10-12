@@ -374,6 +374,11 @@ bool AnyValue::isVariable() const
     return false;
 }
 
+bool AnyValue::isArgumentVariable() const
+{
+    return false;
+}
+
 bool AnyValue::isLocalVariable() const
 {
     return false;
