@@ -25,6 +25,10 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(AnyValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(Type);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionalType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(MethodType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ClosureType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
@@ -155,6 +159,22 @@ public:
     }
 };
 
+template<typename SuT, typename ST>
+class SubMetaTypeOf : public SuT
+{
+public:
+    typedef SuT SuperType;
+    typedef ST SelfType;
+
+    static constexpr char const __typeName__[] = "";
+    static constexpr char const __sysmelTypeName__[] = "";
+
+    std::shared_ptr<SelfType> shared_from_this()
+    {
+        return std::static_pointer_cast<SelfType> (SuperType::shared_from_this());
+    }
+};
+
 template<typename T>
 struct WrapperTypeFor;
 
@@ -193,6 +213,22 @@ AnyValuePtr getFalseConstant();
  * Retrieves the singleton compilation error value constant.
  */
 AnyValuePtr getCompilationErrorValueConstant();
+
+
+/**
+ * Retrieves or create a new function type.
+ */
+FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtrList &arguments);
+
+/**
+ * Retrieves or create a new method type.
+ */
+MethodTypePtr getOrCreateMethodType(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &arguments);
+
+/**
+ * Retrieves or create a new closure type.
+ */
+ClosureTypePtr getOrCreateClosureType(const TypePtr &resultType, const TypePtrList &arguments);
 
 /**
  * I am the base interface for any value that is passed through the interpreter.
@@ -509,6 +545,12 @@ public:
 
     // Is this a function type value?
     virtual bool isFunctionTypeValue() const;
+
+    // Is this a method type?
+    virtual bool isMethodType() const;
+
+    // Is this a method type value?
+    virtual bool isMethodTypeValue() const;
 
     // Is this a closure type?
     virtual bool isClosureType() const;

@@ -529,6 +529,16 @@ bool AnyValue::isFunctionTypeValue() const
     return false;
 }
 
+bool AnyValue::isMethodType() const
+{
+    return false;
+}
+
+bool AnyValue::isMethodTypeValue() const
+{
+    return false;
+}
+
 bool AnyValue::isClosureType() const
 {
     return false;

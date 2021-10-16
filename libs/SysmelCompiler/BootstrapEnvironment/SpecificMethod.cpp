@@ -5,6 +5,9 @@
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
+#include "sysmel/BootstrapEnvironment/MethodType.hpp"
+#include "sysmel/BootstrapEnvironment/ClosureType.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <iostream>
@@ -21,30 +24,45 @@ bool SpecificMethod::isSpecificMethod() const
     return true;
 }
 
+void SpecificMethod::setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    functionalType = getOrCreateMethodType(receiverType, resultType, argumentTypes);
+}
+
+void SpecificMethod::setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    functionalType = getOrCreateFunctionType(resultType, argumentTypes);
+}
+
+void SpecificMethod::setClosureSignature(const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    functionalType = getOrCreateClosureType(resultType, argumentTypes);
+}
+
 MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     (void)selector;
     // Make sure the argument count matches.
-    if(arguments.size() != signature.argumentTypes.size())
+    if(arguments.size() != functionalType->getArgumentCount())
         return MethodPatternMatchingResult{};
 
     PatternMatchingRank totalRank = 0;
 
     // TODO: Handle the void receiver type special case.
-    if(signature.receiverType->isVoidType())
+    if(functionalType->getReceiverType()->isVoidType())
     {
         // Ignore the receiver that we got.
     }
     else
     {
-        totalRank = signature.receiverType->rankToMatchValue(receiver);
+        totalRank = functionalType->getReceiverType()->rankToMatchValue(receiver);
         if(totalRank < 0)
             return MethodPatternMatchingResult{};
     }
 
     for(size_t i = 0; i < arguments.size(); ++i)
     {
-        auto argumentRank = signature.argumentTypes[i]->rankToMatchValue(arguments[i]);
+        auto argumentRank = functionalType->getArgument(i)->rankToMatchValue(arguments[i]);
         if(argumentRank < 0)
             return MethodPatternMatchingResult{};
         totalRank += argumentRank;
@@ -55,19 +73,19 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
 
 TypePtr SpecificMethod::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
 {
-    return argumentIndex < signature.argumentTypes.size() ? signature.argumentTypes[argumentIndex] : nullptr;
+    return argumentIndex < functionalType->getArgumentCount() ? functionalType->getArgument(argumentIndex) : nullptr;
 }
 
 MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     // Make sure the argument count matches.
-    if(node->arguments.size() != signature.argumentTypes.size())
+    if(node->arguments.size() != functionalType->getArgumentCount())
         return MethodPatternMatchingResult{};
 
     PatternMatchingRank totalRank = 0;
 
     // TODO: Handle the void receiver type special case.
-    if(signature.receiverType->isVoidType())
+    if(functionalType->getReceiverType()->isVoidType())
     {
         // Ignore the receiver that we got.
     }
@@ -77,14 +95,14 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
         if(!node->receiver)
             return MethodPatternMatchingResult{};
 
-        totalRank = semanticAnalyzer->rankForMatchingTypeWithNode(signature.receiverType, node->receiver);
+        totalRank = semanticAnalyzer->rankForMatchingTypeWithNode(functionalType->getReceiverType(), node->receiver);
         if(totalRank < 0)
             return MethodPatternMatchingResult{};
     }
 
     for(size_t i = 0; i < node->arguments.size(); ++i)
     {
-        auto expectedArgumentType = signature.argumentTypes[i];
+        auto expectedArgumentType = functionalType->getArgument(i);
         auto argumentRank = semanticAnalyzer->rankForMatchingTypeWithNode(expectedArgumentType, node->arguments[i]);
         if(argumentRank < 0)
             return MethodPatternMatchingResult{};
@@ -96,12 +114,12 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
 
 bool SpecificMethod::isMacroMethod() const
 {
-    return signature.receiverType && signature.receiverType->isSubtypeOf(MacroInvocationContext::__staticType__());
+    return functionalType->getReceiverType() && functionalType->getReceiverType()->isSubtypeOf(MacroInvocationContext::__staticType__());
 }
 
 ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    if(signature.argumentTypes.size() != node->arguments.size())
+    if(functionalType->getArgumentCount() != node->arguments.size())
         return semanticAnalyzer->recordSemanticErrorInNode(node, "Message argument count mismatch.");
 
     ASTNodePtr errorNode;
@@ -121,7 +139,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         // Analyze each one of the arguments
         for(size_t i = 0; i < node->arguments.size(); ++i)
         {
-            auto expectedType = signature.argumentTypes[i];
+            auto expectedType = functionalType->getArgument(i);
             auto argument = node->arguments[i];
             auto adaptedArgument = semanticAnalyzer->adaptNodeAsMacroArgumentOfType(argument, expectedType);
             if(adaptedArgument->isASTErrorNode())
@@ -147,7 +165,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     // Analyze the receiver.
     if(node->receiver)
     {
-        node->receiver = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(node->receiver, signature.receiverType);
+        node->receiver = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(node->receiver, functionalType->getReceiverType());
         if(node->receiver->isASTErrorNode())
             errorNode = node->receiver;
     }
@@ -156,7 +174,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     // Analyze each one of the arguments
     for(size_t i = 0; i < node->arguments.size(); ++i)
     {
-        auto expectedType = signature.argumentTypes[i];
+        auto expectedType = functionalType->getArgument(i);
         auto &argument = node->arguments[i];
         argument = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(argument, expectedType);
         if(argument->isASTErrorNode())
@@ -168,13 +186,13 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         return errorNode;
 
     node->analyzedBoundMessage = shared_from_this();
-    node->analyzedType = signature.resultType;
+    node->analyzedType = functionalType->getResultType();
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
 }
 
 ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    if(isMacroMethod() && signature.argumentTypes.empty())
+    if(isMacroMethod() && functionalType->getArgumentCount() == 0)
     {
         auto macroInvocationContext = semanticAnalyzer->makeMacroInvocationContextFor(node);
 
@@ -188,7 +206,18 @@ ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierRef
         return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(macroResultNode);
     }
 
+    // Is this a closure?
+    if(!functionalType->isClosureType())
+        return asFunctionalValue()->analyzeIdentifierReferenceNode(node, semanticAnalyzer);
+    
     return SuperType::analyzeIdentifierReferenceNode(node, semanticAnalyzer);
+}
+
+FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
+{
+    if(!functionalValue)
+        functionalValue = functionalType->makeValueWithImplementation(shared_from_this());
+    return functionalValue;
 }
 
 } // End of namespace BootstrapEnvironment

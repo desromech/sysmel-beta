@@ -15,12 +15,22 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionalTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class FunctionalType : public SubtypeOf<SimpleType, FunctionalTypeValue>
+class FunctionalType : public SubMetaTypeOf<SimpleType, FunctionalType>
 {
 public:
     virtual bool isFunctionalType() const override;
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
+    size_t getArgumentCount() const;
+    const TypePtr &getArgument(size_t index) const;
+    const TypePtr &getResultType() const;
+
+    virtual TypePtr getReceiverType() const;
+    virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation);
+    
+    virtual std::string printString() const override;
+    
+protected:
     TypePtrList arguments;
     TypePtr result;
 };

@@ -70,7 +70,7 @@ void CompiledMethod::ensureSemanticAnalysis()
     auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
     analyzer->environment = createSemanticAnalysisEnvironment();
     
-    auto analyzedBodyValue = analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->result);
+    auto analyzedBodyValue = analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->getResultType());
     assert(analyzedBodyValue->isASTNode());
 
     analyzedBodyNode = std::static_pointer_cast<ASTNode> (analyzedBodyValue);
@@ -111,16 +111,6 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
 void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
-}
-
-void CompiledMethod::setFunctionalType(const FunctionalTypePtr &newFunctionalType)
-{
-    functionalType = newFunctionalType;
-}
-
-const FunctionalTypePtr &CompiledMethod::getFunctionalType() const
-{
-    return functionalType;
 }
 
 } // End of namespace BootstrapEnvironment

@@ -5,6 +5,7 @@
 #include "SpecificMethod.hpp"
 #include "Wrappers.hpp"
 #include "ArgumentCountError.hpp"
+#include "FunctionalType.hpp"
 #include <type_traits>
 
 namespace SysmelMoebius
@@ -41,23 +42,17 @@ public:
         : functor(initialFunctor)
     {
         selector = initialSelector;
-        signature = MethodSignature{
-            wrapperTypeForReturning<ResultType> (),
-            wrapperTypeFor<ReceiverType> (),
-            {
-                wrapperTypeFor<Args> ()...
-            }
-        };
+        setMethodSignature(wrapperTypeFor<ReceiverType> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
     AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override
     {
         (void)selector;
         
-        if(signature.argumentTypes.size() != arguments.size())
+        if(functionalType->getArgumentCount() != arguments.size())
         {
             auto error = std::make_shared<ArgumentCountError> ();
-            error->expectedCount = signature.argumentTypes.size();
+            error->expectedCount = functionalType->getArgumentCount();
             error->callCount = arguments.size();
             error->signal();
         }
@@ -97,23 +92,17 @@ public:
         : memberFunctionPointer(initialMemberFunctionPointer)
     {
         selector = initialSelector;
-        signature = MethodSignature{
-            wrapperTypeForReturning<ResultType> (),
-            wrapperTypeFor<ReceiverType*> (),
-            {
-                wrapperTypeFor<Args> ()...
-            }
-        };
+        setMethodSignature(wrapperTypeFor<ReceiverType*> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
     AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override
     {
         (void)selector;
         
-        if(signature.argumentTypes.size() != arguments.size())
+        if(functionalType->getArgumentCount() != arguments.size())
         {
             auto error = std::make_shared<ArgumentCountError> ();
-            error->expectedCount = signature.argumentTypes.size();
+            error->expectedCount = functionalType->getArgumentCount();
             error->callCount = arguments.size();
             error->signal();
         }
@@ -152,23 +141,17 @@ public:
         : memberFunctionPointer(initialMemberFunctionPointer)
     {
         selector = initialSelector;
-        signature = MethodSignature{
-            wrapperTypeForReturning<ResultType> (),
-            wrapperTypeFor<const ReceiverType*> (),
-            {
-                wrapperTypeFor<Args> ()...
-            }
-        };
+        setMethodSignature(wrapperTypeFor<const ReceiverType*> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
     AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override
     {
         (void)selector;
         
-        if(signature.argumentTypes.size() != arguments.size())
+        if(functionalType->getArgumentCount() != arguments.size())
         {
             auto error = std::make_shared<ArgumentCountError> ();
-            error->expectedCount = signature.argumentTypes.size();
+            error->expectedCount = functionalType->getArgumentCount();
             error->callCount = arguments.size();
             error->signal();
         }

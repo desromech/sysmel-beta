@@ -31,6 +31,7 @@
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
@@ -185,7 +186,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAc
 AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
     // TODO: Store the closure if needed.
-    return node->analyzedProgramEntity;
+    return std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity)->asFunctionalValue();
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePtr &node)

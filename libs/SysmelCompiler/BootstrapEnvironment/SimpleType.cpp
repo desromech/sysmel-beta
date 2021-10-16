@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SimpleType.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/MetaType.hpp"
 
 
 namespace SysmelMoebius
@@ -22,6 +23,17 @@ TypePtr SimpleType::getType() const
 void SimpleType::setType(const TypePtr &theMetaType)
 {
     metaType = theMetaType;
+}
+
+void SimpleType::setSupertypeAndImplicitMetaType(const TypePtr &newSupertype)
+{
+    assert(newSupertype);
+    auto newMeta = std::make_shared<MetaType> ();
+    metaType = newMeta;
+    newMeta->setThisType(shared_from_this());
+
+    setSupertype(newSupertype);
+    newMeta->setSupertype(newSupertype->getType());
 }
 
 } // End of namespace BootstrapEnvironment

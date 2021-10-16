@@ -717,21 +717,22 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     }
 
     // Create the function type.
-    MethodSignature signature;
-    signature.receiverType = Type::getVoidType();
-    signature.argumentTypes.reserve(analyzedNode->arguments.size());
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
     for(const auto &arg : analyzedNode->arguments)
-        signature.argumentTypes.push_back(arg->analyzedType);
-    signature.resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
-
-    auto functionType = FunctionType::makeForMethodSignature(signature);
+        argumentTypes.push_back(arg->analyzedType);
+    auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
 
     // Create the compiled method if missing.
     if(!compiledMethod)
     {
         compiledMethod = std::make_shared<CompiledMethod> ();
         compiledMethod->setDeclaration(analyzedNode);
-        compiledMethod->setFunctionalType(functionType);
+        compiledMethod->setFunctionSignature(resultType, argumentTypes);
+    }
+    else
+    {
+        // TODO: Validate the signature for matching types.
     }
 
     // Set the definition body.

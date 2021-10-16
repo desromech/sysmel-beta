@@ -58,6 +58,7 @@ set(BootstrapEnvironment_Sources
     CannotOverloadPatternMatchingMethod.cpp
     CannotUnwrap.cpp
     CleanUpScope.cpp
+    ClosureType.cpp
     CompilationError.cpp
     CompilationErrors.cpp
     CompilationErrorValue.cpp
@@ -99,6 +100,7 @@ set(BootstrapEnvironment_Sources
     MetaBuilderInstanceContext.cpp
     MetaType.cpp
     Method.cpp
+    MethodType.cpp
     MethodDictionary.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp

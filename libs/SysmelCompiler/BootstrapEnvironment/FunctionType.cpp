@@ -8,17 +8,36 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<FunctionTypeValue> functionalTypeRegistration;
 
-FunctionTypePtr FunctionType::makeForMethodSignature(const MethodSignature &signature)
+FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList &arguments)
 {
     auto result = std::make_shared<FunctionType> ();
-    result->arguments = signature.argumentTypes;
-    result->result = signature.resultType;
+    result->setSupertypeAndImplicitMetaType(FunctionTypeValue::__staticType__());
+    result->arguments = arguments;
+    result->result = resultType;
     return result;
+}
+
+FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtrList &arguments)
+{
+    return FunctionType::make(resultType, arguments);
 }
 
 bool FunctionType::isFunctionType() const
 {
     return true;
+}
+
+TypePtr FunctionType::getType() const
+{
+    return metaType;
+}
+
+FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValuePtr &implementation)
+{
+    auto result = std::make_shared<FunctionTypeValue> ();
+    result->type = shared_from_this();
+    result->functionalImplementation = implementation;
+    return result;
 }
 
 bool FunctionTypeValue::isFunctionTypeValue() const

@@ -16,12 +16,15 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class FunctionType : public SubtypeOf<FunctionalType, FunctionType>
+class FunctionType : public SubMetaTypeOf<FunctionalType, FunctionType>
 {
 public:
-    virtual bool isFunctionType() const override;
+    static FunctionTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
 
-    static FunctionTypePtr makeForMethodSignature(const MethodSignature &signature);
+    virtual bool isFunctionType() const override;
+    virtual TypePtr getType() const override;
+
+    virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
 };
 
 /**

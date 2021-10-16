@@ -29,7 +29,6 @@ public:
     bool isDefinedForCompileTime() const;
 
     void setDeclaration(const ASTNodePtr &node);
-    void setFunctionalType(const FunctionalTypePtr &type);
     void setDefinition(const ASTNodePtr &node, const ASTNodePtr &bodyNode, const ASTAnalysisEnvironmentPtr &environment);
 
     virtual void ensureSemanticAnalysis() override;
@@ -40,8 +39,6 @@ public:
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
-
-    virtual const FunctionalTypePtr &getFunctionalType() const;
 
 protected:
     ASTAnalysisEnvironmentPtr createSemanticAnalysisEnvironment();
@@ -59,7 +56,6 @@ protected:
     ProgramEntityPtrList children;
 
     ArgumentVariablePtrList arguments;
-    FunctionalTypePtr functionalType;
 };
 
 } // End of namespace BootstrapEnvironment

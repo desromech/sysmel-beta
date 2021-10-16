@@ -12,7 +12,7 @@ namespace BootstrapEnvironment
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
  */
-class BootstrapType : public SubtypeOf<SimpleType, BootstrapType>
+class BootstrapType : public SubMetaTypeOf<SimpleType, BootstrapType>
 {
 public:
     static constexpr char const __typeName__[] = "BootstrapType";
@@ -24,7 +24,7 @@ public:
     
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
 
-    std::string printString() const override;
+    virtual std::string printString() const override;
 
 protected:
     const StaticBootstrapDefinedTypeMetadata *staticMetadata;

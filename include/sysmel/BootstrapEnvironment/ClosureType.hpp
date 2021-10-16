@@ -15,11 +15,14 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class ClosureType : public SubtypeOf<FunctionalType, ClosureType>
+class ClosureType : public SubMetaTypeOf<FunctionalType, ClosureType>
 {
 public:
     virtual bool isClosureType() const override;
 
+    virtual std::string printString() const override;
+
+    static ClosureTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
 };
 
 /**
@@ -29,6 +32,8 @@ class ClosureTypeValue : public SubtypeOf<FunctionalTypeValue, ClosureTypeValue>
 {
 public:
     virtual bool isClosureTypeValue() const override;
+
+    virtual TypePtr getType() const override;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -22,7 +22,10 @@ public:
     virtual TypePtr getType() const override;
     void setType(const TypePtr &theMetaType);
 
+    void setSupertypeAndImplicitMetaType(const TypePtr &newSupertype);
+
 protected:
+
     TypePtr metaType;
 };
 

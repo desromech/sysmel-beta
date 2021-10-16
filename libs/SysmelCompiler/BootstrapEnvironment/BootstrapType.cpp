@@ -9,8 +9,6 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-static BootstrapTypeRegistration<BootstrapType> bootstrapTypeTypeRegistration;
-
 bool BootstrapType::isBootstrapType() const
 {
     return true;
