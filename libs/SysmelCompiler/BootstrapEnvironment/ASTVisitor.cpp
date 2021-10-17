@@ -176,6 +176,11 @@ AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr ASTVisitor::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitFunctionalNode(const ASTFunctionalNodePtr &)
 {
     SysmelSelfSubclassResponsibility();

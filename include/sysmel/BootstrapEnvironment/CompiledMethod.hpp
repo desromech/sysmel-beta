@@ -37,10 +37,14 @@ public:
     virtual SExpression asFullDefinitionSExpression() const override;
 
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
+    virtual AnyValuePtr applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments);
+    virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
 
 protected:
+    void validateBeforeCompileTimeEvaluation();
+    
     ASTAnalysisEnvironmentPtr createSemanticAnalysisEnvironment();
 
     ASTSourcePositionPtr declarationPosition;

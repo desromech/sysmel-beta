@@ -32,6 +32,15 @@ std::string ClosureType::printString() const
     return "(" + SuperType::printString() + ") closure";
 }
 
+FunctionalTypeValuePtr ClosureType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation)
+{
+    auto result = std::make_shared<ClosureTypeValue> ();
+    result->type = shared_from_this();
+    result->functionalImplementation = implementation;
+    result->environment = environment;
+    return result;
+}
+
 bool ClosureTypeValue::isClosureTypeValue() const
 {
     return true;
@@ -40,6 +49,11 @@ bool ClosureTypeValue::isClosureTypeValue() const
 TypePtr ClosureTypeValue::getType() const
 {
     return type;
+}
+
+AnyValuePtr ClosureTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
+{
+    return functionalImplementation->applyInClosureWithArguments(environment, arguments);
 }
 
 } // End of namespace BootstrapEnvironment

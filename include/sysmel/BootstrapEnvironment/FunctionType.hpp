@@ -36,6 +36,8 @@ public:
     virtual bool isFunctionTypeValue() const override;
 
     virtual TypePtr getType() const override;
+    
+    virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
 };
 
 } // End of namespace BootstrapEnvironment

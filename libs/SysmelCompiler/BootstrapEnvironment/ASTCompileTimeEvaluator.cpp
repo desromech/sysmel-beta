@@ -22,6 +22,7 @@
 
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTFunctionalNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
@@ -29,6 +30,8 @@
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
+
+#include "sysmel/BootstrapEnvironment/ClosureType.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
@@ -80,7 +83,12 @@ AnyValuePtr ASTCompileTimeEvaluator::visitIdentifierReferenceNode(const ASTIdent
 
 AnyValuePtr ASTCompileTimeEvaluator::visitCallNode(const ASTCallNodePtr &node)
 {
-    assert(false);
+    auto calledFunction = visitNode(node->function);
+    AnyValuePtrList arguments;
+    arguments.reserve(node->arguments.size());
+    for(auto &arg : node->arguments)
+        arguments.push_back(visitNode(arg));
+    return calledFunction->applyWithArguments(arguments);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
@@ -183,10 +191,24 @@ AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAc
         : storeBinding->accessVariableAsValueWithType(node->analyzedType);
 }
 
+
+AnyValuePtr ASTCompileTimeEvaluator::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node)
+{
+    return currentCleanUpScope->lookupStoreBindingRecursively(node->bindingName);
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
-    // TODO: Store the closure if needed.
-    return std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity)->asFunctionalValue();
+    auto method = std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity);
+    if(node->analyzedType->isClosureType())
+    {
+        auto closureType = std::static_pointer_cast<ClosureType> (node->analyzedType);
+        auto closure = closureType->makeValueWithEnvironmentAndImplementation(currentCleanUpScope, method);
+        currentCleanUpScope->setStoreBinding(method, closure);
+        return closure;
+    }
+
+    return method->asFunctionalValue();
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePtr &node)

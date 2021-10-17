@@ -19,6 +19,7 @@ set(BootstrapEnvironment_Sources
     ASTIdentifierReferenceNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
+    ASTLocalImmutableAccessNode.cpp
     ASTLocalVariableNode.cpp
     ASTMakeAssociationNode.cpp
     ASTMakeDictionaryNode.cpp

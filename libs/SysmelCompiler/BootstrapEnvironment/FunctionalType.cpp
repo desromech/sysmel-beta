@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <sstream>
@@ -60,12 +61,17 @@ std::string FunctionalType::printString() const
     return out.str();
 }
 
-ASTNodePtr FunctionalType::analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+ASTNodePtr FunctionalType::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    assert("TODO: analyzeCallNode" && false);
+    return semanticAnalyzer->analyzeCallNodeWithFunctionalType(node, shared_from_this());
 }
 
-FunctionalTypeValuePtr FunctionalType::makeValueWithImplementation(const AnyValuePtr &implementation)
+FunctionalTypeValuePtr FunctionalType::makeValueWithImplementation(const AnyValuePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+FunctionalTypeValuePtr FunctionalType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &, const AnyValuePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

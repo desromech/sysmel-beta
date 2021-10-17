@@ -384,6 +384,9 @@ public:
     /// Is this object an AST field variable node?
     virtual bool isASTFieldVariableNode() const;
 
+    /// Is this object an AST local immutable access node?
+    virtual bool isASTLocalImmutableAccessNode() const;
+
     /// Is this object an AST variable access node?
     virtual bool isASTVariableAccessNode() const;
 
@@ -650,6 +653,12 @@ public:
 
     /// Evaluates the requested message with the given arguments.
     virtual AnyValuePtr performWithArguments(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments);
+
+    /// Applies the receiver as a function with the given arguments.
+    virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments);
+
+    /// Applies the receiver as a function in the given closure with the arguments.
+    virtual AnyValuePtr applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments);
 
     // Access the value box (e.g. variable binding slot) as a reference with the specified type.
     virtual AnyValuePtr accessVariableAsReferenceWithType(const TypePtr &referenceType);

@@ -27,6 +27,7 @@ public:
 
     virtual TypePtr getReceiverType() const;
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation);
+    virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation);
     
     virtual std::string printString() const override;
     

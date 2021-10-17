@@ -259,6 +259,11 @@ bool AnyValue::isASTFieldVariableNode() const
     return false;
 }
 
+bool AnyValue::isASTLocalImmutableAccessNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTVariableAccessNode() const
 {
     return false;
@@ -702,6 +707,19 @@ AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std:
 {
     (void)selector;
     (void)receiver;
+    (void)arguments;
+    signalNew<CannotEvaluateMessage> ();
+}
+
+AnyValuePtr AnyValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
+{
+    (void)arguments;
+    signalNew<CannotEvaluateMessage> ();
+}
+
+AnyValuePtr AnyValue::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
+{
+    (void)closure;
     (void)arguments;
     signalNew<CannotEvaluateMessage> ();
 }

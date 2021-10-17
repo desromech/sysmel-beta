@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
@@ -207,14 +208,23 @@ ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierRef
     }
 
     // Is this a closure?
-    if(!functionalType->isClosureType())
-        return asFunctionalValue()->analyzeIdentifierReferenceNode(node, semanticAnalyzer);
+    if(functionalType->isClosureType())
+    {
+        auto result = std::make_shared<ASTLocalImmutableAccessNode> ();
+        result->sourcePosition = node->sourcePosition;
+        result->bindingName = shared_from_this();
+        result->analyzedType = functionalType;
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
+    }
     
-    return SuperType::analyzeIdentifierReferenceNode(node, semanticAnalyzer);
+    return asFunctionalValue()->analyzeIdentifierReferenceNode(node, semanticAnalyzer);
 }
 
 FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
 {
+    if(functionalType->isClosureType())
+        return nullptr;
+
     if(!functionalValue)
         functionalValue = functionalType->makeValueWithImplementation(shared_from_this());
     return functionalValue;

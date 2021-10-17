@@ -50,5 +50,10 @@ TypePtr FunctionTypeValue::getType() const
     return type;
 }
 
+AnyValuePtr FunctionTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
+{
+    return functionalImplementation->applyWithArguments(arguments);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

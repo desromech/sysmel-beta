@@ -42,7 +42,6 @@
 #include "sysmel/BootstrapEnvironment/ResultTypeInferenceSlot.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
-#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
@@ -337,7 +336,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(co
         return analyzedNode->type;
 
     // Extract the argument type.
-    if(analyzedNode->type->isASTLiteralTypeNode())
+    if(!analyzedNode->type->isASTLiteralTypeNode())
         return recordSemanticErrorInNode(analyzedNode, formatString("Failed to define a type for argument {0}.", {{validAnyValue(name)->printString()}}));
 
     analyzedNode->analyzedType = unwrapTypeFromLiteralValue(analyzedNode->type);
@@ -387,6 +386,32 @@ AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
     auto analyzedNode = std::make_shared<ASTCallNode> (*node);
     analyzedNode->function = analyzeNodeIfNeededWithAutoType(analyzedNode->function);
     return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, shared_from_this());
+}
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType)
+{
+    if(node->arguments.size() != functionType->getArgumentCount())
+    {
+        // Analyze the arguments for discovering more error.
+        for(auto &arg : node->arguments)
+            analyzeNodeIfNeededWithAutoType(arg);
+
+        return recordSemanticErrorInNode(node, "Call argument count mismatch.");
+    }
+
+    // Analyze the arguments
+    for(size_t i = 0; i < node->arguments.size(); ++i)
+    {
+        auto &arg = node->arguments[i];
+        arg = analyzeNodeIfNeededWithExpectedType(arg, functionType->getArgument(i));
+    }
+
+    // Make sure there is no receiver type.
+    if(!functionType->getReceiverType()->isVoidType())
+        return recordSemanticErrorInNode(node, "Called method requires a receiver.");
+
+    node->analyzedType = functionType->getResultType();
+    return node;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
@@ -728,7 +753,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     {
         compiledMethod = std::make_shared<CompiledMethod> ();
         compiledMethod->setDeclaration(analyzedNode);
-        compiledMethod->setFunctionSignature(resultType, argumentTypes);
+
+        // If this is a local definition, then define it as a closure.
+        if(isLocalDefinition)
+            compiledMethod->setClosureSignature(resultType, argumentTypes);
+        else
+            compiledMethod->setFunctionSignature(resultType, argumentTypes);
     }
     else
     {

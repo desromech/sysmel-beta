@@ -93,18 +93,39 @@ SExpression CompiledMethod::asFullDefinitionSExpression() const
     return SExpressionVoid{};
 }
 
+void CompiledMethod::validateBeforeCompileTimeEvaluation()
+{
+    if(!isDefined())
+        signalNew<CannotEvaluateUndefinedMessage> ();
+    if(!isDefinedForCompileTime())
+        signalNew<CannotEvaluateMessageInCompileTime> ();
+    ensureSemanticAnalysis();
+}
+
 AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     (void)selector;
     (void)arguments;
     (void)receiver;
     
-    if(!isDefined())
-        signalNew<CannotEvaluateUndefinedMessage> ();
-    if(!isDefinedForCompileTime())
-        signalNew<CannotEvaluateMessageInCompileTime> ();
-    ensureSemanticAnalysis();
+    validateBeforeCompileTimeEvaluation();
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+}
 
+AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
+{
+    (void)closure;
+    (void)arguments;
+    
+    validateBeforeCompileTimeEvaluation();
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+}
+
+AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
+{
+    (void)arguments;
+
+    validateBeforeCompileTimeEvaluation();
     return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
 }
 

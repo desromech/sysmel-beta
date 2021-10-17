@@ -23,6 +23,8 @@ public:
     virtual std::string printString() const override;
 
     static ClosureTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
+    
+    virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation);
 };
 
 /**
@@ -34,6 +36,10 @@ public:
     virtual bool isClosureTypeValue() const override;
 
     virtual TypePtr getType() const override;
+
+    virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
+
+    AnyValuePtr environment;
 };
 
 } // End of namespace BootstrapEnvironment
