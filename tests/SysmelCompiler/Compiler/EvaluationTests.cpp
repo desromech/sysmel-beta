@@ -118,10 +118,10 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
-                CHECK(evaluateString("function f() => LiteralInteger := 42")->isMethod());
+                CHECK(evaluateString("function f() => LiteralInteger := 42")->isClosureTypeValue());
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("function f() => LiteralInteger := 42. f()."));
 
-                CHECK(evaluateString("function f() := 42")->isMethod());
+                CHECK(evaluateString("function f() := 42")->isClosureTypeValue());
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("function f() := 42. f()."));
             });
         });
@@ -131,11 +131,11 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
-                CHECK(evaluateString("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isMethod());
-                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1. f(42)."));
+                CHECK(evaluateString("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isClosureTypeValue());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1. plusOne(42)."));
 
-                CHECK(evaluateString("function plusOne(x: LiteralInteger) := x + 1")->isMethod());
-                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) := x + 1. f(42)."));
+                CHECK(evaluateString("function plusOne(x: LiteralInteger) := x + 1")->isClosureTypeValue());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) := x + 1. plusOne(42)."));
             });
         });
     }

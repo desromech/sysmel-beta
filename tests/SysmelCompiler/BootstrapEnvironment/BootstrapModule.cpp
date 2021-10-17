@@ -77,9 +77,6 @@ SUITE(BootstrapModule)
 
             CHECK(module->getBootstrapDefinedTypeNamed("Type"));
             CHECK_EQUAL(module->getBootstrapDefinedTypeNamed("Type"), Type::__staticType__());
-
-            CHECK(module->getBootstrapDefinedTypeNamed("BootstrapType"));
-            CHECK_EQUAL(module->getBootstrapDefinedTypeNamed("BootstrapType"), BootstrapType::__staticType__());
         });
     }
 }
