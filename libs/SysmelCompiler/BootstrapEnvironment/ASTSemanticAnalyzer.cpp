@@ -759,6 +759,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
             compiledMethod->setClosureSignature(resultType, argumentTypes);
         else
             compiledMethod->setFunctionSignature(resultType, argumentTypes);
+
+        // Set the arguments declaration node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
     else
     {
@@ -768,6 +772,11 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     // Set the definition body.
     if(analyzedNode->body)
     {
+        // Set the arguments definition node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+
+        // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
     }
 
@@ -784,6 +793,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
             ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
             ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, compiledMethod);
         }
+    }
+
+    // If this is a local definition, analyze in place.
+    if(isLocalDefinition)
+    {
+        auto analyzedBody = compiledMethod->analyzeDefinitionWith(shared_from_this());
+        if(analyzedBody->isASTErrorNode())
+            return analyzedBody;
     }
 
     analyzedNode->analyzedProgramEntity = compiledMethod;

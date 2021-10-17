@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
+
 /**
  * I am a variable program entity.
  */
@@ -18,6 +20,10 @@ public:
     static constexpr char const __typeName__[] = "ArgumentVariable";
 
     virtual bool isArgumentVariable() const override;
+
+    void setType(const TypePtr &type);
+    void setDeclarationNode(const ASTArgumentDefinitionNodePtr &node);
+    void setDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

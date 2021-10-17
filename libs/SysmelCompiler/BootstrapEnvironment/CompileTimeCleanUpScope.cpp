@@ -20,6 +20,11 @@ CompileTimeCleanUpScopePtr CompileTimeCleanUpScope::makeWithParent(CompileTimeCl
     return result;
 }
 
+bool CompileTimeCleanUpScope::isCompileTimeCleanUpScope() const
+{
+    return true;
+}
+
 void CompileTimeCleanUpScope::setStoreBinding(const AnyValuePtr &key, const AnyValuePtr &binding)
 {
     localStore[key] = binding;

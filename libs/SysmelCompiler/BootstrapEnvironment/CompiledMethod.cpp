@@ -10,8 +10,11 @@
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
+#include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
+#include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
+#include "sysmel/BootstrapEnvironment/ArgumentCountError.hpp"
 #include <assert.h>
 
 namespace SysmelMoebius
@@ -56,9 +59,70 @@ void CompiledMethod::setDefinition(const ASTNodePtr &node, const ASTNodePtr &bod
 ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
 {
     auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
-    result->lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
+    auto lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
+    result->lexicalScope = lexicalScope;
     result->localDefinitionsOwner = shared_from_this();
+
+    // Add the arguments to the lexical scope.
+    for(auto &arg : arguments)
+    {
+        if(arg->getName())
+            lexicalScope->setSymbolBinding(arg->getName(), arg);
+    }
+
     return result;
+}
+
+void CompiledMethod::setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    SuperType::setMethodSignature(receiverType, resultType, argumentTypes);
+    createArgumentVariablesWithTypes(argumentTypes);
+}
+
+void CompiledMethod::setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    SuperType::setFunctionSignature(resultType, argumentTypes);
+    createArgumentVariablesWithTypes(argumentTypes);
+}
+
+void CompiledMethod::setClosureSignature(const TypePtr &resultType, const TypePtrList &argumentTypes)
+{
+    SuperType::setClosureSignature(resultType, argumentTypes);
+    createArgumentVariablesWithTypes(argumentTypes);
+}
+
+void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumentTypes)
+{
+    arguments.reserve(argumentTypes.size());
+    for(const auto &type : argumentTypes)
+    {
+        auto argument = std::make_shared<ArgumentVariable> ();
+        recordChildProgramEntityDefinition(argument);
+        argument->setType(type);
+        arguments.push_back(argument);
+    }
+}
+
+void CompiledMethod::setArgumentDeclarationNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
+{
+    assert(index < arguments.size());
+    arguments[index]->setDeclarationNode(argumentNode);
+}
+
+void CompiledMethod::setArgumentDefinitionNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
+{
+    assert(index < arguments.size());
+    arguments[index]->setDefinitionNode(argumentNode);
+}
+
+ASTNodePtr CompiledMethod::analyzeDefinitionWith(const ASTSemanticAnalyzerPtr &analyzer)
+{
+    if(analyzedBodyNode)
+        return analyzedBodyNode;
+
+    return analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(createSemanticAnalysisEnvironment(), [&]() {
+        return analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->getResultType());
+    });
 }
 
 void CompiledMethod::ensureSemanticAnalysis()
@@ -66,15 +130,8 @@ void CompiledMethod::ensureSemanticAnalysis()
     if(analyzedBodyNode || !isDefined())
         return;
 
-    // FIXME: Use the correct environment here.
     auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
-    analyzer->environment = createSemanticAnalysisEnvironment();
-    
-    auto analyzedBodyValue = analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->getResultType());
-    assert(analyzedBodyValue->isASTNode());
-
-    analyzedBodyNode = std::static_pointer_cast<ASTNode> (analyzedBodyValue);
-
+    analyzeDefinitionWith(analyzer);
     auto compilationError = analyzer->makeCompilationError();
     if(compilationError)
         compilationError->signal();
@@ -104,29 +161,57 @@ void CompiledMethod::validateBeforeCompileTimeEvaluation()
 
 AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
+    assert(!functionalType->isClosureType());
     (void)selector;
-    (void)arguments;
-    (void)receiver;
     
     validateBeforeCompileTimeEvaluation();
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+
+    auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
+    setArgumentsInEvaluationEnvironment(receiver, arguments, evaluationEnvironment);
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
 AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
 {
-    (void)closure;
-    (void)arguments;
-    
+    assert(functionalType->isClosureType());
+    assert(closure->isCompileTimeCleanUpScope());
     validateBeforeCompileTimeEvaluation();
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+
+    auto evaluationEnvironment = CompileTimeCleanUpScope::makeWithParent(std::static_pointer_cast<CompileTimeCleanUpScope> (closure));
+    setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
+}
+
+void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &receiver, const AnyValuePtrList &argumentValues, const CompileTimeCleanUpScopePtr &environment)
+{
+    auto expectedReceiverType = functionalType->getReceiverType();
+    if(!expectedReceiverType->isVoidType())
+    {
+        (void)receiver;
+        assert("TODO: set compile time evaluation receiver" && false);
+    }
+
+    // Check the argument count.
+    if(arguments.size() != argumentValues.size())
+    {
+        auto error = std::make_shared<ArgumentCountError> ();
+        error->expectedCount = functionalType->getArgumentCount();
+        error->callCount = arguments.size();
+        error->signal();
+    }
+
+    // Set the different arguments.
+    for(size_t i = 0; i < arguments.size(); ++i)
+        environment->setStoreBinding(arguments[i], argumentValues[i]);
 }
 
 AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
 {
-    (void)arguments;
-
+    assert(!functionalType->isClosureType());
     validateBeforeCompileTimeEvaluation();
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(analyzedBodyNode);
+    auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
+    setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
+    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
 void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)

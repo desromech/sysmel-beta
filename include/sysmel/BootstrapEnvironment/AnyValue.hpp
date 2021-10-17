@@ -408,6 +408,9 @@ public:
     /// Is this object clean-up scope?
     virtual bool isCleanUpScope() const;
 
+    /// Is this object a compile time clean-up scope?
+    virtual bool isCompileTimeCleanUpScope() const;
+
     /// Is this object a program entity?
     virtual bool isProgramEntity() const;
 

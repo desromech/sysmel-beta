@@ -26,9 +26,9 @@ public:
         return functionalType;
     }
 
-    void setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes);
-    void setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
-    void setClosureSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
+    virtual void setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes);
+    virtual void setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
+    virtual void setClosureSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
 
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex);
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;

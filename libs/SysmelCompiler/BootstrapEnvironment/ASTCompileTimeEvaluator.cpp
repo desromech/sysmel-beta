@@ -63,10 +63,10 @@ AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScope
     return visitNodeInNewCleanUpScope(node->body);
 }
 
-AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const ASTNodePtr &node)
+AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const CompileTimeCleanUpScopePtr &initialEnvironment, const ASTNodePtr &node)
 {
     assert(!currentCleanUpScope);
-    currentCleanUpScope = CompileTimeCleanUpScope::makeEmpty();
+    currentCleanUpScope = initialEnvironment;
 
     return visitNode(node);
 }

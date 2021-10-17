@@ -24,6 +24,8 @@ public:
     static CompileTimeCleanUpScopePtr makeEmpty();
     static CompileTimeCleanUpScopePtr makeWithParent(CompileTimeCleanUpScopePtr newParentScope);
 
+    virtual bool isCompileTimeCleanUpScope() const override;
+
     void setStoreBinding(const AnyValuePtr &key, const AnyValuePtr &binding);
     AnyValuePtr lookupStoreBindingRecursively(const AnyValuePtr &key);
 

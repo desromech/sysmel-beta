@@ -299,6 +299,11 @@ bool AnyValue::isCleanUpScope() const
     return false;
 }
 
+bool AnyValue::isCompileTimeCleanUpScope() const
+{
+    return false;
+}
+
 bool AnyValue::isProgramEntity() const
 {
     return false;
