@@ -554,6 +554,46 @@ bool AnyValue::isClosureTypeValue() const
     return false;
 }
 
+bool AnyValue::isPrimitiveTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveTensorTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveScalarTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveBooleanTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveNumberTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveIntegerTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveCharacterTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveFloatTypeValue() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

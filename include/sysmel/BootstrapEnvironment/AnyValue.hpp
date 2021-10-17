@@ -561,6 +561,30 @@ public:
     // Is this a closure type value?
     virtual bool isClosureTypeValue() const;
 
+    // Is this a primitive value?
+    virtual bool isPrimitiveTypeValue() const;
+
+    // Is this a primitive tensor type?
+    virtual bool isPrimitiveTensorTypeValue() const;
+
+    // Is this a primitive scalar type?
+    virtual bool isPrimitiveScalarTypeValue() const;
+
+    // Is this a primitive boolean type?
+    virtual bool isPrimitiveBooleanTypeValue() const;
+
+    // Is this a primitive number type?
+    virtual bool isPrimitiveNumberTypeValue() const;
+
+    // Is this a primitive integer type?
+    virtual bool isPrimitiveIntegerTypeValue() const;
+
+    // Is this a primitive integer type?
+    virtual bool isPrimitiveCharacterTypeValue() const;
+
+    // Is this a primitive integer type?
+    virtual bool isPrimitiveFloatTypeValue() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 

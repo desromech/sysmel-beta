@@ -113,6 +113,14 @@ set(BootstrapEnvironment_Sources
     ParseError.cpp
     PatternMatchingMethod.cpp
     Pragma.cpp
+    PrimitiveBooleanType.cpp
+    PrimitiveCharacterType.cpp
+    PrimitiveFloatType.cpp
+    PrimitiveIntegerType.cpp
+    PrimitiveNumberType.cpp
+    PrimitiveScalarType.cpp
+    PrimitiveTensorType.cpp
+    PrimitiveType.cpp
     ProgramEntity.cpp
     ProgramEntityScope.cpp
     ResultTypeInferenceSlot.cpp
