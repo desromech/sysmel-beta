@@ -58,6 +58,7 @@ set(BootstrapEnvironment_Sources
     CannotEvaluateUndefinedMessage.cpp
     CannotOverloadPatternMatchingMethod.cpp
     CannotUnwrap.cpp
+    ClassMetaBuilder.cpp
     CleanUpScope.cpp
     ClosureType.cpp
     CompilationError.cpp
@@ -69,6 +70,7 @@ set(BootstrapEnvironment_Sources
     CompilerObject.cpp
     DivisionByZeroError.cpp
     DomainError.cpp
+    EnumMetaBuilder.cpp
     Error.cpp
     Exception.cpp
     Fraction.cpp
@@ -137,11 +139,14 @@ set(BootstrapEnvironment_Sources
     SimpleType.cpp
     SpecificMethod.cpp
     StringUtilities.cpp
+    StructMetaBuilder.cpp
     SubclassResponsibility.cpp
     ResultTypeInferenceSlot.cpp
     Type.cpp
+    TypeMetaBuilder.cpp
     Undefined.cpp
     UnsupportedOperation.cpp
+    UnionMetaBuilder.cpp
     ValueBox.cpp
     Variable.cpp
     VariableMetaBuilder.cpp
