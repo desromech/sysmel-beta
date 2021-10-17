@@ -17,6 +17,7 @@ enum class ProgramEntityVisibility : uint8_t
     Default = 0,
     Private,
     Public,
+    Protected,
     Internal,
     LexicalScope,
 };

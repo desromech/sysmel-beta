@@ -31,6 +31,14 @@ public:
     virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context);
 
+    virtual ASTNodePtr delegateToMetaBuilderAt(const MetaBuilderPtr &delegatedMetaBuilder, const ASTSourcePositionPtr &sourcePosition);
+
+    template<typename T>
+    ASTNodePtr delegateToMetaBuilderAt(const ASTSourcePositionPtr &sourcePosition)
+    {
+        return delegateToMetaBuilderAt(std::make_shared<T> (), sourcePosition);
+    }
+
 protected:
     virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual ASTNodePtr concretizeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

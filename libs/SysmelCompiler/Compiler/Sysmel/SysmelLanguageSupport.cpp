@@ -42,6 +42,11 @@
 #include "sysmel/BootstrapEnvironment/LetMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/NamespaceMetaBuilder.hpp"
 
+#include "sysmel/BootstrapEnvironment/InternalMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/PrivateMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ProtectedMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/PublicMetaBuilder.hpp"
+
 #include <fstream>
 #include <iostream>
 
@@ -446,6 +451,11 @@ void SysmelLanguageSupport::initialize()
         topLevelScope->setSymbolBinding(internSymbol("let"), metaBuilderFactoryFor<LetMetaBuilder> ("let"));
         topLevelScope->setSymbolBinding(internSymbol("function"), metaBuilderFactoryFor<FunctionMetaBuilder> ("function"));
         topLevelScope->setSymbolBinding(internSymbol("namespace"), metaBuilderFactoryFor<NamespaceMetaBuilder> ("namespace"));
+
+        topLevelScope->setSymbolBinding(internSymbol("internal"), metaBuilderFactoryFor<InternalMetaBuilder> ("internal"));
+        topLevelScope->setSymbolBinding(internSymbol("private"), metaBuilderFactoryFor<PrivateMetaBuilder> ("private"));
+        topLevelScope->setSymbolBinding(internSymbol("protected"), metaBuilderFactoryFor<ProtectedMetaBuilder> ("protected"));
+        topLevelScope->setSymbolBinding(internSymbol("public"), metaBuilderFactoryFor<PublicMetaBuilder> ("public"));
     }
 }
 

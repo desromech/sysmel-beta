@@ -752,6 +752,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     if(!compiledMethod)
     {
         compiledMethod = std::make_shared<CompiledMethod> ();
+        compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
 
         // If this is a local definition, then define it as a closure.

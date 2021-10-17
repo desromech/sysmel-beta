@@ -127,6 +127,19 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(PublicNullaryFunction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function f() => LiteralInteger := 42")->isFunctionTypeValue());
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("f()."));
+
+                CHECK(evaluateString("public function f2() := 42")->isFunctionTypeValue());
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("f()."));
+            });
+        });
+    }
+
     TEST(SingleArgumentFunction)
     {
         RuntimeContext::create()->activeDuring([&](){
@@ -136,6 +149,19 @@ SUITE(SysmelCompileTimeEvaluation)
 
                 CHECK(evaluateString("function plusOne(x: LiteralInteger) := x + 1")->isClosureTypeValue());
                 CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) := x + 1. plusOne(42)."));
+            });
+        });
+    }
+
+    TEST(PublicSingleArgumentFunction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isFunctionTypeValue());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("plusOne(42)."));
+
+                CHECK(evaluateString("public function plusOne2(x: LiteralInteger) := x + 1")->isFunctionTypeValue());
+                CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("plusOne2(42)."));
             });
         });
     }

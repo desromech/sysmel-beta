@@ -76,6 +76,7 @@ set(BootstrapEnvironment_Sources
     FunctionalType.cpp
     FunctionMetaBuilder.cpp
     IdentifierLookupScope.cpp
+    InternalMetaBuilder.cpp
     LanguageSupport.cpp
     LargeInteger.cpp
     LexicalScope.cpp
@@ -121,8 +122,12 @@ set(BootstrapEnvironment_Sources
     PrimitiveScalarType.cpp
     PrimitiveTensorType.cpp
     PrimitiveType.cpp
+    PrivateMetaBuilder.cpp
     ProgramEntity.cpp
     ProgramEntityScope.cpp
+    ProgramModule.cpp
+    ProtectedMetaBuilder.cpp
+    PublicMetaBuilder.cpp
     ResultTypeInferenceSlot.cpp
     ReturnType.cpp
     RuntimeContext.cpp
@@ -133,7 +138,6 @@ set(BootstrapEnvironment_Sources
     SpecificMethod.cpp
     StringUtilities.cpp
     SubclassResponsibility.cpp
-    ProgramModule.cpp
     ResultTypeInferenceSlot.cpp
     Type.cpp
     Undefined.cpp
@@ -141,6 +145,7 @@ set(BootstrapEnvironment_Sources
     ValueBox.cpp
     Variable.cpp
     VariableMetaBuilder.cpp
+    VisibilityMetaBuilder.cpp
     Void.cpp
     Wrappers.cpp
 )

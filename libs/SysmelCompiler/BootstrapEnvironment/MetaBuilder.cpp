@@ -23,6 +23,15 @@ void MetaBuilder::setMetaBuilderInstanceContext(const MetaBuilderInstanceContext
     instanceContext = context;
 }
 
+ASTNodePtr MetaBuilder::delegateToMetaBuilderAt(const MetaBuilderPtr &delegatedMetaBuilder, const ASTSourcePositionPtr &sourcePosition)
+{
+    delegatedMetaBuilder->setMetaBuilderInstanceContext(instanceContext);
+    
+    auto resultNode = delegatedMetaBuilder->asASTNodeRequiredInPosition(sourcePosition);
+    resultNode->analyzedType = delegatedMetaBuilder->getType();
+    return resultNode;
+}
+
 ASTNodePtr MetaBuilder::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return concretizeCallNode(node, semanticAnalyzer);

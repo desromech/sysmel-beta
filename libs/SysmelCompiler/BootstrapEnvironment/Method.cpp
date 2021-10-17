@@ -19,6 +19,11 @@ AnyValuePtr Method::getName() const
     return name;
 }
 
+void Method::setName(const AnyValuePtr &newName)
+{
+    name = newName;
+}
+
 TypePtr Method::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
 {
     (void)argumentIndex;
