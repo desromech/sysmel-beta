@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/Exception.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 
 namespace SysmelMoebius
 {
@@ -47,6 +48,8 @@ const char* ExceptionWrapper::what() const noexcept
 {
     if(!hasRetrievedDescription)
     {
+        if(!RuntimeContext::getActive())
+            return "Exception propagated beyond its runtime context scope.";
         description = exception->getDescription();
         hasRetrievedDescription = true;
     }
