@@ -22,6 +22,8 @@ public:
     virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
 protected:
+    virtual ASTNodePtr concretizeMetaBuilder() override;
+
     ASTNodePtr valueTypeNode;
     ASTNodePtr valuesNode;
 };

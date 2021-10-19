@@ -226,4 +226,18 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    /*TEST(Enum)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto enumDeclaration = evaluateString("public enum TestEnum.");
+                CHECK(enumDeclaration->isType());
+                
+                auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{}; definition: {}.");
+                CHECK(enumDefinition->isType());
+                CHECK_EQUAL(enumDeclaration, enumDefinition);
+            });
+        });
+    }*/
 }

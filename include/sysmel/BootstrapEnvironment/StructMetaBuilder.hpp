@@ -19,8 +19,8 @@ class StructMetaBuilder : public SubtypeOf<TypeMetaBuilder, StructMetaBuilder>
 public:
     static constexpr char const __typeName__[] = "StructMetaBuilder";
 
-//protected:
-//    virtual ASTNodePtr concretizeMetaBuilder() override;
+protected:
+    virtual ASTNodePtr concretizeMetaBuilder() override;
 };
 
 } // End of namespace BootstrapEnvironment

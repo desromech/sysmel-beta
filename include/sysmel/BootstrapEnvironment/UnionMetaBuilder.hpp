@@ -19,8 +19,8 @@ class UnionMetaBuilder : public SubtypeOf<TypeMetaBuilder, UnionMetaBuilder>
 public:
     static constexpr char const __typeName__[] = "UnionMetaBuilder";
 
-//protected:
-//    virtual ASTNodePtr concretizeMetaBuilder() override;
+protected:
+    virtual ASTNodePtr concretizeMetaBuilder() override;
 };
 
 } // End of namespace BootstrapEnvironment

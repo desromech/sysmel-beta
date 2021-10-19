@@ -8,11 +8,13 @@ set(BootstrapEnvironment_Sources
     ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
     ASTCallNode.cpp
+    ASTClassNode.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
     ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
     ASTEmptySourcePosition.cpp
+    ASTEnumNode.cpp
     ASTErrorNode.cpp
     ASTFunctionalNode.cpp
     ASTFunctionNode.cpp
@@ -45,6 +47,9 @@ set(BootstrapEnvironment_Sources
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
+    ASTStructNode.cpp
+    ASTTypeNode.cpp
+    ASTUnionNode.cpp
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVisitor.cpp

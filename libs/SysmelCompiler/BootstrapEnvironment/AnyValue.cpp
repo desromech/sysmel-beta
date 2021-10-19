@@ -289,6 +289,31 @@ bool AnyValue::isASTNamespaceNode() const
     return false;
 }
 
+bool AnyValue::isASTTypeNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTStructNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTUnionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTClassNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTEnumNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;

@@ -402,6 +402,21 @@ public:
     /// Is this object an AST namespace node?
     virtual bool isASTNamespaceNode() const;
 
+    /// Is this object an AST type node?
+    virtual bool isASTTypeNode() const;
+
+    /// Is this object an AST struct node?
+    virtual bool isASTStructNode() const;
+
+    /// Is this object an AST union node?
+    virtual bool isASTUnionNode() const;
+
+    /// Is this object an AST class node?
+    virtual bool isASTClassNode() const;
+
+    /// Is this object an AST enum node?
+    virtual bool isASTEnumNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

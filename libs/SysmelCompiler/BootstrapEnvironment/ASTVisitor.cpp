@@ -10,6 +10,11 @@
 #include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTEnumNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTStructNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -198,6 +203,31 @@ AnyValuePtr ASTVisitor::visitMethodNode(const ASTMethodNodePtr &node)
 AnyValuePtr ASTVisitor::visitNamespaceNode(const ASTNamespaceNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitTypeNode(const ASTTypeNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitEnumNode(const ASTEnumNodePtr &node)
+{
+    return visitTypeNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitStructNode(const ASTStructNodePtr &node)
+{
+    return visitTypeNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitUnionNode(const ASTUnionNodePtr &node)
+{
+    return visitTypeNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitClassNode(const ASTClassNodePtr &node)
+{
+    return visitTypeNode(node);
 }
 
 } // End of namespace BootstrapEnvironment

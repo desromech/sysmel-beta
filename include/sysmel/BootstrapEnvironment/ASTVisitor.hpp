@@ -57,6 +57,12 @@ public:
     virtual AnyValuePtr visitMethodNode(const ASTMethodNodePtr &node);
 
     virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node);
+
+    virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node);
+    virtual AnyValuePtr visitEnumNode(const ASTEnumNodePtr &node);
+    virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node);
+    virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node);
+    virtual AnyValuePtr visitClassNode(const ASTClassNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

@@ -49,7 +49,7 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
         else if(selector == "class")
             return delegateToMetaBuilderAt<ClassMetaBuilder> (node->sourcePosition);
 
-        // Slots
+        // Variables
     }
 
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);

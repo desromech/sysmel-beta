@@ -19,8 +19,12 @@ class ClassMetaBuilder : public SubtypeOf<TypeMetaBuilder, ClassMetaBuilder>
 public:
     static constexpr char const __typeName__[] = "ClassMetaBuilder";
 
-//protected:
-//    virtual ASTNodePtr concretizeMetaBuilder() override;
+    virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+protected:
+    virtual ASTNodePtr concretizeMetaBuilder() override;
+
+    ASTNodePtr superclassNode;
 };
 
 } // End of namespace BootstrapEnvironment

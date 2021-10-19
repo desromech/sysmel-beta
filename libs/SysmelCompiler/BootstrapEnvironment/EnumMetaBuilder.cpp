@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/EnumMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTEnumNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -28,6 +29,18 @@ ASTNodePtr EnumMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
 }
 
+ASTNodePtr EnumMetaBuilder::concretizeMetaBuilder()
+{
+    auto result = std::make_shared<ASTEnumNode> ();
+    result->sourcePosition = instanceContext->concreteSourcePosition();
+    result->visibility = instanceContext->programEntityVisibility;
+
+    result->name = nameNode;
+    result->body = bodyNode;
+    result->valueType = valueTypeNode;
+    result->values = valuesNode;
+    return result;
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
