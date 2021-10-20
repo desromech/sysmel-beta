@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
+
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
 /**
@@ -36,6 +38,8 @@ public:
     static MethodCategories __instanceMethods__();
 
     virtual bool isType() const override;
+    virtual std::string printString() const override;
+    virtual void setName(const AnyValuePtr &newName);
     virtual AnyValuePtr getName() const override;
 
     static TypePtr getAnyValueType();
@@ -146,18 +150,23 @@ public:
     /// This methods iterates through all the direct subtypes and myself.
     void withAllSubtypesDo(const TypeIterationBlock &aBlock);
 
+    /// This method enqueue the analysis of a body block.
+    virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
+
 protected:
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
     virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector);
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector);
 
     AnyValuePtr name;
-    TypePtr supertype;
+    mutable TypePtr supertype;
     TypePtrList subtypes;
 
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;
+
+    DeferredCompileTimeCodeFragmentPtrList pendingBodyBlockCodeFragments;
 };
 
 } // End of namespace BootstrapEnvironment

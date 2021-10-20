@@ -61,6 +61,18 @@ AnyValuePtr Type::getName() const
     return name;
 }
 
+void Type::setName(const AnyValuePtr &newName)
+{
+    name = newName;
+}
+
+std::string Type::printString() const
+{
+    if(name)
+        return name->asString();
+    return SuperType::printString();
+}
+
 TypePtr Type::getSupertype() const
 {
     return supertype;
@@ -378,6 +390,11 @@ void Type::withAllSubtypesDo(const TypeIterationBlock &aBlock)
 {
     aBlock(shared_from_this());
     allSubtypesDo(aBlock);
+}
+
+void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
+{
+    pendingBodyBlockCodeFragments.push_back(codeFragment);
 }
 
 } // End of namespace BootstrapEnvironment

@@ -70,7 +70,6 @@ public:
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
     virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
     virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node) override;
-    virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node) override;
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
     virtual AnyValuePtr visitParseErrorNode(const ASTParseErrorNodePtr &node) override;
     virtual AnyValuePtr visitPragmaNode(const ASTPragmaNodePtr &node) override;
@@ -87,6 +86,10 @@ public:
     virtual AnyValuePtr visitFunctionNode(const ASTFunctionNodePtr &node) override;
 
     virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
+
+    virtual AnyValuePtr visitClassNode(const ASTClassNodePtr &node) override;
+    virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node) override;
+    virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node) override;
 
     AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);

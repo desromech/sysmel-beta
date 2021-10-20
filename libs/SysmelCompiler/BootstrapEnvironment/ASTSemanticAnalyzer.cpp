@@ -32,6 +32,11 @@
 #include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTEnumNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTStructNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
@@ -54,6 +59,12 @@
 #include "sysmel/BootstrapEnvironment/LocalVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
+
+#include "sysmel/BootstrapEnvironment/ClassType.hpp"
+#include "sysmel/BootstrapEnvironment/StructureType.hpp"
+#include "sysmel/BootstrapEnvironment/UnionType.hpp"
+
+#include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
 
 #include <iostream>
 
@@ -458,11 +469,43 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &n
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNodePtr &node)
 {
-    assert(false);
-}
+    // Validated the chained message nodes.
+    for(auto &message : node->messages)
+    {
+        if(!message->isASTMessageChainMessageNode())
+            return recordSemanticErrorInNode(message, "Expected a chained message AST node.");
+    }
 
-AnyValuePtr ASTSemanticAnalyzer::visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node)
-{
+    // Turn into a sequence of receiver-less messages.
+    if(!node->receiver)
+    {
+        auto result = std::make_shared<ASTSequenceNode> ();
+        result->sourcePosition = node->sourcePosition;
+        result->expressions.reserve(node->messages.size());
+        for(auto &message : node->messages)
+        {
+            auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(nullptr);
+            result->expressions.push_back(convertedMessage);
+        }
+        return analyzeNodeIfNeededWithCurrentExpectedType(result);
+    }
+
+
+    auto analyzedNode = std::make_shared<ASTMessageChainNode> (*node);
+    analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
+
+    // Support inline analysis of meta-builders.
+    if(analyzedNode->receiver->isASTLiteralValueNode() && analyzedNode->receiver->analyzedType->supportsMessageAnalysisByLiteralValueReceivers())
+    {
+        auto result = analyzedNode->receiver;
+        for(auto &message : analyzedNode->messages)
+        {
+            auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(analyzedNode->receiver);
+            result = analyzeNodeIfNeededWithAutoType(convertedMessage);
+        }
+        return result;
+    }
+
     assert(false);
 }
 
@@ -872,6 +915,193 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
     // Finish the node analysis.
     analyzedNode->analyzedProgramEntity = namespaceEntity;
     analyzedNode->analyzedType = Type::getNamespaceType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTClassNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    ClassTypePtr classType;
+    if(name)
+    {
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Class {1} overrides reserved name.",
+                    {{name->printString()}}));
+
+        // Find an existing class with the same name.
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isClassType())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous non-class definition in its parent program entity ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                classType = std::static_pointer_cast<ClassType> (boundSymbol);
+            }
+        }
+
+        // Check the symbol on the current lexical scope.
+        if(!name)
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+    }
+
+    // Create the class type.
+    if(!classType)
+    {
+        classType = std::make_shared<ClassType> ();
+        classType->setName(name);
+        classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
+        ownerEntity->recordChildProgramEntityDefinition(classType);
+        if(name)
+            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, classType);
+    }
+
+    // Defer the superclass analysis.
+    if(analyzedNode->superclass)
+    {
+        classType->enqueuePendingSuperclassCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->superclass, environment));
+        analyzedNode->superclass.reset();
+    }
+
+    // Defer the body analysis.
+    if(analyzedNode->body)
+    {
+        classType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(classType)));
+        analyzedNode->body.reset();
+    }
+
+    analyzedNode->analyzedProgramEntity = classType;
+    analyzedNode->analyzedType = classType->getType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTStructNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    StructureTypePtr structureType;
+    if(name)
+    {
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Structure {1} overrides reserved name.",
+                    {{name->printString()}}));
+
+        // Find an existing structure with the same name.
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isStructureType())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Structure ({1}) overrides previous non-structure definition in its parent program entity ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                structureType = std::static_pointer_cast<StructureType> (boundSymbol);
+            }
+        }
+
+        // Check the symbol on the current lexical scope.
+        if(!name)
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Structure ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+    }
+
+    // Create the structure type.
+    if(!structureType)
+    {
+        structureType = std::make_shared<StructureType> ();
+        structureType->setName(name);
+        structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
+        ownerEntity->recordChildProgramEntityDefinition(structureType);
+        if(name)
+            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, structureType);
+    }
+
+    // Defer the body analysis.
+    if(analyzedNode->body)
+    {
+        structureType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(structureType)));
+        analyzedNode->body.reset();
+    }
+
+    analyzedNode->analyzedProgramEntity = structureType;
+    analyzedNode->analyzedType = structureType->getType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTUnionNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    UnionTypePtr unionType;
+    if(name)
+    {
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Union {1} overrides reserved name.",
+                    {{name->printString()}}));
+
+        // Find an existing union with the same name.
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isUnionType())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Union ({1}) overrides previous non-union definition in its parent program entity ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                unionType = std::static_pointer_cast<UnionType> (boundSymbol);
+            }
+        }
+
+        // Check the symbol on the current lexical scope.
+        if(!name)
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Union ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+    }
+
+    // Create the union type.
+    if(!unionType)
+    {
+        unionType = std::make_shared<UnionType> ();
+        unionType->setName(name);
+        unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
+        ownerEntity->recordChildProgramEntityDefinition(unionType);
+        if(name)
+            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, unionType);
+    }
+
+    // Defer the body analysis.
+    if(analyzedNode->body)
+    {
+        unionType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(unionType)));
+        analyzedNode->body.reset();
+    }
+
+    analyzedNode->analyzedProgramEntity = unionType;
+    analyzedNode->analyzedType = unionType->getType();
     return analyzedNode;
 }
 

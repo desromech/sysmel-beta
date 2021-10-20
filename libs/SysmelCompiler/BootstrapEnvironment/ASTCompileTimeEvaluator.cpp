@@ -26,6 +26,7 @@
 
 #include "sysmel/BootstrapEnvironment/ASTFunctionalNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTTypeNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
@@ -216,6 +217,11 @@ AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePt
     if(node->body)
         visitNodeInNewCleanUpScope(node->body);
 
+    return node->analyzedProgramEntity;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitTypeNode(const ASTTypeNodePtr &node)
+{
     return node->analyzedProgramEntity;
 }
 

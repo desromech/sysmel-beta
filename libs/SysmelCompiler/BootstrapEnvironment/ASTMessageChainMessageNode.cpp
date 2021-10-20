@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -33,6 +34,16 @@ SExpression ASTMessageChainMessageNode::asSExpression() const
         selector->asSExpression(),
         argumentsSExpression,
     }};
+}
+
+ASTMessageSendNodePtr ASTMessageChainMessageNode::asMessageSendNodeWithReceiver(const ASTNodePtr &newReceiver)
+{
+    auto result = std::make_shared<ASTMessageSendNode> ();
+    result->sourcePosition = sourcePosition;
+    result->receiver = newReceiver;
+    result->selector = selector;
+    result->arguments = arguments;
+    return result;
 }
 
 } // End of namespace BootstrapEnvironment

@@ -603,6 +603,36 @@ public:
     // Is this a primitive integer type?
     virtual bool isPrimitiveFloatTypeValue() const;
 
+    // Is this an aggregate type?
+    virtual bool isAggregateType() const;
+
+    // Is this an aggregate type value?
+    virtual bool isAggregateTypeValue() const;
+
+    // Is this an aggregate type with fields?
+    virtual bool isAggregateTypeWithFields() const;
+
+    // Is this an aggregate type value?
+    virtual bool isAggregateTypeWithFieldsValue() const;
+
+    // Is this a structure type?
+    virtual bool isStructureType() const;
+
+    // Is this a structure type value?
+    virtual bool isStructureTypeValue() const;
+
+    // Is this a class type?
+    virtual bool isClassType() const;
+
+    // Is this a class type value?
+    virtual bool isClassTypeValue() const;
+
+    // Is this an union type?
+    virtual bool isUnionType() const;
+
+    // Is this an union type value?
+    virtual bool isUnionTypeValue() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 

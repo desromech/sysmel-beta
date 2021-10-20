@@ -1,4 +1,6 @@
 set(BootstrapEnvironment_Sources
+    AggregateType.cpp
+    AggregateTypeWithFields.cpp
     AmbiguousMatchingPatternsFound.cpp
     ArgumentCountError.cpp
     ArgumentVariable.cpp
@@ -64,6 +66,7 @@ set(BootstrapEnvironment_Sources
     CannotOverloadPatternMatchingMethod.cpp
     CannotUnwrap.cpp
     ClassMetaBuilder.cpp
+    ClassType.cpp
     CleanUpScope.cpp
     ClosureType.cpp
     CompilationError.cpp
@@ -72,6 +75,7 @@ set(BootstrapEnvironment_Sources
     CompiledMethod.cpp
     CompileTimeCleanUpScope.cpp
     CompileTimeEvaluationError.cpp
+    DeferredCompileTimeCodeFragment.cpp
     CompilerObject.cpp
     DivisionByZeroError.cpp
     DomainError.cpp
@@ -145,6 +149,7 @@ set(BootstrapEnvironment_Sources
     SpecificMethod.cpp
     StringUtilities.cpp
     StructMetaBuilder.cpp
+    StructureType.cpp
     SubclassResponsibility.cpp
     ResultTypeInferenceSlot.cpp
     Type.cpp
@@ -152,6 +157,7 @@ set(BootstrapEnvironment_Sources
     Undefined.cpp
     UnsupportedOperation.cpp
     UnionMetaBuilder.cpp
+    UnionType.cpp
     ValueBox.cpp
     Variable.cpp
     VariableMetaBuilder.cpp

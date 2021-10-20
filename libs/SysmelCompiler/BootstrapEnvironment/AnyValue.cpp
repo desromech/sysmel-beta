@@ -624,6 +624,56 @@ bool AnyValue::isPrimitiveFloatTypeValue() const
     return false;
 }
 
+bool AnyValue::isAggregateType() const
+{
+    return false;
+}
+
+bool AnyValue::isAggregateTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isAggregateTypeWithFields() const
+{
+    return false;
+}
+
+bool AnyValue::isAggregateTypeWithFieldsValue() const
+{
+    return false;
+}
+
+bool AnyValue::isStructureType() const
+{
+    return false;
+}
+
+bool AnyValue::isStructureTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isClassType() const
+{
+    return false;
+}
+
+bool AnyValue::isClassTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isUnionType() const
+{
+    return false;
+}
+
+bool AnyValue::isUnionTypeValue() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

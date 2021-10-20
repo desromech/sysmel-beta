@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
@@ -190,10 +191,10 @@ SUITE(SysmelCompileTimeEvaluation)
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDeclaration = evaluateString("public struct TestStruct.");
-                CHECK(structDeclaration->isType());
+                CHECK(structDeclaration->isStructureType());
                 
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
-                CHECK(structDefinition->isType());
+                CHECK(structDefinition->isStructureType());
                 CHECK_EQUAL(structDeclaration, structDefinition);
             });
         });
@@ -204,10 +205,10 @@ SUITE(SysmelCompileTimeEvaluation)
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto unionDeclaration = evaluateString("public union TestUnion.");
-                CHECK(unionDeclaration->isType());
+                CHECK(unionDeclaration->isUnionType());
                 
                 auto unionDefinition = evaluateString("public union TestUnion definition: {}.");
-                CHECK(unionDefinition->isType());
+                CHECK(unionDefinition->isUnionType());
                 CHECK_EQUAL(unionDeclaration, unionDefinition);
             });
         });
@@ -218,11 +219,25 @@ SUITE(SysmelCompileTimeEvaluation)
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto classDeclaration = evaluateString("public class TestClass.");
-                CHECK(classDeclaration->isType());
+                CHECK(classDeclaration->isClassType());
                 
                 auto classDefinition = evaluateString("public class TestClass definition: {}.");
-                CHECK(classDefinition->isType());
+                CHECK(classDefinition->isClassType());
                 CHECK_EQUAL(classDeclaration, classDefinition);
+            });
+        });
+    }
+
+    TEST(SuperClass)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto superclass = evaluateString("public class SuperClass definition: {}.");
+                CHECK(superclass->isClassType());
+                
+                auto subclass = evaluateString("public class SubClass superclass: SuperClass; definition: {}.");
+                CHECK(subclass->isClassType());
+                CHECK_EQUAL(std::static_pointer_cast<Type> (subclass)->getSupertype(), superclass);
             });
         });
     }
@@ -232,10 +247,10 @@ SUITE(SysmelCompileTimeEvaluation)
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto enumDeclaration = evaluateString("public enum TestEnum.");
-                CHECK(enumDeclaration->isType());
+                CHECK(enumDeclaration->isEnumType());
                 
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{}; definition: {}.");
-                CHECK(enumDefinition->isType());
+                CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
             });
         });

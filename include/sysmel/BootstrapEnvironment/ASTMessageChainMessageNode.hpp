@@ -21,6 +21,8 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
+    ASTMessageSendNodePtr asMessageSendNodeWithReceiver(const ASTNodePtr &newReceiver);
+
     ASTNodePtr selector;
     ASTNodePtrList arguments;
 };

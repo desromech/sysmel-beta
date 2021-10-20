@@ -41,6 +41,7 @@ public:
 
     virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node) override;
     virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
+    virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node) override;
 
     AnyValuePtr evaluateMethodBodyNode(const CompileTimeCleanUpScopePtr &initialEnvironment, const ASTNodePtr &node);
 
