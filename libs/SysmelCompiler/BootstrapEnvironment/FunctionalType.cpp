@@ -40,22 +40,14 @@ TypePtr FunctionalType::getReceiverType() const
 std::string FunctionalType::printString() const
 {
     std::ostringstream out;
-    if(arguments.empty())
+    out << '(';
+    for(size_t i = 0; i < arguments.size(); ++i)
     {
-        out << "Void => ";
+        if(i > 0)
+            out << ", ";
+        out << arguments[i]->printString();
     }
-    else
-    {
-        out << '(';
-        for(size_t i = 0; i < arguments.size(); ++i)
-        {
-            if(i > 0)
-                out << " -- ";
-            out << arguments[i]->printString();
-        }
-        out << ") => ";
-    }
-
+    out << ") => ";
     out << result->printString();
 
     return out.str();
