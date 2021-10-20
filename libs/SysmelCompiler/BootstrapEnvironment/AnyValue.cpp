@@ -674,6 +674,26 @@ bool AnyValue::isUnionTypeValue() const
     return false;
 }
 
+bool AnyValue::isDerivedType() const
+{
+    return false;
+}
+
+bool AnyValue::isDerivedTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isEnumType() const
+{
+    return false;
+}
+
+bool AnyValue::isEnumTypeValue() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

@@ -633,6 +633,18 @@ public:
     // Is this an union type value?
     virtual bool isUnionTypeValue() const;
 
+    // Is this a derived type?
+    virtual bool isDerivedType() const;
+
+    // Is this a derived type value?
+    virtual bool isDerivedTypeValue() const;
+
+    // Is this an enum type?
+    virtual bool isEnumType() const;
+
+    // Is this an enum type value?
+    virtual bool isEnumTypeValue() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 

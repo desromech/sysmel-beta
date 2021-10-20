@@ -76,10 +76,12 @@ set(BootstrapEnvironment_Sources
     CompileTimeCleanUpScope.cpp
     CompileTimeEvaluationError.cpp
     DeferredCompileTimeCodeFragment.cpp
+    DerivedType.cpp
     CompilerObject.cpp
     DivisionByZeroError.cpp
     DomainError.cpp
     EnumMetaBuilder.cpp
+    EnumType.cpp
     Error.cpp
     Exception.cpp
     Fraction.cpp

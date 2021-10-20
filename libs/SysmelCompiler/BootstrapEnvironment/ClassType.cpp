@@ -4,7 +4,6 @@
 #include "sysmel/BootstrapEnvironment/ASTSemanticErrorNode.hpp"
 #include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
-#include <sstream>
 
 namespace SysmelMoebius
 {
@@ -26,30 +25,33 @@ TypePtr ClassType::getSupertype() const
 
 void ClassType::evaluatePendingSuperclassDefinitions() const
 {
-    auto fragmentsToProcess = pendingSuperclassCodeFragments;
-    pendingSuperclassCodeFragments.clear();
-    for(auto &fragment : fragmentsToProcess)
+    while(!pendingSuperclassCodeFragments.empty())
     {
-        auto newSupertype = fragment->analyzeAndEvaluateAsTypeExpression();
-        if(!hasEvaluatedSuperclassCodeFragment)
+        auto fragmentsToProcess = pendingSuperclassCodeFragments;
+        pendingSuperclassCodeFragments.clear();
+        for(auto &fragment : fragmentsToProcess)
         {
-            supertype = newSupertype;
-            getType()->setSupertype(newSupertype->getType());
-            hasEvaluatedSuperclassCodeFragment = true;
-        }
-        else
-        {
-            // Raise an error for c
-            if(supertype != newSupertype)
+            auto newSupertype = fragment->analyzeAndEvaluateAsTypeExpression();
+            if(!hasEvaluatedSuperclassCodeFragment)
             {
-                auto errorNode = std::make_shared<ASTSemanticErrorNode> ();
-                errorNode->sourcePosition = fragment->codeFragment->sourcePosition;
-                errorNode->errorMessage = formatString("Conflicting super classes ({2} vs {3}) given for {1}.", {{
-                    supertype->printString(), newSupertype->printString(), printString()
-                }});
-                errorNode->asCompilationError()->signal();
+                supertype = newSupertype;
+                getType()->setSupertype(newSupertype->getType());
+                hasEvaluatedSuperclassCodeFragment = true;
             }
+            else
+            {
+                // Raise an error
+                if(supertype != newSupertype)
+                {
+                    auto errorNode = std::make_shared<ASTSemanticErrorNode> ();
+                    errorNode->sourcePosition = fragment->codeFragment->sourcePosition;
+                    errorNode->errorMessage = formatString("Conflicting super classes ({2} vs {3}) given for {1}.", {{
+                        supertype->printString(), newSupertype->printString(), printString()
+                    }});
+                    errorNode->asCompilationError()->signal();
+                }
 
+            }
         }
     }
 

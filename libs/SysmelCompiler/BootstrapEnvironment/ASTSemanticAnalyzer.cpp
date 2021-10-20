@@ -60,6 +60,7 @@
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 
+#include "sysmel/BootstrapEnvironment/EnumType.hpp"
 #include "sysmel/BootstrapEnvironment/ClassType.hpp"
 #include "sysmel/BootstrapEnvironment/StructureType.hpp"
 #include "sysmel/BootstrapEnvironment/UnionType.hpp"
@@ -915,6 +916,81 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
     // Finish the node analysis.
     analyzedNode->analyzedProgramEntity = namespaceEntity;
     analyzedNode->analyzedType = Type::getNamespaceType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTEnumNode> (*node);
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    EnumTypePtr enumType;
+    if(name)
+    {
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Class {1} overrides reserved name.",
+                    {{name->printString()}}));
+
+        // Find an existing class with the same name.
+        {
+            auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+            if(boundSymbol)
+            {
+                if(!boundSymbol->isEnumType())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous non-class definition in its parent program entity ({2}).",
+                        {{name->printString(), boundSymbol->printString()}}));
+
+                enumType = std::static_pointer_cast<EnumType> (boundSymbol);
+            }
+        }
+
+        // Check the symbol on the current lexical scope.
+        if(!name)
+        {
+            auto previousLocalDefinition = environment->lexicalScope->lookupSymbolLocally(name);
+            if(previousLocalDefinition)
+                return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous definition in the same lexical scope ({2}).",
+                    {{name->printString(), previousLocalDefinition->printString()}}));
+        }
+    }
+
+    // Create the class type.
+    if(!enumType)
+    {
+        enumType = std::make_shared<EnumType> ();
+        enumType->setName(name);
+        enumType->setBaseType(AnyValue::__staticType__());
+        enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
+        ownerEntity->recordChildProgramEntityDefinition(enumType);
+        if(name)
+            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, enumType);
+    }
+
+    // Defer the value type analysis.
+    if(analyzedNode->valueType)
+    {
+        enumType->enqueuePendingValueTypeCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->valueType, environment));
+        analyzedNode->valueType.reset();
+    }
+
+    // Defer the values.
+    if(analyzedNode->values)
+    {
+        enumType->enqueuePendingValuesCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->values, environment->copyForPublicProgramEntityBody(enumType)));
+        analyzedNode->values.reset();
+    }
+
+    // Defer the body analysis.
+    if(analyzedNode->body)
+    {
+        enumType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(enumType)));
+        analyzedNode->body.reset();
+    }
+
+    analyzedNode->analyzedProgramEntity = enumType;
+    analyzedNode->analyzedType = enumType->getType();
     return analyzedNode;
 }
 

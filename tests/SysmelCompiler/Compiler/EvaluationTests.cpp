@@ -1,5 +1,7 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/EnumType.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveIntegerType.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
@@ -242,7 +244,7 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
-    /*TEST(Enum)
+    TEST(Enum)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
@@ -252,7 +254,8 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
+                CHECK_EQUAL(std::static_pointer_cast<EnumType> (enumDefinition)->getBaseType(), UInt32::__staticType__());
             });
         });
-    }*/
+    }
 }
