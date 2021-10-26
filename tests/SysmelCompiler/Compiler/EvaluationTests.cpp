@@ -188,6 +188,19 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(NamespaceMethod)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                evaluateString("namespace TestNamespace definition: { public method square: x := x*x }");
+
+                CHECK_EQUAL(1, unwrapValue<int> (evaluateString("TestNamespace square: 1")));
+                CHECK_EQUAL(4, unwrapValue<int> (evaluateString("TestNamespace square: 2")));
+                CHECK_EQUAL(9, unwrapValue<int> (evaluateString("TestNamespace square: 3")));
+            });
+        });
+    }
+
     TEST(Struct)
     {
         RuntimeContext::create()->activeDuring([&](){
