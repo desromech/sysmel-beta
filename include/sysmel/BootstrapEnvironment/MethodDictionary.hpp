@@ -19,7 +19,7 @@ public:
 
     virtual bool isMethodDictionary() const override;
 
-    void addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
+    void addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector);
     AnyValuePtr lookupSelector(const AnyValuePtr &selector);
 
 protected:

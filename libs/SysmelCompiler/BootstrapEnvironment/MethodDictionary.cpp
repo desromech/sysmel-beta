@@ -25,7 +25,7 @@ AnyValuePtr MethodDictionary::lookupSelector(const AnyValuePtr &selector)
     return AnyValuePtr();
 }
 
-void MethodDictionary::addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+void MethodDictionary::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     auto it = dictionary.find(selector);
     if(it == dictionary.end())

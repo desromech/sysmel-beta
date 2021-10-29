@@ -747,7 +747,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     // Check the name.
     if(name)
     {
-        // Forbid reversed names.
+        // Forbid reserved names.
         if(isNameReserved(name))
             return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides reserved name.", {{name->printString()}}));
 
@@ -836,7 +836,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         else if(!alreadyRegistered)
         {
             ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
-            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, compiledMethod);
+            ownerEntity->bindProgramEntityWithVisibility(compiledMethod, analyzedNode->visibility);
         }
     }
 
@@ -846,6 +846,131 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         auto analyzedBody = compiledMethod->analyzeDefinitionWith(shared_from_this());
         if(analyzedBody->isASTErrorNode())
             return analyzedBody;
+    }
+
+    analyzedNode->analyzedProgramEntity = compiledMethod;
+    analyzedNode->analyzedType = compiledMethod->getFunctionalType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTMethodNode> (*node);
+
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::Public;
+
+    // Analyze the arguments node.
+    bool hasError = false;
+    for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+    {
+        auto &arg = analyzedNode->arguments[i];
+        assert(arg->isASTArgumentDefinitionNode());
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        hasError = hasError || arg->isASTErrorNode();
+    }
+
+    // Evaluate the result type.
+    auto expectedResultType = currentExpectedType->getExpectedFunctionalResultType();
+    if(!analyzedNode->resultType)
+    {
+        if(expectedResultType)
+        {
+            analyzedNode->resultType = expectedResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else if(environment->defaultResultType)
+        {
+            analyzedNode->resultType = environment->defaultResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            analyzedNode->resultType = recordSemanticErrorInNode(analyzedNode, "Function definition requires an explicit result type specification.");
+            hasError = true;
+        }
+    }
+
+    if(analyzedNode->resultType)
+    {
+        if(!analyzedNode->resultType->isASTErrorNode())
+            analyzedNode->resultType = evaluateTypeExpression(analyzedNode->resultType);
+
+        hasError = hasError || analyzedNode->resultType->isASTErrorNode();
+    }
+
+    // Evaluate the name.
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    if(!name)
+        return recordSemanticErrorInNode(analyzedNode, "Anonymous methods are not supported.");
+
+    CompiledMethodPtr compiledMethod;
+    bool alreadyRegistered = false;
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+    auto receiverType = ownerEntity->asReceiverType();
+
+    // Forbid reserved names.
+    if(isNameReserved(name))
+        return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} overrides reserved name.", {{name->printString()}}));
+
+    // Check for a previous method with the same selector.
+    auto previousMethod = ownerEntity->lookupLocalSelector(name);
+    if(previousMethod)
+    {
+        if(!previousMethod->isCompiledMethod())
+            return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} overrides previous non-method definition in its parent program entity ({2}).",
+                {{name->printString(), previousMethod->printString()}}));
+
+        compiledMethod = std::static_pointer_cast<CompiledMethod> (previousMethod);
+        alreadyRegistered = true;
+    }
+
+    // Abort the remaining analysis of the method in case of error.
+    if(hasError)
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // Create the function type.
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        argumentTypes.push_back(arg->analyzedType);
+    auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
+
+    // Create the compiled method if missing.
+    if(!compiledMethod)
+    {
+        compiledMethod = std::make_shared<CompiledMethod> ();
+        compiledMethod->setName(name);
+        compiledMethod->setDeclaration(analyzedNode);
+        compiledMethod->setMethodSignature(receiverType, resultType, argumentTypes);
+
+        // Set the arguments declaration node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+    }
+    else
+    {
+        // TODO: Validate the signature for matching types.
+    }
+
+    // Set the definition body.
+    if(analyzedNode->body)
+    {
+        // Set the arguments definition node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+
+        // Set the definition body.
+        compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
+    }
+
+    // Register the compiled method.
+    if(!alreadyRegistered)
+    {
+        ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
+        ownerEntity->addMethodWithSelector(compiledMethod, name);
     }
 
     analyzedNode->analyzedProgramEntity = compiledMethod;
@@ -900,7 +1025,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
         namespaceEntity = Namespace::makeWithName(name);
         ownerEntity->recordChildProgramEntityDefinition(namespaceEntity);
         if(name)
-            ownerEntity->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, namespaceEntity);
+            ownerEntity->bindProgramEntityWithVisibility(namespaceEntity, ProgramEntityVisibility::Public);
     }
 
     // If the namespace is anonymous, use it in the current lexical scope.
@@ -965,7 +1090,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
         ownerEntity->recordChildProgramEntityDefinition(enumType);
         if(name)
-            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, enumType);
+            ownerEntity->bindProgramEntityWithVisibility(enumType, analyzedNode->visibility);
     }
 
     // Defer the value type analysis.
@@ -1039,7 +1164,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
         classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
         ownerEntity->recordChildProgramEntityDefinition(classType);
         if(name)
-            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, classType);
+            ownerEntity->bindProgramEntityWithVisibility(classType, analyzedNode->visibility);
     }
 
     // Defer the superclass analysis.
@@ -1106,7 +1231,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
         structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
         ownerEntity->recordChildProgramEntityDefinition(structureType);
         if(name)
-            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, structureType);
+            ownerEntity->bindProgramEntityWithVisibility(structureType, analyzedNode->visibility);
     }
 
     // Defer the body analysis.
@@ -1166,7 +1291,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
         unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
         ownerEntity->recordChildProgramEntityDefinition(unionType);
         if(name)
-            ownerEntity->bindProgramEntityWithVisibility(analyzedNode->visibility, unionType);
+            ownerEntity->bindProgramEntityWithVisibility(unionType, analyzedNode->visibility);
     }
 
     // Defer the body analysis.

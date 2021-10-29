@@ -10,6 +10,7 @@
 
 // Functional
 #include "sysmel/BootstrapEnvironment/FunctionMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/MethodMetaBuilder.hpp"
 
 // Slots
 
@@ -38,6 +39,8 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
         // Functional
         if(selector == "function")
             return delegateToMetaBuilderAt<FunctionMetaBuilder> (node->sourcePosition);
+        else if(selector == "method")
+            return delegateToMetaBuilderAt<MethodMetaBuilder> (node->sourcePosition);
 
         // Types
         else if(selector == "enum")

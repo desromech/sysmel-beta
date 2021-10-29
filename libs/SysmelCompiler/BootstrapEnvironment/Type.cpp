@@ -94,11 +94,15 @@ void Type::registerSubtype(const TypePtr &subtype)
         subtypes.push_back(subtype);
 }
 
+TypePtr Type::asReceiverType()
+{
+    return shared_from_this();
+}
+
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
 {
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
-
 
 AnyValuePtr Type::lookupLocalMacroSelector(const AnyValuePtr &selector)
 {
@@ -147,23 +151,6 @@ AnyValuePtr Type::lookupMacroFallbackSelector(const AnyValuePtr &selector)
         return superType->lookupMacroFallbackSelector(selector);
 
     return AnyValuePtr();
-}
-
-AnyValuePtr Type::lookupSelectorInReceiverNodeWithExpansionLevel(const AnyValuePtr &selector, const ASTNodePtr &receiverNode, MessageSendExpansionLevel expansionLevel)
-{
-    (void)receiverNode;
-
-    switch(expansionLevel)
-    {
-    case MessageSendExpansionLevel::UnexpandedMacros:
-        return lookupMacroSelector(selector);
-    case MessageSendExpansionLevel::ExpandedMacros:
-        return lookupSelector(selector);
-    case MessageSendExpansionLevel::FallbackMacros:
-        return lookupMacroFallbackSelector(selector);
-    default:
-        return nullptr;
-    }
 }
 
 /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
@@ -223,7 +210,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
     }
 
     AnyValuePtr directSelectorValue;
-    if(node->selector->isASTLiteralSymbolValue())
+    if(node->selector->isASTLiteralValueNode())
         directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
 
     // Attempt going through the different expansion levels
@@ -288,36 +275,25 @@ AnyValuePtr Type::lookupDoesNotUnderstandMacro()
     return nullptr;
 }
 
-void Type::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
         macroMethodDictionary = std::make_shared<MethodDictionary> ();
-    macroMethodDictionary->addMethodWithSelector(selector, method);
+    macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
-void Type::addMacroMethodCategories(const MethodCategories &categories)
-{
-    for(auto &[category, methods] : categories)
-    {
-        for(auto &[selector, method] : methods)
-            addMacroMethodWithSelector(selector, method);
-    }
-}
-
-void Type::addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+void Type::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!methodDictionary)
         methodDictionary = std::make_shared<MethodDictionary> ();
-    methodDictionary->addMethodWithSelector(selector, method);
+    methodDictionary->addMethodWithSelector(method, selector);
 }
 
-void Type::addMethodCategories(const MethodCategories &categories)
+void Type::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
-    for(auto &[category, methods] : categories)
-    {
-        for(auto &[selector, method] : methods)
-            addMethodWithSelector(selector, method);
-    }
+    if(!macroMethodDictionary)
+        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+    macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
 TypePtr Type::getInstanceType()

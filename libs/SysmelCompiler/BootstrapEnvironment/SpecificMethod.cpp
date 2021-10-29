@@ -170,7 +170,6 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         if(node->receiver->isASTErrorNode())
             errorNode = node->receiver;
     }
-        
 
     // Analyze each one of the arguments
     for(size_t i = 0; i < node->arguments.size(); ++i)
@@ -186,6 +185,8 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     if(errorNode)
         return errorNode;
 
+    // FIXME: Improve the criteria for direct message sends.
+    node->analyzedBoundMessageIsDirect = functionalType->getReceiverType()->isVoidType();
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = functionalType->getResultType();
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);

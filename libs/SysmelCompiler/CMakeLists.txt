@@ -117,6 +117,7 @@ set(BootstrapEnvironment_Sources
     Method.cpp
     MethodType.cpp
     MethodDictionary.cpp
+    MethodMetaBuilder.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp
     ModuleReference.cpp

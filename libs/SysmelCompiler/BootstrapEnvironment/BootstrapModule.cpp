@@ -67,13 +67,13 @@ void BootstrapModule::initialize()
     bootstrapEnvironmentNamespace = Namespace::makeWithName(internSymbol("__BootstrapEnvironment__"));
     bootstrapEnvironmentNamespace->registerInCurrentModule();
     globalNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentNamespace);
-    globalNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapEnvironmentNamespace);
+    globalNamespace->bindProgramEntityWithVisibility(bootstrapEnvironmentNamespace, ProgramEntityVisibility::Public);
 
     // Create the bootstrap environment sysmel language namespace.
     bootstrapEnvironmentSysmelLanguageNamespace = Namespace::makeWithName(internSymbol("SysmelLanguage"));
     bootstrapEnvironmentSysmelLanguageNamespace->registerInCurrentModule();
     bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentSysmelLanguageNamespace);
-    bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapEnvironmentSysmelLanguageNamespace);
+    bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(bootstrapEnvironmentSysmelLanguageNamespace, ProgramEntityVisibility::Public);
 
     // Register the bootstrap types on the namespaces.
     for(const auto &metadata : bootstrapMetadataList)
@@ -84,7 +84,7 @@ void BootstrapModule::initialize()
         auto bootstrapType = getBootstrapDefinedType(metadata->bootstrapTypeID);
         assert(bootstrapType);
         bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapType);
-        bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(ProgramEntityVisibility::Public, bootstrapType);
+        bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(bootstrapType, ProgramEntityVisibility::Public);
 
         if(!metadata->sysmelLanguageTopLevelName.empty())
             bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol(metadata->sysmelLanguageTopLevelName), ProgramEntityVisibility::Public, bootstrapType);

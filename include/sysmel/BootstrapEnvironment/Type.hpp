@@ -15,18 +15,6 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
 /**
- * The diferent levels for a message send expansion.
- */
-enum class MessageSendExpansionLevel : uint8_t
-{
-    UnexpandedMacros = 0,
-    ExpandedMacros,
-    FallbackMacros,
-
-    Count,
-};
-
-/**
  * I am the base interface for all of the types that are defined in the system.
  */
 class Type : public SubtypeOf<ModuleDefinedProgramEntity, Type>
@@ -72,20 +60,29 @@ public:
     /// This method registers a subtypes.
     virtual void registerSubtype(const TypePtr &subtype);
 
+    /// Converts this type into a specific receiver type.
+    virtual TypePtr asReceiverType();
+
     /// This method performs the lookup for a macro message with the specified selector.
-    virtual AnyValuePtr lookupMacroSelector(const AnyValuePtr &selector);
+    virtual AnyValuePtr lookupMacroSelector(const AnyValuePtr &selector) override;
+
+    /// This method performs the lookup for a macro message with the specified selector only in this type.
+    virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup of macro fallback message with the specified selector.
-    virtual AnyValuePtr lookupMacroFallbackSelector(const AnyValuePtr &selector);
+    virtual AnyValuePtr lookupMacroFallbackSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup for a message with the specified selector.
-    virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector);
+    virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector) override;
 
-    /// This method performs the lookup for a macro message or message with the specified selector and expansion level.
-    virtual AnyValuePtr lookupSelectorInReceiverNodeWithExpansionLevel(const AnyValuePtr &selector, const ASTNodePtr &receiverNode, MessageSendExpansionLevel expansionLevel);
+    /// This method performs the lookup for a message with the specified selector only in this type.
+    virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup of the doesNotUnderstand: macro
     virtual AnyValuePtr lookupDoesNotUnderstandMacro();
+
+    /// This method performs the lookup for a macro fallback message with the specified selector only in this type.
+    virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector) override;
 
     /// Does this type support dynamic compile time message sends?
     virtual bool supportsDynamicCompileTimeMessageSend() const;
@@ -115,16 +112,13 @@ public:
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 
     /// This method add a new macro method into the method dictionary with the specified selector.
-    virtual void addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
-
-    /// This method adds the method in the specified categories.
-    virtual void addMacroMethodCategories(const MethodCategories &categories);
+    virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
     /// This method add a new method into the method dictionary with the specified selector.
-    virtual void addMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method);
+    virtual void addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
-    /// This method adds the method in the specified categories.
-    virtual void addMethodCategories(const MethodCategories &categories);
+    /// This method add a new macro method into the method dictionary with the specified selector.
+    virtual void addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
     /// Is this type a kind of the other type?
     virtual bool isSubtypeOf(const TypePtr &otherType) const;
@@ -154,10 +148,6 @@ public:
     virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
 protected:
-    virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
-    virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector);
-    virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector);
-
     AnyValuePtr name;
     mutable TypePtr supertype;
     TypePtrList subtypes;
