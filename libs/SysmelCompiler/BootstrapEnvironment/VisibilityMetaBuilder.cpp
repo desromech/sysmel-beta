@@ -12,7 +12,9 @@
 #include "sysmel/BootstrapEnvironment/FunctionMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/MethodMetaBuilder.hpp"
 
-// Slots
+// Variables
+#include "sysmel/BootstrapEnvironment/FieldMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/GlobalMetaBuilder.hpp"
 
 namespace SysmelMoebius
 {
@@ -53,6 +55,10 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
             return delegateToMetaBuilderAt<ClassMetaBuilder> (node->sourcePosition);
 
         // Variables
+        else if(selector == "field")
+            return delegateToMetaBuilderAt<FieldMetaBuilder> (node->sourcePosition);
+        else if(selector == "global")
+            return delegateToMetaBuilderAt<GlobalMetaBuilder> (node->sourcePosition);
     }
 
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);

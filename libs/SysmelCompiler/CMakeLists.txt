@@ -18,8 +18,10 @@ set(BootstrapEnvironment_Sources
     ASTEmptySourcePosition.cpp
     ASTEnumNode.cpp
     ASTErrorNode.cpp
+    ASTFieldVariableNode.cpp
     ASTFunctionalNode.cpp
     ASTFunctionNode.cpp
+    ASTGlobalVariableNode.cpp
     ASTIdentifierReferenceNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
@@ -84,10 +86,12 @@ set(BootstrapEnvironment_Sources
     EnumType.cpp
     Error.cpp
     Exception.cpp
+    FieldMetaBuilder.cpp
     Fraction.cpp
     FunctionType.cpp
     FunctionalType.cpp
     FunctionMetaBuilder.cpp
+    GlobalMetaBuilder.cpp
     IdentifierLookupScope.cpp
     InternalMetaBuilder.cpp
     LanguageSupport.cpp

@@ -105,7 +105,7 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
-    TEST(LocalVariable)
+    TEST(ImmutableLocalVariable)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
@@ -116,6 +116,16 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42. a"));
                 CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("let a type: LiteralInteger := 42. a + 1"));
+            });
+        });
+    }
+
+    TEST(ImmutableGlobalVariable)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("public global A := 42"));
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("A"));
             });
         });
     }

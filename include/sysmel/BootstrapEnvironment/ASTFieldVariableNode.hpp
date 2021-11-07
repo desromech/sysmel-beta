@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTVariableNode.hpp"
+#include "ProgramEntityVisibility.hpp"
 
 namespace SysmelMoebius
 {
@@ -20,6 +21,8 @@ public:
     virtual bool isASTFieldVariableNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+
+    ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -28,7 +28,6 @@ public:
     ASTNodePtrList arguments;
     ASTNodePtr body;
 
-
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
     MethodDispatchMode dispatchMode = MethodDispatchMode::Default;
 };
