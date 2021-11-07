@@ -21,7 +21,8 @@ namespace BootstrapEnvironment
 
 #define SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(className) \
     SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
-    typedef std::vector<className ##Ptr> className ##PtrList;
+    typedef std::vector<className ##Ptr> className ##PtrList; \
+    typedef std::vector<className ##WeakPtr> className ##WeakPtrList;
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(AnyValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(Type);

@@ -149,6 +149,7 @@ public:
 
     virtual void ensureSemanticAnalysis() override;
 
+    virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
 protected:
     /// This method evaluates all of the pending code fragments.
     virtual void evaluateAllPendingCodeFragments();
@@ -160,6 +161,7 @@ protected:
     mutable TypePtr supertype;
     TypePtrList subtypes;
 
+    ProgramEntityPtrList children;
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;

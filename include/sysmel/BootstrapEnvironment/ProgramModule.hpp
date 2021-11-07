@@ -37,6 +37,7 @@ protected:
     std::vector<ModuleReferencePtr> importedModules;
     std::vector<ModuleReferencePtr> indirectlyImportedModules;
     std::vector<ModuleDefinedProgramEntityPtr> programEntitiesWithPendingAnalysis;
+    std::unordered_set<ModuleDefinedProgramEntityPtr> programEntitiesWithPendingAnalysisSet;
 };
 
 } // End of namespace BootstrapEnvironment

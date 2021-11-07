@@ -399,5 +399,10 @@ void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFrag
     enqueuePendingSemanticAnalysis();
 }
 
+void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
+{
+    children.push_back(newChild);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

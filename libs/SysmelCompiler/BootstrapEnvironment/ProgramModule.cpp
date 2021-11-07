@@ -39,13 +39,18 @@ bool ProgramModule::isProgramModule() const
 
 void ProgramModule::enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &programEntity)
 {
+    if(programEntitiesWithPendingAnalysisSet.find(programEntity) != programEntitiesWithPendingAnalysisSet.end())
+        return;
+
     programEntitiesWithPendingAnalysis.push_back(programEntity);
+    programEntitiesWithPendingAnalysisSet.insert(programEntity);
 }
 
 void ProgramModule::analyzeAllPendingProgramEntities()
 {
     std::vector<ModuleDefinedProgramEntityPtr> toAnalyze;
     toAnalyze.swap(programEntitiesWithPendingAnalysis);
+    programEntitiesWithPendingAnalysisSet.clear();
     while(!toAnalyze.empty())
     {
         for(auto &entity : toAnalyze)
@@ -53,6 +58,7 @@ void ProgramModule::analyzeAllPendingProgramEntities()
 
         toAnalyze.clear();
         toAnalyze.swap(programEntitiesWithPendingAnalysis);
+        programEntitiesWithPendingAnalysisSet.clear();
     }
 
 }
