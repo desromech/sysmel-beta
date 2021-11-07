@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Namespace);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ModuleDefinedProgramEntity);
 
 /**
  * I am a particular module in the system.
@@ -53,8 +54,8 @@ public:
     void lockForNewDefinitions();
 
     virtual void registerProgramEntity(const ProgramEntityPtr &programEntity);
-    virtual void enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &programEntity);
-    virtual void analyzeAllPendingProgramEntities(const ProgramEntityPtr &programEntity);
+    virtual void enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &programEntity);
+    virtual void analyzeAllPendingProgramEntities();
 
     virtual NamespacePtr getGlobalNamespace() const;
 

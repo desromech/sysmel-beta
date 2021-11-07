@@ -39,7 +39,7 @@ void ModuleDefinedProgramEntity::ensureSemanticAnalysis()
 
 void ModuleDefinedProgramEntity::enqueuePendingSemanticAnalysis()
 {
-    getDefinitionModule()->enqueueProgramEntitySemanticAnalysis(shared_from_this());
+    Module::getActive()->enqueueProgramEntitySemanticAnalysis(shared_from_this());
 }
 
 } // End of namespace BootstrapEnvironment

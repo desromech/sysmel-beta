@@ -26,7 +26,9 @@ public:
     virtual NamespacePtr getGlobalNamespace() const override;
 
     virtual bool isProgramModule() const override;
-    
+
+    virtual void enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &programEntity) override;
+    virtual void analyzeAllPendingProgramEntities() override;
 
 protected:
     std::string name;
@@ -34,6 +36,7 @@ protected:
 
     std::vector<ModuleReferencePtr> importedModules;
     std::vector<ModuleReferencePtr> indirectlyImportedModules;
+    std::vector<ModuleDefinedProgramEntityPtr> programEntitiesWithPendingAnalysis;
 };
 
 } // End of namespace BootstrapEnvironment

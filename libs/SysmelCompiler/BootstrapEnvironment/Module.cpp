@@ -54,12 +54,12 @@ void Module::registerProgramEntity(const ProgramEntityPtr &programEntity)
     registeredProgramEntities.insert(programEntity);
 }
 
-void Module::enqueueProgramEntitySemanticAnalysis(const ProgramEntityPtr &)
+void Module::enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &)
 {
     signalNew<UnsupportedOperation> ();
 }
 
-void Module::analyzeAllPendingProgramEntities(const ProgramEntityPtr &)
+void Module::analyzeAllPendingProgramEntities()
 {
     // Nothing is required here by default.
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ProgramEntity.hpp"
+#include "Exception.hpp"
 
 namespace SysmelMoebius
 {
@@ -44,7 +45,17 @@ public:
         } restoreActive;
 
         setActive(shared_from_this());
-        f();
+
+        // Make sure to invoke what on the exception so that it can be readed outside this context.
+        try
+        {
+            f();
+        }
+        catch(const ExceptionWrapper& e)
+        {
+            e.what();
+            throw e;
+        }
     }
 
     virtual void initialize() override;

@@ -798,6 +798,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         compiledMethod = std::make_shared<CompiledMethod> ();
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
+        compiledMethod->registerInCurrentModule();
 
         // If this is a local definition, then define it as a closure.
         if(isLocalDefinition)
@@ -823,6 +824,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
         // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
+        compiledMethod->enqueuePendingSemanticAnalysis();
     }
 
     // Register the compiled method.
@@ -949,6 +951,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+
+        compiledMethod->registerInCurrentModule();
     }
     else
     {
@@ -964,6 +968,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
 
         // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
+        compiledMethod->enqueuePendingSemanticAnalysis();
     }
 
     // Register the compiled method.
@@ -1088,6 +1093,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
         enumType->setName(name);
         enumType->setBaseType(AnyValue::__staticType__());
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
+        enumType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(enumType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(enumType, analyzedNode->visibility);
@@ -1162,6 +1168,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
         classType = std::make_shared<ClassType> ();
         classType->setName(name);
         classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
+        classType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(classType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(classType, analyzedNode->visibility);
@@ -1229,6 +1236,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
         structureType = std::make_shared<StructureType> ();
         structureType->setName(name);
         structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
+        structureType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(structureType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(structureType, analyzedNode->visibility);
@@ -1289,6 +1297,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
         unionType = std::make_shared<UnionType> ();
         unionType->setName(name);
         unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
+        unionType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(unionType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(unionType, analyzedNode->visibility);

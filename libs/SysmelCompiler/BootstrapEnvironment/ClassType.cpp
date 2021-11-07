@@ -23,6 +23,18 @@ TypePtr ClassType::getSupertype() const
     return SuperType::getSupertype();
 }
 
+void ClassType::evaluateAllPendingCodeFragments()
+{
+    evaluatePendingSuperclassDefinitions();
+    evaluateAllPendingBodyBlockCodeFragments();
+}
+
+void ClassType::evaluateAllPendingBodyBlockCodeFragments()
+{
+    evaluatePendingSuperclassDefinitions();
+    SuperType::evaluateAllPendingBodyBlockCodeFragments();
+}
+
 void ClassType::evaluatePendingSuperclassDefinitions() const
 {
     while(!pendingSuperclassCodeFragments.empty())
@@ -61,6 +73,7 @@ void ClassType::evaluatePendingSuperclassDefinitions() const
 void ClassType::enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
 {
     pendingSuperclassCodeFragments.push_back(codeFragment);
+    enqueuePendingSemanticAnalysis();
 }
 
 bool ClassTypeValue::isClassTypeValue() const

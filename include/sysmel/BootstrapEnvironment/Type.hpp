@@ -147,7 +147,15 @@ public:
     /// This method enqueue the analysis of a body block.
     virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
+    virtual void ensureSemanticAnalysis() override;
+
 protected:
+    /// This method evaluates all of the pending code fragments.
+    virtual void evaluateAllPendingCodeFragments();
+
+    /// This method evaluates all of the pending body block code fragments.
+    virtual void evaluateAllPendingBodyBlockCodeFragments();
+
     AnyValuePtr name;
     mutable TypePtr supertype;
     TypePtrList subtypes;

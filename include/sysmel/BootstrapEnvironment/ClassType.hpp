@@ -26,7 +26,14 @@ public:
     virtual void enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
 protected:
-    void evaluatePendingSuperclassDefinitions() const;
+    /// This method evaluates all of the pending code fragments.
+    virtual void evaluateAllPendingCodeFragments() override;
+
+    /// This method evaluates all of the pending body block code fragments.
+    virtual void evaluateAllPendingBodyBlockCodeFragments() override;
+
+    /// This method evaluates all of the pending super class definition code fragments.
+    virtual void evaluatePendingSuperclassDefinitions() const;
 
     mutable DeferredCompileTimeCodeFragmentPtrList pendingSuperclassCodeFragments;
     mutable bool hasEvaluatedSuperclassCodeFragment = false;

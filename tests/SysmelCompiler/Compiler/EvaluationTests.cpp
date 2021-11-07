@@ -1,6 +1,9 @@
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/EnumType.hpp"
+#include "sysmel/BootstrapEnvironment/StructureType.hpp"
+#include "sysmel/BootstrapEnvironment/ClassType.hpp"
+#include "sysmel/BootstrapEnvironment/UnionType.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveIntegerType.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
@@ -211,6 +214,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
                 CHECK_EQUAL(structDeclaration, structDefinition);
+                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<StructureType> (structDefinition)->getDefinitionModule());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }
@@ -225,6 +231,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto unionDefinition = evaluateString("public union TestUnion definition: {}.");
                 CHECK(unionDefinition->isUnionType());
                 CHECK_EQUAL(unionDeclaration, unionDefinition);
+                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<UnionType> (unionDefinition)->getDefinitionModule());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }
@@ -239,6 +248,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto classDefinition = evaluateString("public class TestClass definition: {}.");
                 CHECK(classDefinition->isClassType());
                 CHECK_EQUAL(classDeclaration, classDefinition);
+                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<ClassType> (classDefinition)->getDefinitionModule());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }
@@ -252,7 +264,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 
                 auto subclass = evaluateString("public class SubClass superclass: SuperClass; definition: {}.");
                 CHECK(subclass->isClassType());
-                CHECK_EQUAL(std::static_pointer_cast<Type> (subclass)->getSupertype(), superclass);
+                CHECK_EQUAL(superclass, std::static_pointer_cast<Type> (subclass)->getSupertype());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }
@@ -267,7 +281,80 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
-                CHECK_EQUAL(std::static_pointer_cast<EnumType> (enumDefinition)->getBaseType(), UInt32::__staticType__());
+                CHECK_EQUAL(UInt32::__staticType__(), std::static_pointer_cast<EnumType> (enumDefinition)->getBaseType());
+                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<EnumType> (enumDefinition)->getDefinitionModule());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructField)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {public field int32Field type: Int32}.");
+                CHECK(structDefinition->isStructureType());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructMethod)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {public method square: x := x*x}.");
+                CHECK(structDefinition->isStructureType());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+
+    TEST(EmptyStructBasicNewValue)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structValue = evaluateString("TestStruct basicNewValue");
+                CHECK(structValue->isStructureTypeValue());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(EmptyStructNewValue)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structValue = evaluateString("TestStruct newValue");
+                CHECK(structValue->isStructureTypeValue());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(EmptyStructNewValue2)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structValue = evaluateString("TestStruct()");
+                CHECK(structValue->isStructureTypeValue());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }

@@ -8,6 +8,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
+#include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -368,9 +369,34 @@ void Type::withAllSubtypesDo(const TypeIterationBlock &aBlock)
     allSubtypesDo(aBlock);
 }
 
+void Type::ensureSemanticAnalysis()
+{
+    SuperType::ensureSemanticAnalysis();
+    evaluateAllPendingCodeFragments();
+}
+
+void Type::evaluateAllPendingCodeFragments()
+{
+    evaluateAllPendingBodyBlockCodeFragments();
+}
+
+void Type::evaluateAllPendingBodyBlockCodeFragments()
+{
+    while(!pendingBodyBlockCodeFragments.empty())
+    {
+        auto fragmentsToProcess = pendingBodyBlockCodeFragments;
+        pendingBodyBlockCodeFragments.clear();
+        for(auto &fragment : fragmentsToProcess)
+        {
+            fragment->analyzeAndEvaluate();
+        }
+    }
+}
+
 void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
 {
     pendingBodyBlockCodeFragments.push_back(codeFragment);
+    enqueuePendingSemanticAnalysis();
 }
 
 } // End of namespace BootstrapEnvironment

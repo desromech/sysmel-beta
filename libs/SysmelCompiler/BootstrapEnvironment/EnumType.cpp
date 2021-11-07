@@ -26,11 +26,13 @@ const TypePtr &EnumType::getBaseType()
 void EnumType::enqueuePendingValueTypeCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
 {
     pendingValueTypeCodeFragments.push_back(codeFragment);
+    enqueuePendingSemanticAnalysis();
 }
 
 void EnumType::enqueuePendingValuesCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
 {
     pendingValuesCodeFragments.push_back(codeFragment);
+    enqueuePendingSemanticAnalysis();
 }
 
 void EnumType::evaluatePendingValueTypeCodeFragments()

@@ -37,5 +37,25 @@ bool ProgramModule::isProgramModule() const
     return true;
 }
 
+void ProgramModule::enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &programEntity)
+{
+    programEntitiesWithPendingAnalysis.push_back(programEntity);
+}
+
+void ProgramModule::analyzeAllPendingProgramEntities()
+{
+    std::vector<ModuleDefinedProgramEntityPtr> toAnalyze;
+    toAnalyze.swap(programEntitiesWithPendingAnalysis);
+    while(!toAnalyze.empty())
+    {
+        for(auto &entity : toAnalyze)
+            entity->ensureSemanticAnalysis();
+
+        toAnalyze.clear();
+        toAnalyze.swap(programEntitiesWithPendingAnalysis);
+    }
+
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
