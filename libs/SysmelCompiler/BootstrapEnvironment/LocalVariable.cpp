@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/LocalVariable.hpp"
+#include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
-
 
 namespace SysmelMoebius
 {
@@ -12,6 +12,11 @@ static BootstrapTypeRegistration<LocalVariable> localVariableTypeRegistration;
 bool LocalVariable::isLocalVariable() const
 {
     return true;
+}
+
+AnyValuePtr LocalVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
+{
+    return compileTimeCleanUpScope->lookupStoreBindingRecursively(shared_from_this());
 }
 
 } // End of namespace BootstrapEnvironment

@@ -80,6 +80,8 @@ public:
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node) override;
 
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitFieldVariableNode(const ASTFieldVariableNodePtr &node) override;
 
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
 

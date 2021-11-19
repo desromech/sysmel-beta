@@ -20,6 +20,7 @@
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
@@ -182,9 +183,15 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
     return storeValue;
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
+{
+    return std::static_pointer_cast<Variable> (node->analyzedProgramEntity)->findStoreBindingInCompileTime(currentCleanUpScope)
+        ->accessVariableAsReferenceWithType(node->analyzedType);
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
-    auto storeBinding = currentCleanUpScope->lookupStoreBindingRecursively(node->variable);
+    auto storeBinding = node->variable->findStoreBindingInCompileTime(currentCleanUpScope);
     assert(storeBinding);
     
     return node->isAccessedByReference ?

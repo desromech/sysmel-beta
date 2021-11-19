@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
+#include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<ArgumentVariable> localVariableTypeRegistration
 bool ArgumentVariable::isArgumentVariable() const
 {
     return true;
+}
+
+AnyValuePtr ArgumentVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
+{
+    return compileTimeCleanUpScope->lookupStoreBindingRecursively(shared_from_this());
 }
 
 void ArgumentVariable::setType(const TypePtr &type)

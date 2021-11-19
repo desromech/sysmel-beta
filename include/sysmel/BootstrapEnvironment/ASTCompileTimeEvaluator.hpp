@@ -36,6 +36,7 @@ public:
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
 
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node) override;
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
     virtual AnyValuePtr visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node) override;
 

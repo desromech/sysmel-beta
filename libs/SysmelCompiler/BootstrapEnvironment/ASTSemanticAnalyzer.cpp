@@ -26,6 +26,8 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
@@ -57,6 +59,8 @@
 #include "sysmel/BootstrapEnvironment/CompilationErrors.hpp"
 
 #include "sysmel/BootstrapEnvironment/LocalVariable.hpp"
+#include "sysmel/BootstrapEnvironment/GlobalVariable.hpp"
+#include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 
@@ -679,6 +683,100 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
     analyzedNode->analyzedType = localVariable->getReferenceType();
     analyzedNode->analyzedProgramEntity = localVariable;
     return analyzedNode;
+}
+
+
+AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTGlobalVariableNode> (*node);
+    
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::Internal;
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    GlobalVariablePtr globalVariable;
+
+    // Check the name.
+    if(name)
+    {
+        // Forbid reserved names.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} overrides reserved name.", {{name->printString()}}));
+
+        auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+        if(boundSymbol)
+        {
+            if(!boundSymbol->isGlobalVariable())
+                return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} overrides previous non-global variable definition in its parent program entity ({2}).",
+                    {{name->printString(), boundSymbol->printString()}}));
+
+            globalVariable = std::static_pointer_cast<GlobalVariable> (boundSymbol);
+        }
+    }
+
+    if(analyzedNode->type)
+    {
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+    }
+    else
+    {
+        if(analyzedNode->initialValue)
+        {
+            analyzedNode->initialValue = analyzeNodeIfNeededWithAutoTypeInferenceMode(analyzedNode->initialValue, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+            analyzedNode->type = analyzedNode->initialValue->analyzedType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            assert("TODO: Support deferred and/or default type " && false);    
+        }
+    }
+
+    auto valueType = Type::getUndefinedType();
+    if(analyzedNode->type->isASTLiteralValueNode())
+    {
+        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        assert(literalTypeNode->value->isType());
+
+        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+    }
+
+    // Make sure the initial value is analyzed.
+    if(analyzedNode->initialValue)
+        analyzedNode->initialValue = analyzeNodeIfNeededWithExpectedType(analyzedNode->initialValue, valueType, true);
+
+    // Create the global variable.
+    if(!globalVariable)
+    {
+        globalVariable = std::make_shared<GlobalVariable> ();
+        globalVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+        globalVariable->registerInCurrentModule();
+        globalVariable->enqueuePendingSemanticAnalysis();
+
+        ownerEntity->recordChildProgramEntityDefinition(globalVariable);
+        ownerEntity->bindProgramEntityWithVisibility(globalVariable, analyzedNode->visibility);
+        globalVariable->currentValueOrValueBox = getNilConstant();
+    }
+
+    if(analyzedNode->initialValue)
+    {
+        if(globalVariable->initialValueCodeFragment)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} has multiple definitions for its initial value.", {{name->printString()}}));
+
+        globalVariable->initialValueCodeFragment = DeferredCompileTimeCodeFragment::make(analyzedNode->initialValue, environment);
+    }
+
+    // Set it in the analyzed node.
+    analyzedNode->analyzedType = globalVariable->getReferenceType();
+    analyzedNode->analyzedProgramEntity = globalVariable;
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
+{
+    return visitProgramEntityNode(node);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

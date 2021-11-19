@@ -20,6 +20,7 @@ public:
     static constexpr char const __typeName__[] = "ArgumentVariable";
 
     virtual bool isArgumentVariable() const override;
+    virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope) override;
 
     void setType(const TypePtr &type);
     void setDeclarationNode(const ASTArgumentDefinitionNodePtr &node);

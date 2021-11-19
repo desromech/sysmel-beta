@@ -87,11 +87,13 @@ set(BootstrapEnvironment_Sources
     Error.cpp
     Exception.cpp
     FieldMetaBuilder.cpp
+    FieldVariable.cpp
     Fraction.cpp
     FunctionType.cpp
     FunctionalType.cpp
     FunctionMetaBuilder.cpp
     GlobalMetaBuilder.cpp
+    GlobalVariable.cpp
     IdentifierLookupScope.cpp
     InternalMetaBuilder.cpp
     LanguageSupport.cpp

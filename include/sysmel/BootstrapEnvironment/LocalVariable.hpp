@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "LocalVariable";
 
     virtual bool isLocalVariable() const override;
+    virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope) override;
 };
 
 } // End of namespace BootstrapEnvironment

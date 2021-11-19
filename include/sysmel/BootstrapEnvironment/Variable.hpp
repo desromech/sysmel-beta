@@ -10,6 +10,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeCleanUpScope);
+
 /**
  * I am a variable program entity.
  */
@@ -26,6 +28,8 @@ public:
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual AnyValuePtr getName() const override;
+
+    virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope);
 
     const TypePtr &getValueType() const
     {

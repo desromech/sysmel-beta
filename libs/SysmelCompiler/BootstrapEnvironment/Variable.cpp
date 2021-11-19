@@ -22,6 +22,11 @@ AnyValuePtr Variable::getName() const
     return name;
 }
 
+AnyValuePtr Variable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
+{
+    return nullptr;
+}
+
 void Variable::setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType, TypeInferenceMode typeInferenceMode, bool definitionMutability, uint64_t definitionMinimalAlignment)
 {
     name = definitionName;
