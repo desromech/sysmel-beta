@@ -205,6 +205,11 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalImmutableAccessNode(const ASTLoca
     return currentCleanUpScope->lookupStoreBindingRecursively(node->bindingName);
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitProgramEntityNode(const ASTProgramEntityNodePtr &node)
+{
+    return node->analyzedProgramEntity;
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
     auto method = std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity);

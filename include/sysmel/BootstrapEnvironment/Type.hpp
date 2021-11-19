@@ -150,6 +150,9 @@ public:
     virtual void ensureSemanticAnalysis() override;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
+
+    virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding) override;
+
 protected:
     /// This method evaluates all of the pending code fragments.
     virtual void evaluateAllPendingCodeFragments();
@@ -162,6 +165,8 @@ protected:
     TypePtrList subtypes;
 
     ProgramEntityPtrList children;
+    std::unordered_map<AnyValuePtr, ProgramEntityVisibilityWithBinding> bindings;
+    
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;

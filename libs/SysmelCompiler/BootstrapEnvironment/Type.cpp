@@ -404,5 +404,14 @@ void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
     children.push_back(newChild);
 }
 
+void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
+{
+    assert(symbol && !symbol->isAnonymousNameSymbol());
+    if(bindings.find(symbol) != bindings.end())
+        signalNewWithMessage<Error> ("Expected a new symbol binding.");
+
+    bindings[symbol] = std::make_pair(visibility, binding);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

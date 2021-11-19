@@ -94,6 +94,9 @@ public:
 
     /// This method performs the lookup for a message with the specified selector only in this type.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
+
+    /// Does this program entity support the definition of fields?
+    virtual bool canHaveFields() const;
 };
 
 } // End of namespace BootstrapEnvironment

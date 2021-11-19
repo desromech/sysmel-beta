@@ -307,6 +307,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK(structDefinition->isStructureType());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
+
+                auto structType = std::static_pointer_cast<StructureType> (structDefinition);
+                CHECK_EQUAL(1u, structType->fields.size());
             });
         });
     }
@@ -322,7 +325,6 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
-
 
     TEST(EmptyStructBasicNewValue)
     {

@@ -776,7 +776,92 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
 
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
 {
-    return visitProgramEntityNode(node);
+    auto analyzedNode = std::make_shared<ASTFieldVariableNode> (*node);
+    
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::Internal;
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    if(!ownerEntity->canHaveFields())
+        return recordSemanticErrorInNode(analyzedNode, formatString("Fields cannot be defined inside of program entity {0}.", {{ownerEntity->printString()}}));
+
+    FieldVariablePtr fieldVariable;
+
+    // Check the name.
+    if(name)
+    {
+        // Forbid reserved names.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Field {0} overrides reserved name.", {{name->printString()}}));
+
+        auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+        if(boundSymbol)
+        {
+            if(!boundSymbol->isFieldVariable())
+                return recordSemanticErrorInNode(analyzedNode, formatString("Field {0} overrides previous non-field variable definition in its parent program entity ({1}).",
+                    {{name->printString(), boundSymbol->printString()}}));
+
+            fieldVariable = std::static_pointer_cast<FieldVariable> (boundSymbol);
+        }
+    }
+
+    if(analyzedNode->type)
+    {
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+    }
+    else
+    {
+        if(analyzedNode->initialValue)
+        {
+            analyzedNode->initialValue = analyzeNodeIfNeededWithAutoTypeInferenceMode(analyzedNode->initialValue, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+            analyzedNode->type = analyzedNode->initialValue->analyzedType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            assert("TODO: Support deferred and/or default type " && false);    
+        }
+    }
+
+    auto valueType = Type::getUndefinedType();
+    if(analyzedNode->type->isASTLiteralValueNode())
+    {
+        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        assert(literalTypeNode->value->isType());
+
+        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+    }
+
+    // Make sure the initial value is analyzed.
+    if(analyzedNode->initialValue)
+        analyzedNode->initialValue = analyzeNodeIfNeededWithExpectedType(analyzedNode->initialValue, valueType, true);
+
+    // Create the global variable.
+    if(!fieldVariable)
+    {
+        fieldVariable = std::make_shared<FieldVariable> ();
+        fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+        fieldVariable->registerInCurrentModule();
+        fieldVariable->enqueuePendingSemanticAnalysis();
+
+        ownerEntity->recordChildProgramEntityDefinition(fieldVariable);
+        ownerEntity->bindProgramEntityWithVisibility(fieldVariable, analyzedNode->visibility);
+    }
+
+    if(analyzedNode->initialValue)
+    {
+        if(fieldVariable->initialValueCodeFragment)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {0} has multiple definitions for its initial value.", {{name->printString()}}));
+
+        fieldVariable->initialValueCodeFragment = DeferredCompileTimeCodeFragment::make(analyzedNode->initialValue, environment);
+    }
+
+    // Set it in the analyzed node.
+    analyzedNode->analyzedType = FieldVariable::__staticType__();
+    analyzedNode->analyzedProgramEntity = fieldVariable;
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

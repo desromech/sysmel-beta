@@ -10,7 +10,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(GlobalVariable);
-SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
 
 /**
  * I am a variable program entity.

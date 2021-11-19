@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeWithFields);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeWithFieldsValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FieldVariable);
 
 /**
  * I am an instance of a function type object.
@@ -19,6 +20,11 @@ class AggregateTypeWithFields : public SubMetaTypeOf<AggregateType, AggregateTyp
 {
 public:
     virtual bool isAggregateTypeWithFields() const override;
+
+    virtual bool canHaveFields() const override;
+    virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
+
+    FieldVariablePtrList fields;
 };
 
 /**

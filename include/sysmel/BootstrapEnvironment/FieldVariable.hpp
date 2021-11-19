@@ -10,6 +10,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
 
 /**
  * I am a variable program entity.
@@ -20,6 +21,8 @@ public:
     static constexpr char const __typeName__[] = "FieldVariable";
 
     virtual bool isFieldVariable() const override;
+
+    DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
 };
 
 } // End of namespace BootstrapEnvironment

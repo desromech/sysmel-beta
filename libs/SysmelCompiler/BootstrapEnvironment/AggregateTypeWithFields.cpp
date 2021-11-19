@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/AggregateTypeWithFields.hpp"
+#include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <sstream>
 
@@ -12,6 +13,19 @@ static BootstrapTypeRegistration<AggregateTypeWithFieldsValue> AggregateTypeWith
 bool AggregateTypeWithFields::isAggregateTypeWithFields() const
 {
     return true;
+}
+
+bool AggregateTypeWithFields::canHaveFields() const
+{
+    return true;
+}
+
+void AggregateTypeWithFields::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
+{
+    SuperType::recordChildProgramEntityDefinition(newChild);
+    
+    if(newChild->isFieldVariable())
+        fields.push_back(std::static_pointer_cast<FieldVariable> (newChild));
 }
 
 bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const

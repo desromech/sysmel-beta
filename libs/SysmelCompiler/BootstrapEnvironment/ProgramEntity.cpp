@@ -41,7 +41,7 @@ void ProgramEntity::recordChildProgramEntityDefinition(const ProgramEntityPtr &n
 void ProgramEntity::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
 {
     (void)visibility;
-    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot bind child program {0} with symbol {1} entity inside of {2}.",
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot bind child program entity {0} with symbol {1} entity inside of {2}.",
         {{binding->printString(), validAnyValue(symbol)->printString(), printString()}}));
 }
 
@@ -160,6 +160,11 @@ void ProgramEntity::addMacroFallbackMethodCategories(const MethodCategories &cat
         for(auto &[selector, method] : methods)
             addMacroFallbackMethodWithSelector(method, selector);
     }
+}
+
+bool ProgramEntity::canHaveFields() const
+{
+    return false;
 }
 
 } // End of namespace BootstrapEnvironment
