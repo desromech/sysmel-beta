@@ -118,7 +118,17 @@ int main(int argc, const char *argv[])
                     return;
                 }
             }
-        });
+
+            try
+            {
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            }
+            catch(ExceptionWrapper &exception)
+            {
+                std::cerr << exception.what() << std::endl;
+                exitCode = 1;
+            }
+       });
     });
 
     return exitCode;
