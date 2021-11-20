@@ -41,9 +41,13 @@ public:
 
     virtual FunctionalTypeValuePtr asFunctionalValue();
     
+    void setIntrinsicName(const AnyValuePtr &theIntrinsicName);
+    const AnyValuePtr &getIntrinsicName() const;
+
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;
+    AnyValuePtr intrinsicName;
 };
 
 } // End of namespace BootstrapEnvironment

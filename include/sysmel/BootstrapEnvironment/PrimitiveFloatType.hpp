@@ -41,10 +41,14 @@ public:
 class Float32 : public SubtypeOf<PrimitiveFloatType, Float32>
 {
 public:
+    typedef float ValueType;
+
     static constexpr char const __typeName__[] = "Float32";
     static constexpr char const __sysmelTypeName__[] = "Float32";
+    
+    static MethodCategories __instanceMethods__();
 
-    float value = 0;
+    ValueType value = 0;
 };
 
 /**
@@ -53,10 +57,14 @@ public:
 class Float64 : public SubtypeOf<PrimitiveFloatType, Float64>
 {
 public:
+    typedef double ValueType;
+
     static constexpr char const __typeName__[] = "Float64";
     static constexpr char const __sysmelTypeName__[] = "Float64";
+    
+    static MethodCategories __instanceMethods__();
 
-    double value = 0;
+    ValueType value = 0;
 };
 
 } // End of namespace BootstrapEnvironment

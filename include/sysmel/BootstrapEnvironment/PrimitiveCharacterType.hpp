@@ -29,8 +29,12 @@ public:
 class Char8 : public SubtypeOf<PrimitiveCharacterType, Char8>
 {
 public:
+    typedef char ValueType;
+
     static constexpr char const __typeName__[] = "Char8";
     static constexpr char const __sysmelTypeName__[] = "Char8";
+    
+    static MethodCategories __instanceMethods__();
 
     char value = 0;
 };
@@ -41,8 +45,12 @@ public:
 class Char16 : public SubtypeOf<PrimitiveCharacterType, Char16>
 {
 public:
+    typedef char16_t ValueType;
+
     static constexpr char const __typeName__[] = "Char16";
     static constexpr char const __sysmelTypeName__[] = "Char16";
+    
+    static MethodCategories __instanceMethods__();
 
     char16_t value = 0;
 };
@@ -53,8 +61,12 @@ public:
 class Char32 : public SubtypeOf<PrimitiveCharacterType, Char32>
 {
 public:
+    typedef char32_t ValueType;
+
     static constexpr char const __typeName__[] = "Char32";
     static constexpr char const __sysmelTypeName__[] = "Char32";
+    
+    static MethodCategories __instanceMethods__();
 
     char32_t value = 0;
 };

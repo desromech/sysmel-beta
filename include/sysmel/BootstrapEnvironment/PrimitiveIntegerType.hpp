@@ -29,10 +29,14 @@ public:
 class UInt8 : public SubtypeOf<PrimitiveIntegerType, UInt8>
 {
 public:
+    typedef uint8_t ValueType;
+
     static constexpr char const __typeName__[] = "UInt8";
     static constexpr char const __sysmelTypeName__[] = "UInt8";
+    
+    static MethodCategories __instanceMethods__();
 
-    uint8_t value = 0;
+    ValueType value = 0;
 };
 
 /**
@@ -41,8 +45,12 @@ public:
 class UInt16 : public SubtypeOf<PrimitiveIntegerType, UInt16>
 {
 public:
+    typedef uint16_t ValueType;
+
     static constexpr char const __typeName__[] = "UInt16";
     static constexpr char const __sysmelTypeName__[] = "UInt16";
+
+    static MethodCategories __instanceMethods__();
 
     uint16_t value = 0;
 };
@@ -53,8 +61,12 @@ public:
 class UInt32 : public SubtypeOf<PrimitiveIntegerType, UInt32>
 {
 public:
+    typedef uint32_t ValueType;
+
     static constexpr char const __typeName__[] = "UInt32";
     static constexpr char const __sysmelTypeName__[] = "UInt32";
+
+    static MethodCategories __instanceMethods__();
 
     uint32_t value = 0;
 };
@@ -65,8 +77,12 @@ public:
 class UInt64 : public SubtypeOf<PrimitiveIntegerType, UInt64>
 {
 public:
+    typedef uint64_t ValueType;
+
     static constexpr char const __typeName__[] = "UInt64";
     static constexpr char const __sysmelTypeName__[] = "UInt64";
+
+    static MethodCategories __instanceMethods__();
 
     uint64_t value = 0;
 };
@@ -77,8 +93,12 @@ public:
 class Int8 : public SubtypeOf<PrimitiveIntegerType, Int8>
 {
 public:
+    typedef int8_t ValueType;
+
     static constexpr char const __typeName__[] = "Int8";
     static constexpr char const __sysmelTypeName__[] = "Int8";
+
+    static MethodCategories __instanceMethods__();
 
     int8_t value = 0;
 };
@@ -89,8 +109,12 @@ public:
 class Int16 : public SubtypeOf<PrimitiveIntegerType, Int16>
 {
 public:
+    typedef int16_t ValueType;
+
     static constexpr char const __typeName__[] = "Int16";
     static constexpr char const __sysmelTypeName__[] = "Int16";
+
+    static MethodCategories __instanceMethods__();
 
     int16_t value = 0;
 };
@@ -101,8 +125,12 @@ public:
 class Int32 : public SubtypeOf<PrimitiveIntegerType, Int32>
 {
 public:
+    typedef int32_t ValueType;
+
     static constexpr char const __typeName__[] = "Int32";
     static constexpr char const __sysmelTypeName__[] = "Int32";
+
+    static MethodCategories __instanceMethods__();
 
     int32_t value = 0;
 };
@@ -113,8 +141,12 @@ public:
 class Int64 : public SubtypeOf<PrimitiveIntegerType, Int64>
 {
 public:
+    typedef int64_t ValueType;
+
     static constexpr char const __typeName__[] = "Int64";
     static constexpr char const __sysmelTypeName__[] = "Int64";
+
+    static MethodCategories __instanceMethods__();
 
     int64_t value = 0;
 };

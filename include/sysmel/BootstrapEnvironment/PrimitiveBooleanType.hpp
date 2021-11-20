@@ -10,6 +10,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveBooleanType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Boolean8);
 
 /**
  * I am a primitive boolean type.
@@ -29,8 +30,12 @@ public:
 class Boolean8 : public SubtypeOf<PrimitiveBooleanType, Boolean8>
 {
 public:
+    typedef bool ValueType;
+    
     static constexpr char const __typeName__[] = "Boolean8";
     static constexpr char const __sysmelTypeName__[] = "Boolean8";
+
+    static Boolean8Ptr make(bool value);
 
     bool value = false;
 };

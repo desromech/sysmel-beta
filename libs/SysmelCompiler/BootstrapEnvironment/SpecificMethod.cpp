@@ -231,5 +231,16 @@ FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
     return functionalValue;
 }
 
+void SpecificMethod::setIntrinsicName(const AnyValuePtr &theIntrinsicName)
+{
+    intrinsicName = theIntrinsicName;
+}
+
+const AnyValuePtr &SpecificMethod::getIntrinsicName() const
+{
+    return intrinsicName;
+}
+
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
