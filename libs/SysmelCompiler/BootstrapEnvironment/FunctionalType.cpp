@@ -68,6 +68,17 @@ FunctionalTypeValuePtr FunctionalType::makeValueWithEnvironmentAndImplementation
     SysmelSelfSubclassResponsibility();
 }
 
+bool FunctionalType::hasAutoResultType() const
+{
+    return result->isAutoType();
+}
+
+FunctionTypePtr FunctionalType::copyWithResultType(const TypePtr &newResultType)
+{
+    (void)newResultType;
+    SysmelSelfSubclassResponsibility();
+}
+
 bool FunctionalTypeValue::isFunctionalTypeValue() const
 {
     return true;

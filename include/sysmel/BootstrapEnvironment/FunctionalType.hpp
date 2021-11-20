@@ -30,6 +30,9 @@ public:
     virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation);
     
     virtual std::string printString() const override;
+
+    bool hasAutoResultType() const;
+    virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType);
     
 protected:
     TypePtrList arguments;

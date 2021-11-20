@@ -102,7 +102,7 @@ CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast
     }
 
     auto scriptMethod = std::make_shared<CompiledMethod> ();
-    scriptMethod->setFunctionSignature(Type::getVoidType(), TypePtrList{});
+    scriptMethod->setFunctionSignature(Type::getAutoType(), TypePtrList{});
     scriptMethod->setDefinition(ast, ast, environment);
     scriptMethod->ensureSemanticAnalysis();
     return scriptMethod;

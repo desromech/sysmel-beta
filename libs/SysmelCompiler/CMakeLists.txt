@@ -57,6 +57,7 @@ set(BootstrapEnvironment_Sources
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVisitor.cpp
+    Auto.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
@@ -86,6 +87,7 @@ set(BootstrapEnvironment_Sources
     EnumType.cpp
     Error.cpp
     Exception.cpp
+    ExpectedTypeSetInferenceSlot.cpp
     FieldMetaBuilder.cpp
     FieldVariable.cpp
     Fraction.cpp

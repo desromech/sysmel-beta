@@ -35,6 +35,7 @@ public:
     static TypePtr getLiteralSymbolValue();
     static TypePtr getUndefinedType();
     static TypePtr getVoidType();
+    static TypePtr getAutoType();
     static TypePtr getNamespaceType();
 
     static TypePtr getPragmaType();
@@ -44,6 +45,7 @@ public:
 
     bool isUndefinedType() const;
     bool isVoidType() const;
+    bool isAutoType() const;
     bool isReturnType() const;
     bool isLiteralValueType() const;
     bool isCompilationErrorValueType() const;

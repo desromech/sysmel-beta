@@ -32,6 +32,11 @@ bool Type::isUndefinedType() const
     return isSubtypeOf(getUndefinedType());
 }
 
+bool Type::isAutoType() const
+{
+    return this == getAutoType().get();
+}
+
 bool Type::isVoidType() const
 {
     return isSubtypeOf(getVoidType());

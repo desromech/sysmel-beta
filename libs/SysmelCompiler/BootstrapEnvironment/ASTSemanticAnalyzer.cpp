@@ -152,8 +152,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNo
         currentExpectedType = oldExpectedType;
     });
 
-    // TODO: Add the implicit cast that might be needed here.
-    return analyzedNode;
+    return typeInferenceSlot->concretizeTypeInferenceOfNodeWith(analyzedNode, shared_from_this());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects)
@@ -314,6 +313,36 @@ AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
 bool ASTSemanticAnalyzer::isNameReserved(const AnyValuePtr &name)
 {
     return environment->lexicalScope->isNameReserved(name);
+}
+
+ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType)
+{
+    auto analyzedNode = node;
+    if(!analyzedNode->analyzedType)
+        analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
+    
+    auto sourceType = analyzedNode->analyzedType;
+    if(sourceType->isSubtypeOf(targetType))
+        return node;
+    
+    return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+}
+
+ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
+{
+    assert(!expectedTypeSet.empty());
+    if(expectedTypeSet.size() == 1)
+        return addImplicitCastTo(node, expectedTypeSet[0]);
+
+    // Is there a single matching type?
+    auto &sourceType = node->analyzedType;
+    for(auto &expectedType : expectedTypeSet)
+    {
+        if(sourceType->isSubtypeOf(expectedType))
+            return node;
+    }
+
+    assert("TODO: addImplicitCastToOneOf" && false);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)

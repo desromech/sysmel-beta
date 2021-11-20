@@ -95,6 +95,9 @@ public:
     virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node) override;
     virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node) override;
 
+    ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);
+    ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
+
     AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateTypeExpression(const ASTNodePtr &node);

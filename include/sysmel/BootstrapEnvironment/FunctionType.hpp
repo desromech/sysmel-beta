@@ -25,6 +25,7 @@ public:
     virtual TypePtr getType() const override;
 
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
+    virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType) override;
 };
 
 /**

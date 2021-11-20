@@ -17,6 +17,11 @@ FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList 
     return result;
 }
 
+FunctionTypePtr FunctionType::copyWithResultType(const TypePtr &newResultType)
+{
+    return make(newResultType, arguments);
+}
+
 FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtrList &arguments)
 {
     return FunctionType::make(resultType, arguments);

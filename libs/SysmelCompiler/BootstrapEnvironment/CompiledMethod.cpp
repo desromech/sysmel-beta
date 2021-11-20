@@ -120,9 +120,12 @@ ASTNodePtr CompiledMethod::analyzeDefinitionWith(const ASTSemanticAnalyzerPtr &a
     if(analyzedBodyNode)
         return analyzedBodyNode;
 
-    return analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(createSemanticAnalysisEnvironment(), [&]() {
+    analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(createSemanticAnalysisEnvironment(), [&]() {
         return analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->getResultType());
     });
+
+    concretizeAutoResultTypeWith(analyzedBodyNode->analyzedType);
+    return analyzedBodyNode;
 }
 
 void CompiledMethod::ensureSemanticAnalysis()

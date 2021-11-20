@@ -25,6 +25,7 @@ public:
     static ResultTypeInferenceSlotPtr makeForAuto();
     static ResultTypeInferenceSlotPtr makeForAutoWithMode(TypeInferenceMode mode, bool isMutable);
 
+    virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual TypePtr getExpectedFunctionalArgumentType(size_t index) const;
     virtual TypePtr getExpectedFunctionalResultType() const;
 };

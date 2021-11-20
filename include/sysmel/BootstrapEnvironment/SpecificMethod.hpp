@@ -40,9 +40,11 @@ public:
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual FunctionalTypeValuePtr asFunctionalValue();
-    
+
     void setIntrinsicName(const AnyValuePtr &theIntrinsicName);
     const AnyValuePtr &getIntrinsicName() const;
+
+    void concretizeAutoResultTypeWith(const TypePtr &newResultType);
 
 protected:
     FunctionalTypePtr functionalType;

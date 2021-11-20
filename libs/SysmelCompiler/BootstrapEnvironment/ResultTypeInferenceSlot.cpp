@@ -8,18 +8,6 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<ResultTypeInferenceSlot> ResultTypeInferenceSlotTypeRegistration;
 
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForType(const TypePtr &expectedType)
-{
-    (void)expectedType;
-    return std::make_shared<ResultTypeInferenceSlot> ();
-}
-
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtrList &expectedTypeSet)
-{
-    (void)expectedTypeSet;
-    return std::make_shared<ResultTypeInferenceSlot> ();
-}
-
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
 {
     return std::make_shared<ResultTypeInferenceSlot> ();
@@ -30,6 +18,12 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInfe
     (void)mode;
     (void)isMutable;
     return std::make_shared<ResultTypeInferenceSlot> ();
+}
+
+ASTNodePtr ResultTypeInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    (void)semanticAnalyzer;
+    return node;
 }
 
 TypePtr ResultTypeInferenceSlot::getExpectedFunctionalArgumentType(size_t index) const

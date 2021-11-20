@@ -241,6 +241,16 @@ const AnyValuePtr &SpecificMethod::getIntrinsicName() const
     return intrinsicName;
 }
 
+void SpecificMethod::concretizeAutoResultTypeWith(const TypePtr &newResultType)
+{
+    if(!functionalType->hasAutoResultType())
+        return;
+    
+    assert(!newResultType->isReturnType());
+    functionalType = functionalType->copyWithResultType(newResultType);
+    if(functionalValue)
+        functionalValue->type = functionalType;
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
