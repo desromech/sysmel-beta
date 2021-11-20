@@ -418,6 +418,18 @@ public:
     /// Is this object an AST enum node?
     virtual bool isASTEnumNode() const;
 
+    /// Is this object an AST type conversion node?
+    virtual bool isASTTypeConversionNode() const;
+
+    /// Is this object an AST value as void type conversion node?
+    virtual bool isASTValueAsVoidTypeConversionNode() const;
+
+    /// Is this object an AST upcast type conversion node?
+    virtual bool isASTUpcastTypeConversionNode() const;
+
+    /// Is this object an AST downcast type conversion node?
+    virtual bool isASTDowncastTypeConversionNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

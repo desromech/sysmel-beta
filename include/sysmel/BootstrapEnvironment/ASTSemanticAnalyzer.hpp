@@ -95,6 +95,8 @@ public:
     virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node) override;
     virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node) override;
 
+    virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node) override;
+
     ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);
     ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
 

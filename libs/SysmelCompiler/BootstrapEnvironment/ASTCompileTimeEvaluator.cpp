@@ -29,6 +29,10 @@
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTTypeNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTUpcastTypeConversionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
@@ -40,6 +44,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
+#include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 
 namespace SysmelMoebius
 {
@@ -235,6 +240,28 @@ AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePt
 AnyValuePtr ASTCompileTimeEvaluator::visitTypeNode(const ASTTypeNodePtr &node)
 {
     return node->analyzedProgramEntity;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node)
+{
+    visitNode(node->expression);
+    return getVoidConstant();
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node)
+{
+    return visitNode(node->expression);
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node)
+{
+    auto value = visitNode(node->expression);
+    auto valueType = validAnyValue(value)->getType();
+    auto expectedType = node->analyzedType;
+    if(!valueType->isSubtypeOf(expectedType))
+        signalNewWithMessage<Error> (formatString("Cannot peform down-cast of value of type {0} into value of type {1}.", {valueType->printString(), expectedType->printString()}));
+
+    return value;
 }
 
 } // End of namespace BootstrapEnvironment

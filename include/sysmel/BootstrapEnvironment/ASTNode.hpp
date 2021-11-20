@@ -58,6 +58,11 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTStructNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTUnionNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTClassNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTTypeConversionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTValueAsVoidTypeConversionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTUpcastTypeConversionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTDowncastTypeConversionNode);
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */

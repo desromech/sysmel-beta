@@ -15,6 +15,10 @@
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTUpcastTypeConversionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -228,6 +232,26 @@ AnyValuePtr ASTVisitor::visitUnionNode(const ASTUnionNodePtr &node)
 AnyValuePtr ASTVisitor::visitClassNode(const ASTClassNodePtr &node)
 {
     return visitTypeNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitTypeConversionNode(const ASTTypeConversionNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node)
+{
+    return visitTypeConversionNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node)
+{
+    return visitTypeConversionNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node)
+{
+    return visitTypeConversionNode(node);
 }
 
 } // End of namespace BootstrapEnvironment

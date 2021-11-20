@@ -15,6 +15,7 @@ set(BootstrapEnvironment_Sources
     ASTClosureNode.cpp
     ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
+    ASTDowncastTypeConversionNode.cpp
     ASTEmptySourcePosition.cpp
     ASTEnumNode.cpp
     ASTErrorNode.cpp
@@ -52,8 +53,11 @@ set(BootstrapEnvironment_Sources
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
     ASTStructNode.cpp
+    ASTTypeConversionNode.cpp
     ASTTypeNode.cpp
     ASTUnionNode.cpp
+    ASTUpcastTypeConversionNode.cpp
+    ASTValueAsVoidTypeConversionNode.cpp
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVisitor.cpp
@@ -83,6 +87,7 @@ set(BootstrapEnvironment_Sources
     CompilerObject.cpp
     DivisionByZeroError.cpp
     DomainError.cpp
+    DowncastTypeConversionRule.cpp
     EnumMetaBuilder.cpp
     EnumType.cpp
     Error.cpp
@@ -97,6 +102,7 @@ set(BootstrapEnvironment_Sources
     GlobalMetaBuilder.cpp
     GlobalVariable.cpp
     IdentifierLookupScope.cpp
+    IdentityTypeConversionRule.cpp
     InternalMetaBuilder.cpp
     LanguageSupport.cpp
     LargeInteger.cpp
@@ -164,12 +170,15 @@ set(BootstrapEnvironment_Sources
     SubclassResponsibility.cpp
     ResultTypeInferenceSlot.cpp
     Type.cpp
+    TypeConversionRule.cpp
     TypeMetaBuilder.cpp
     Undefined.cpp
     UnsupportedOperation.cpp
+    UpcastTypeConversionRule.cpp
     UnionMetaBuilder.cpp
     UnionType.cpp
     ValueBox.cpp
+    ValueAsVoidTypeConversionRule.cpp
     Variable.cpp
     VariableMetaBuilder.cpp
     VisibilityMetaBuilder.cpp

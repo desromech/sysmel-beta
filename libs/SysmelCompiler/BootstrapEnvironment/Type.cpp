@@ -8,6 +8,11 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
+#include "sysmel/BootstrapEnvironment/TypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/IdentityTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/UpcastTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/DowncastTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
 #include <algorithm>
 
@@ -417,6 +422,80 @@ void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisi
 
     bindings[symbol] = std::make_pair(visibility, binding);
 }
+
+void Type::addDefaultTypeConversionRules()
+{
+    addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
+    addTypeConversionRule(UpcastTypeConversionRule::uniqueInstance());
+    addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
+    addExplicitTypeConversionRule(DowncastTypeConversionRule::uniqueInstance());
+}
+
+void Type::addTypeConversionRule(const TypeConversionRulePtr &rule)
+{
+    addExplicitTypeConversionRule(rule);
+    addImplicitTypeConversionRule(rule);
+}
+
+void Type::addExplicitTypeConversionRule(const TypeConversionRulePtr &rule)
+{
+    explicitTypeConversionRules.push_back(rule);
+}
+
+void Type::addImplicitTypeConversionRule(const TypeConversionRulePtr &rule)
+{
+    implicitTypeConversionRules.push_back(rule);
+}
+
+void Type::addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule)
+{
+    reinterpretTypeConversionRules.push_back(rule);
+}
+
+TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+{
+    auto sourceType = shared_from_this();
+    for(auto & rule : implicitTypeConversionRules)
+    {
+        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
+            return rule;
+    }
+
+    // Look for a rule on my supertype.
+    /*if(supertype)
+    {
+        auto superTypeRule = supertype->findImplicitTypeConversionRuleForInto(node, targetType);
+        if(superTypeRule)
+            return superTypeRule->chainedWith(ImplicitSuperTypeConversionRule::makeFor(supertype));
+    }*/
+
+    return nullptr;
+}
+
+TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+{
+    auto sourceType = shared_from_this();
+    for(auto & rule : explicitTypeConversionRules)
+    {
+        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
+            return rule;
+    }
+
+    return nullptr;
+}
+
+TypeConversionRulePtr Type::findReinterpretTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+{
+    auto sourceType = shared_from_this();
+    for(auto & rule : reinterpretTypeConversionRules)
+    {
+        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
+            return rule;
+    }
+
+    return nullptr;
+}
+
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

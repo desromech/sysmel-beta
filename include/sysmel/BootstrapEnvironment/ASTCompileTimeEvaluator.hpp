@@ -45,6 +45,10 @@ public:
     virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
     virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node) override;
 
+    virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
+    virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;
+    virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node) override;
+
     AnyValuePtr evaluateMethodBodyNode(const CompileTimeCleanUpScopePtr &initialEnvironment, const ASTNodePtr &node);
 
     CompileTimeCleanUpScopePtr currentCleanUpScope;

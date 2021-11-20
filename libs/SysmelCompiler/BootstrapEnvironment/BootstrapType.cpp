@@ -43,9 +43,11 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
         
     addMacroMethodCategories(staticMetadata->instanceMacroMethods());
     addMethodCategories(staticMetadata->instanceMethods());
+    addDefaultTypeConversionRules();
 
     metaType->addMacroMethodCategories(staticMetadata->typeMacroMethods());
     metaType->addMethodCategories(staticMetadata->typeMethods());
+    metaType->addDefaultTypeConversionRules();
 }
 
 std::string BootstrapType::printString() const

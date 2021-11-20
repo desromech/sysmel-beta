@@ -10,6 +10,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
@@ -155,6 +156,30 @@ public:
 
     virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding) override;
 
+    /// This method finds an implicit type conversion rule.
+    virtual TypeConversionRulePtr findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
+
+    /// This method finds an explicit type conversion rule.
+    virtual TypeConversionRulePtr findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
+
+    /// This method finds an reinterpret type conversion rule.
+    virtual TypeConversionRulePtr findReinterpretTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
+
+    /// This method adds the default type conversion rules of this type.
+    virtual void addDefaultTypeConversionRules();
+
+    /// Adds an explicit and implicit type conversion rule.
+    virtual void addTypeConversionRule(const TypeConversionRulePtr &rule);
+
+    /// Adds an explicit type conversion rule.
+    virtual void addExplicitTypeConversionRule(const TypeConversionRulePtr &rule);
+
+    /// Adds an implicit type conversion rule.
+    virtual void addImplicitTypeConversionRule(const TypeConversionRulePtr &rule);
+
+    /// Adds an reinterpret type conversion rule.
+    virtual void addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule);
+
 protected:
     /// This method evaluates all of the pending code fragments.
     virtual void evaluateAllPendingCodeFragments();
@@ -172,6 +197,10 @@ protected:
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;
+
+    TypeConversionRulePtrList implicitTypeConversionRules;
+    TypeConversionRulePtrList explicitTypeConversionRules;
+    TypeConversionRulePtrList reinterpretTypeConversionRules;
 
     DeferredCompileTimeCodeFragmentPtrList pendingBodyBlockCodeFragments;
 };

@@ -39,6 +39,8 @@
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTTypeConversionNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
@@ -70,6 +72,8 @@
 #include "sysmel/BootstrapEnvironment/UnionType.hpp"
 
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
+
+#include "sysmel/BootstrapEnvironment/TypeConversionRule.hpp"
 
 #include <iostream>
 
@@ -322,27 +326,52 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
         analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
     
     auto sourceType = analyzedNode->analyzedType;
-    if(sourceType->isSubtypeOf(targetType))
-        return node;
+    auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType);
+    if(!typeConversionRule)
+        return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+    return typeConversionRule->convertNodeIntoWith(node, targetType, shared_from_this());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
 {
+    auto analyzedNode = node;
+    if(!analyzedNode->analyzedType)
+        analyzedNode = analyzeNodeIfNeededWithAutoType(node);
+
     assert(!expectedTypeSet.empty());
     if(expectedTypeSet.size() == 1)
         return addImplicitCastTo(node, expectedTypeSet[0]);
 
     // Is there a single matching type?
+    size_t bestConversionRuleCost = std::numeric_limits<std::size_t>::max();
+    std::vector<std::pair<TypeConversionRulePtr, TypePtr>> bestConversionRules;
     auto &sourceType = node->analyzedType;
     for(auto &expectedType : expectedTypeSet)
     {
-        if(sourceType->isSubtypeOf(expectedType))
-            return node;
+        auto rule = sourceType->findImplicitTypeConversionRuleForInto(node, expectedType);
+        if(!rule)
+            continue;
+        
+        auto cost = rule->getConversionCost(node, expectedType);
+        if(cost < bestConversionRuleCost)
+        {
+            bestConversionRuleCost = cost;
+            bestConversionRules.clear();
+            bestConversionRules.push_back({rule, expectedType});
+        }
+        else if(cost == bestConversionRuleCost)
+        {
+            bestConversionRules.push_back({rule, expectedType});
+        }
     }
 
-    assert("TODO: addImplicitCastToOneOf" && false);
+    // Single conversion rule found.
+    if(bestConversionRules.size() == 1)
+        return bestConversionRules[0].first->convertNodeIntoWith(node, bestConversionRules[0].second, shared_from_this());
+
+    // No conversion, or ambiguous conversion rule found.
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
@@ -1525,6 +1554,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
     analyzedNode->analyzedProgramEntity = unionType;
     analyzedNode->analyzedType = unionType->getType();
     return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)
+{
+    assert(node->analyzedType);
+    return node;
 }
 
 CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()

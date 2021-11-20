@@ -34,6 +34,9 @@ void SimpleType::setSupertypeAndImplicitMetaType(const TypePtr &newSupertype)
 
     setSupertype(newSupertype);
     newMeta->setSupertype(newSupertype->getType());
+
+    addDefaultTypeConversionRules();
+    newMeta->addDefaultTypeConversionRules();
 }
 
 } // End of namespace BootstrapEnvironment

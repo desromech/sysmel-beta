@@ -314,6 +314,26 @@ bool AnyValue::isASTEnumNode() const
     return false;
 }
 
+bool AnyValue::isASTTypeConversionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTValueAsVoidTypeConversionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTUpcastTypeConversionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTDowncastTypeConversionNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;
