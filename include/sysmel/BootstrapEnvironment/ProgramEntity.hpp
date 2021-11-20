@@ -45,6 +45,7 @@ public:
 
     virtual ModulePtr getDefinitionModule() const;
     virtual AnyValuePtr getName() const;
+    virtual SExpression asSExpression() const override;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild);
     virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);

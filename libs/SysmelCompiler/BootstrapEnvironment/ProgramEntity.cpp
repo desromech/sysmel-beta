@@ -27,6 +27,11 @@ AnyValuePtr ProgramEntity::getName() const
     return nullptr;
 }
 
+SExpression ProgramEntity::asSExpression() const
+{
+    return printString();
+}
+
 TypePtr ProgramEntity::asReceiverType()
 {
     return Type::getVoidType();

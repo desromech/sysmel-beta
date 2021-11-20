@@ -32,8 +32,8 @@ MethodCategories AnyValue::__instanceMethods__()
 {
     return MethodCategories{
         {"accessing", {
-            makeMethodBinding("__type__", &AnyValue::getType),
-            makeMethodBinding<AnyValuePtr (AnyValuePtr)> ("yourself", [](const AnyValuePtr &self) {
+            makeIntrinsicMethodBinding("object.get-type", "__type__", &AnyValue::getType),
+            makeIntrinsicMethodBinding<AnyValuePtr (AnyValuePtr)> ("object.yourself", "yourself", [](const AnyValuePtr &self) {
                 return self;
             }),
         }},

@@ -49,6 +49,8 @@ public:
 
     virtual bool isFunctionalTypeValue() const override;
 
+    virtual SExpression asSExpression() const override;
+
     FunctionalTypePtr type;
     AnyValuePtr functionalImplementation;
 };

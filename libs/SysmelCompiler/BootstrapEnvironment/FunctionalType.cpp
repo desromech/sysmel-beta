@@ -73,5 +73,10 @@ bool FunctionalTypeValue::isFunctionalTypeValue() const
     return true;
 }
 
+SExpression FunctionalTypeValue::asSExpression() const
+{
+    return functionalImplementation->asSExpression();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

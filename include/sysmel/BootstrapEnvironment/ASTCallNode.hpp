@@ -19,6 +19,7 @@ public:
 
     virtual bool isASTCallNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
 
     ASTNodePtr function;
     ASTNodePtrList arguments;

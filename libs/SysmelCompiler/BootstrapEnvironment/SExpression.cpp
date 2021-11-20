@@ -64,17 +64,64 @@ struct SExpressionPrinterVisitor
     void operator()(const SExpressionList &value)
     {
         out << '(';
-        for(size_t i = 0; i < value.elements.size(); ++i)
+        if(value.elements.size() >= 1)
+            std::visit(*this, value.elements[0]);
+
+        if(shouldPrintInline(value))
         {
-            if(i > 0)
+            for(size_t i = 1; i < value.elements.size(); ++i)
+            {
                 out << ' ';
-            std::visit(*this, value.elements[i]);
+                std::visit(*this, value.elements[i]);
+            }
+        }
+        else
+        {
+            ++indentation;
+            for(size_t i = 1; i < value.elements.size(); ++i)
+            {
+                newIndentedLine();
+                std::visit(*this, value.elements[i]);
+            }
+            --indentation;
         }
 
         out << ')';
     }
 
+    bool shouldPrintInline(const SExpressionList &list)
+    {
+        if(!prettyPrint)
+            return true;
+        if(list.elements.size() <= 1)
+            return true;
+
+        for(auto &el : list.elements)
+        {
+            if(std::holds_alternative<SExpressionList> (el))
+            {
+                if(!isAlwaysInlineList(std::get<SExpressionList> (el)))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool isAlwaysInlineList(const SExpressionList &list)
+    {
+        return list.elements.size() <= 2;
+    }
+
+    void newIndentedLine()
+    {
+        out << "\n";
+        for(int i = 0; i < indentation; ++i)
+            out << "  ";
+    }
+
     bool prettyPrint = false;
+    int indentation = 0;
     std::ostringstream out;
 };
 
