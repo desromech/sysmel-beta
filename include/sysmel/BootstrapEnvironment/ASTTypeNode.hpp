@@ -23,7 +23,6 @@ public:
     ASTNodePtr name;
     ASTNodePtr body;
     ASTNodePtr alignment;
-    ASTNodePtr initialValue;
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
 };

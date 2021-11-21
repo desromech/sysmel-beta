@@ -418,6 +418,9 @@ public:
     /// Is this object an AST enum node?
     virtual bool isASTEnumNode() const;
 
+    /// Is this object an AST program entity extension node?
+    virtual bool isASTProgramEntityExtensionNode() const;
+
     /// Is this object an AST type conversion node?
     virtual bool isASTTypeConversionNode() const;
 

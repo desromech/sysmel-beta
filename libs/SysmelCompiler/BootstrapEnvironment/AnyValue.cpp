@@ -314,6 +314,11 @@ bool AnyValue::isASTEnumNode() const
     return false;
 }
 
+bool AnyValue::isASTProgramEntityExtensionNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTTypeConversionNode() const
 {
     return false;

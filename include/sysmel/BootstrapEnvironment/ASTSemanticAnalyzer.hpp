@@ -94,6 +94,7 @@ public:
     virtual AnyValuePtr visitClassNode(const ASTClassNodePtr &node) override;
     virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node) override;
     virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node) override;
+    virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node) override;
 

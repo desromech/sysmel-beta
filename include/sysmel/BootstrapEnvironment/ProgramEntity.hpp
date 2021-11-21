@@ -19,6 +19,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
+
 typedef std::pair<ProgramEntityVisibility, ProgramEntityPtr> ProgramEntityVisibilityWithBinding;
 
 /**
@@ -50,6 +52,7 @@ public:
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild);
     virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);
     virtual void bindProgramEntityWithVisibility(const ProgramEntityPtr &programEntity, ProgramEntityVisibility visibility);
+    virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector);

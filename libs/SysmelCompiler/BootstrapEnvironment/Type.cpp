@@ -5,6 +5,7 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
+#include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
@@ -14,6 +15,7 @@
 #include "sysmel/BootstrapEnvironment/DowncastTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
+#include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -28,6 +30,26 @@ MethodCategories Type::__instanceMethods__()
         {"accessing", {
             makeMethodBinding("supertype", &Type::getSupertype),
             makeMethodBinding("subtypes", &Type::getSubtypes),
+        }},
+    };
+}
+
+MethodCategories Type::__instanceMacroMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("extend:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
+                auto extensionNode = std::make_shared<ASTProgramEntityExtensionNode> ();
+                extensionNode->programEntity = macroContext->receiverNode;
+                extensionNode->body = bodyNode;
+                return extensionNode;
+            }),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("definition:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
+                auto extensionNode = std::make_shared<ASTProgramEntityExtensionNode> ();
+                extensionNode->programEntity = macroContext->receiverNode;
+                extensionNode->body = bodyNode;
+                return extensionNode;
+            }),
         }},
     };
 }

@@ -41,6 +41,7 @@ set(BootstrapEnvironment_Sources
     ASTParseErrorNode.cpp
     ASTParseErrorValidator.cpp
     ASTPragmaNode.cpp
+    ASTProgramEntityExtensionNode.cpp
     ASTProgramEntityNode.cpp
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp

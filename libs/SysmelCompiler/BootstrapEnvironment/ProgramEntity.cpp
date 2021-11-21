@@ -55,6 +55,12 @@ void ProgramEntity::bindProgramEntityWithVisibility(const ProgramEntityPtr &bind
     bindSymbolWithVisibility(binding->getName(), visibility, binding);
 }
 
+void ProgramEntity::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)
+{
+    (void)codeFragment;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot add an additional definition body to program entity {0}.", {{printString()}}));
+}
+
 AnyValuePtr ProgramEntity::lookupExportedSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
 {
     (void)symbol;

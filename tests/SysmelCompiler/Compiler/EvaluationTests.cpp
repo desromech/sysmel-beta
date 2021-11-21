@@ -326,6 +326,21 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(StructExtensionMethod)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto extensionDefinition = evaluateString("TestStruct extend: {public method square: x := x*x}.");
+                CHECK_EQUAL(structDefinition, extensionDefinition);
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
     TEST(EmptyStructBasicNewValue)
     {
         RuntimeContext::create()->activeDuring([&](){

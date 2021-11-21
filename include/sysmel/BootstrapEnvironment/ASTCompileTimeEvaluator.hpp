@@ -44,6 +44,7 @@ public:
     virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node) override;
     virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
     virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node) override;
+    virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;

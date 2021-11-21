@@ -28,6 +28,7 @@
 #include "sysmel/BootstrapEnvironment/ASTFunctionalNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTTypeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTUpcastTypeConversionNode.hpp"
@@ -238,6 +239,11 @@ AnyValuePtr ASTCompileTimeEvaluator::visitNamespaceNode(const ASTNamespaceNodePt
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitTypeNode(const ASTTypeNodePtr &node)
+{
+    return node->analyzedProgramEntity;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
 {
     return node->analyzedProgramEntity;
 }

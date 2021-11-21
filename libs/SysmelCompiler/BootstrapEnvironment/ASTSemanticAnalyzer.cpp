@@ -38,6 +38,7 @@
 #include "sysmel/BootstrapEnvironment/ASTStructNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTTypeConversionNode.hpp"
 
@@ -1553,6 +1554,29 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
 
     analyzedNode->analyzedProgramEntity = unionType;
     analyzedNode->analyzedType = unionType->getType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTProgramEntityExtensionNode> (*node);
+    analyzedNode->programEntity = analyzeNodeIfNeededWithExpectedType(analyzedNode->programEntity, ProgramEntity::__staticType__());
+    if(analyzedNode->programEntity->isASTErrorNode())
+        return analyzedNode->programEntity;
+
+    auto programEntity = evaluateInCompileTime(analyzedNode->programEntity);
+    if(!programEntity || !programEntity->isProgramEntity())
+        return recordSemanticErrorInNode(node, "Failed to evaluate in compile time the corresponding program entity.");
+
+    analyzedNode->analyzedProgramEntity = std::static_pointer_cast<ProgramEntity> (programEntity);
+    analyzedNode->analyzedType = analyzedNode->analyzedProgramEntity->getType();
+
+    if(analyzedNode->body)
+    {
+        analyzedNode->analyzedProgramEntity->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(analyzedNode->analyzedProgramEntity)));
+        analyzedNode->body.reset();
+    }
+
     return analyzedNode;
 }
 

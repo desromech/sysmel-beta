@@ -63,6 +63,7 @@ public:
     virtual AnyValuePtr visitStructNode(const ASTStructNodePtr &node);
     virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node);
     virtual AnyValuePtr visitClassNode(const ASTClassNodePtr &node);
+    virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node);
 
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node);
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node);

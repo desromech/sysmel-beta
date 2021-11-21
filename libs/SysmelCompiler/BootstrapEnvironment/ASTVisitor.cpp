@@ -234,6 +234,11 @@ AnyValuePtr ASTVisitor::visitClassNode(const ASTClassNodePtr &node)
     return visitTypeNode(node);
 }
 
+AnyValuePtr ASTVisitor::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitTypeConversionNode(const ASTTypeConversionNodePtr &)
 {
     SysmelSelfSubclassResponsibility();

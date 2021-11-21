@@ -11,7 +11,6 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
-SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(DeferredCompileTimeCodeFragment);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
@@ -25,6 +24,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Type";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __instanceMacroMethods__();
 
     virtual bool isType() const override;
     virtual std::string printString() const override;
@@ -148,7 +148,7 @@ public:
     void withAllSubtypesDo(const TypeIterationBlock &aBlock);
 
     /// This method enqueue the analysis of a body block.
-    virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
+    virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment) override;
 
     virtual void ensureSemanticAnalysis() override;
 
