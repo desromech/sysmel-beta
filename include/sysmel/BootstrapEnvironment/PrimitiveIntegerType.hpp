@@ -35,6 +35,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "UInt8";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual uint8_t unwrapAsUInt8() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     ValueType value = 0;
 };
@@ -52,6 +59,13 @@ public:
 
     static MethodCategories __instanceMethods__();
 
+    virtual uint16_t unwrapAsUInt16() const override;
+    static MethodCategories __typeMacroMethods__();
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
+
     uint16_t value = 0;
 };
 
@@ -68,6 +82,13 @@ public:
 
     static MethodCategories __instanceMethods__();
 
+    virtual uint32_t unwrapAsUInt32() const override;
+    static MethodCategories __typeMacroMethods__();
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
+
     uint32_t value = 0;
 };
 
@@ -83,6 +104,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "UInt64";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual uint64_t unwrapAsUInt64() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     uint64_t value = 0;
 };
@@ -99,6 +127,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Int8";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual int8_t unwrapAsInt8() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     int8_t value = 0;
 };
@@ -115,6 +150,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Int16";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual int16_t unwrapAsInt16() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     int16_t value = 0;
 };
@@ -131,6 +173,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Int32";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual int32_t unwrapAsInt32() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     int32_t value = 0;
 };
@@ -147,6 +196,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Int64";
 
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual int64_t unwrapAsInt64() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     int64_t value = 0;
 };

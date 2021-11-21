@@ -61,14 +61,25 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*typeMethods)();
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
+    AnyValuePtr (*basicNewValue)();
     bool isDynamicCompileTimeType;
     bool isLiteralValueMessageAnalyzer;
     bool isEphemeralCompileTimeObject;
+    bool isNullableType;
+    bool hasTrivialInitialization;
+    bool hasTrivialFinalization;
+    bool hasTrivialCopyingFrom;
+    bool hasTrivialMovingFrom;
     std::string sysmelLanguageTopLevelName;
     size_t bootstrapTypeID;
 };
 
 TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID);
+
+/**
+ * Retrieves the singleton nil constant.
+ */
+AnyValuePtr getNilConstant();
 
 template<typename T>
 struct StaticBootstrapDefinedTypeMetadataFor
@@ -89,9 +100,15 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__typeMethods__,
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
+    &T::__basicNewValue__,
     T::__isDynamicCompileTimeType__,
     T::__isLiteralValueMessageAnalyzer__,
     T::__isEphemeralCompileTimeObject__,
+    T::__isNullableType__,
+    T::__hasTrivialInitialization__,
+    T::__hasTrivialFinalization__,
+    T::__hasTrivialCopyingFrom__,
+    T::__hasTrivialMovingFrom__,
     T::__sysmelTypeName__,
     0
 };
@@ -149,6 +166,14 @@ public:
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
 
+    static AnyValuePtr __basicNewValue__()
+    {
+        if constexpr(std::is_constructible<SelfType>::value)
+            return std::make_shared<SelfType> ();
+        else
+            return getNilConstant();
+    }
+
     virtual TypePtr getType() const override
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
@@ -196,11 +221,6 @@ AnyValuePtr internSymbol(const std::string &symbolValue);
 AnyValuePtr getVoidConstant();
 
 /**
- * Retrieves the singleton nil constant.
- */
-AnyValuePtr getNilConstant();
-
-/**
  * Retrieves the singleton true constant.
  */
 AnyValuePtr getTrueConstant();
@@ -245,6 +265,11 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = true;
     static constexpr bool __isLiteralValueMessageAnalyzer__ = false;
     static constexpr bool __isEphemeralCompileTimeObject__ = false;
+    static constexpr bool __isNullableType__ = true;
+    static constexpr bool __hasTrivialInitialization__ = false;
+    static constexpr bool __hasTrivialFinalization__ = false;
+    static constexpr bool __hasTrivialCopyingFrom__ = false;
+    static constexpr bool __hasTrivialMovingFrom__ = false;
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
@@ -255,6 +280,11 @@ public:
     static TypePtr __staticType__()
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
+    }
+
+    static AnyValuePtr __basicNewValue__()
+    {
+        return std::make_shared<AnyValue> ();
     }
 
     /// Retrieves the type of the object.

@@ -6,6 +6,9 @@
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageChainNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
@@ -34,6 +37,20 @@ MethodCategories Type::__instanceMethods__()
     };
 }
 
+TypePtr Type::extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode)
+{
+    assert(receiverNode->analyzedType);
+
+    if(receiverNode->isASTLiteralTypeNode())
+    {
+        auto typeValue = std::static_pointer_cast<ASTLiteralValueNode> (receiverNode)->value;
+        assert(typeValue && typeValue->isType());
+        return std::static_pointer_cast<Type> (typeValue);
+    }
+
+    return receiverNode->analyzedType->getInstanceType();
+}
+
 MethodCategories Type::__instanceMacroMethods__()
 {
     return MethodCategories{
@@ -49,6 +66,12 @@ MethodCategories Type::__instanceMacroMethods__()
                 extensionNode->programEntity = macroContext->receiverNode;
                 extensionNode->body = bodyNode;
                 return extensionNode;
+            }),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("basicNewValue", [](const MacroInvocationContextPtr &macroContext) {
+                return extractTypeForTypeMacroReceiverNode(macroContext->receiverNode)->expandBasicNewValue(macroContext);
+            }),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("newValue", [](const MacroInvocationContextPtr &macroContext) {
+                return extractTypeForTypeMacroReceiverNode(macroContext->receiverNode)->expandNewValue(macroContext);
             }),
         }},
     };
@@ -277,6 +300,31 @@ bool Type::isEphemeralCompileTimeObject() const
     return false;
 }
 
+bool Type::isNullableType() const
+{
+    return true;
+}
+
+bool Type::hasTrivialInitialization() const
+{
+    return false;
+}
+
+bool Type::hasTrivialFinalization() const
+{
+    return false;
+}
+
+bool Type::hasTrivialCopyingFrom() const
+{
+    return false;
+}
+
+bool Type::hasTrivialMovingFrom() const
+{
+    return false;
+}
+
 ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(supportsDynamicCompileTimeMessageSend())
@@ -483,14 +531,6 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
             return rule;
     }
 
-    // Look for a rule on my supertype.
-    /*if(supertype)
-    {
-        auto superTypeRule = supertype->findImplicitTypeConversionRuleForInto(node, targetType);
-        if(superTypeRule)
-            return superTypeRule->chainedWith(ImplicitSuperTypeConversionRule::makeFor(supertype));
-    }*/
-
     return nullptr;
 }
 
@@ -518,6 +558,46 @@ TypeConversionRulePtr Type::findReinterpretTypeConversionRuleForInto(const ASTNo
     return nullptr;
 }
 
+AnyValuePtr Type::basicNewValue()
+{
+    return nullptr;
+}
+
+AnyValuePtr Type::defaultValue()
+{
+    return isNullableType() ? nullptr : basicNewValue();
+}
+
+ASTNodePtr Type::expandBasicNewValue(const MacroInvocationContextPtr &context)
+{
+    return validAnyValue(basicNewValue())->asASTNodeRequiredInPosition(context->astBuilder->sourcePosition);
+}
+
+ASTNodePtr Type::expandNewValue(const MacroInvocationContextPtr &context)
+{
+    auto basicNewValue = expandBasicNewValue(context);
+    if(hasTrivialInitialization())
+        return basicNewValue;
+
+    auto &builder = context->astBuilder;
+    return builder->messageChain(basicNewValue, {
+        builder->messageChainMessage(builder->literalSymbol("initialize"), {}),
+        builder->messageChainMessage(builder->literalSymbol("yourself"), {})
+    });
+}
+
+ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    // If no arguments are given, default to expand new value.
+    if(arguments.empty())
+    {
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(
+            expandNewValue(semanticAnalyzer->makeMacroInvocationContextFor(node))
+        );
+    }
+    
+    return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Unsupported construction of value with type {0} using the specified arguments.", {printString()}));
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

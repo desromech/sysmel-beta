@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <ostream>
+#include <sstream>
 
 namespace SysmelMoebius
 {
@@ -18,6 +19,14 @@ void formatUtf32Character(char32_t c, std::ostream &out);
 std::string formatStringLiteral(const std::string &value);
 std::string formatSymbolLiteral(const std::string &value);
 std::string formatString(const std::string &format, const std::vector<std::string> &arguments);
+
+template<typename T>
+std::string castToString(const T &value)
+{
+    std::ostringstream out;
+    out << value;
+    return out.str();
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

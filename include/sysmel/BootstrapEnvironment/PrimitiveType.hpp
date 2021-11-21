@@ -21,6 +21,11 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_PrimitiveType";
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
+    static constexpr bool __isNullableType__ = false;
+    static constexpr bool __hasTrivialInitialization__ = true;
+    static constexpr bool __hasTrivialFinalization__ = true;
+    static constexpr bool __hasTrivialCopyingFrom__ = true;
+    static constexpr bool __hasTrivialMovingFrom__ = true;
 
     virtual bool isPrimitiveTypeValue() const override;
 };

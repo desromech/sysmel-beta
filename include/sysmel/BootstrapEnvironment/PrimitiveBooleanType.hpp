@@ -37,6 +37,12 @@ public:
 
     static Boolean8Ptr make(bool value);
 
+    virtual bool unwrapAsBoolean() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
+
     bool value = false;
 };
 

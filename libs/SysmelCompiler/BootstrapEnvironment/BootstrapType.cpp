@@ -29,6 +29,32 @@ bool BootstrapType::isEphemeralCompileTimeObject() const
     return staticMetadata->isEphemeralCompileTimeObject;
 }
 
+bool BootstrapType::isNullableType() const
+{
+    return staticMetadata->isNullableType;
+}
+
+
+bool BootstrapType::hasTrivialInitialization() const
+{
+    return staticMetadata->hasTrivialInitialization;
+}
+
+bool BootstrapType::hasTrivialFinalization() const
+{
+    return staticMetadata->hasTrivialFinalization;
+}
+
+bool BootstrapType::hasTrivialCopyingFrom() const
+{
+    return staticMetadata->hasTrivialCopyingFrom;
+}
+
+bool BootstrapType::hasTrivialMovingFrom() const
+{
+    return staticMetadata->hasTrivialMovingFrom;
+}
+
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)
 {
     staticMetadata = theStaticMetadata;
@@ -53,6 +79,11 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
 std::string BootstrapType::printString() const
 {
     return staticMetadata->typeName;
+}
+
+AnyValuePtr BootstrapType::basicNewValue()
+{
+    return staticMetadata->basicNewValue();
 }
 
 } // End of namespace BootstrapEnvironment

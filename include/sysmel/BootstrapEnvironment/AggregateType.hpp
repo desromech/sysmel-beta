@@ -31,6 +31,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_AggregateType";
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
+    static constexpr bool __isNullableType__ = false;
 
     virtual bool isAggregateTypeValue() const override;
 

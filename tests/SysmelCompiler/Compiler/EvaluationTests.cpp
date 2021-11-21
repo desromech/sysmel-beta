@@ -182,6 +182,23 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(PrimitiveInt32Sum)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function sum(a: Int32, b: Int32) => Int32 := a + b")->isFunctionTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sum(Int32(), Int32())."));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sum(Int32 zero, Int32 zero)."));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("sum(Int32 one, Int32 one)."));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sum(0, 0)."));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sum(0, 1)."));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sum(1, 0)."));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("sum(1, 1)."));
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int32_t> ("sum(1, 3)."));
+            });
+        });
+    }
+
     TEST(Namespace)
     {
         RuntimeContext::create()->activeDuring([&](){

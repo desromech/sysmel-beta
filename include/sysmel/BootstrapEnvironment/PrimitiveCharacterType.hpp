@@ -35,6 +35,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Char8";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual char unwrapAsChar8() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     char value = 0;
 };
@@ -51,6 +58,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Char16";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual char16_t unwrapAsChar16() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     char16_t value = 0;
 };
@@ -67,6 +81,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Char32";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual char32_t unwrapAsChar32() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     char32_t value = 0;
 };

@@ -22,6 +22,12 @@ struct WrapperTypeFor<bool>
 };
 
 template<>
+struct WrapperTypeFor<void>
+{
+    static TypePtr apply();
+};
+
+template<>
 struct WrapperTypeFor<LargeInteger> 
 {
     static TypePtr apply();

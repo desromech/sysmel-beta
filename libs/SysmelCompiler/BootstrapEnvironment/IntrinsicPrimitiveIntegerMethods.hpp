@@ -4,6 +4,9 @@
 #pragma once
 
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
+#include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
 namespace SysmelMoebius
@@ -62,6 +65,9 @@ struct IntrinsicPrimitiveIntegerMethods
                 }),
             }},
             {"arithmetic", {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.neg", "pre--", +[](const PrimitiveIntegerPtr &v) {
+                    return makeValue(-v->value);
+                }),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.neg", "negated", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(-v->value);
                 }),
@@ -82,6 +88,9 @@ struct IntrinsicPrimitiveIntegerMethods
                 }),
             }},
             {"bitwise", {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.bitnot", "pre-~", +[](const PrimitiveIntegerPtr &v) {
+                    return makeValue(~v->value);
+                }),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.bitnot", "bitInvert", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(~v->value);
                 }),
@@ -112,6 +121,33 @@ struct IntrinsicPrimitiveIntegerMethods
             }}
         };
     }
+
+    static MethodCategories typeMacroMethods()
+    {
+        return MethodCategories{
+            {"constants", {
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("zero", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(0));
+                }),
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("one", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(1));
+                }),
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("minValue", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
+                }),
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("negativeInfinityOrMinValue", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
+                }),
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("maxValue", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::max()));
+                }),
+                makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("infinityOrMaxValue", +[](const MacroInvocationContextPtr &context) {
+                    return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
+                }),
+            }}
+        };
+    }
+
 };
 
 } // End of namespace BootstrapEnvironment

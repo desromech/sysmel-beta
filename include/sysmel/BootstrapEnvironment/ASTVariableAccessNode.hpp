@@ -21,6 +21,7 @@ public:
 
     virtual bool isASTVariableAccessNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
 
     VariablePtr variable;
     bool isAccessedByReference = false;

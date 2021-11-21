@@ -47,6 +47,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Float32";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual float unwrapAsFloat32() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     ValueType value = 0;
 };
@@ -63,6 +70,13 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Float64";
     
     static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+
+    virtual double unwrapAsFloat64() const override;
+
+    virtual std::string asString() const override;
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
     ValueType value = 0;
 };

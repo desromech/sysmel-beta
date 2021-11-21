@@ -76,6 +76,8 @@
 
 #include "sysmel/BootstrapEnvironment/TypeConversionRule.hpp"
 
+#include "sysmel/BootstrapEnvironment/MessageChainReceiverName.hpp"
+
 #include <iostream>
 
 namespace SysmelMoebius
@@ -120,6 +122,7 @@ MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(con
     result->receiverNode = node;
     result->selfType = Type::getVoidType();
     result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder->sourcePosition = node->sourcePosition;
     return result;
 }
 
@@ -131,6 +134,22 @@ MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(con
     if(node->receiver && node->receiver->analyzedType)
         result->selfType = node->receiver->analyzedType;
     result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder->sourcePosition = node->sourcePosition;
+    return result;
+}
+
+MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTNodePtr &node)
+{
+    if(node->isASTMessageSendNode())
+        return makeMacroInvocationContextFor(std::static_pointer_cast<ASTMessageSendNode> (node));
+    else if(node->isASTIdentifierReferenceNode())
+        return makeMacroInvocationContextFor(std::static_pointer_cast<ASTIdentifierReferenceNode> (node));
+
+    auto result = std::make_shared<MacroInvocationContext> ();
+    result->receiverNode = node;
+    result->selfType = Type::getVoidType();
+    result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder->sourcePosition = node->sourcePosition;
     return result;
 }
 
@@ -327,11 +346,16 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
         analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
     
     auto sourceType = analyzedNode->analyzedType;
+
+    // Do not attempt to convert error nodes.
+    if(sourceType->isCompilationErrorValueType())
+        return analyzedNode;
+
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeIntoWith(node, targetType, shared_from_this());
+    return typeConversionRule->convertNodeIntoWith(analyzedNode, targetType, shared_from_this());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
@@ -533,12 +557,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &n
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNodePtr &node)
 {
-    // Validated the chained message nodes.
+    // Validate the chained message nodes.
     for(auto &message : node->messages)
     {
         if(!message->isASTMessageChainMessageNode())
             return recordSemanticErrorInNode(message, "Expected a chained message AST node.");
     }
+
+    // Single message degenerate case.
+    if(node->messages.size() == 1)
+        return std::static_pointer_cast<ASTMessageChainMessageNode> (node->messages[0])->asMessageSendNodeWithReceiver(node->receiver);
 
     // Turn into a sequence of receiver-less messages.
     if(!node->receiver)
@@ -553,7 +581,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         }
         return analyzeNodeIfNeededWithCurrentExpectedType(result);
     }
-
 
     auto analyzedNode = std::make_shared<ASTMessageChainNode> (*node);
     analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
@@ -570,7 +597,35 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         return result;
     }
 
-    assert(false);
+    // Expand into a sequence with a variable
+    auto result = std::make_shared<ASTSequenceNode> ();
+    result->sourcePosition = node->sourcePosition;
+    result->expressions.reserve(1 + node->messages.size());
+
+    // Make the receiver variable name;
+    auto receiverVariableName = std::make_shared<MessageChainReceiverName> ();
+    receiverVariableName->sourcePosition = node->sourcePosition;
+
+    // Create a receiver variable.
+    auto receiverVariable = std::make_shared<ASTLocalVariableNode> ();
+    receiverVariable->name = receiverVariableName->asASTNodeRequiredInPosition(node->sourcePosition);
+    receiverVariable->initialValue = node->receiver;
+    receiverVariable->typeInferenceMode = TypeInferenceMode::TemporaryReference;
+    result->expressions.push_back(receiverVariable);
+
+    // Create the receiver identifier.
+    auto receiverIdentifier = std::make_shared<ASTIdentifierReferenceNode> ();
+    receiverIdentifier->sourcePosition = node->sourcePosition;
+    receiverIdentifier->identifier = receiverVariableName;
+
+    // Convert the chained messages.
+    for(auto &message : analyzedNode->messages)
+    {
+        auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(receiverIdentifier);
+        result->expressions.push_back(convertedMessage);
+    }
+
+    return analyzeNodeIfNeededWithCurrentExpectedType(result);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePtr &node)

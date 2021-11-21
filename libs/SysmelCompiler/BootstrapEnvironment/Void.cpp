@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/Void.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
@@ -8,6 +9,11 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 static BootstrapTypeRegistration<Void> voidRegistration;
+
+TypePtr WrapperTypeFor<void>::apply()
+{
+    return Void::__staticType__();
+}
 
 TypePtr Type::getVoidType()
 {

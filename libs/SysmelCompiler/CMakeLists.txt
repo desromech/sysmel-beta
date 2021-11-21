@@ -125,6 +125,7 @@ set(BootstrapEnvironment_Sources
     LiteralValue.cpp
     LocalVariable.cpp
     MacroInvocationContext.cpp
+    MessageChainReceiverName.cpp
     MessageNotUnderstood.cpp
     MetaBuilder.cpp
     MetaBuilderInstanceContext.cpp

@@ -96,6 +96,21 @@ public:
     /// Is this a type that should be concretized always?
     virtual bool isEphemeralCompileTimeObject() const;
 
+    /// Is this a whose value can be null?
+    virtual bool isNullableType() const;
+
+    /// Is this a type with a trivial initialization?
+    virtual bool hasTrivialInitialization() const;
+
+    /// Is this a type with a trivial finalization?
+    virtual bool hasTrivialFinalization() const;
+
+    /// Is this a type with a trivial copy process?
+    virtual bool hasTrivialCopyingFrom() const;
+
+    /// Is this a type with a trivial movement process?
+    virtual bool hasTrivialMovingFrom() const;
+
     /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
@@ -180,7 +195,25 @@ public:
     /// Adds an reinterpret type conversion rule.
     virtual void addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule);
 
+    /// Expands the #basicNewValue macro.
+    virtual ASTNodePtr expandBasicNewValue(const MacroInvocationContextPtr &context);
+
+    /// Expands the #newValue macro.
+    virtual ASTNodePtr expandNewValue(const MacroInvocationContextPtr &context);
+
+    /// Constructs a value of this type.
+    virtual AnyValuePtr basicNewValue();
+
+    /// Get the default value of this type.
+    virtual AnyValuePtr defaultValue();
+    
+    /// This method analyzes the construction of a value of this type with the specified arguments.
+    virtual ASTNodePtr analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    
 protected:
+    // Utility method for expanding type macros.
+    static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);
+
     /// This method evaluates all of the pending code fragments.
     virtual void evaluateAllPendingCodeFragments();
 

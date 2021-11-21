@@ -1,5 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/Variable.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -17,6 +19,14 @@ bool ASTVariableAccessNode::isASTVariableAccessNode() const
 AnyValuePtr ASTVariableAccessNode::accept(const ASTVisitorPtr &visitor)
 {
     return visitor->visitVariableAccessNode(shared_from_this());
+}
+
+SExpression ASTVariableAccessNode::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"variableAccess"}},
+        sourcePosition->asSExpression(),
+        variable->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment

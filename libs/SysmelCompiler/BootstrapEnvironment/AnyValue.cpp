@@ -15,6 +15,7 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -36,6 +37,10 @@ MethodCategories AnyValue::__instanceMethods__()
             makeIntrinsicMethodBinding<AnyValuePtr (AnyValuePtr)> ("object.yourself", "yourself", [](const AnyValuePtr &self) {
                 return self;
             }),
+        }},
+
+        {"initialization", {
+            makeIntrinsicMethodBinding("object.initialize", "initialize", &AnyValue::initialize),
         }},
 
         {"printing", {
@@ -736,6 +741,7 @@ std::string AnyValue::fullPrintString() const
 
 SExpression AnyValue::asSExpression() const
 {
+    std::cout << getType()->printString() << std::endl;
     SysmelSelfSubclassResponsibility();
 }
 
