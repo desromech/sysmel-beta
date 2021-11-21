@@ -19,6 +19,8 @@
 #include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
+#include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -356,6 +358,20 @@ AnyValuePtr Type::lookupDoesNotUnderstandMacro()
     return nullptr;
 }
 
+void Type::addConstructor(const AnyValuePtr &constructorMethod)
+{
+    if(!constructorMethod->isSpecificMethod())
+        signalNewWithMessage<UnsupportedOperation> ("Cannot add a non-specific method as a constructor in a type.");
+
+    constructors.push_back(std::static_pointer_cast<SpecificMethod> (constructorMethod));
+}
+
+void Type::addConstructors(const AnyValuePtrList &constructorMethods)
+{
+    for(auto &ctor : constructorMethods )
+        addConstructor(ctor);
+}
+
 void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
@@ -597,6 +613,18 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
     }
     
     return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Unsupported construction of value with type {0} using the specified arguments.", {printString()}));
+}
+
+bool Type::canBeInstantiatedWithLiteralValue(const AnyValuePtr &value)
+{
+    (void)value;
+    return false;
+}
+
+AnyValuePtr Type::instantiatedWithLiteralValue(const AnyValuePtr &value)
+{
+    (void)value;
+    return nullptr;
 }
 
 } // End of namespace BootstrapEnvironment

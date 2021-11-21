@@ -23,7 +23,6 @@ TypePtr MethodType::getReceiverType() const
     return receiverType;
 }
 
-
 FunctionalTypeValuePtr MethodType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
     auto result = std::make_shared<MethodTypeValue> ();

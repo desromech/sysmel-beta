@@ -122,6 +122,7 @@ set(BootstrapEnvironment_Sources
     LiteralCharacter.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
+    LiteralToTargetTypeConversionRule.cpp
     LiteralValue.cpp
     LocalVariable.cpp
     MacroInvocationContext.cpp

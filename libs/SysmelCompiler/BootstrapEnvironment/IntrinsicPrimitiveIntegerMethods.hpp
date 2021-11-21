@@ -8,6 +8,7 @@
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include <string.h>
 
 namespace SysmelMoebius
 {
@@ -33,6 +34,33 @@ struct IntrinsicPrimitiveIntegerMethods
         auto box = std::make_shared<PrimitiveInteger> ();
         box->value = value;
         return box;
+    }
+
+    static bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value)
+    {
+        if(value->isLiteralInteger())
+        {
+            auto integerValue = value->unwrapAsLargeInteger();
+            return LargeInteger{std::numeric_limits<ValueType>::min()} <= integerValue && integerValue <= LargeInteger{std::numeric_limits<ValueType>::max()};
+        }
+
+        return false;
+    }
+
+    static AnyValuePtr instantiateWithLiteralValue(const AnyValuePtr &value)
+    {
+        if(value->isLiteralInteger())
+        {
+            auto integerValue = value->unwrapAsLargeInteger();
+            ValueType decoded = 0;
+            memcpy(&decoded, integerValue.words.data(), integerValue.words.size()*4);
+
+            if(integerValue.isNegative())
+                decoded = -decoded;
+            return makeValue(decoded);
+        }
+
+        return nullptr;
     }
 
     static MethodCategories instanceMethods()

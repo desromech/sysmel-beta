@@ -46,10 +46,15 @@ public:
 
     void concretizeAutoResultTypeWith(const TypePtr &newResultType);
 
+    bool isExplicit() const;
+    void makeExplicit();
+    
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;
     AnyValuePtr intrinsicName;
+
+    bool isExplicit_ = false;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -228,6 +228,40 @@ MethodBinding makeIntrinsicMethodBinding(const std::string &intrinsicName, const
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
+template<typename FT>
+SpecificMethodPtr makeConstructor(FT &&functor)
+{
+    auto selectorSymbol = internSymbol("()");
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->registerInCurrentModule();
+    return bootstrapMethod;
+}
+
+template<typename FT>
+SpecificMethodPtr makeExplicitConstructor(FT &&functor)
+{
+    auto ctor = makeConstructor<FT> (std::forward<FT> (functor));
+    ctor->makeExplicit();
+    return ctor;
+}
+
+template<typename FT>
+SpecificMethodPtr makeIntrinsicConstructor(const std::string &intrinsicName, FT &&functor)
+{
+    auto ctor = makeConstructor<FT> (std::forward<FT> (functor));
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
+template<typename FT>
+SpecificMethodPtr makeExplicitIntrinsicConstructor(std::string &intrinsicName, FT &&functor)
+{
+    auto ctor = makeConstructor<FT> (std::forward<FT> (functor));
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    ctor->makeExplicit();
+    return ctor;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 

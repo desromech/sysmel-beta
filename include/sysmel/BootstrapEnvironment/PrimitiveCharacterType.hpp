@@ -36,6 +36,8 @@ public:
     
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual char unwrapAsChar8() const override;
 
@@ -59,6 +61,8 @@ public:
     
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual char16_t unwrapAsChar16() const override;
 
@@ -82,6 +86,8 @@ public:
     
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual char32_t unwrapAsChar32() const override;
 

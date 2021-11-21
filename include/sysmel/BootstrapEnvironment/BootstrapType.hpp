@@ -28,11 +28,13 @@ public:
     virtual bool hasTrivialMovingFrom() const override;
 
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
+    void addDefaultTypeConversionRules() override;
 
     virtual std::string printString() const override;
     
     virtual AnyValuePtr basicNewValue() override;
-
+    virtual bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value) override;
+    virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value) override;
 protected:
     const StaticBootstrapDefinedTypeMetadata *staticMetadata;
 };

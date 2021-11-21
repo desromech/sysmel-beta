@@ -19,6 +19,8 @@ class StructureType : public SubMetaTypeOf<AggregateTypeWithFields, StructureTyp
 {
 public:
     virtual bool isStructureType() const override;
+    
+    virtual AnyValuePtr basicNewValue() override;
 };
 
 /**
@@ -33,6 +35,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isStructureTypeValue() const override;
+    virtual TypePtr getType() const override;
 
     AnyValuePtrList slots;
 };

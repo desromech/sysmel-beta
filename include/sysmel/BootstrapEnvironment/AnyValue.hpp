@@ -59,9 +59,13 @@ struct StaticBootstrapDefinedTypeMetadata
     std::string typeName;
     MethodCategories (*instanceMethods)();
     MethodCategories (*typeMethods)();
+    AnyValuePtrList (*constructors)();
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
     AnyValuePtr (*basicNewValue)();
+    void (*addTypeConversionRules)(const TypePtr &type);
+    bool (*canBeInstantiatedWithLiteralValue)(const AnyValuePtr &value);
+    AnyValuePtr (*instantiateWithLiteralValue)(const AnyValuePtr &value);
     bool isDynamicCompileTimeType;
     bool isLiteralValueMessageAnalyzer;
     bool isEphemeralCompileTimeObject;
@@ -98,9 +102,13 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     T::__typeName__,
     &T::__instanceMethods__,
     &T::__typeMethods__,
+    &T::__constructors__,
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
     &T::__basicNewValue__,
+    &T::__addTypeConversionRules__,
+    &T::__canBeInstantiatedWithLiteralValue__,
+    &T::__instantiateWithLiteralValue__,
     T::__isDynamicCompileTimeType__,
     T::__isLiteralValueMessageAnalyzer__,
     T::__isEphemeralCompileTimeObject__,
@@ -149,6 +157,11 @@ public:
     static MethodCategories __typeMethods__()
     {
         return MethodCategories{};
+    }
+
+    static AnyValuePtrList __constructors__()
+    {
+        return AnyValuePtrList{};
     }
 
     static MethodCategories __instanceMacroMethods__()
@@ -273,10 +286,15 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
+    static AnyValuePtrList __constructors__();
 
     static MethodCategories __instanceMacroMethods__();
     static MethodCategories __typeMacroMethods__();
-
+    static void __addTypeConversionRules__(const TypePtr &type)
+    {
+        (void)type;
+    }
+    
     static TypePtr __staticType__()
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
@@ -285,6 +303,18 @@ public:
     static AnyValuePtr __basicNewValue__()
     {
         return std::make_shared<AnyValue> ();
+    }
+
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+    {
+        (void)value;
+        return false;
+    }
+
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value)
+    {
+        (void)value;
+        return nullptr;
     }
 
     /// Retrieves the type of the object.

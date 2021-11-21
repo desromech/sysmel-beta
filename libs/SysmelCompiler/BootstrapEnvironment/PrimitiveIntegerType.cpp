@@ -34,6 +34,16 @@ MethodCategories UInt8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<UInt8>::typeMacroMethods();
 }
 
+bool UInt8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt8>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr UInt8::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt8>::instantiateWithLiteralValue(value);
+}
+
 uint8_t UInt8::unwrapAsUInt8() const
 {
     return value;
@@ -65,6 +75,16 @@ MethodCategories UInt16::__instanceMethods__()
 MethodCategories UInt16::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<UInt16>::typeMacroMethods();
+}
+
+bool UInt16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt16>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr UInt16::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt16>::instantiateWithLiteralValue(value);
 }
 
 uint16_t UInt16::unwrapAsUInt16() const
@@ -100,6 +120,16 @@ MethodCategories UInt32::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<UInt32>::typeMacroMethods();
 }
 
+bool UInt32::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt32>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr UInt32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt32>::instantiateWithLiteralValue(value);
+}
+
 uint32_t UInt32::unwrapAsUInt32() const
 {
     return value;
@@ -131,6 +161,16 @@ MethodCategories UInt64::__instanceMethods__()
 MethodCategories UInt64::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<UInt64>::typeMacroMethods();
+}
+
+bool UInt64::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt64>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr UInt64::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt64>::instantiateWithLiteralValue(value);
 }
 
 uint64_t UInt64::unwrapAsUInt64() const
@@ -166,6 +206,16 @@ MethodCategories Int8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Int8>::typeMacroMethods();
 }
 
+bool Int8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int8>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Int8::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int8>::instantiateWithLiteralValue(value);
+}
+
 int8_t Int8::unwrapAsInt8() const
 {
     return value;
@@ -197,6 +247,16 @@ MethodCategories Int16::__instanceMethods__()
 MethodCategories Int16::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Int16>::typeMacroMethods();
+}
+
+bool Int16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int16>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Int16::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int16>::instantiateWithLiteralValue(value);
 }
 
 int16_t Int16::unwrapAsInt16() const
@@ -232,6 +292,16 @@ MethodCategories Int32::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Int32>::typeMacroMethods();
 }
 
+bool Int32::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int32>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Int32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int32>::instantiateWithLiteralValue(value);
+}
+
 int32_t Int32::unwrapAsInt32() const
 {
     return value;
@@ -263,6 +333,16 @@ MethodCategories Int64::__instanceMethods__()
 MethodCategories Int64::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Int64>::typeMacroMethods();
+}
+
+bool Int64::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int64>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Int64::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Int64>::instantiateWithLiteralValue(value);
 }
 
 int64_t Int64::unwrapAsInt64() const

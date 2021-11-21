@@ -28,6 +28,16 @@ MethodCategories Char8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Char8>::typeMacroMethods();
 }
 
+bool Char8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char8>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Char8::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char8>::instantiateWithLiteralValue(value);
+}
+
 char Char8::unwrapAsChar8() const
 {
     return value;
@@ -61,6 +71,16 @@ MethodCategories Char16::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Char16>::typeMacroMethods();
 }
 
+bool Char16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char16>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Char16::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char16>::instantiateWithLiteralValue(value);
+}
+
 char16_t Char16::unwrapAsChar16() const
 {
     return value;
@@ -92,6 +112,16 @@ MethodCategories Char32::__instanceMethods__()
 MethodCategories Char32::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Char32>::typeMacroMethods();
+}
+
+bool Char32::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char32>::canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr Char32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    return IntrinsicPrimitiveIntegerMethods<Char32>::instantiateWithLiteralValue(value);
 }
 
 char32_t Char32::unwrapAsChar32() const

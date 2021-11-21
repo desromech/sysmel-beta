@@ -32,11 +32,6 @@ bool FunctionType::isFunctionType() const
     return true;
 }
 
-TypePtr FunctionType::getType() const
-{
-    return metaType;
-}
-
 FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
     auto result = std::make_shared<FunctionTypeValue> ();

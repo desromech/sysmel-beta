@@ -252,5 +252,15 @@ void SpecificMethod::concretizeAutoResultTypeWith(const TypePtr &newResultType)
         functionalValue->type = functionalType;
 }
 
+bool SpecificMethod::isExplicit() const
+{
+    return isExplicit_;
+}
+
+void SpecificMethod::makeExplicit()
+{
+    isExplicit_ = true;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

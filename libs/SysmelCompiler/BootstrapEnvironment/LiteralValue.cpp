@@ -1,5 +1,8 @@
 #include "sysmel/BootstrapEnvironment/LiteralValue.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralToTargetTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
+
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 
@@ -14,6 +17,11 @@ TypePtr Type::getLiteralValueType()
     return LiteralValue::__staticType__();
 }
 
+void LiteralValue::__addTypeConversionRules__(const TypePtr &type)
+{
+    type->addTypeConversionRule(LiteralToTargetTypeConversionRule::uniqueInstance());
+}
+
 bool LiteralValue::isLiteralValue() const
 {
     return true;
@@ -22,6 +30,26 @@ bool LiteralValue::isLiteralValue() const
 bool LiteralValue::isPureCompileTimeLiteralValue() const
 {
     return true;
+}
+
+bool LiteralValue::canBeConcretizedWithType(const TypePtr &targetType)
+{
+    return targetType->canBeInstantiatedWithLiteralValue(shared_from_this());
+}
+
+AnyValuePtr LiteralValue::concretizeWithType(const TypePtr &targetType)
+{
+    return targetType->instantiatedWithLiteralValue(shared_from_this());
+}
+
+TypePtr LiteralValue::getStandardConcreteType()
+{
+    return getType();
+}
+
+TypePtr LiteralValue::getBestConcreteType()
+{
+    return getType();
 }
 
 } // End of namespace BootstrapEnvironment

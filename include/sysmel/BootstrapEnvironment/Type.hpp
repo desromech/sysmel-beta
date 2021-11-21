@@ -10,6 +10,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SpecificMethod);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
@@ -129,6 +130,12 @@ public:
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 
+    /// This method add a new constructor function.
+    virtual void addConstructor(const AnyValuePtr &constructorMethod);
+
+    /// This method adds a list of constructors.
+    virtual void addConstructors(const AnyValuePtrList &constructorMethods);
+
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
@@ -210,6 +217,12 @@ public:
     /// This method analyzes the construction of a value of this type with the specified arguments.
     virtual ASTNodePtr analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     
+    /// Is it possible to instantiate this type with the specified literal value?
+    virtual bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value);
+
+    /// Make an instance with the specified literal value
+    virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value);
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);
@@ -230,6 +243,7 @@ protected:
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;
+    SpecificMethodPtrList constructors;
 
     TypeConversionRulePtrList implicitTypeConversionRules;
     TypeConversionRulePtrList explicitTypeConversionRules;

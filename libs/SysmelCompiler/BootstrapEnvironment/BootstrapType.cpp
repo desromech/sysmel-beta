@@ -34,7 +34,6 @@ bool BootstrapType::isNullableType() const
     return staticMetadata->isNullableType;
 }
 
-
 bool BootstrapType::hasTrivialInitialization() const
 {
     return staticMetadata->hasTrivialInitialization;
@@ -69,11 +68,18 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
         
     addMacroMethodCategories(staticMetadata->instanceMacroMethods());
     addMethodCategories(staticMetadata->instanceMethods());
+    addConstructors(staticMetadata->constructors());
     addDefaultTypeConversionRules();
 
     metaType->addMacroMethodCategories(staticMetadata->typeMacroMethods());
     metaType->addMethodCategories(staticMetadata->typeMethods());
     metaType->addDefaultTypeConversionRules();
+}
+
+void BootstrapType::addDefaultTypeConversionRules()
+{
+    SuperType::addDefaultTypeConversionRules();
+    staticMetadata->addTypeConversionRules(shared_from_this());
 }
 
 std::string BootstrapType::printString() const
@@ -84,6 +90,16 @@ std::string BootstrapType::printString() const
 AnyValuePtr BootstrapType::basicNewValue()
 {
     return staticMetadata->basicNewValue();
+}
+
+bool BootstrapType::canBeInstantiatedWithLiteralValue(const AnyValuePtr &value)
+{
+    return staticMetadata->canBeInstantiatedWithLiteralValue(value);
+}
+
+AnyValuePtr BootstrapType::instantiatedWithLiteralValue(const AnyValuePtr &value)
+{
+    return staticMetadata->instantiateWithLiteralValue(value);
 }
 
 } // End of namespace BootstrapEnvironment

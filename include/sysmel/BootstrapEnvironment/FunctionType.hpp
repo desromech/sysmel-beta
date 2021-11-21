@@ -22,7 +22,6 @@ public:
     static FunctionTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
 
     virtual bool isFunctionType() const override;
-    virtual TypePtr getType() const override;
 
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
     virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType) override;
