@@ -7,6 +7,7 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralInteger.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <string.h>
 
@@ -47,20 +48,31 @@ struct IntrinsicPrimitiveIntegerMethods
         return false;
     }
 
+    static PrimitiveIntegerPtr makeWithLargeInteger(const LargeInteger &largeInteger)
+    {
+        ValueType decoded = 0;
+        memcpy(&decoded, largeInteger.words.data(), std::min(sizeof(ValueType), largeInteger.words.size()*4));
+
+        if(largeInteger.isNegative())
+            decoded = -decoded;
+        return makeValue(decoded);
+    }
+
     static AnyValuePtr instantiateWithLiteralValue(const AnyValuePtr &value)
     {
         if(value->isLiteralInteger())
-        {
-            auto integerValue = value->unwrapAsLargeInteger();
-            ValueType decoded = 0;
-            memcpy(&decoded, integerValue.words.data(), integerValue.words.size()*4);
-
-            if(integerValue.isNegative())
-                decoded = -decoded;
-            return makeValue(decoded);
-        }
+            return makeWithLargeInteger(value->unwrapAsLargeInteger());
 
         return nullptr;
+    }
+
+    static AnyValuePtrList constructors()
+    {
+        return AnyValuePtrList{
+            makeExplicitConstructor<PrimitiveIntegerPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
+                return makeWithLargeInteger(value->unwrapAsLargeInteger());
+            }),
+        };
     }
 
     static MethodCategories instanceMethods()

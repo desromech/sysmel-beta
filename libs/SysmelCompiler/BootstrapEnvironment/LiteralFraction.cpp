@@ -26,7 +26,11 @@ MethodCategories LiteralFraction::__instanceMethods__()
 {
     return MethodCategories{
         {"arithmetic", {
+            // Negation
             makeMethodBinding<Fraction (Fraction)> ("negated", +[](const Fraction &value) {
+                return -value;
+            }),
+            makeMethodBinding<Fraction (Fraction)> ("pre--", +[](const Fraction &value) {
                 return -value;
             }),
 

@@ -27,7 +27,11 @@ MethodCategories LiteralInteger::__instanceMethods__()
 {
     return MethodCategories{
         {"arithmetic", {
+            // Negation
             makeMethodBinding<LargeInteger (LargeInteger)> ("negated", +[](const LargeInteger &value) {
+                return -value;
+            }),
+            makeMethodBinding<LargeInteger (LargeInteger)> ("pre--", +[](const LargeInteger &value) {
                 return -value;
             }),
 

@@ -34,6 +34,11 @@ MethodCategories UInt8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<UInt8>::typeMacroMethods();
 }
 
+AnyValuePtrList UInt8::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt8>::constructors();
+}
+
 bool UInt8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveIntegerMethods<UInt8>::canBeInstantiatedWithLiteralValue(value);
@@ -75,6 +80,11 @@ MethodCategories UInt16::__instanceMethods__()
 MethodCategories UInt16::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<UInt16>::typeMacroMethods();
+}
+
+AnyValuePtrList UInt16::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt16>::constructors();
 }
 
 bool UInt16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
@@ -120,6 +130,11 @@ MethodCategories UInt32::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<UInt32>::typeMacroMethods();
 }
 
+AnyValuePtrList UInt32::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt32>::constructors();
+}
+
 bool UInt32::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveIntegerMethods<UInt32>::canBeInstantiatedWithLiteralValue(value);
@@ -161,6 +176,11 @@ MethodCategories UInt64::__instanceMethods__()
 MethodCategories UInt64::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<UInt64>::typeMacroMethods();
+}
+
+AnyValuePtrList UInt64::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<UInt64>::constructors();
 }
 
 bool UInt64::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
@@ -206,6 +226,11 @@ MethodCategories Int8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Int8>::typeMacroMethods();
 }
 
+AnyValuePtrList Int8::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Int8>::constructors();
+}
+
 bool Int8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveIntegerMethods<Int8>::canBeInstantiatedWithLiteralValue(value);
@@ -239,6 +264,7 @@ SExpression Int8::asSExpression() const
     }};
 }
 
+
 MethodCategories Int16::__instanceMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Int16>::instanceMethods();
@@ -247,6 +273,11 @@ MethodCategories Int16::__instanceMethods__()
 MethodCategories Int16::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Int16>::typeMacroMethods();
+}
+
+AnyValuePtrList Int16::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Int16>::constructors();
 }
 
 bool Int16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
@@ -280,6 +311,11 @@ SExpression Int16::asSExpression() const
         SExpressionIdentifier{{"int16"}},
         LargeInteger{value}
     }};
+}
+
+AnyValuePtrList Int32::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Int32>::constructors();
 }
 
 MethodCategories Int32::__instanceMethods__()
@@ -333,6 +369,11 @@ MethodCategories Int64::__instanceMethods__()
 MethodCategories Int64::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Int64>::typeMacroMethods();
+}
+
+AnyValuePtrList Int64::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Int64>::constructors();
 }
 
 bool Int64::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)

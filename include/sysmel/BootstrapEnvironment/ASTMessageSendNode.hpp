@@ -33,6 +33,7 @@ public:
 
     AnyValuePtr analyzedBoundMessage;
     bool analyzedBoundMessageIsDirect = false;
+    bool shouldBeAttemptedInCompileTimeEagerly = false;
 };
 
 } // End of namespace BootstrapEnvironment

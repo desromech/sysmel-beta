@@ -26,6 +26,9 @@ MethodCategories LiteralFloat::__instanceMethods__()
             makeMethodBinding<double (double)> ("negated", +[](double value) {
                 return -value;
             }),
+            makeMethodBinding<double (double)> ("pre--", +[](double value) {
+                return -value;
+            }),
 
             // Addition
             makeMethodBinding<double (double, LargeInteger)> ("+", +[](double a, const LargeInteger &b) {

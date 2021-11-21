@@ -46,6 +46,9 @@ public:
 
     void concretizeAutoResultTypeWith(const TypePtr &newResultType);
 
+    bool isConstructor() const;
+    void makeConstructor();
+
     bool isExplicit() const;
     void makeExplicit();
     
@@ -54,6 +57,7 @@ protected:
     FunctionalTypeValuePtr functionalValue;
     AnyValuePtr intrinsicName;
 
+    bool isConstructor_ = false;
     bool isExplicit_ = false;
 };
 

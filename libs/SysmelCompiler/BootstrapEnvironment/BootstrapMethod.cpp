@@ -14,5 +14,10 @@ bool BootstrapMethodBase::isBootstrapMethod() const
     return true;
 }
 
+bool BootstrapMethodBase::isCompileTimeEvaluableMethod() const
+{
+    return true;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

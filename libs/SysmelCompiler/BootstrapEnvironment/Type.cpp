@@ -604,6 +604,54 @@ ASTNodePtr Type::expandNewValue(const MacroInvocationContextPtr &context)
 
 ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
+    // Do we have some constructors?
+    if(!constructors.empty())
+    {
+        // Make a synthetic message send node.
+        auto messageSendNode = std::make_shared<ASTMessageSendNode> ();
+        messageSendNode->sourcePosition = node->sourcePosition;
+        messageSendNode->selector = internSymbol("()")->asASTNodeRequiredInPosition(node->sourcePosition);
+        messageSendNode->receiver = asASTNodeRequiredInPosition(node->sourcePosition);
+        messageSendNode->receiver->analyzedType = getType();
+        messageSendNode->arguments = arguments;
+        messageSendNode->shouldBeAttemptedInCompileTimeEagerly = true;
+
+        // Ensure the arguments are analyzed.
+        for(auto &arg : messageSendNode->arguments)
+            arg = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+
+        // Find a matching constructor.
+        std::vector<MethodPtr> matchingCandidates;
+        PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+
+        for(auto &constructor : constructors)
+        {
+            auto result = constructor->matchPatternForAnalyzingMessageSendNode(messageSendNode, semanticAnalyzer);
+            if(!result.matchingMethod)
+                continue;
+
+            if(result.matchingRank < bestRank)
+            {
+                matchingCandidates.clear();
+                matchingCandidates.push_back(result.matchingMethod);
+                bestRank = result.matchingRank;
+            }
+            else if(result.matchingRank == bestRank)
+            {
+                matchingCandidates.push_back(result.matchingMethod);
+            }
+        }
+
+        if(matchingCandidates.size() == 1)
+        {
+            return matchingCandidates.front()->analyzeMessageSendNode(messageSendNode, semanticAnalyzer);
+        }
+        else if(matchingCandidates.size() > 1)
+        {
+            return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Ambiguous matching constructors of type {0} using the specified arguments.", {printString()}));
+        }
+    }
+
     // If no arguments are given, default to expand new value.
     if(arguments.empty())
     {
@@ -611,7 +659,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
             expandNewValue(semanticAnalyzer->makeMacroInvocationContextFor(node))
         );
     }
-    
+
     return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Unsupported construction of value with type {0} using the specified arguments.", {printString()}));
 }
 

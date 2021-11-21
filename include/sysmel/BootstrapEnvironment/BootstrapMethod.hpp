@@ -24,6 +24,7 @@ public:
     static constexpr char const __typeName__[] = "BootstrapMethod";
     
     virtual bool isBootstrapMethod() const override;
+    virtual bool isCompileTimeEvaluableMethod() const override;
 
 protected:
     AnyValuePtr selector;
@@ -228,11 +229,47 @@ MethodBinding makeIntrinsicMethodBinding(const std::string &intrinsicName, const
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeConstructor(FT &&functor)
+{
+    auto selectorSymbol = internSymbol("()");
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->makeConstructor();
+    bootstrapMethod->registerInCurrentModule();
+    return bootstrapMethod;
+}
+
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeExplicitConstructor(FT &&functor)
+{
+    auto ctor = makeConstructor<MethodSignature> (std::forward<FT> (functor));
+    ctor->makeExplicit();
+    return ctor;
+}
+
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeIntrinsicConstructor(const std::string &intrinsicName, FT &&functor)
+{
+    auto ctor = makeConstructor<MethodSignature> (std::forward<FT> (functor));
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeExplicitIntrinsicConstructor(const std::string &intrinsicName, FT &&functor)
+{
+    auto ctor = makeConstructor<MethodSignature> (std::forward<FT> (functor));
+    ctor->makeExplicit();
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
 template<typename FT>
 SpecificMethodPtr makeConstructor(FT &&functor)
 {
     auto selectorSymbol = internSymbol("()");
     auto bootstrapMethod = std::make_shared<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->makeConstructor();
     bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }

@@ -535,6 +535,9 @@ public:
     /// Is this object a bootstrap method?
     virtual bool isSpecificMethod() const;
 
+    /// Is this object a method that can be evaluated in compile time?
+    virtual bool isCompileTimeEvaluableMethod() const;
+
     /// Is this object a compiled method?
     virtual bool isCompiledMethod() const;
 

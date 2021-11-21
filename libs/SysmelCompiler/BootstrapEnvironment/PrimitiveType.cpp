@@ -8,8 +8,12 @@ namespace BootstrapEnvironment
 {
 static BootstrapTypeRegistration<PrimitiveType> PrimitiveTypeTypeRegistration;
 
-
 bool PrimitiveType::isPrimitiveTypeValue() const
+{
+    return true;
+}
+
+bool PrimitiveType::isPureCompileTimeLiteralValue() const
 {
     return true;
 }

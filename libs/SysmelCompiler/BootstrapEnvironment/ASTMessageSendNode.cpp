@@ -28,7 +28,10 @@ bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
     if(receiver)
     {
         if(!receiver->isPureCompileTimeLiteralValueNode())
-            return false;
+        {
+            if(!shouldBeAttemptedInCompileTimeEagerly)
+                return false;
+        }
     }
     else
     {

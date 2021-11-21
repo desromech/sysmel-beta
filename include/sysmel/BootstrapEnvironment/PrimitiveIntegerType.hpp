@@ -36,6 +36,7 @@ public:
     
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -61,6 +62,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -86,6 +88,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -111,6 +114,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -136,6 +140,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -161,6 +166,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -186,6 +192,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
@@ -211,6 +218,7 @@ public:
 
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 

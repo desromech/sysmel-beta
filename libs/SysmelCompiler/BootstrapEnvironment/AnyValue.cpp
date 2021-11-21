@@ -414,6 +414,11 @@ bool AnyValue::isSpecificMethod() const
     return false;
 }
 
+bool AnyValue::isCompileTimeEvaluableMethod() const
+{
+    return false;
+}
+
 bool AnyValue::isCompiledMethod() const
 {
     return false;

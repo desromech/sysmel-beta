@@ -186,7 +186,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         return errorNode;
 
     // FIXME: Improve the criteria for direct message sends.
-    node->analyzedBoundMessageIsDirect = functionalType->getReceiverType()->isVoidType();
+    node->analyzedBoundMessageIsDirect = isConstructor() || functionalType->getReceiverType()->isVoidType();
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = functionalType->getResultType();
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
@@ -250,6 +250,16 @@ void SpecificMethod::concretizeAutoResultTypeWith(const TypePtr &newResultType)
     functionalType = functionalType->copyWithResultType(newResultType);
     if(functionalValue)
         functionalValue->type = functionalType;
+}
+
+bool SpecificMethod::isConstructor() const
+{
+    return isConstructor_;
+}
+
+void SpecificMethod::makeConstructor()
+{
+    isConstructor_ = true;
 }
 
 bool SpecificMethod::isExplicit() const

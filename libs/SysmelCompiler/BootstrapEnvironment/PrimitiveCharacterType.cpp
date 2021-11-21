@@ -28,6 +28,11 @@ MethodCategories Char8::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Char8>::typeMacroMethods();
 }
 
+AnyValuePtrList Char8::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Char8>::constructors();
+}
+
 bool Char8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveIntegerMethods<Char8>::canBeInstantiatedWithLiteralValue(value);
@@ -71,6 +76,11 @@ MethodCategories Char16::__typeMacroMethods__()
     return IntrinsicPrimitiveIntegerMethods<Char16>::typeMacroMethods();
 }
 
+AnyValuePtrList Char16::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Char16>::constructors();
+}
+
 bool Char16::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveIntegerMethods<Char16>::canBeInstantiatedWithLiteralValue(value);
@@ -112,6 +122,11 @@ MethodCategories Char32::__instanceMethods__()
 MethodCategories Char32::__typeMacroMethods__()
 {
     return IntrinsicPrimitiveIntegerMethods<Char32>::typeMacroMethods();
+}
+
+AnyValuePtrList Char32::__constructors__()
+{
+    return IntrinsicPrimitiveIntegerMethods<Char32>::constructors();
 }
 
 bool Char32::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
