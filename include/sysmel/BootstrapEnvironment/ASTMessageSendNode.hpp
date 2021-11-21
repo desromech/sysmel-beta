@@ -33,7 +33,7 @@ public:
 
     AnyValuePtr analyzedBoundMessage;
     bool analyzedBoundMessageIsDirect = false;
-    bool shouldBeAttemptedInCompileTimeEagerly = false;
+    bool isPureMessageSend = false; // TODO: Replace this with a pure flag.
 };
 
 } // End of namespace BootstrapEnvironment

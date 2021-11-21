@@ -189,6 +189,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     node->analyzedBoundMessageIsDirect = isConstructor() || functionalType->getReceiverType()->isVoidType();
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = functionalType->getResultType();
+    node->isPureMessageSend = isPure();
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
 }
 
@@ -252,24 +253,49 @@ void SpecificMethod::concretizeAutoResultTypeWith(const TypePtr &newResultType)
         functionalValue->type = functionalType;
 }
 
+void SpecificMethod::addMethodFlags(MethodFlags extraMethodFlags)
+{
+    methodFlags = methodFlags | extraMethodFlags;
+}
+
+MethodFlags SpecificMethod::getMethodFlags() const
+{
+    return methodFlags;
+}
+
+void SpecificMethod::setMethodFlags(MethodFlags newFlags)
+{
+    methodFlags = newFlags;
+}
+
 bool SpecificMethod::isConstructor() const
 {
-    return isConstructor_;
+    return (methodFlags & MethodFlags::Constructor) != MethodFlags::None;
 }
 
 void SpecificMethod::makeConstructor()
 {
-    isConstructor_ = true;
+    methodFlags = methodFlags | MethodFlags::Constructor;
 }
 
 bool SpecificMethod::isExplicit() const
 {
-    return isExplicit_;
+    return (methodFlags & MethodFlags::Explicit) != MethodFlags::None;
 }
 
 void SpecificMethod::makeExplicit()
 {
-    isExplicit_ = true;
+    methodFlags = methodFlags | MethodFlags::Explicit;
+}
+
+bool SpecificMethod::isPure() const
+{
+    return (methodFlags & MethodFlags::Pure) != MethodFlags::None;
+}
+
+void SpecificMethod::makePure()
+{
+    methodFlags = methodFlags | MethodFlags::Pure;
 }
 
 } // End of namespace BootstrapEnvironment

@@ -48,6 +48,11 @@ bool ASTLiteralValueNode::isPureCompileTimeLiteralValueNode() const
     return value && value->isPureCompileTimeLiteralValue();
 }
 
+bool ASTLiteralValueNode::isPureCompileTimeEvaluableNode() const
+{
+    return true;
+}
+
 SExpression ASTLiteralValueNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"literal"}},

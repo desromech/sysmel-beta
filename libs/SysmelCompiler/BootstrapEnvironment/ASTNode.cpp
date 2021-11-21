@@ -37,6 +37,11 @@ bool ASTNode::isPureCompileTimeLiteralValueNode() const
     return false;
 }
 
+bool ASTNode::isPureCompileTimeEvaluableNode() const
+{
+    return false;
+}
+
 ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
     (void)requiredSourcePosition;

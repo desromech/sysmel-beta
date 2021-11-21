@@ -69,9 +69,9 @@ struct IntrinsicPrimitiveIntegerMethods
     static AnyValuePtrList constructors()
     {
         return AnyValuePtrList{
-            makeExplicitConstructor<PrimitiveIntegerPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
+            makeConstructor<PrimitiveIntegerPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
                 return makeWithLargeInteger(value->unwrapAsLargeInteger());
-            }),
+            }, MethodFlags::Explicit | MethodFlags::Pure),
         };
     }
 

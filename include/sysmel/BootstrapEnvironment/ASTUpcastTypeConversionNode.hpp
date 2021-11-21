@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTUpcastTypeConversionNode";
 
     virtual bool isASTUpcastTypeConversionNode() const override;
+    virtual bool isPureCompileTimeEvaluableNode() const override;
     virtual bool isPureCompileTimeLiteralValueNode() const override;
     
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;

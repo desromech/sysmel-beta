@@ -21,6 +21,11 @@ bool ASTUpcastTypeConversionNode::isPureCompileTimeLiteralValueNode() const
     return expression->isPureCompileTimeLiteralValueNode();
 }
 
+bool ASTUpcastTypeConversionNode::isPureCompileTimeEvaluableNode() const
+{
+    return expression->isPureCompileTimeEvaluableNode();
+}
+
 AnyValuePtr ASTUpcastTypeConversionNode::accept(const ASTVisitorPtr &visitor)
 {
     return visitor->visitUpcastTypeConversionNode(shared_from_this());

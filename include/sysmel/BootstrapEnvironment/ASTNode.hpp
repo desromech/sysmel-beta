@@ -79,6 +79,7 @@ public:
     virtual bool isASTIdentifierSymbolValue() const;
     virtual bool isASTLiteralTypeNode() const;
     virtual bool isPureCompileTimeLiteralValueNode() const;
+    virtual bool isPureCompileTimeEvaluableNode() const;
 
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     

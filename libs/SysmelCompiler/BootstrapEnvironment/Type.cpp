@@ -614,7 +614,6 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
         messageSendNode->receiver = asASTNodeRequiredInPosition(node->sourcePosition);
         messageSendNode->receiver->analyzedType = getType();
         messageSendNode->arguments = arguments;
-        messageSendNode->shouldBeAttemptedInCompileTimeEagerly = true;
 
         // Ensure the arguments are analyzed.
         for(auto &arg : messageSendNode->arguments)

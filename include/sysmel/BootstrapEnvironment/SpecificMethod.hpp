@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Method.hpp"
+#include "MethodFlags.hpp"
 
 namespace SysmelMoebius
 {
@@ -46,19 +47,25 @@ public:
 
     void concretizeAutoResultTypeWith(const TypePtr &newResultType);
 
+    void addMethodFlags(MethodFlags extraMethodFlags);
+    MethodFlags getMethodFlags() const;
+    void setMethodFlags(MethodFlags newFlags);
+
     bool isConstructor() const;
     void makeConstructor();
 
     bool isExplicit() const;
     void makeExplicit();
-    
+
+    bool isPure() const;
+    void makePure();
+
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;
     AnyValuePtr intrinsicName;
 
-    bool isConstructor_ = false;
-    bool isExplicit_ = false;
+    MethodFlags methodFlags = MethodFlags::None;
 };
 
 } // End of namespace BootstrapEnvironment

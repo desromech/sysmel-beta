@@ -27,9 +27,14 @@ bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
 {
     if(receiver)
     {
-        if(!receiver->isPureCompileTimeLiteralValueNode())
+        if(isPureMessageSend)
         {
-            if(!shouldBeAttemptedInCompileTimeEagerly)
+            if(!receiver->isPureCompileTimeEvaluableNode())
+                return false;
+        }
+        else
+        {
+            if(!receiver->isPureCompileTimeLiteralValueNode())
                 return false;
         }
     }
@@ -41,8 +46,16 @@ bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
 
     for(const auto &argument : arguments)
     {
-        if(!argument->isPureCompileTimeLiteralValueNode())
-            return false;
+        if(isPureMessageSend)
+        {
+            if(!receiver->isPureCompileTimeEvaluableNode())
+                return false;
+        }
+        else
+        {
+            if(!argument->isPureCompileTimeLiteralValueNode())
+                return false;
+        }
     }
 
     return true;
