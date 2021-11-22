@@ -1,6 +1,5 @@
 #include "sysmel/BootstrapEnvironment/DowncastTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
-#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -30,13 +29,13 @@ size_t DowncastTypeConversionRule::getConversionCost(const ASTNodePtr &node, con
     return 1;
 }
 
-ASTNodePtr DowncastTypeConversionRule::convertNodeIntoWith(const ASTNodePtr &node, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
+ASTNodePtr DowncastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
     (void)semanticAnalyzer;
     assert(node->analyzedType);
 
     auto result = std::make_shared<ASTDowncastTypeConversionNode> ();
-    result->sourcePosition = ASTSourcePosition::empty();
+    result->sourcePosition = sourcePosition;
     result->expression = node;
     result->analyzedType = targetType;
     return result;

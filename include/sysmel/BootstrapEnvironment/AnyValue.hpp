@@ -60,6 +60,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*instanceMethods)();
     MethodCategories (*typeMethods)();
     AnyValuePtrList (*constructors)();
+    AnyValuePtrList (*conversions)();
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
     AnyValuePtr (*basicNewValue)();
@@ -104,6 +105,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__instanceMethods__,
     &T::__typeMethods__,
     &T::__constructors__,
+    &T::__conversions__,
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
     &T::__basicNewValue__,
@@ -162,6 +164,11 @@ public:
     }
 
     static AnyValuePtrList __constructors__()
+    {
+        return AnyValuePtrList{};
+    }
+
+    static AnyValuePtrList __conversions__()
     {
         return AnyValuePtrList{};
     }
@@ -290,6 +297,7 @@ public:
     static MethodCategories __instanceMethods__();
     static MethodCategories __typeMethods__();
     static AnyValuePtrList __constructors__();
+    static AnyValuePtrList __conversions__();
 
     static MethodCategories __instanceMacroMethods__();
     static MethodCategories __typeMacroMethods__();

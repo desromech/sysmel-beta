@@ -74,6 +74,7 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
     addMacroMethodCategories(staticMetadata->instanceMacroMethods());
     addMethodCategories(staticMetadata->instanceMethods());
     addConstructors(staticMetadata->constructors());
+    addConversions(staticMetadata->conversions());
     addDefaultTypeConversionRules();
 
     metaType->addMacroMethodCategories(staticMetadata->typeMacroMethods());

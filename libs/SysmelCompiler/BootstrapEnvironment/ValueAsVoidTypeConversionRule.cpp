@@ -1,6 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
-#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -31,13 +30,13 @@ size_t ValueAsVoidTypeConversionRule::getConversionCost(const ASTNodePtr &node, 
     return 0;
 }
 
-ASTNodePtr ValueAsVoidTypeConversionRule::convertNodeIntoWith(const ASTNodePtr &node, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
+ASTNodePtr ValueAsVoidTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
     (void)semanticAnalyzer;
     assert(node->analyzedType);
 
     auto result = std::make_shared<ASTValueAsVoidTypeConversionNode> ();
-    result->sourcePosition = ASTSourcePosition::empty();
+    result->sourcePosition = sourcePosition;
     result->expression = node;
     result->analyzedType = targetType;
     return result;

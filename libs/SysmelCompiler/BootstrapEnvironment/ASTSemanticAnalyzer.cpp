@@ -361,7 +361,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeIntoWith(analyzedNode, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedNode, node->sourcePosition, targetType, shared_from_this());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
@@ -399,7 +399,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
 
     // Single conversion rule found.
     if(bestConversionRules.size() == 1)
-        return bestConversionRules[0].first->convertNodeIntoWith(node, bestConversionRules[0].second, shared_from_this());
+        return bestConversionRules[0].first->convertNodeAtIntoWith(node, node->sourcePosition, bestConversionRules[0].second, shared_from_this());
 
     // No conversion, or ambiguous conversion rule found.
     return analyzedNode;
@@ -1662,20 +1662,28 @@ AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNode
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeIntoWith(analyzedExpression, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNodePtr &node)
 {
+    auto analyzedExpression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
     auto targetTypeNode = evaluateTypeExpression(node->targetType);
+    if(analyzedExpression->isASTErrorNode())
+        return analyzedExpression;
     if(targetTypeNode->isASTErrorNode())
         return targetTypeNode;
-    
+
+    auto sourceType = analyzedExpression->analyzedType;
     auto targetType = std::static_pointer_cast<Type> (
         std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
     );
 
-    return addImplicitCastTo(node->expression, targetType);
+    auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedExpression, targetType);
+    if(!typeConversionRule)
+        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+    
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
@@ -1696,7 +1704,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCa
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeIntoWith(analyzedExpression, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)

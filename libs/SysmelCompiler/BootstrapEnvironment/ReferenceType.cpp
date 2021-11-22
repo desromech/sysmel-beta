@@ -105,6 +105,10 @@ void ReferenceType::addSpecializedInstanceMethods()
         }
     });
 
+    addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", shared_from_this(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
+        return validAnyValue(self->baseValue)->accessVariableAsValueWithType(baseType);
+    }));
+
     // Define the assignment
     // TODO: Depend on the triviality of assignment.
     if(baseType->isImmutableType())
@@ -114,7 +118,7 @@ void ReferenceType::addSpecializedInstanceMethods()
                     makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", shared_from_this(), shared_from_this(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
                         self->baseValue->copyAssignValue(newValue);
                         return self;
-                    }, MethodFlags::Pure),
+                    }),
                 }
             }
         });

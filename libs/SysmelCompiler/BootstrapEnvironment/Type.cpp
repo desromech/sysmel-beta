@@ -18,6 +18,8 @@
 #include "sysmel/BootstrapEnvironment/UpcastTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/DowncastTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/ConstructorMethodTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/ConversionMethodTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
@@ -392,6 +394,20 @@ void Type::addConstructors(const AnyValuePtrList &constructorMethods)
         addConstructor(ctor);
 }
 
+void Type::addConversion(const AnyValuePtr &conversionMethod)
+{
+    if(!conversionMethod->isSpecificMethod())
+        signalNewWithMessage<UnsupportedOperation> ("Cannot add a non-specific method as a conversion in a type.");
+
+    conversions.push_back(std::static_pointer_cast<SpecificMethod> (conversionMethod));
+}
+
+void Type::addConversions(const AnyValuePtrList &conversionMethods)
+{
+    for(auto &conversion : conversionMethods )
+        addConversion(conversion);
+}
+
 void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
@@ -567,6 +583,32 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
             return rule;
     }
 
+    // Find a conversion method here.
+    for(auto &conversion : conversions)
+    {
+        if(conversion->isExplicit())
+            continue;
+
+        auto conversionTargetType = conversion->getFunctionalType()->getResultType();
+        if(conversionTargetType == targetType)
+            return ConversionMethodTypeConversionRule::makeFor(sourceType, conversionTargetType, conversion);
+    }
+
+    // Find a constructor method in the target.
+    for(auto &targetConstructor : targetType->constructors)
+    {
+        const auto &constructorType = targetConstructor->getFunctionalType();
+        if(constructorType->getArgumentCount() != 1)
+            continue;
+
+        if(targetConstructor->isExplicit())
+            continue;
+
+        const auto &constructorSourceType = constructorType->getArgument(0);
+        if(sourceType == constructorSourceType)
+            return ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor);
+    }
+
     return nullptr;
 }
 
@@ -579,6 +621,26 @@ TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodeP
             return rule;
     }
 
+    // Find a conversion method here.
+    for(auto &conversion : conversions)
+    {
+        auto conversionTargetType = conversion->getFunctionalType()->getResultType();
+        if(conversionTargetType == targetType)
+            return ConversionMethodTypeConversionRule::makeFor(sourceType, conversionTargetType, conversion);
+    }
+
+    // Find a constructor method in the target.
+    for(auto &targetConstructor : targetType->constructors)
+    {
+        const auto &constructorType = targetConstructor->getFunctionalType();
+        if(constructorType->getArgumentCount() != 1)
+            continue;
+
+        const auto &constructorSourceType = constructorType->getArgument(0);
+        if(sourceType == constructorSourceType)
+            return ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor);
+    }
+    
     return nullptr;
 }
 

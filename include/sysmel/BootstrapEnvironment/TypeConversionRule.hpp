@@ -23,7 +23,7 @@ public:
 
     virtual bool canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const;
     virtual size_t getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const;
-    virtual ASTNodePtr convertNodeIntoWith(const ASTNodePtr &node, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const;
+    virtual ASTNodePtr convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const;
 };
 
 } // End of namespace BootstrapEnvironment

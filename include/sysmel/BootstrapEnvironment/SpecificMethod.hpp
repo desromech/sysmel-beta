@@ -60,6 +60,9 @@ public:
     bool isPure() const;
     void makePure();
 
+    bool isConversion() const;
+    void makeConversion();
+
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;

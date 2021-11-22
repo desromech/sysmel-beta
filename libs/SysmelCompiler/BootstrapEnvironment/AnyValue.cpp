@@ -65,6 +65,11 @@ AnyValuePtrList AnyValue::__constructors__()
     return AnyValuePtrList{};
 }
 
+AnyValuePtrList AnyValue::__conversions__()
+{
+    return AnyValuePtrList{};
+}
+
 MethodCategories AnyValue::__instanceMacroMethods__()
 {
     return MethodCategories{

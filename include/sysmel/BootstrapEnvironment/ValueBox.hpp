@@ -20,6 +20,9 @@ public:
     virtual bool isValueBox() const override;
     virtual AnyValuePtr copyAssignValue(const AnyValuePtr &newValue) override;
     
+    virtual AnyValuePtr accessVariableAsReferenceWithType(const TypePtr &referenceType) override;
+    virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType) override;
+
     AnyValuePtr value;
     TypePtr type;
 };

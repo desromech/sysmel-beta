@@ -138,11 +138,17 @@ public:
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
 
-    /// This method add a new constructor function.
+    /// This method adds a new constructor method.
     virtual void addConstructor(const AnyValuePtr &constructorMethod);
 
     /// This method adds a list of constructors.
     virtual void addConstructors(const AnyValuePtrList &constructorMethods);
+
+    /// This method adds a new conversion method.
+    virtual void addConversion(const AnyValuePtr &conversionMethod);
+
+    /// This method adds a list of conversion method.
+    virtual void addConversions(const AnyValuePtrList &conversionMethods);
 
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
@@ -279,6 +285,7 @@ protected:
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;
     SpecificMethodPtrList constructors;
+    SpecificMethodPtrList conversions;
 
     TypeConversionRulePtrList implicitTypeConversionRules;
     TypeConversionRulePtrList explicitTypeConversionRules;

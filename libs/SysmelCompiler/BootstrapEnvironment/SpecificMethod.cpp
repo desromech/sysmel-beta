@@ -186,7 +186,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         return errorNode;
 
     // FIXME: Improve the criteria for direct message sends.
-    node->analyzedBoundMessageIsDirect = isConstructor() || functionalType->getReceiverType()->isVoidType();
+    node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || functionalType->getReceiverType()->isVoidType();
     node->analyzedBoundMessage = shared_from_this();
     node->analyzedType = functionalType->getResultType();
     node->isPureMessageSend = isPure();
@@ -296,6 +296,16 @@ bool SpecificMethod::isPure() const
 void SpecificMethod::makePure()
 {
     methodFlags = methodFlags | MethodFlags::Pure;
+}
+
+bool SpecificMethod::isConversion() const
+{
+    return (methodFlags & MethodFlags::Conversion) != MethodFlags::None;
+}
+
+void SpecificMethod::makeConversion()
+{
+    methodFlags = methodFlags | MethodFlags::Conversion;
 }
 
 } // End of namespace BootstrapEnvironment

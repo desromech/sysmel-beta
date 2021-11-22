@@ -20,6 +20,7 @@ enum class MethodFlags : uint32_t
     Pure = 1<<3,
     Abstract = 1<<4,
     Macro = 1<<5,
+    Conversion = 1<<6,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)

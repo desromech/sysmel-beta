@@ -25,9 +25,6 @@ public:
     
     virtual bool isBootstrapMethod() const override;
     virtual bool isCompileTimeEvaluableMethod() const override;
-
-protected:
-    AnyValuePtr selector;
 };
 
 template<typename MethodSignature, typename FT = void>
@@ -42,7 +39,7 @@ public:
     BootstrapMethod(const AnyValuePtr &initialSelector, FT initialFunctor)
         : functor(initialFunctor)
     {
-        selector = initialSelector;
+        setName(initialSelector);
         setMethodSignature(wrapperTypeFor<ReceiverType> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
@@ -92,7 +89,7 @@ public:
     BootstrapMethod(const AnyValuePtr &initialSelector, MemberFunctionPointerType initialMemberFunctionPointer)
         : memberFunctionPointer(initialMemberFunctionPointer)
     {
-        selector = initialSelector;
+        setName(initialSelector);
         setMethodSignature(wrapperTypeFor<ReceiverType*> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
@@ -141,7 +138,7 @@ public:
     BootstrapMethod(const AnyValuePtr &initialSelector, MemberFunctionPointerType initialMemberFunctionPointer)
         : memberFunctionPointer(initialMemberFunctionPointer)
     {
-        selector = initialSelector;
+        setName(initialSelector);
         setMethodSignature(wrapperTypeFor<const ReceiverType*> (), wrapperTypeForReturning<ResultType> (), { wrapperTypeFor<Args> ()...});
     }
 
@@ -292,6 +289,62 @@ template<typename FT>
 SpecificMethodPtr makeIntrinsicConstructor(const std::string &intrinsicName, FT &&functor, MethodFlags flags = MethodFlags::None)
 {
     auto ctor = makeConstructor<FT> (std::forward<FT> (functor), flags);
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeConversion(FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto selectorSymbol = internSymbol("conv");
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->makeConversion();
+    bootstrapMethod->addMethodFlags(flags);
+    bootstrapMethod->registerInCurrentModule();
+    return bootstrapMethod;
+}
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeIntrinsicConversion(const std::string &intrinsicName, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto ctor = makeConversion<MethodSignature> (std::forward<FT> (functor), flags);
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
+template<typename FT>
+SpecificMethodPtr makeConversion(FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto selectorSymbol = internSymbol("()");
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->makeConversion();
+    bootstrapMethod->addMethodFlags(flags);
+    bootstrapMethod->registerInCurrentModule();
+    return bootstrapMethod;
+}
+
+template<typename FT>
+SpecificMethodPtr makeIntrinsicConversion(const std::string &intrinsicName, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto ctor = makeConversion<FT> (std::forward<FT> (functor), flags);
+    ctor->setIntrinsicName(internSymbol(intrinsicName));
+    return ctor;
+}
+
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeConversionWithSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto selectorSymbol = internSymbol("conv");
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
+    bootstrapMethod->makeConversion();
+    bootstrapMethod->addMethodFlags(flags);
+    bootstrapMethod->registerInCurrentModule();
+    return bootstrapMethod;
+}
+template<typename MethodSignature, typename FT>
+SpecificMethodPtr makeIntrinsicConversionWithSignature(const std::string &intrinsicName, const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto ctor = makeConversionWithSignature<MethodSignature> (receiverType, resultType, argumentTypes, std::forward<FT> (functor), flags);
     ctor->setIntrinsicName(internSymbol(intrinsicName));
     return ctor;
 }

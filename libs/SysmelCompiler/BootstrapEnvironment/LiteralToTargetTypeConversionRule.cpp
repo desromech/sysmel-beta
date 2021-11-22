@@ -40,7 +40,7 @@ size_t LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &no
         return 15;
 }
 
-ASTNodePtr LiteralToTargetTypeConversionRule::convertNodeIntoWith(const ASTNodePtr &node, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
+ASTNodePtr LiteralToTargetTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
     assert(node->isASTLiteralValueNode());
 
@@ -49,7 +49,7 @@ ASTNodePtr LiteralToTargetTypeConversionRule::convertNodeIntoWith(const ASTNodeP
     if(!concreteValue)
         return semanticAnalyzer->recordSemanticErrorInNode(node, "Failed to concretize literal value.");
 
-    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(concreteValue->asASTNodeRequiredInPosition(node->sourcePosition));
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(concreteValue->asASTNodeRequiredInPosition(sourcePosition));
 }
 
 } // End of namespace BootstrapEnvironment

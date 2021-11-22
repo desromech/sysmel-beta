@@ -28,8 +28,9 @@ size_t IdentityTypeConversionRule::getConversionCost(const ASTNodePtr &node, con
     return 0;
 }
 
-ASTNodePtr IdentityTypeConversionRule::convertNodeIntoWith(const ASTNodePtr &node, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
+ASTNodePtr IdentityTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
+    (void)sourcePosition;
     (void)targetType;
     (void)semanticAnalyzer;
     return node;

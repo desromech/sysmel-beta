@@ -88,6 +88,8 @@ set(BootstrapEnvironment_Sources
     CompiledMethod.cpp
     CompileTimeCleanUpScope.cpp
     CompileTimeEvaluationError.cpp
+    ConstructorMethodTypeConversionRule.cpp
+    ConversionMethodTypeConversionRule.cpp
     DeferredCompileTimeCodeFragment.cpp
     DerivedType.cpp
     CompilerObject.cpp
