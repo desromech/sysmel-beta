@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTSpliceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -23,6 +24,7 @@ AnyValuePtr ASTSpliceNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTSpliceNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"splice"}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         sourcePosition->asSExpression(),
         expression->asSExpression()
     }};

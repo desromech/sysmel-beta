@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTQuoteNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -24,6 +25,7 @@ AnyValuePtr ASTQuoteNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTQuoteNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"quote"}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         sourcePosition->asSExpression(),
         expression->asSExpression()
     }};

@@ -3,6 +3,7 @@
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -27,6 +28,7 @@ SExpression ASTIdentifierReferenceNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"identifier"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         identifier->asSExpression()}};
 }
 

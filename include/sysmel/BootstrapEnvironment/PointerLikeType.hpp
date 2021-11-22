@@ -20,12 +20,18 @@ class PointerLikeType : public SubMetaTypeOf<DerivedType, PointerLikeType>
 public:
     virtual bool isPointerLikeType() const override;
 
+    virtual bool supportsDynamicCompileTimeMessageSend() const override;
+
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() const override;
     virtual bool hasTrivialInitialization() const override;
     virtual bool hasTrivialFinalization() const override;
     virtual bool hasTrivialCopyingFrom() const override;
     virtual bool hasTrivialMovingFrom() const override;
+
+    bool hasGenericAddressSpace() const;
+
+    virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value);
 
     AnyValuePtr addressSpace;
 };

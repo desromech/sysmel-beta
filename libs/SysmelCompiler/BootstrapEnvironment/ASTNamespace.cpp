@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -24,6 +25,7 @@ SExpression ASTNamespaceNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"namespace"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         name ? name->asSExpression() : nullptr,
         body ? body->asSExpression() : nullptr,
     }};

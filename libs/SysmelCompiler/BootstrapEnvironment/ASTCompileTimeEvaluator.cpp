@@ -35,7 +35,7 @@
 #include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
-#include "sysmel/BootstrapEnvironment/ValueBox.hpp"
+#include "sysmel/BootstrapEnvironment/PointerLikeType.hpp"
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
 
 #include "sysmel/BootstrapEnvironment/ClosureType.hpp"
@@ -164,24 +164,25 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
 
     AnyValuePtr initialValue;
 
+    auto variable = std::static_pointer_cast<Variable> (node->analyzedProgramEntity);
     if(node->initialValue)
     {
         initialValue = visitNode(node->initialValue);
     }
     else
     {
-        initialValue = getNilConstant();
-        // TODO: Ask the type for the proper default value here.
+        initialValue = variable->getValueType()->defaultValue();
     }
 
     // If the variable is mutable, we have to wrap the value in a box.
     auto storeValue = validAnyValue(initialValue);
     if(node->isMutable)
     {
-        auto box = std::make_shared<ValueBox> ();
-        box->value = initialValue;
-        box->type = std::static_pointer_cast<Variable> (node->analyzedProgramEntity)->getValueType();
-        storeValue = box;
+        auto referenceType = variable->getReferenceType();
+        assert(referenceType->isReferenceLikeType());
+
+        auto mutableValue = storeValue->asMutableStoreValue();
+        storeValue = std::static_pointer_cast<PointerLikeType> (referenceType)->makeWithValue(mutableValue);
     }
 
     currentCleanUpScope->setStoreBinding(node->analyzedProgramEntity, storeValue);

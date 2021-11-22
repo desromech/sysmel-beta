@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeTupleNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -27,6 +28,7 @@ SExpression ASTMakeTupleNode::asSExpression() const
     sexpr.elements.reserve(2 + elements.size());
     sexpr.elements.push_back(SExpressionIdentifier{{"tuple"}});
     sexpr.elements.push_back(sourcePosition->asSExpression());
+    sexpr.elements.push_back(analyzedType ? analyzedType->asSExpression() : nullptr);
     for(const auto &element : elements)
         sexpr.elements.push_back(element->asSExpression());
 

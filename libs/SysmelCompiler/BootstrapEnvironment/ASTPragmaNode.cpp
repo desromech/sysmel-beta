@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTPragmaNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -30,6 +31,7 @@ SExpression ASTPragmaNode::asSExpression() const
 
     return SExpressionList{{SExpressionIdentifier{{"pragma"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         selector->asSExpression(),
         argumentsSExpression,
     }};

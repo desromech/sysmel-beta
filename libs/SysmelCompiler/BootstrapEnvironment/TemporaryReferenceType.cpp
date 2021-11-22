@@ -29,6 +29,11 @@ TemporaryReferenceTypePtr TemporaryReferenceType::makeWithAddressSpace(const Typ
     return result;
 }
 
+bool TemporaryReferenceType::isReferenceLikeType() const
+{
+    return true;
+}
+
 bool TemporaryReferenceType::isTemporaryReferenceType() const
 {
     return true;
@@ -57,7 +62,36 @@ PointerLikeTypePtr TemporaryReferenceType::tempRefFor(const AnyValuePtr &newAddr
     return baseType->tempRefFor(newAddressSpace);
 }
 
+std::string TemporaryReferenceType::printString() const
+{
+    if(hasGenericAddressSpace())
+        return baseType->printString() + " tempRef";
+    return "(" + baseType->printString() + " tempRefFor: " + addressSpace->printString();
+}
+
+SExpression TemporaryReferenceType::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"tempRefType"}},
+        baseType->asSExpression(),
+        addressSpace->asSExpression()
+    }};
+}
+
+PointerLikeTypeValuePtr TemporaryReferenceType::makeWithValue(const AnyValuePtr &value)
+{
+    auto temporaryReference = std::make_shared<TemporaryReferenceTypeValue> ();
+    temporaryReference->type = shared_from_this();
+    temporaryReference->baseValue = value;
+    return temporaryReference;
+}
+
 bool TemporaryReferenceTypeValue::isTemporaryReferenceTypeValue() const
+{
+    return true;
+}
+
+bool TemporaryReferenceTypeValue::isReferenceLikeTypeValue() const
 {
     return true;
 }

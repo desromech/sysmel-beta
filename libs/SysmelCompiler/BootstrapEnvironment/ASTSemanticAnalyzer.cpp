@@ -795,7 +795,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
 
     // Create the local variable.
     auto localVariable = std::make_shared<LocalVariable> ();
-    localVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+    localVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
 
     // Record the program entity.
     environment->localDefinitionsOwner->recordChildProgramEntityDefinition(localVariable);
@@ -875,13 +875,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     if(!globalVariable)
     {
         globalVariable = std::make_shared<GlobalVariable> ();
-        globalVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+        globalVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         globalVariable->registerInCurrentModule();
         globalVariable->enqueuePendingSemanticAnalysis();
 
         ownerEntity->recordChildProgramEntityDefinition(globalVariable);
         ownerEntity->bindProgramEntityWithVisibility(globalVariable, analyzedNode->visibility);
-        globalVariable->currentValueOrValueBox = getNilConstant();
     }
 
     if(analyzedNode->initialValue)
@@ -966,7 +965,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     if(!fieldVariable)
     {
         fieldVariable = std::make_shared<FieldVariable> ();
-        fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->typeInferenceMode, analyzedNode->isMutable);
+        fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         fieldVariable->registerInCurrentModule();
         fieldVariable->enqueuePendingSemanticAnalysis();
 

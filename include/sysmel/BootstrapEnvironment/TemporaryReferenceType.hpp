@@ -22,11 +22,17 @@ public:
     static TemporaryReferenceTypePtr makeWithAddressSpace(const TypePtr &baseType, const AnyValuePtr &addressSpace);
 
     virtual bool isTemporaryReferenceType() const override;
+    virtual bool isReferenceLikeType() const override;
 
     virtual ReferenceTypePtr ref() override;
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace) override;
     virtual PointerLikeTypePtr tempRef() override;
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace) override;
+
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
+
+    virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
 };
 
 /**
@@ -39,6 +45,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_TemporaryReferenceType";
     
     virtual bool isTemporaryReferenceTypeValue() const override;
+    virtual bool isReferenceLikeTypeValue() const override;
     virtual TypePtr getType() const override;
 };
 

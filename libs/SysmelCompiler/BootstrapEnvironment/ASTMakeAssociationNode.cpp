@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTMakeAssociationNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -25,6 +26,7 @@ SExpression ASTMakeAssociationNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"association"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         key ? key->asSExpression() : nullptr,
         value ? value->asSExpression() : nullptr,
     }};

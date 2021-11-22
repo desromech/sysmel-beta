@@ -33,6 +33,31 @@ bool PointerType::isPointerType() const
 {
     return true;
 }
+
+std::string PointerType::printString() const
+{
+    if(hasGenericAddressSpace())
+        return baseType->printString() + " pointer";
+    return "(" + baseType->printString() + " pointerFor: " + addressSpace->printString();
+}
+
+SExpression PointerType::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"pointerType"}},
+        baseType->asSExpression(),
+        addressSpace->asSExpression()
+    }};
+}
+
+PointerLikeTypeValuePtr PointerType::makeWithValue(const AnyValuePtr &value)
+{
+    auto pointer = std::make_shared<PointerTypeValue> ();
+    pointer->type = shared_from_this();
+    pointer->baseValue = value;
+    return pointer;
+}
+
 bool PointerTypeValue::isPointerTypeValue() const
 {
     return true;

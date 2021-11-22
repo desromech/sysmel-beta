@@ -745,6 +745,12 @@ public:
     // Is this a pointer like type value?
     virtual bool isPointerLikeTypeValue() const;
 
+    // Is this a pointer like type?
+    virtual bool isReferenceLikeType() const;
+
+    // Is this a pointer like type value?
+    virtual bool isReferenceLikeTypeValue() const;
+
     // Is this a pointer type?
     virtual bool isPointerType() const;
 
@@ -867,6 +873,9 @@ public:
 
     // Access the value box (e.g. variable binding slot) as a value with the specified type.
     virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType);
+
+    // Wraps and/or copy the object to make a mutable version of it.
+    virtual AnyValuePtr asMutableStoreValue();
 
     template<typename ResultType, typename... Args>
     ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)

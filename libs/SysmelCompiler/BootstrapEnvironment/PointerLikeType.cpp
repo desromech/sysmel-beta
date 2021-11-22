@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/PointerLikeType.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -11,6 +12,11 @@ static BootstrapTypeRegistration<PointerLikeTypeValue> PointerLikeTypeValueTypeR
 bool PointerLikeType::isPointerLikeType() const
 {
     return true;
+}
+
+bool PointerLikeType::supportsDynamicCompileTimeMessageSend() const
+{
+    return false;
 }
 
 bool PointerLikeType::isNullableType() const
@@ -41,6 +47,16 @@ bool PointerLikeType::hasTrivialCopyingFrom() const
 bool PointerLikeType::hasTrivialMovingFrom() const
 {
     return true;
+}
+
+bool PointerLikeType::hasGenericAddressSpace() const
+{
+    return addressSpace == internSymbol("generic");
+}
+
+PointerLikeTypeValuePtr PointerLikeType::makeWithValue(const AnyValuePtr &value)
+{
+    SysmelSelfSubclassResponsibility();
 }
 
 bool PointerLikeTypeValue::isPointerLikeTypeValue() const

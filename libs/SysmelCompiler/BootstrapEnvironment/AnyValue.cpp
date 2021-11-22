@@ -17,6 +17,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
 #include <iostream>
@@ -37,10 +38,10 @@ MethodCategories AnyValue::__instanceMethods__()
 {
     return MethodCategories{
         {"accessing", {
-            makeIntrinsicMethodBinding("object.get-type", "__type__", &AnyValue::getType),
+            makeIntrinsicMethodBinding("object.get-type", "__type__", &AnyValue::getType, MethodFlags::Pure),
             makeIntrinsicMethodBinding<AnyValuePtr (AnyValuePtr)> ("object.yourself", "yourself", [](const AnyValuePtr &self) {
                 return self;
-            }),
+            }, MethodFlags::Pure),
         }},
 
         {"initialization", {
@@ -783,6 +784,16 @@ bool AnyValue::isPointerLikeTypeValue() const
     return false;
 }
 
+bool AnyValue::isReferenceLikeType() const
+{
+    return false;
+}
+
+bool AnyValue::isReferenceLikeTypeValue() const
+{
+    return false;
+}
+
 bool AnyValue::isPointerType() const
 {
     return false;
@@ -1002,6 +1013,14 @@ AnyValuePtr AnyValue::accessVariableAsValueWithType(const TypePtr &valueType)
 {
     (void)valueType;
     return shared_from_this();
+}
+
+AnyValuePtr AnyValue::asMutableStoreValue()
+{
+    auto box = std::make_shared<ValueBox> ();
+    box->value = shared_from_this();
+    box->type = getType();
+    return box;
 }
 
 } // End of namespace BootstrapEnvironment

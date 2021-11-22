@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -29,6 +30,7 @@ SExpression ASTMethodNode::asSExpression() const
 
     return SExpressionList{{SExpressionIdentifier{{"method"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
         SExpressionIdentifier{{methodDispatchModeToString(dispatchMode)}},
         name ? name->asSExpression() : nullptr,

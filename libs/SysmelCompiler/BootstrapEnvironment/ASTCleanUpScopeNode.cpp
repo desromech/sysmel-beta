@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTCleanUpScopeNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -24,6 +25,7 @@ AnyValuePtr ASTCleanUpScopeNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTCleanUpScopeNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"cleanUpScope"}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         sourcePosition->asSExpression(),
         body->asSExpression()
     }};

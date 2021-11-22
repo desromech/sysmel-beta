@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -29,6 +30,7 @@ SExpression ASTCallNode::asSExpression() const
 
     return SExpressionList{{SExpressionIdentifier{{"call"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         function->asSExpression(),
         argumentsSExpr
     }};

@@ -26,12 +26,14 @@ public:
     virtual void ensureSemanticAnalysis() override;
 
     DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
-    AnyValuePtr currentValueOrValueBox;
 
 protected:
     void ensureEvaluationOfInitialValue();
 
     bool hasEvaluatedInitialValueCodeFragment = false;
+
+    AnyValuePtr currentValueOrValueBox;
+    AnyValuePtr referenceValue;
 };
 
 } // End of namespace BootstrapEnvironment

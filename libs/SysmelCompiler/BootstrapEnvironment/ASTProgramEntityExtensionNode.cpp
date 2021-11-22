@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -25,6 +26,7 @@ SExpression ASTProgramEntityExtensionNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"extension"}},
         sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         body->asSExpression(),
     }};
 }

@@ -22,11 +22,18 @@ public:
     static ReferenceTypePtr makeWithAddressSpace(const TypePtr &baseType, const AnyValuePtr &addressSpace);
 
     virtual bool isReferenceType() const override;
+    virtual bool isReferenceLikeType() const override;
 
+    // Is this a pointer like type value?
     virtual ReferenceTypePtr ref() override;
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace) override;
     virtual PointerLikeTypePtr tempRef() override;
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace) override;
+
+    virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
+    
+    virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
 };
 
 /**
@@ -39,6 +46,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_ReferenceType";
     
     virtual bool isReferenceTypeValue() const override;
+    virtual bool isReferenceLikeTypeValue() const override;
     virtual TypePtr getType() const override;
 };
 

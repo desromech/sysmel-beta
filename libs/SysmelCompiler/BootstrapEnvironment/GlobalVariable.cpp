@@ -1,6 +1,6 @@
 #include "sysmel/BootstrapEnvironment/GlobalVariable.hpp"
 #include "sysmel/BootstrapEnvironment/DeferredCompileTimeCodeFragment.hpp"
-#include "sysmel/BootstrapEnvironment/ValueBox.hpp"
+#include "sysmel/BootstrapEnvironment/PointerLikeType.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 
@@ -25,14 +25,13 @@ void GlobalVariable::ensureEvaluationOfInitialValue()
     auto evaluatedValue = initialValueCodeFragment->analyzeAndEvaluate();
     if(isMutable_)
     {
-        auto box = std::make_shared<ValueBox> ();
-        box->type = valueType;
-        box->value = evaluatedValue;
-        currentValueOrValueBox = box;
+        assert(referenceType->isReferenceLikeType());
+        currentValueOrValueBox = evaluatedValue->asMutableStoreValue();
+        referenceValue = std::static_pointer_cast<PointerLikeType> (referenceType)->makeWithValue(currentValueOrValueBox);
     }
     else
     {
-        currentValueOrValueBox = evaluatedValue;
+        referenceValue = currentValueOrValueBox = evaluatedValue;
     }
 
     hasEvaluatedInitialValueCodeFragment = true;
@@ -47,7 +46,7 @@ AnyValuePtr GlobalVariable::findStoreBindingInCompileTime(const CompileTimeClean
 {
     (void)compileTimeCleanUpScope;
     ensureEvaluationOfInitialValue();
-    return currentValueOrValueBox;
+    return referenceValue;
 }
 
 } // End of namespace BootstrapEnvironment

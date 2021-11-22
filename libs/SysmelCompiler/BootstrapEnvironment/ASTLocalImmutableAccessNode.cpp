@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -23,6 +24,7 @@ AnyValuePtr ASTLocalImmutableAccessNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTLocalImmutableAccessNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"localImmutableAccessNode"}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         sourcePosition->asSExpression(),
         bindingName->asSExpression()
     }};
