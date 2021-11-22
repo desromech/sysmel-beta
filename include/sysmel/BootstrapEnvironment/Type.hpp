@@ -100,6 +100,9 @@ public:
     /// Is this a whose value can be null?
     virtual bool isNullableType() const;
 
+    /// Is this a value that cannot be modified?
+    virtual bool isImmutableType() const;
+
     /// Is this a type with a trivial initialization?
     virtual bool hasTrivialInitialization() const;
 
@@ -207,6 +210,12 @@ public:
 
     /// Expands the #newValue macro.
     virtual ASTNodePtr expandNewValue(const MacroInvocationContextPtr &context);
+
+    /// Expands the construction of a value.
+    virtual ASTNodePtr expandCopyConstruction(const MacroInvocationContextPtr &context, const ASTNodePtr &valueNode);
+
+    /// Expands the movement of a value.
+    virtual ASTNodePtr expandMoveConstruction(const MacroInvocationContextPtr &context, const ASTNodePtr &valueNode);
 
     /// Constructs a value of this type.
     virtual AnyValuePtr basicNewValue();

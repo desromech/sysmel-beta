@@ -203,6 +203,9 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("Boolean8(false)"));
+                CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("Boolean8(true)"));
+
                 CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("Int8(-1)"));
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int8_t> ("Int8(0)"));
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int8_t> ("Int8(1)"));
@@ -239,9 +242,37 @@ SUITE(SysmelCompileTimeEvaluation)
 
                 CHECK_EQUAL(char32_t(0), evaluateStringWithValueOfType<char32_t> ("Char32(0)"));
                 CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("Char32(1)"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<float> ("Float32(42)"));
+                CHECK_EQUAL(42.5f, evaluateStringWithValueOfType<float> ("Float32(42.5)"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("Float64(42)"));
+                CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("Float64(42.5)"));
             });
         });
     }
+
+    TEST(ImmutableCopyConstructor)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("Int8(Int8(-1))"));
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("Int16(Int16(-1))"));
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int32_t> ("Int32(Int32(-1))"));
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int64_t> ("Int64(Int64(-1))"));
+
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("UInt8(UInt8(1))"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint16_t> ("UInt16(UInt16(1))"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("UInt32(UInt32(1))"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("UInt64(UInt64(1))"));
+
+                CHECK_EQUAL(char(1), evaluateStringWithValueOfType<char> ("Char8(Char8(1))"));
+                CHECK_EQUAL(char16_t(1), evaluateStringWithValueOfType<char16_t> ("Char16(Char16(1))"));
+                CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("Char32(Char32(1))"));
+            });
+        });
+    }
+
 
     TEST(Namespace)
     {

@@ -37,6 +37,12 @@ public:
 
     static Boolean8Ptr make(bool value);
 
+    static MethodCategories __instanceMethods__();
+    static MethodCategories __typeMacroMethods__();
+    static AnyValuePtrList __constructors__();
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    
     virtual bool unwrapAsBoolean() const override;
 
     virtual std::string asString() const override;

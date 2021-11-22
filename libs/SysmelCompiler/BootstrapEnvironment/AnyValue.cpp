@@ -66,7 +66,7 @@ MethodCategories AnyValue::__instanceMacroMethods__()
         {"accessing", {
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("yourself", [](const MacroInvocationContextPtr &macroContext) {
                 return macroContext->receiverNode;
-            }),
+            }, MethodFlags::Macro),
         }}
     };
 }

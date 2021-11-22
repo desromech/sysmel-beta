@@ -70,6 +70,7 @@ struct StaticBootstrapDefinedTypeMetadata
     bool isLiteralValueMessageAnalyzer;
     bool isEphemeralCompileTimeObject;
     bool isNullableType;
+    bool isImmutableType;
     bool hasTrivialInitialization;
     bool hasTrivialFinalization;
     bool hasTrivialCopyingFrom;
@@ -113,6 +114,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     T::__isLiteralValueMessageAnalyzer__,
     T::__isEphemeralCompileTimeObject__,
     T::__isNullableType__,
+    T::__isImmutableType__,
     T::__hasTrivialInitialization__,
     T::__hasTrivialFinalization__,
     T::__hasTrivialCopyingFrom__,
@@ -279,6 +281,7 @@ public:
     static constexpr bool __isLiteralValueMessageAnalyzer__ = false;
     static constexpr bool __isEphemeralCompileTimeObject__ = false;
     static constexpr bool __isNullableType__ = true;
+    static constexpr bool __isImmutableType__ = false;
     static constexpr bool __hasTrivialInitialization__ = false;
     static constexpr bool __hasTrivialFinalization__ = false;
     static constexpr bool __hasTrivialCopyingFrom__ = false;

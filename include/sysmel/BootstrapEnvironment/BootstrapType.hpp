@@ -22,6 +22,7 @@ public:
     virtual bool supportsMessageAnalysisByLiteralValueReceivers() const override;
     virtual bool isEphemeralCompileTimeObject() const override;
     virtual bool isNullableType() const override;
+    virtual bool isImmutableType() const override;
     virtual bool hasTrivialInitialization() const override;
     virtual bool hasTrivialFinalization() const override;
     virtual bool hasTrivialCopyingFrom() const override;

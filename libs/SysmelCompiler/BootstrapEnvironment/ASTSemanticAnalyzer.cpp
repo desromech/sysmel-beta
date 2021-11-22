@@ -695,6 +695,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
 {
     auto analyzedNode = std::make_shared<ASTSequenceNode> (*node);
 
+    // Simplify the single element sequence.
+    if(analyzedNode->pragmas.empty() && analyzedNode->expressions.size() == 1)
+        return analyzeNodeIfNeededWithTypeInference(analyzedNode->expressions[0], currentExpectedType, true);
+
     // Analyze the pragmas.
     for(auto &pragma : analyzedNode->pragmas)
         pragma = analyzeNodeIfNeededWithExpectedType(pragma, Type::getPragmaType());

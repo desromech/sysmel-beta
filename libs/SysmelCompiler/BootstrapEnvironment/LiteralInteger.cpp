@@ -30,61 +30,61 @@ MethodCategories LiteralInteger::__instanceMethods__()
             // Negation
             makeMethodBinding<LargeInteger (LargeInteger)> ("negated", +[](const LargeInteger &value) {
                 return -value;
-            }),
+            }, MethodFlags::Pure),
             makeMethodBinding<LargeInteger (LargeInteger)> ("pre--", +[](const LargeInteger &value) {
                 return -value;
-            }),
+            }, MethodFlags::Pure),
 
             // Addition
             makeMethodBinding<LiteralCharacterPtr (LargeInteger, LiteralCharacterPtr)> ("+", +[](const LargeInteger &a, const LiteralCharacterPtr &b) {
                 auto result = std::make_shared<LiteralCharacter> ();
                 result->value = a + b->getValue();
                 return result;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<LiteralCharacterPtr (LiteralCharacterPtr, LargeInteger)> ("+", +[](const LiteralCharacterPtr &a, const LargeInteger &b) {
                 auto result = std::make_shared<LiteralCharacter> ();
                 result->value = a->getValue() + b;
                 return result;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("+", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a + b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (LargeInteger, Fraction)> ("+", +[](const LargeInteger &a, const Fraction &b) {
                 return Fraction{a} + b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (LargeInteger, double)> ("+", +[](const LargeInteger &a, double b) {
                 return a.asDouble() + b;
-            }),
+            }, MethodFlags::Pure),
 
             // Subtraction
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("-", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a - b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (LargeInteger, Fraction)> ("-", +[](const LargeInteger &a, const Fraction &b) {
                 return Fraction{a} - b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (LargeInteger, double)> ("-", +[](const LargeInteger &a, double b) {
                 return a.asDouble() - b;
-            }),
+            }, MethodFlags::Pure),
 
             // Multiplication
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("*", +[](const LargeInteger &a, const LargeInteger &b) {
                 return a * b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (LargeInteger, Fraction)> ("*", +[](const LargeInteger &a, const Fraction &b) {
                 return Fraction{a} * b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (LargeInteger, double)> ("*", +[](const LargeInteger &a, double b) {
                 return a.asDouble() * b;
-            }),
+            }, MethodFlags::Pure),
 
             // Division
             makeMethodBinding<Fraction (LargeInteger, LargeInteger)> ("/", +[](const LargeInteger &a, const LargeInteger &b) {
@@ -92,25 +92,25 @@ MethodCategories LiteralInteger::__instanceMethods__()
                     signalNew<DivisionByZeroError> ();
 
                 return Fraction{a, b}.reduced();
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (LargeInteger, Fraction)> ("/", +[](const LargeInteger &a, const Fraction &b) {
                 if(b.numerator.isZero())
                     signalNew<DivisionByZeroError> ();
 
                 return Fraction(a) / b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (LargeInteger, double)> ("/", +[](const LargeInteger &a, double b) {
                 return a.asDouble() / b;
-            }),
+            }, MethodFlags::Pure),
 
             // Integer division
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("//", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
                     signalNew<DivisionByZeroError> ();
                 return a / b;
-            }),
+            }, MethodFlags::Pure),
 
             // Remainder
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("%", +[](const LargeInteger &a, const LargeInteger &b) {
@@ -118,20 +118,20 @@ MethodCategories LiteralInteger::__instanceMethods__()
                     signalNew<DivisionByZeroError> ();
 
                 return a % b;
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<LargeInteger (LargeInteger, LargeInteger)> ("\\\\", +[](const LargeInteger &a, const LargeInteger &b) {
                 if(b.isZero())
                     signalNew<DivisionByZeroError> ();
 
                 return a % b;
-            }),
+            }, MethodFlags::Pure),
         }},
 
         {"math functions", {
             makeMethodBinding<LargeInteger (LargeInteger)> ("factorial", +[](const LargeInteger &value) {
                 return value.factorial();
-            })
+            }, MethodFlags::Pure)
         }}
     };
 }

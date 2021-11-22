@@ -19,6 +19,7 @@ class LiteralValue : public SubtypeOf<AnyValue, LiteralValue>
 public:
     static constexpr char const __typeName__[] = "LiteralValue";
     static constexpr char const __sysmelTypeName__[] = "LiteralValue";
+    static constexpr bool __isImmutableType__ = true;
 
     static void __addTypeConversionRules__(const TypePtr &type);
 

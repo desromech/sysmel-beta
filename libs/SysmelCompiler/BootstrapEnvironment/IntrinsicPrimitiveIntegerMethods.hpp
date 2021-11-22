@@ -81,83 +81,83 @@ struct IntrinsicPrimitiveIntegerMethods
             {"comparisons", {
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.equals", "=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value == b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.equals", "==", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value == b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.not-equals", "~=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value != b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.not-equals", "~~", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value != b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-than", "<", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value < b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-equals", "<=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value <= b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-than", ">", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value > b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-equals", ">=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value >= b->value);
-                }),
+                }, MethodFlags::Pure),
             }},
             {"arithmetic", {
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.neg", "pre--", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(-v->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.neg", "negated", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(-v->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.add", "+", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value + b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.sub", "-", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value - b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mul", "*", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value * b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.div", "/", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value / b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod", "%", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value % b->value);
-                }),
+                }, MethodFlags::Pure),
             }},
             {"bitwise", {
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.bitnot", "pre-~", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(~v->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.bitnot", "bitInvert", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(~v->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitor", "|", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value | b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitor", "bitOr:", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value | b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitand", "&", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value & b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitand", "bitAnd:", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value & b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitxor", "^", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value ^ b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.bitxor", "bitXor:", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value ^ b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.shift-left", "<<", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value << b->value);
-                }),
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.shift-right", ">>", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value >> b->value);
-                }),
+                }, MethodFlags::Pure),
             }}
         };
     }
@@ -168,22 +168,22 @@ struct IntrinsicPrimitiveIntegerMethods
             {"constants", {
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("zero", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(0));
-                }),
+                }, MethodFlags::Macro),
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("one", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(1));
-                }),
+                }, MethodFlags::Macro),
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("minValue", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
-                }),
+                }, MethodFlags::Macro),
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("negativeInfinityOrMinValue", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
-                }),
+                }, MethodFlags::Macro),
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("maxValue", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::max()));
-                }),
+                }, MethodFlags::Macro),
                 makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("infinityOrMaxValue", +[](const MacroInvocationContextPtr &context) {
                     return context->astBuilder->literal(makeValue(std::numeric_limits<ValueType>::min()));
-                }),
+                }, MethodFlags::Macro),
             }}
         };
     }

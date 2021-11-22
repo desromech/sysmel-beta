@@ -62,19 +62,19 @@ MethodCategories Type::__instanceMacroMethods__()
                 extensionNode->programEntity = macroContext->receiverNode;
                 extensionNode->body = bodyNode;
                 return extensionNode;
-            }),
+            }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("definition:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
                 auto extensionNode = std::make_shared<ASTProgramEntityExtensionNode> ();
                 extensionNode->programEntity = macroContext->receiverNode;
                 extensionNode->body = bodyNode;
                 return extensionNode;
-            }),
+            }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("basicNewValue", [](const MacroInvocationContextPtr &macroContext) {
                 return extractTypeForTypeMacroReceiverNode(macroContext->receiverNode)->expandBasicNewValue(macroContext);
-            }),
+            }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("newValue", [](const MacroInvocationContextPtr &macroContext) {
                 return extractTypeForTypeMacroReceiverNode(macroContext->receiverNode)->expandNewValue(macroContext);
-            }),
+            }, MethodFlags::Macro),
         }},
     };
 }
@@ -305,6 +305,11 @@ bool Type::isEphemeralCompileTimeObject() const
 bool Type::isNullableType() const
 {
     return true;
+}
+
+bool Type::isImmutableType() const
+{
+    return false;
 }
 
 bool Type::hasTrivialInitialization() const
@@ -602,8 +607,47 @@ ASTNodePtr Type::expandNewValue(const MacroInvocationContextPtr &context)
     });
 }
 
+ASTNodePtr Type::expandCopyConstruction(const MacroInvocationContextPtr &context, const ASTNodePtr &valueNode)
+{
+    (void)context;
+    if(isImmutableType())
+        return valueNode;
+
+    assert("TODO: expandCopyConstruction" && false);
+}
+
+ASTNodePtr Type::expandMoveConstruction(const MacroInvocationContextPtr &context, const ASTNodePtr &valueNode)
+{
+    (void)context;
+    if(isImmutableType())
+        return valueNode;
+
+    assert("TODO: expandMoveConstruction" && false);
+}
+
 ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
+    auto analyzedArguments = arguments;
+
+    // Ensure the arguments are analyzed.
+    for(auto &arg : analyzedArguments)
+        arg = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+
+    // Special single argument constructors.
+    if(analyzedArguments.size() == 1)
+    {
+        auto argument = analyzedArguments.front();
+        auto argumentType = argument->analyzedType;
+
+        // Copy constructor.
+        if(argumentType == shared_from_this())
+            return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(
+                expandCopyConstruction(semanticAnalyzer->makeMacroInvocationContextFor(node), argument)
+            );
+            
+        // TODO: move constructor
+    }
+
     // Do we have some constructors?
     if(!constructors.empty())
     {
@@ -613,11 +657,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
         messageSendNode->selector = internSymbol("()")->asASTNodeRequiredInPosition(node->sourcePosition);
         messageSendNode->receiver = asASTNodeRequiredInPosition(node->sourcePosition);
         messageSendNode->receiver->analyzedType = getType();
-        messageSendNode->arguments = arguments;
-
-        // Ensure the arguments are analyzed.
-        for(auto &arg : messageSendNode->arguments)
-            arg = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+        messageSendNode->arguments = analyzedArguments;
 
         // Find a matching constructor.
         std::vector<MethodPtr> matchingCandidates;

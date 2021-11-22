@@ -17,7 +17,9 @@ enum class MethodFlags : uint32_t
     None = 0,
     Constructor = 1<<1,
     Explicit = 1<<2,
-    Pure = 1<<3
+    Pure = 1<<3,
+    Abstract = 1<<4,
+    Macro = 1<<5,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)

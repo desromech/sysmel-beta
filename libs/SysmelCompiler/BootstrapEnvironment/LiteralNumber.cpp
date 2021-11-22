@@ -18,39 +18,39 @@ MethodCategories LiteralNumber::__instanceMethods__()
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr)> ("negated", +[](const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr)> ("pre--", +[](const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
 
             // Addition
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr, LiteralNumberPtr)> ("+", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
 
             // Subtraction
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr, LiteralNumberPtr)> ("-", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
 
             // Multiplication
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr, LiteralNumberPtr)> ("*", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
 
             // Division
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr, LiteralNumberPtr)> ("/", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
                 SysmelSelfSubclassResponsibility();
                 return LiteralNumberPtr();
-            }),
+            }, MethodFlags::Pure | MethodFlags::Abstract),
         }},
 
         {"converting", {
-            makeMethodBinding("asFloat", &LiteralNumber::asFloat),
+            makeMethodBinding("asFloat", &LiteralNumber::asFloat, MethodFlags::Pure | MethodFlags::Abstract),
         }}
     };
 }

@@ -29,62 +29,62 @@ MethodCategories LiteralFraction::__instanceMethods__()
             // Negation
             makeMethodBinding<Fraction (Fraction)> ("negated", +[](const Fraction &value) {
                 return -value;
-            }),
+            }, MethodFlags::Pure),
             makeMethodBinding<Fraction (Fraction)> ("pre--", +[](const Fraction &value) {
                 return -value;
-            }),
+            }, MethodFlags::Pure),
 
             // Addition
             makeMethodBinding<Fraction (Fraction, LargeInteger)> ("+", +[](const Fraction &a, const LargeInteger &b) {
                 return a + Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (Fraction, Fraction)> ("+", +[](const Fraction &a, const Fraction &b) {
                 return a + Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (Fraction, double)> ("+", +[](const Fraction &a, double b) {
                 return a.asDouble() + b;
-            }),
+            }, MethodFlags::Pure),
 
             // Subtraction
             makeMethodBinding<Fraction (Fraction, LargeInteger)> ("-", +[](const Fraction &a, const LargeInteger &b) {
                 return a - Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (Fraction, Fraction)> ("-", +[](const Fraction &a, const Fraction &b) {
                 return a - Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (Fraction, double)> ("-", +[](const Fraction &a, double b) {
                 return a.asDouble() - b;
-            }),
+            }, MethodFlags::Pure),
 
             // Multiplication
             makeMethodBinding<Fraction (Fraction, LargeInteger)> ("*", +[](const Fraction &a, const LargeInteger &b) {
                 return a * Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (Fraction, Fraction)> ("*", +[](const Fraction &a, const Fraction &b) {
                 return a * Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (Fraction, double)> ("*", +[](const Fraction &a, double b) {
                 return a.asDouble() * b;
-            }),
+            }, MethodFlags::Pure),
 
             // Division
             makeMethodBinding<Fraction (Fraction, LargeInteger)> ("/", +[](const Fraction &a, const LargeInteger &b) {
                 return a / Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<Fraction (Fraction, Fraction)> ("/", +[](const Fraction &a, const Fraction &b) {
                 return a / Fraction{b};
-            }),
+            }, MethodFlags::Pure),
 
             makeMethodBinding<double (Fraction, double)> ("/", +[](const Fraction &a, double b) {
                 return a.asDouble() / b;
-            }),
+            }, MethodFlags::Pure),
         }}
     };
 }
