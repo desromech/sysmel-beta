@@ -97,6 +97,10 @@ public:
     virtual AnyValuePtr visitUnionNode(const ASTUnionNodePtr &node) override;
     virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
+    virtual AnyValuePtr visitExplicitCastNode(const ASTExplicitCastNodePtr &node);
+    virtual AnyValuePtr visitImplicitCastNode(const ASTImplicitCastNodePtr &node);
+    virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node);
+
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node) override;
 
     ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);

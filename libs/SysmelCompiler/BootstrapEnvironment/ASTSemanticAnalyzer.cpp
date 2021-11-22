@@ -40,6 +40,10 @@
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReinterpretCastNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/ASTTypeConversionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
@@ -344,13 +348,10 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
     auto analyzedNode = node;
     if(!analyzedNode->analyzedType)
         analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
+    if(analyzedNode->isASTErrorNode())
+        return analyzedNode;
     
     auto sourceType = analyzedNode->analyzedType;
-
-    // Do not attempt to convert error nodes.
-    if(sourceType->isCompilationErrorValueType())
-        return analyzedNode;
-
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
@@ -1637,6 +1638,61 @@ AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgra
     }
 
     return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNodePtr &node)
+{
+    auto analyzedExpression = analyzeNodeIfNeededWithAutoType(node->expression);
+    auto targetTypeNode = evaluateTypeExpression(node->targetType);
+    if(analyzedExpression->isASTErrorNode())
+        return analyzedExpression;
+    if(targetTypeNode->isASTErrorNode())
+        return targetTypeNode;
+
+    auto sourceType = analyzedExpression->analyzedType;
+    auto targetType = std::static_pointer_cast<Type> (
+        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    );
+
+    auto typeConversionRule = sourceType->findExplicitTypeConversionRuleForInto(analyzedExpression, targetType);
+    if(!typeConversionRule)
+        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+    
+    return typeConversionRule->convertNodeIntoWith(analyzedExpression, targetType, shared_from_this());
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNodePtr &node)
+{
+    auto targetTypeNode = evaluateTypeExpression(node->targetType);
+    if(targetTypeNode->isASTErrorNode())
+        return targetTypeNode;
+    
+    auto targetType = std::static_pointer_cast<Type> (
+        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    );
+
+    return addImplicitCastTo(node->expression, targetType);
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
+{
+    auto analyzedExpression = analyzeNodeIfNeededWithAutoType(node->expression);
+    auto targetTypeNode = evaluateTypeExpression(node->targetType);
+    if(analyzedExpression->isASTErrorNode())
+        return analyzedExpression;
+    if(targetTypeNode->isASTErrorNode())
+        return targetTypeNode;
+
+    auto sourceType = analyzedExpression->analyzedType;
+    auto targetType = std::static_pointer_cast<Type> (
+        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    );
+
+    auto typeConversionRule = sourceType->findReinterpretTypeConversionRuleForInto(analyzedExpression, targetType);
+    if(!typeConversionRule)
+        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+    
+    return typeConversionRule->convertNodeIntoWith(analyzedExpression, targetType, shared_from_this());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)

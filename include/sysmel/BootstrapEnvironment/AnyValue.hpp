@@ -484,6 +484,18 @@ public:
     /// Is this object an AST program entity extension node?
     virtual bool isASTProgramEntityExtensionNode() const;
 
+    /// Is this object an AST cast node?
+    virtual bool isASTCastNode() const;
+
+    /// Is this object an AST implicit cast node?
+    virtual bool isASTImplicitCastNode() const;
+
+    /// Is this object an AST implicit cast node?
+    virtual bool isASTExplicitCastNode() const;
+
+    /// Is this object an AST implicit cast node?
+    virtual bool isASTReinterpretCastNode() const;
+
     /// Is this object an AST type conversion node?
     virtual bool isASTTypeConversionNode() const;
 

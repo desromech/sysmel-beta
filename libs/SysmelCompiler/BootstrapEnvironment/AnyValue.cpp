@@ -5,6 +5,10 @@
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReinterpretCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
@@ -66,6 +70,21 @@ MethodCategories AnyValue::__instanceMacroMethods__()
         {"accessing", {
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("yourself", [](const MacroInvocationContextPtr &macroContext) {
                 return macroContext->receiverNode;
+            }, MethodFlags::Macro),
+        }},
+
+        {"casting", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("castTo:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &targetType) {
+                return macroContext->astBuilder->explicitCastTo(macroContext->receiverNode, targetType);
+            }, MethodFlags::Macro),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("explicitCastTo:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &targetType) {
+                return macroContext->astBuilder->explicitCastTo(macroContext->receiverNode, targetType);
+            }, MethodFlags::Macro),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("implicitCastTo:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &targetType) {
+                return macroContext->astBuilder->implicitCastTo(macroContext->receiverNode, targetType);
+            }, MethodFlags::Macro),
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("reinterpretCastTo:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &targetType) {
+                return macroContext->astBuilder->reinterpretCastTo(macroContext->receiverNode, targetType);
             }, MethodFlags::Macro),
         }}
     };
@@ -325,6 +344,26 @@ bool AnyValue::isASTEnumNode() const
 }
 
 bool AnyValue::isASTProgramEntityExtensionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTCastNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTImplicitCastNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTExplicitCastNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTReinterpretCastNode() const
 {
     return false;
 }

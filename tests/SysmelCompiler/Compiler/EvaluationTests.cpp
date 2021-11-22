@@ -252,6 +252,167 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(PrimitiveTypeImplicitCastConstruction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false implicitCastTo: Boolean8"));
+                CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("true implicitCastTo: Boolean8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("-1 implicitCastTo: Int8"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int8_t> ("0 implicitCastTo: Int8"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int8_t> ("1 implicitCastTo: Int8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("-1 implicitCastTo: Int16"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int16_t> ("0 implicitCastTo: Int16"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int16_t> ("1 implicitCastTo: Int16"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int32_t> ("-1 implicitCastTo: Int32"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("0 implicitCastTo: Int32"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("1 implicitCastTo: Int32"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int64_t> ("-1 implicitCastTo: Int64"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int64_t> ("0 implicitCastTo: Int64"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int64_t> ("1 implicitCastTo: Int64"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint8_t> ("0 implicitCastTo: UInt8"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("1 implicitCastTo: UInt8"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint16_t> ("0 implicitCastTo: UInt16"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint16_t> ("1 implicitCastTo: UInt16"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint32_t> ("0 implicitCastTo: UInt32"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("1 implicitCastTo: UInt32"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint64_t> ("0 implicitCastTo: UInt64"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("1 implicitCastTo: UInt64"));
+
+                CHECK_EQUAL(char(0), evaluateStringWithValueOfType<char> ("0 implicitCastTo: Char8"));
+                CHECK_EQUAL(char(1), evaluateStringWithValueOfType<char> ("1 implicitCastTo: Char8"));
+                CHECK_EQUAL('A', evaluateStringWithValueOfType<char> ("'A' implicitCastTo: Char8"));
+
+                CHECK_EQUAL(char16_t(0), evaluateStringWithValueOfType<char16_t> ("0 implicitCastTo: Char16"));
+                CHECK_EQUAL(char16_t(1), evaluateStringWithValueOfType<char16_t> ("1 implicitCastTo: Char16"));
+                CHECK_EQUAL(char16_t('A'), evaluateStringWithValueOfType<char16_t> ("'A' implicitCastTo: Char16"));
+
+                CHECK_EQUAL(char32_t(0), evaluateStringWithValueOfType<char32_t> ("0 implicitCastTo: Char32"));
+                CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("1 implicitCastTo: Char32"));
+                CHECK_EQUAL(char32_t('A'), evaluateStringWithValueOfType<char32_t> ("'A' implicitCastTo: Char32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<float> ("42 implicitCastTo: Float32"));
+                CHECK_EQUAL(42.5f, evaluateStringWithValueOfType<float> ("42.5 implicitCastTo: Float32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("42 implicitCastTo: Float64"));
+                CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("42.5 implicitCastTo: Float64"));
+            });
+        });
+    }
+
+    TEST(PrimitiveTypeExplicitCastConstruction)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false castTo: Boolean8"));
+                CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("true castTo: Boolean8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("-1 castTo: Int8"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int8_t> ("0 castTo: Int8"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int8_t> ("1 castTo: Int8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("-1 castTo: Int16"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int16_t> ("0 castTo: Int16"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int16_t> ("1 castTo: Int16"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int32_t> ("-1 castTo: Int32"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("0 castTo: Int32"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("1 castTo: Int32"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int64_t> ("-1 castTo: Int64"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int64_t> ("0 castTo: Int64"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int64_t> ("1 castTo: Int64"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint8_t> ("0 castTo: UInt8"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("1 castTo: UInt8"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint16_t> ("0 castTo: UInt16"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint16_t> ("1 castTo: UInt16"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint32_t> ("0 castTo: UInt32"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("1 castTo: UInt32"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint64_t> ("0 castTo: UInt64"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("1 castTo: UInt64"));
+
+                CHECK_EQUAL(char(0), evaluateStringWithValueOfType<char> ("0 castTo: Char8"));
+                CHECK_EQUAL(char(1), evaluateStringWithValueOfType<char> ("1 castTo: Char8"));
+                CHECK_EQUAL('A', evaluateStringWithValueOfType<char> ("'A' castTo: Char8"));
+
+                CHECK_EQUAL(char16_t(0), evaluateStringWithValueOfType<char16_t> ("0 castTo: Char16"));
+                CHECK_EQUAL(char16_t(1), evaluateStringWithValueOfType<char16_t> ("1 castTo: Char16"));
+                CHECK_EQUAL(char16_t('A'), evaluateStringWithValueOfType<char16_t> ("'A' castTo: Char16"));
+
+                CHECK_EQUAL(char32_t(0), evaluateStringWithValueOfType<char32_t> ("0 castTo: Char32"));
+                CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("1 castTo: Char32"));
+                CHECK_EQUAL(char32_t('A'), evaluateStringWithValueOfType<char32_t> ("'A' castTo: Char32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<float> ("42 castTo: Float32"));
+                CHECK_EQUAL(42.5f, evaluateStringWithValueOfType<float> ("42.5 castTo: Float32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("42 castTo: Float64"));
+                CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("42.5 castTo: Float64"));
+
+                CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false explicitCastTo: Boolean8"));
+                CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("true explicitCastTo: Boolean8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("-1 explicitCastTo: Int8"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int8_t> ("0 explicitCastTo: Int8"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int8_t> ("1 explicitCastTo: Int8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("-1 explicitCastTo: Int16"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int16_t> ("0 explicitCastTo: Int16"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int16_t> ("1 explicitCastTo: Int16"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int32_t> ("-1 explicitCastTo: Int32"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("0 explicitCastTo: Int32"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("1 explicitCastTo: Int32"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int64_t> ("-1 explicitCastTo: Int64"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int64_t> ("0 explicitCastTo: Int64"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int64_t> ("1 explicitCastTo: Int64"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint8_t> ("0 explicitCastTo: UInt8"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("1 explicitCastTo: UInt8"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint16_t> ("0 explicitCastTo: UInt16"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint16_t> ("1 explicitCastTo: UInt16"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint32_t> ("0 explicitCastTo: UInt32"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("1 explicitCastTo: UInt32"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint64_t> ("0 explicitCastTo: UInt64"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("1 explicitCastTo: UInt64"));
+
+                CHECK_EQUAL(char(0), evaluateStringWithValueOfType<char> ("0 explicitCastTo: Char8"));
+                CHECK_EQUAL(char(1), evaluateStringWithValueOfType<char> ("1 explicitCastTo: Char8"));
+                CHECK_EQUAL('A', evaluateStringWithValueOfType<char> ("'A' explicitCastTo: Char8"));
+
+                CHECK_EQUAL(char16_t(0), evaluateStringWithValueOfType<char16_t> ("0 explicitCastTo: Char16"));
+                CHECK_EQUAL(char16_t(1), evaluateStringWithValueOfType<char16_t> ("1 explicitCastTo: Char16"));
+                CHECK_EQUAL(char16_t('A'), evaluateStringWithValueOfType<char16_t> ("'A' explicitCastTo: Char16"));
+
+                CHECK_EQUAL(char32_t(0), evaluateStringWithValueOfType<char32_t> ("0 explicitCastTo: Char32"));
+                CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("1 explicitCastTo: Char32"));
+                CHECK_EQUAL(char32_t('A'), evaluateStringWithValueOfType<char32_t> ("'A' explicitCastTo: Char32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<float> ("42 explicitCastTo: Float32"));
+                CHECK_EQUAL(42.5f, evaluateStringWithValueOfType<float> ("42.5 explicitCastTo: Float32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("42 explicitCastTo: Float64"));
+                CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("42.5 explicitCastTo: Float64"));
+            });
+        });
+    }
+
     TEST(ImmutableCopyConstructor)
     {
         RuntimeContext::create()->activeDuring([&](){

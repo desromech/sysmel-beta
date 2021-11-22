@@ -10,6 +10,7 @@ set(BootstrapEnvironment_Sources
     ASTArgumentDefinitionNode.cpp
     ASTBuilder.cpp
     ASTCallNode.cpp
+    ASTCastNode.cpp
     ASTClassNode.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
@@ -19,11 +20,13 @@ set(BootstrapEnvironment_Sources
     ASTEmptySourcePosition.cpp
     ASTEnumNode.cpp
     ASTErrorNode.cpp
+    ASTExplicitCastNode.cpp
     ASTFieldVariableNode.cpp
     ASTFunctionalNode.cpp
     ASTFunctionNode.cpp
     ASTGlobalVariableNode.cpp
     ASTIdentifierReferenceNode.cpp
+    ASTImplicitCastNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
     ASTLocalImmutableAccessNode.cpp
@@ -46,6 +49,7 @@ set(BootstrapEnvironment_Sources
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
+    ASTReinterpretCastNode.cpp
     ASTSemanticAnalyzer.cpp
     ASTSemanticErrorNode.cpp
     ASTSequenceNode.cpp

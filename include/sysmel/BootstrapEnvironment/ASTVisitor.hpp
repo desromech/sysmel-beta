@@ -65,6 +65,11 @@ public:
     virtual AnyValuePtr visitClassNode(const ASTClassNodePtr &node);
     virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node);
 
+    virtual AnyValuePtr visitCastNode(const ASTCastNodePtr &node);
+    virtual AnyValuePtr visitExplicitCastNode(const ASTExplicitCastNodePtr &node);
+    virtual AnyValuePtr visitImplicitCastNode(const ASTImplicitCastNodePtr &node);
+    virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node);
+
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node);
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node);
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node);

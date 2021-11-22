@@ -15,6 +15,10 @@
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReinterpretCastNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTUpcastTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
@@ -237,6 +241,26 @@ AnyValuePtr ASTVisitor::visitClassNode(const ASTClassNodePtr &node)
 AnyValuePtr ASTVisitor::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitCastNode(const ASTCastNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitExplicitCastNode(const ASTExplicitCastNodePtr &node)
+{
+    return visitCastNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitImplicitCastNode(const ASTImplicitCastNodePtr &node)
+{
+    return visitCastNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
+{
+    return visitCastNode(node);
 }
 
 AnyValuePtr ASTVisitor::visitTypeConversionNode(const ASTTypeConversionNodePtr &)
