@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -17,6 +18,14 @@ bool ASTLocalImmutableAccessNode::isASTLocalImmutableAccessNode() const
 AnyValuePtr ASTLocalImmutableAccessNode::accept(const ASTVisitorPtr &visitor)
 {
     return visitor->visitLocalImmutableAccessNode(shared_from_this());
+}
+
+SExpression ASTLocalImmutableAccessNode::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"localImmutableAccessNode"}},
+        sourcePosition->asSExpression(),
+        bindingName->asSExpression()
+    }};
 }
 
 } // End of namespace BootstrapEnvironment
