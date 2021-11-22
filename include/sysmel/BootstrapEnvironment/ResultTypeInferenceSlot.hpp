@@ -23,6 +23,7 @@ public:
     static ResultTypeInferenceSlotPtr makeForType(const TypePtr &expectedType);
     static ResultTypeInferenceSlotPtr makeForTypeSet(const TypePtrList &expectedTypeSet);
     static ResultTypeInferenceSlotPtr makeForAuto();
+    static ResultTypeInferenceSlotPtr makeForTemporaryAuto();
     static ResultTypeInferenceSlotPtr makeForAutoWithMode(TypeInferenceMode mode, bool isMutable);
 
     virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

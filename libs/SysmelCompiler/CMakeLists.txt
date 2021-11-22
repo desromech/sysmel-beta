@@ -148,6 +148,8 @@ set(BootstrapEnvironment_Sources
     NotMatchingPatternFound.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp
+    PointerLikeType.cpp
+    PointerType.cpp
     Pragma.cpp
     PrimitiveBooleanType.cpp
     PrimitiveCharacterType.cpp
@@ -163,6 +165,7 @@ set(BootstrapEnvironment_Sources
     ProgramModule.cpp
     ProtectedMetaBuilder.cpp
     PublicMetaBuilder.cpp
+    ReferenceType.cpp
     ResultTypeInferenceSlot.cpp
     ReturnType.cpp
     RuntimeContext.cpp
@@ -175,7 +178,7 @@ set(BootstrapEnvironment_Sources
     StructMetaBuilder.cpp
     StructureType.cpp
     SubclassResponsibility.cpp
-    ResultTypeInferenceSlot.cpp
+    TemporaryReferenceType
     Type.cpp
     TypeConversionRule.cpp
     TypeMetaBuilder.cpp

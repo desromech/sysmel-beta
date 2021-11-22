@@ -739,6 +739,30 @@ public:
     // Is this an enum type value?
     virtual bool isEnumTypeValue() const;
 
+    // Is this a pointer like type?
+    virtual bool isPointerLikeType() const;
+
+    // Is this a pointer like type value?
+    virtual bool isPointerLikeTypeValue() const;
+
+    // Is this a pointer type?
+    virtual bool isPointerType() const;
+
+    // Is this a pointer type value?
+    virtual bool isPointerTypeValue() const;
+
+    // Is this a reference type?
+    virtual bool isReferenceType() const;
+
+    // Is this a reference type value?
+    virtual bool isReferenceTypeValue() const;
+
+    // Is this a temporary reference type?
+    virtual bool isTemporaryReferenceType() const;
+
+    // Is this a temporary reference type value?
+    virtual bool isTemporaryReferenceTypeValue() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 

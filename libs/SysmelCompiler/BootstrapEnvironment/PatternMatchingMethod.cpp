@@ -91,7 +91,7 @@ void PatternMatchingMethod::ensureArgumentsAreAnalyzed(ASTNodePtrList &arguments
         }
 
         if(hasAutoType)
-            argument = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(argument);
+            argument = semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(argument);
         else
             argument = semanticAnalyzer->analyzeNodeIfNeededWithExpectedTypeSet(argument, expectedTypeSet);
     }

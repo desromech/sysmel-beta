@@ -4,6 +4,7 @@
 
 #include "ProgramEntity.hpp"
 #include "Exception.hpp"
+#include <map>
 
 namespace SysmelMoebius
 {
@@ -12,6 +13,14 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemporaryReferenceType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureType);
 
 /**
  * I represent an active runtime context in the object model environment.
@@ -71,9 +80,20 @@ public:
     }
 
 protected:
+    friend class FunctionType;
+    friend class ClosureType;
+    friend class MethodType;
+    friend class PointerType;
+    friend class ReferenceType;
+    friend class TemporaryReferenceType;
     
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;
+
+    std::map<std::pair<TypePtr, AnyValuePtr>, PointerTypePtr> pointerTypeCache;
+    std::map<std::pair<TypePtr, AnyValuePtr>, ReferenceTypePtr> referenceTypeCache;
+    std::map<std::pair<TypePtr, AnyValuePtr>, TemporaryReferenceTypePtr> temporaryReferenceTypeCache;
+    std::map<std::vector<TypePtr>, TupleTypePtr> tupleTypeCache;
 };
 
 } // End of namespace BootstrapEnvironment

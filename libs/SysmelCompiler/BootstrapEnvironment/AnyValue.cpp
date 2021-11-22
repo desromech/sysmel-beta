@@ -773,6 +773,46 @@ bool AnyValue::isEnumTypeValue() const
     return false;
 }
 
+bool AnyValue::isPointerLikeType() const
+{
+    return false;
+}
+
+bool AnyValue::isPointerLikeTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isPointerType() const
+{
+    return false;
+}
+
+bool AnyValue::isPointerTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isReferenceType() const
+{
+    return false;
+}
+
+bool AnyValue::isReferenceTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isTemporaryReferenceType() const
+{
+    return false;
+}
+
+bool AnyValue::isTemporaryReferenceTypeValue() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

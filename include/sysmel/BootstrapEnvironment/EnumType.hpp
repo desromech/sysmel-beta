@@ -37,7 +37,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class EnumTypeValue : public SubtypeOf<AnyValue, EnumTypeValue>
+class EnumTypeValue : public SubtypeOf<DerivedTypeValue, EnumTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "EnumType";
@@ -46,6 +46,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isEnumTypeValue() const override;
+    virtual TypePtr getType() const override;
 };
 
 } // End of namespace BootstrapEnvironment

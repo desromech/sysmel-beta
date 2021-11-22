@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ModuleDefinedProgramEntity.hpp"
+#include "TypeInferenceMode.hpp"
 #include <functional>
 
 namespace SysmelMoebius
@@ -12,6 +13,10 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SpecificMethod);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeType);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
@@ -231,6 +236,27 @@ public:
 
     /// Make an instance with the specified literal value
     virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value);
+
+    /// Type inference.
+    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode);
+    
+    /// Makes a pointer type where I am the base type.
+    virtual PointerTypePtr pointer();
+
+    /// Makes a pointer type where I am the base type with the specified address space.
+    virtual PointerTypePtr pointerFor(const AnyValuePtr &addressSpace);
+
+    /// Makes a reference type where I am the base type.
+    virtual ReferenceTypePtr ref();
+
+    /// Makes a reference type where I am the base type with the specified address space.
+    virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace);
+
+    /// Makes a temporary reference type where I am the base type.
+    virtual PointerLikeTypePtr tempRef();
+
+    /// Makes a temporary reference type where I am the base type with the specified address space.
+    virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace);
 
 protected:
     // Utility method for expanding type macros.

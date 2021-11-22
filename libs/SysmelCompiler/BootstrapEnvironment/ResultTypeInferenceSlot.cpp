@@ -13,6 +13,12 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
     return std::make_shared<ResultTypeInferenceSlot> ();
 }
 
+
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTemporaryAuto()
+{
+    return std::make_shared<ResultTypeInferenceSlot> ();
+}
+
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable)
 {
     (void)mode;

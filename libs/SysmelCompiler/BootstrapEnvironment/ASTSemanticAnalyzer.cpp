@@ -203,6 +203,11 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithAutoType(const ASTNodePtr
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForAuto());
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTemporaryAutoType(const ASTNodePtr &node)
+{
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTemporaryAuto());
+}
+
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node, bool concretizeEphemeralObjects)
 {
     if(node->analyzedType)
@@ -262,7 +267,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessa
 AnyValuePtr ASTSemanticAnalyzer::evaluateInCompileTime(const ASTNodePtr &node)
 {
     auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();
-    return evaluator->visitNode(analyzeNodeIfNeededWithAutoType(node));
+    return evaluator->visitNode(analyzeNodeIfNeededWithTemporaryAutoType(node));
 }
 
 ASTNodePtr ASTSemanticAnalyzer::guardCompileTimeEvaluationForNode(const ASTNodePtr &node, const ASTNodeSemanticAnalysisBlock &aBlock)
@@ -363,7 +368,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
 {
     auto analyzedNode = node;
     if(!analyzedNode->analyzedType)
-        analyzedNode = analyzeNodeIfNeededWithAutoType(node);
+        analyzedNode = analyzeNodeIfNeededWithTemporaryAutoType(node);
 
     assert(!expectedTypeSet.empty());
     if(expectedTypeSet.size() == 1)
@@ -484,7 +489,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
 AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 {
     auto analyzedNode = std::make_shared<ASTCallNode> (*node);
-    analyzedNode->function = analyzeNodeIfNeededWithAutoType(analyzedNode->function);
+    analyzedNode->function = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->function);
     return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, shared_from_this());
 }
 
@@ -494,7 +499,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallN
     {
         // Analyze the arguments for discovering more error.
         for(auto &arg : node->arguments)
-            analyzeNodeIfNeededWithAutoType(arg);
+            analyzeNodeIfNeededWithTemporaryAutoType(arg);
 
         return recordSemanticErrorInNode(node, "Call argument count mismatch.");
     }
@@ -584,7 +589,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
     }
 
     auto analyzedNode = std::make_shared<ASTMessageChainNode> (*node);
-    analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
+    analyzedNode->receiver = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->receiver);
 
     // Support inline analysis of meta-builders.
     if(analyzedNode->receiver->isASTLiteralValueNode() && analyzedNode->receiver->analyzedType->supportsMessageAnalysisByLiteralValueReceivers())
@@ -593,7 +598,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         for(auto &message : analyzedNode->messages)
         {
             auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(analyzedNode->receiver);
-            result = analyzeNodeIfNeededWithAutoType(convertedMessage);
+            result = analyzeNodeIfNeededWithTemporaryAutoType(convertedMessage);
         }
         return result;
     }
@@ -636,7 +641,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
 
     if(analyzedNode->receiver)
     {
-        analyzedNode->receiver = analyzeNodeIfNeededWithAutoType(analyzedNode->receiver);
+        analyzedNode->receiver = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->receiver);
 
         // Delegate to the receiver type.
         return analyzedNode->receiver->analyzedType->analyzeMessageSendNode(analyzedNode, shared_from_this());
@@ -1642,7 +1647,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgra
 
 AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNodePtr &node)
 {
-    auto analyzedExpression = analyzeNodeIfNeededWithAutoType(node->expression);
+    auto analyzedExpression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
     auto targetTypeNode = evaluateTypeExpression(node->targetType);
     if(analyzedExpression->isASTErrorNode())
         return analyzedExpression;
@@ -1676,7 +1681,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
 {
-    auto analyzedExpression = analyzeNodeIfNeededWithAutoType(node->expression);
+    auto analyzedExpression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
     auto targetTypeNode = evaluateTypeExpression(node->targetType);
     if(analyzedExpression->isASTErrorNode())
         return analyzedExpression;

@@ -34,6 +34,7 @@ public:
     ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects = false);
     ASTNodePtr analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
     ASTNodePtr analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node);
+    ASTNodePtr analyzeNodeIfNeededWithTemporaryAutoType(const ASTNodePtr &node);
     ASTNodePtr analyzeNodeIfNeededWithAutoTypeInferenceMode(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable);
     ASTNodePtr analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node, bool concretizeEphemeralObjects = false);
 

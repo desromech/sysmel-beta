@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
@@ -21,6 +22,11 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
+
+#include "sysmel/BootstrapEnvironment/PointerType.hpp"
+#include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
+#include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
+
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -33,8 +39,17 @@ MethodCategories Type::__instanceMethods__()
 {
     return MethodCategories{
         {"accessing", {
-            makeMethodBinding("supertype", &Type::getSupertype),
-            makeMethodBinding("subtypes", &Type::getSubtypes),
+            makeMethodBinding("supertype", &Type::getSupertype, MethodFlags::Pure),
+            makeMethodBinding("subtypes", &Type::getSubtypes, MethodFlags::Pure),
+        }},
+
+        {"type composition", {
+            makeMethodBinding("pointer", &Type::pointer, MethodFlags::Pure),
+            makeMethodBinding("pointerFor:", &Type::pointerFor, MethodFlags::Pure),
+            makeMethodBinding("ref", &Type::ref, MethodFlags::Pure),
+            makeMethodBinding("refFor:", &Type::refFor, MethodFlags::Pure),
+            makeMethodBinding("tempRef", &Type::tempRef, MethodFlags::Pure),
+            makeMethodBinding("tempRefFor:", &Type::tempRefFor, MethodFlags::Pure),
         }},
     };
 }
@@ -222,7 +237,7 @@ ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAn
     {
         assert(node->function->analyzedType->isCompilationErrorValueType());
         for(const auto &arg : node->arguments)
-            semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+            semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
         return node->function;
     }
 
@@ -263,7 +278,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
     {
         assert(node->receiver->analyzedType->isCompilationErrorValueType());
         for(const auto &arg : node->arguments)
-            semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+            semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
         return node->receiver;
     }
 
@@ -631,7 +646,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
 
     // Ensure the arguments are analyzed.
     for(auto &arg : analyzedArguments)
-        arg = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+        arg = semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
 
     // Special single argument constructors.
     if(analyzedArguments.size() == 1)
@@ -712,6 +727,42 @@ AnyValuePtr Type::instantiatedWithLiteralValue(const AnyValuePtr &value)
 {
     (void)value;
     return nullptr;
+}
+
+TypePtr Type::asInferredTypeWithMode(TypeInferenceMode mode)
+{
+    (void)mode;
+    return shared_from_this();
+}
+
+PointerTypePtr Type::pointer()
+{
+    return PointerType::make(shared_from_this());
+}
+
+PointerTypePtr Type::pointerFor(const AnyValuePtr &addressSpace)
+{
+    return PointerType::makeWithAddressSpace(shared_from_this(), addressSpace);
+}
+
+ReferenceTypePtr Type::ref()
+{
+    return ReferenceType::make(shared_from_this());
+}
+
+ReferenceTypePtr Type::refFor(const AnyValuePtr &addressSpace)
+{
+    return ReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
+}
+
+PointerLikeTypePtr Type::tempRef()
+{
+    return TemporaryReferenceType::make(shared_from_this());
+}
+
+PointerLikeTypePtr Type::tempRefFor(const AnyValuePtr &addressSpace)
+{
+    return TemporaryReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
 }
 
 } // End of namespace BootstrapEnvironment

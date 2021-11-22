@@ -73,5 +73,10 @@ bool EnumTypeValue::isEnumTypeValue() const
     return true;
 }
 
+TypePtr EnumTypeValue::getType() const
+{
+    return type;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

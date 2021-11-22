@@ -120,6 +120,90 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(MutableLocalVariable)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a mutable := 42"));
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a mutable := 42. a"));
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int> ("let a mutable := 42. a := 4"));
+
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int> ("let a mutable := 42. a := 4. a"));
+            });
+        });
+    }
+
+    TEST(PointerLikeTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                {
+                    auto a = evaluateString("Int32 pointer");
+                    auto b = evaluateString("Int32 pointer");
+                    CHECK(a->isPointerType());
+                    CHECK(b->isPointerType());
+                    CHECK_EQUAL(a, b);
+
+                    auto c = evaluateString("Int32 pointerFor: #function");
+                    auto d = evaluateString("Int32 pointerFor: #function");
+                    CHECK(c->isPointerType());
+                    CHECK(d->isPointerType());
+                    CHECK_EQUAL(c, d);
+                }
+
+                {
+                    auto a = evaluateString("Int32 ref");
+                    auto b = evaluateString("Int32 ref");
+                    auto c = evaluateString("Int32 ref ref");
+                    auto d = evaluateString("Int32 ref tempRef");
+                    CHECK(a->isReferenceType());
+                    CHECK(b->isReferenceType());
+                    CHECK(c->isReferenceType());
+                    CHECK(d->isReferenceType());
+                    CHECK_EQUAL(a, b);
+                    CHECK_EQUAL(b, c);
+                    CHECK_EQUAL(c, d);
+
+                    auto e = evaluateString("Int32 refFor: #function");
+                    auto f = evaluateString("Int32 refFor: #function");
+                    auto g = evaluateString("(Int32 refFor: #function) ref");
+                    auto h = evaluateString("(Int32 refFor: #function) refFor: #function");
+                    CHECK(e->isReferenceType());
+                    CHECK(f->isReferenceType());
+                    CHECK(g->isReferenceType());
+                    CHECK(h->isReferenceType());
+                    CHECK_EQUAL(e, f);
+                    CHECK_EQUAL(f, g);
+                    CHECK_EQUAL(g, h);
+                }
+
+                {
+                    auto a = evaluateString("Int32 tempRef");
+                    auto b = evaluateString("Int32 tempRef");
+                    auto c = evaluateString("Int32 tempRef tempRef");
+                    auto d = evaluateString("Int32 tempRef ref");
+                    CHECK(a->isTemporaryReferenceType());
+                    CHECK(b->isTemporaryReferenceType());
+                    CHECK(c->isTemporaryReferenceType());
+                    CHECK(d->isReferenceType());
+                    CHECK_EQUAL(a, b);
+                    CHECK_EQUAL(b, c);
+
+                    auto e = evaluateString("Int32 tempRefFor: #function");
+                    auto f = evaluateString("Int32 tempRefFor: #function");
+                    auto g = evaluateString("(Int32 tempRefFor: #function) tempRef");
+                    auto h = evaluateString("(Int32 tempRefFor: #function) tempRefFor: #function");
+                    CHECK(e->isTemporaryReferenceType());
+                    CHECK(f->isTemporaryReferenceType());
+                    CHECK(g->isTemporaryReferenceType());
+                    CHECK(h->isTemporaryReferenceType());
+                    CHECK_EQUAL(e, f);
+                    CHECK_EQUAL(g, h);
+                }
+            });
+        });
+    }
+
     TEST(ImmutableGlobalVariable)
     {
         RuntimeContext::create()->activeDuring([&](){
