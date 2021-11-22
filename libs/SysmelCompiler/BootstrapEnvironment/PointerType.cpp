@@ -1,6 +1,8 @@
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
+#include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
 namespace SysmelMoebius
 {
@@ -26,6 +28,7 @@ PointerTypePtr PointerType::makeWithAddressSpace(const TypePtr &baseType, const 
     result->baseType = baseType;
     result->addressSpace = addressSpace;
     cache.insert({{baseType, addressSpace}, result});
+    result->addSpecializedInstanceMethods();
     return result;
 }
 
@@ -56,6 +59,23 @@ PointerLikeTypeValuePtr PointerType::makeWithValue(const AnyValuePtr &value)
     pointer->type = shared_from_this();
     pointer->baseValue = value;
     return pointer;
+}
+
+void PointerType::addSpecializedInstanceMethods()
+{
+    auto referenceType = baseType->refFor(addressSpace);
+
+    addMethodCategories(MethodCategories{
+            {"accessing", {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "value", shared_from_this(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
+                    return referenceType->makeWithValue(value->baseValue);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "_", shared_from_this(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
+                    return referenceType->makeWithValue(value->baseValue);
+                }, MethodFlags::Pure),
+            }
+        }
+    });
 }
 
 bool PointerTypeValue::isPointerTypeValue() const

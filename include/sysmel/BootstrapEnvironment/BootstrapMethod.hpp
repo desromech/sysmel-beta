@@ -234,6 +234,32 @@ MethodBinding makeIntrinsicMethodBinding(const std::string &intrinsicName, const
 }
 
 template<typename MethodSignature, typename FT>
+MethodBinding makeIntrinsicMethodBindingWithSignature(const std::string &intrinsicName, const std::string &selector, const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto intrinsicSymbol = internSymbol(intrinsicName);
+    auto selectorSymbol = internSymbol(selector);
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
+    bootstrapMethod->setIntrinsicName(intrinsicSymbol);
+    bootstrapMethod->addMethodFlags(flags);
+    bootstrapMethod->registerInCurrentModule();
+    return MethodBinding{selectorSymbol, bootstrapMethod};
+}
+
+template<typename FT>
+MethodBinding makeIntrinsicMethodBindingWithSignature(const std::string &intrinsicName, const std::string &selector, const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes, FT &&functor, MethodFlags flags = MethodFlags::None)
+{
+    auto intrinsicSymbol = internSymbol(intrinsicName);
+    auto selectorSymbol = internSymbol(selector);
+    auto bootstrapMethod = std::make_shared<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
+    bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
+    bootstrapMethod->setIntrinsicName(intrinsicSymbol);
+    bootstrapMethod->addMethodFlags(flags);
+    bootstrapMethod->registerInCurrentModule();
+    return MethodBinding{selectorSymbol, bootstrapMethod};
+}
+
+template<typename MethodSignature, typename FT>
 SpecificMethodPtr makeConstructor(FT &&functor, MethodFlags flags = MethodFlags::None)
 {
     auto selectorSymbol = internSymbol("()");

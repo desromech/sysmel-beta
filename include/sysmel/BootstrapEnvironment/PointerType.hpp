@@ -27,6 +27,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
+
+    void addSpecializedInstanceMethods();
 };
 
 /**

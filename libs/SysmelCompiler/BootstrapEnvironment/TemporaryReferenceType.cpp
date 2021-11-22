@@ -1,5 +1,7 @@
 #include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
+#include "sysmel/BootstrapEnvironment/PointerType.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -26,6 +28,7 @@ TemporaryReferenceTypePtr TemporaryReferenceType::makeWithAddressSpace(const Typ
     result->baseType = baseType;
     result->addressSpace = addressSpace;
     cache.insert({{baseType, addressSpace}, result});
+    result->addSpecializedInstanceMethods();
     return result;
 }
 
@@ -84,6 +87,20 @@ PointerLikeTypeValuePtr TemporaryReferenceType::makeWithValue(const AnyValuePtr 
     temporaryReference->type = shared_from_this();
     temporaryReference->baseValue = value;
     return temporaryReference;
+}
+
+void TemporaryReferenceType::addSpecializedInstanceMethods()
+{
+    auto pointerType = baseType->pointerFor(addressSpace);
+
+    addMethodCategories(MethodCategories{
+            {"accessing", {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (TemporaryReferenceTypeValuePtr)> ("reference.to.pointer", "address", shared_from_this(), pointerType, {}, [=](const TemporaryReferenceTypeValuePtr &value) {
+                    return pointerType->makeWithValue(value->baseValue);
+                }, MethodFlags::Pure),
+            }
+        }
+    });
 }
 
 bool TemporaryReferenceTypeValue::isTemporaryReferenceTypeValue() const
