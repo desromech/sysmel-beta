@@ -877,6 +877,12 @@ public:
     // Wraps and/or copy the object to make a mutable version of it.
     virtual AnyValuePtr asMutableStoreValue();
 
+    // Assigns a new value onto myself.
+    virtual AnyValuePtr copyAssignValue(const AnyValuePtr &newValue);
+
+    // Assigns a new value onto myself.
+    virtual AnyValuePtr moveAssignValue(const AnyValuePtr &newValue);
+
     template<typename ResultType, typename... Args>
     ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)
     {

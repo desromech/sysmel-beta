@@ -13,5 +13,12 @@ bool ValueBox::isValueBox() const
     return true;
 }
 
+AnyValuePtr ValueBox::copyAssignValue(const AnyValuePtr &newValue)
+{
+    value = newValue;
+    return shared_from_this();
+}
+
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

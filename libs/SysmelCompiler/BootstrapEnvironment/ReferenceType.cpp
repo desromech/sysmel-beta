@@ -98,12 +98,27 @@ void ReferenceType::addSpecializedInstanceMethods()
 
     addMethodCategories(MethodCategories{
             {"accessing", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr)> ("reference.to.pointer", "address", shared_from_this(), pointerType, {}, [=](const ReferenceTypeValuePtr &value) {
-                    return pointerType->makeWithValue(value->baseValue);
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr)> ("reference.to.pointer", "address", shared_from_this(), pointerType, {}, [=](const ReferenceTypeValuePtr &self) {
+                    return pointerType->makeWithValue(self->baseValue);
                 }, MethodFlags::Pure),
             }
         }
     });
+
+    // Define the assignment
+    // TODO: Depend on the triviality of assignment.
+    if(baseType->isImmutableType())
+    {
+        addMethodCategories(MethodCategories{
+                {"assignment", {
+                    makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", shared_from_this(), shared_from_this(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
+                        self->baseValue->copyAssignValue(newValue);
+                        return self;
+                    }, MethodFlags::Pure),
+                }
+            }
+        });
+    }
 }
 
 bool ReferenceTypeValue::isReferenceTypeValue() const

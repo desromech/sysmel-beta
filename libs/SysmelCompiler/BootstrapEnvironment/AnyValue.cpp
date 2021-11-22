@@ -1015,6 +1015,18 @@ AnyValuePtr AnyValue::accessVariableAsValueWithType(const TypePtr &valueType)
     return shared_from_this();
 }
 
+AnyValuePtr AnyValue::copyAssignValue(const AnyValuePtr &newValue)
+{
+    (void)newValue;
+    return shared_from_this();
+}
+
+AnyValuePtr AnyValue::moveAssignValue(const AnyValuePtr &newValue)
+{
+    (void)newValue;
+    return copyAssignValue(newValue);
+}
+
 AnyValuePtr AnyValue::asMutableStoreValue()
 {
     auto box = std::make_shared<ValueBox> ();
