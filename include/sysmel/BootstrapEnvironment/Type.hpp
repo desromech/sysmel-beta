@@ -238,7 +238,7 @@ public:
     virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value);
 
     /// Type inference.
-    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode);
+    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable);
     
     /// Makes a pointer type where I am the base type.
     virtual PointerTypePtr pointer();

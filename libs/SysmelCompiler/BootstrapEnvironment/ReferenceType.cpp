@@ -121,6 +121,19 @@ void ReferenceType::addSpecializedInstanceMethods()
     }
 }
 
+TypePtr ReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
+{
+    switch(mode)
+    {
+    case TypeInferenceMode::Value:
+    default:
+        return baseType->asInferredTypeWithMode(mode, isMutable);
+    case TypeInferenceMode::Reference:
+    case TypeInferenceMode::TemporaryReference:
+        return shared_from_this();
+    }
+}
+
 bool ReferenceTypeValue::isReferenceTypeValue() const
 {
     return true;

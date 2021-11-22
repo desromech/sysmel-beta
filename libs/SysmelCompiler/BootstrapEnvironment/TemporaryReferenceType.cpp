@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
+#include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -101,6 +102,20 @@ void TemporaryReferenceType::addSpecializedInstanceMethods()
             }
         }
     });
+}
+
+TypePtr TemporaryReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
+{
+    switch(mode)
+    {
+    case TypeInferenceMode::Value:
+    default:
+        return baseType->asInferredTypeWithMode(mode, isMutable);
+    case TypeInferenceMode::Reference:
+        return ref()->asInferredTypeWithMode(mode, isMutable);
+    case TypeInferenceMode::TemporaryReference:
+        return shared_from_this();
+    }
 }
 
 bool TemporaryReferenceTypeValue::isTemporaryReferenceTypeValue() const

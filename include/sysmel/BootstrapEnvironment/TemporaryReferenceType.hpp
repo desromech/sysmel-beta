@@ -33,6 +33,7 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
+    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable) override;
 
     void addSpecializedInstanceMethods();
 };

@@ -67,6 +67,7 @@ set(BootstrapEnvironment_Sources
     ASTVariableNode.cpp
     ASTVisitor.cpp
     Auto.cpp
+    AutoTypeInferenceSlot.cpp
     BootstrapExtensionMethods.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp

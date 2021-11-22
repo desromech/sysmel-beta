@@ -8,24 +8,6 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<ResultTypeInferenceSlot> ResultTypeInferenceSlotTypeRegistration;
 
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
-{
-    return std::make_shared<ResultTypeInferenceSlot> ();
-}
-
-
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTemporaryAuto()
-{
-    return std::make_shared<ResultTypeInferenceSlot> ();
-}
-
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable)
-{
-    (void)mode;
-    (void)isMutable;
-    return std::make_shared<ResultTypeInferenceSlot> ();
-}
-
 ASTNodePtr ResultTypeInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     (void)semanticAnalyzer;

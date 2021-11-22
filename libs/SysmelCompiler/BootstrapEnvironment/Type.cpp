@@ -729,9 +729,10 @@ AnyValuePtr Type::instantiatedWithLiteralValue(const AnyValuePtr &value)
     return nullptr;
 }
 
-TypePtr Type::asInferredTypeWithMode(TypeInferenceMode mode)
+TypePtr Type::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
 {
     (void)mode;
+    (void)isMutable;
     return shared_from_this();
 }
 
