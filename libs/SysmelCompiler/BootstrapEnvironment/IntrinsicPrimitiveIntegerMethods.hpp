@@ -8,6 +8,11 @@
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralInteger.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralFraction.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralFloat.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveIntegerType.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveCharacterType.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveFloatType.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include <string.h>
 
@@ -17,11 +22,70 @@ namespace BootstrapEnvironment
 {
     
 template<typename T>
+struct IsUnsignedIntegerType
+{
+    static constexpr bool value = false;
+};
+
+template<>
+struct IsUnsignedIntegerType<uint8_t>
+{
+    static constexpr bool value = true;
+};
+
+template<>
+struct IsUnsignedIntegerType<uint16_t>
+{
+    static constexpr bool value = true;
+};
+
+template<>
+struct IsUnsignedIntegerType<uint32_t>
+{
+    static constexpr bool value = true;
+};
+
+template<>
+struct IsUnsignedIntegerType<uint64_t>
+{
+    static constexpr bool value = true;
+};
+
+template<typename T>
+struct IsCharacterIntegerType
+{
+    static constexpr bool value = false;
+};
+
+template<>
+struct IsCharacterIntegerType<char>
+{
+    static constexpr bool value = true;
+};
+
+template<>
+struct IsCharacterIntegerType<char16_t>
+{
+    static constexpr bool value = true;
+};
+
+template<>
+struct IsCharacterIntegerType<char32_t>
+{
+    static constexpr bool value = true;
+};
+
+template<typename T>
 struct IntrinsicPrimitiveIntegerMethods
 {
     typedef T PrimitiveInteger;
     typedef std::shared_ptr<PrimitiveInteger> PrimitiveIntegerPtr;
     typedef typename PrimitiveInteger::ValueType ValueType;
+
+    static constexpr bool IsUnsigned = IsUnsignedIntegerType<ValueType>::value;
+    static constexpr bool IsCharacter = IsCharacterIntegerType<ValueType>::value;
+    static constexpr bool IsUnsignedOrCharacter = IsUnsigned || IsCharacter;
+    static constexpr bool IsSigned = !IsUnsignedOrCharacter;
 
     static PrimitiveIntegerPtr makeValue(const ValueType &value)
     {
@@ -66,13 +130,86 @@ struct IntrinsicPrimitiveIntegerMethods
         return nullptr;
     }
 
+    template<typename SourceType>
+    static void addConstructorFor(AnyValuePtrList &ctors)
+    {
+        typedef std::shared_ptr<SourceType> SourceTypePtr;
+        typedef typename SourceType::ValueType SourceValueType;
+
+        static constexpr bool IsSourceUnsigned = IsUnsignedIntegerType<SourceValueType>::value;
+        static constexpr bool IsSourceCharacter = IsCharacterIntegerType<SourceValueType>::value;
+        static constexpr bool IsSourceUnsignedOrCharacter = IsSourceUnsigned || IsSourceCharacter;
+        static constexpr bool IsSourceSigned = !IsSourceUnsignedOrCharacter;
+        static constexpr bool IsSourceSameAsDestination = std::is_same<ValueType, SourceValueType>::value;
+
+        static constexpr auto SourceValueTypeSize = sizeof(SourceValueType);
+        static constexpr auto DestinationValueTypeSize = sizeof(ValueType);
+
+        // Ignore the copy constructor.
+        if(IsSourceSameAsDestination)
+            return;
+
+        std::string intrinsicName;
+        bool implicit = false;
+
+        if constexpr(DestinationValueTypeSize < SourceValueTypeSize)
+        {
+            intrinsicName = "integer.conversion.truncate";
+        }
+        else if constexpr(DestinationValueTypeSize == SourceValueTypeSize)
+        {
+            intrinsicName = "integer.conversion.bitcast";
+            implicit = IsSourceUnsignedOrCharacter && IsUnsignedOrCharacter;
+        }
+        else
+        {
+            static_assert(DestinationValueTypeSize > SourceValueTypeSize, "Increasing size conversion.");
+            intrinsicName = IsSourceSigned ? "integer.conversion.sign-extend" : "integer.conversion.zero-extend";
+            implicit = !IsSourceSigned || IsSourceSigned == IsSigned;
+        }
+
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveIntegerPtr (TypePtr, SourceTypePtr)> (intrinsicName, +[](const TypePtr &, const SourceTypePtr &value){
+            return makeValue(ValueType(value->value));
+        }, implicit ? MethodFlags::Pure : (MethodFlags::Pure | MethodFlags::Explicit)));
+    }
+
+    template<typename SourceType>
+    static void addConstructorForFloat(AnyValuePtrList &ctors)
+    {
+        typedef std::shared_ptr<SourceType> SourceTypePtr;
+
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveIntegerPtr (TypePtr, SourceTypePtr)> ("float.conversion.to-integer", +[](const TypePtr &, const SourceTypePtr &value){
+            return makeValue(ValueType(value->value));
+        }, MethodFlags::Pure | MethodFlags::Explicit));
+    }
+
     static AnyValuePtrList constructors()
     {
-        return AnyValuePtrList{
-            makeConstructor<PrimitiveIntegerPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
-                return makeWithLargeInteger(value->unwrapAsLargeInteger());
-            }, MethodFlags::Explicit | MethodFlags::Pure),
-        };
+        AnyValuePtrList ctors;
+        ctors.push_back(makeConstructor<PrimitiveIntegerPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
+            return makeWithLargeInteger(value->unwrapAsLargeInteger());
+        }, MethodFlags::Explicit | MethodFlags::Pure));
+        ctors.push_back(makeConstructor<PrimitiveIntegerPtr (TypePtr, LiteralFractionPtr)> (+[](const TypePtr &, const LiteralFractionPtr &value){
+            return makeValue(ValueType(value->unwrapAsFloat64()));
+        }, MethodFlags::Explicit | MethodFlags::Pure));
+        ctors.push_back(makeConstructor<PrimitiveIntegerPtr (TypePtr, LiteralFloatPtr)> (+[](const TypePtr &, const LiteralFloatPtr &value){
+            return makeValue(ValueType(value->unwrapAsFloat64()));
+        }, MethodFlags::Explicit | MethodFlags::Pure));
+
+        addConstructorFor<UInt8> (ctors);
+        addConstructorFor<UInt16> (ctors);
+        addConstructorFor<UInt32> (ctors);
+        addConstructorFor<UInt64> (ctors);
+        addConstructorFor<Int8> (ctors);
+        addConstructorFor<Int16> (ctors);
+        addConstructorFor<Int32> (ctors);
+        addConstructorFor<Int64> (ctors);
+        addConstructorFor<Char8> (ctors);
+        addConstructorFor<Char16> (ctors);
+        addConstructorFor<Char32> (ctors);
+        addConstructorForFloat<Float32> (ctors);
+        addConstructorForFloat<Float64> (ctors);
+        return ctors;
     }
 
     static MethodCategories instanceMethods()

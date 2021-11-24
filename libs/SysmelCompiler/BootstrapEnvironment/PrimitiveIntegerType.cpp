@@ -56,12 +56,12 @@ uint8_t UInt8::unwrapAsUInt8() const
 
 std::string UInt8::asString() const
 {
-    return castToString(value);
+    return castToString(int(value));
 }
 
 std::string UInt8::printString() const
 {
-    return "UInt8(" + castToString(value) + ")";
+    return "UInt8(" + castToString(int(value)) + ")";
 }
 
 SExpression UInt8::asSExpression() const
@@ -248,12 +248,12 @@ int8_t Int8::unwrapAsInt8() const
 
 std::string Int8::asString() const
 {
-    return castToString(value);
+    return castToString(int(value));
 }
 
 std::string Int8::printString() const
 {
-    return "Int8(" + castToString(value) + ")";
+    return "Int8(" + castToString(int(value)) + ")";
 }
 
 SExpression Int8::asSExpression() const
