@@ -537,13 +537,21 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::create()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
-                CHECK(evaluateString("public function returnObject(object) := {return: object . 2}")->isFunctionTypeValue());
+                CHECK(evaluateString("public function returnObject(object) := {return: object}")->isFunctionTypeValue());
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnObject(1)"));
                 CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnObject(2)"));
 
-                CHECK(evaluateString("public function returnInt32(value: Int32) => Int32 := {return: value . -42}")->isFunctionTypeValue());
+                CHECK(evaluateString("public function returnInt32(value: Int32) => Int32 := {return: value}")->isFunctionTypeValue());
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnInt32(1)"));
                 CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnInt32(2)"));
+
+                CHECK(evaluateString("public function returnObjectDeadCode(object) := {return: object . 2}")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnObjectDeadCode(1)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnObjectDeadCode(2)"));
+
+                CHECK(evaluateString("public function returnInt32DeadCode(value: Int32) => Int32 := {return: value . -42.0}")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnInt32DeadCode(1)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnInt32DeadCode(2)"));
             });
         });
     }

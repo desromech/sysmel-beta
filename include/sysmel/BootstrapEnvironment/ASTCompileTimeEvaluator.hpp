@@ -50,9 +50,18 @@ public:
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node) override;
 
+    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node) override;
+    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node) override;
+    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node) override;
+    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node) override;
+    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
+    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
+
     AnyValuePtr evaluateMethodBodyNode(const CompileTimeCleanUpScopePtr &initialEnvironment, const ASTNodePtr &node);
+    AnyValuePtr visitNodeCachingExplicitReturns(const ASTNodePtr &node);
 
     CompileTimeCleanUpScopePtr currentCleanUpScope;
+    void *currentReturnToken = nullptr;
 };
 
 } // End of namespace BootstrapEnvironment

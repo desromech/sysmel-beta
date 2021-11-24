@@ -32,6 +32,16 @@ ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyForPublicProgramEntityBody
     result->programEntityForPublicDefinitions = publicProgramEntity;
     result->cleanUpScope = CleanUpScope::makeWithParent(cleanUpScope);
     result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(lexicalScope, publicProgramEntity));
+    result->continueLevelCount = 0;
+    result->breakLevelCount = 0;
+    return result;
+}
+
+ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithBreakAndContinueLevel(uint32_t newBreakLevelCount, uint32_t newContinueLevelCount)
+{
+    auto result = std::make_shared<ASTAnalysisEnvironment> (*this);
+    result->breakLevelCount = newBreakLevelCount;
+    result->continueLevelCount = newContinueLevelCount;
     return result;
 }
 

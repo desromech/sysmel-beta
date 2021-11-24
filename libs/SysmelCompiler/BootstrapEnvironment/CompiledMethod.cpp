@@ -61,6 +61,7 @@ ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
     auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
     auto lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
     result->lexicalScope = lexicalScope;
+    result->returnTargetMethod = shared_from_this();
     result->localDefinitionsOwner = shared_from_this();
 
     // Add the arguments to the lexical scope.

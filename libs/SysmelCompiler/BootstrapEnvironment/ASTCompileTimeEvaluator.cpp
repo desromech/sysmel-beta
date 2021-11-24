@@ -34,6 +34,13 @@
 #include "sysmel/BootstrapEnvironment/ASTUpcastTypeConversionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTDowncastTypeConversionNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDoWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBreakNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/PointerLikeType.hpp"
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
@@ -53,6 +60,20 @@ namespace BootstrapEnvironment
 {
 
 static BootstrapTypeRegistration<ASTCompileTimeEvaluator> ASTCompileTimeEvaluatorTypeRegistration;
+
+struct ASTCompileTimeEvaluatorBreakException
+{
+};
+
+struct ASTCompileTimeEvaluatorContinueException
+{
+};
+
+struct ASTCompileTimeEvaluatorReturnException
+{
+    void *targetToken;
+    AnyValuePtr value;
+};
 
 AnyValuePtr ASTCompileTimeEvaluator::visitNodeInNewCleanUpScope(const ASTNodePtr &node)
 {
@@ -76,9 +97,33 @@ AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const CompileTimeCle
     assert(!currentCleanUpScope);
     currentCleanUpScope = initialEnvironment;
 
-    return visitNode(node);
+    return visitNodeCachingExplicitReturns(node);
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitNodeCachingExplicitReturns(const ASTNodePtr &node)
+{
+    int returnToken = 0;
+    auto oldReturnToken = currentReturnToken;
+    currentReturnToken = &returnToken;
+    AnyValuePtr result;
+
+    try
+    {
+        result = visitNode(node);
+        currentReturnToken = oldReturnToken;
+    }
+    catch(ASTCompileTimeEvaluatorReturnException &e)
+    {
+        if(e.targetToken != &returnToken)
+            throw e;
+        
+        currentReturnToken = &returnToken;
+        result = e.value;
+    }
+
+    return result;
+
+}
 AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &node)
 {
     assert(false);
@@ -271,5 +316,99 @@ AnyValuePtr ASTCompileTimeEvaluator::visitDowncastTypeConversionNode(const ASTDo
     return value;
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitIfNode(const ASTIfNodePtr &node)
+{
+    auto result = getVoidConstant();
+
+    if(visitNode(node->condition)->unwrapAsBoolean())
+    {
+        if(node->trueExpression)
+            result = visitNode(node->trueExpression);
+    }
+    else
+    {
+        if(node->falseExpression)
+            result = visitNode(node->falseExpression);
+    }
+
+    if(node->analyzedType->isVoidType())
+        result = getVoidConstant();
+    return result;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitWhileNode(const ASTWhileNodePtr &node)
+{
+    while(node->condition ? visitNode(node->condition)->unwrapAsBoolean() : true)
+    {
+        if(node->bodyExpression)
+        {
+            try
+            {
+                visitNode(node->bodyExpression);
+            }
+            catch(ASTCompileTimeEvaluatorBreakException &)
+            {
+                return getVoidConstant();
+            }
+            catch(ASTCompileTimeEvaluatorContinueException &)
+            {
+                // Nothing is required here
+            }
+        }
+
+        if(node->continueExpression)
+            visitNode(node->continueExpression);
+    }
+
+    return getVoidConstant();
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitDoWhileNode(const ASTDoWhileNodePtr &node)
+{
+    bool shouldContinue = false;
+    do
+    {
+        if(node->bodyExpression)
+        {
+            try
+            {
+                visitNode(node->bodyExpression);
+            }
+            catch(ASTCompileTimeEvaluatorBreakException &)
+            {
+                return getVoidConstant();
+            }
+            catch(ASTCompileTimeEvaluatorContinueException &)
+            {
+                // Nothing is required here
+            }
+        }
+        
+        shouldContinue = node->condition ? visitNode(node->condition)->unwrapAsBoolean() : true;
+        if(shouldContinue && node->continueExpression)
+            visitNode(node->continueExpression);
+    } while(shouldContinue);
+
+    return getVoidConstant();
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitReturnNode(const ASTReturnNodePtr &node)
+{
+    assert(currentReturnToken);
+    auto result = getVoidConstant();
+    if(node->expression)
+        result = visitNode(node->expression);
+    throw ASTCompileTimeEvaluatorReturnException{currentReturnToken, result};
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitContinueNode(const ASTContinueNodePtr &)
+{
+    throw ASTCompileTimeEvaluatorContinueException{};
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitBreakNode(const ASTBreakNodePtr &)
+{
+    throw ASTCompileTimeEvaluatorBreakException{};
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

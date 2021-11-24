@@ -46,6 +46,13 @@
 
 #include "sysmel/BootstrapEnvironment/ASTTypeConversionNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDoWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBreakNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 
@@ -81,6 +88,9 @@
 #include "sysmel/BootstrapEnvironment/TypeConversionRule.hpp"
 
 #include "sysmel/BootstrapEnvironment/MessageChainReceiverName.hpp"
+
+#include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
 
 #include <iostream>
 
@@ -208,6 +218,25 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTemporaryAutoType(const A
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTemporaryAuto());
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithBooleanExpectedType(const ASTNodePtr &node)
+{
+    auto partiallyAnalyzedNode = analyzeNodeIfNeededWithAutoType(node);
+    if(partiallyAnalyzedNode->isASTErrorNode())
+        return partiallyAnalyzedNode;
+    
+    // Are we a part of the literal boolean hierarchy?
+    auto type = partiallyAnalyzedNode->analyzedType;
+    auto literalBooleanType = LiteralBoolean::__staticType__();
+    if(node->isASTLiteralValueNode())
+        return addImplicitCastTo(partiallyAnalyzedNode, Boolean8::__staticType__());
+
+    if(type->isSubtypeOf(literalBooleanType) || literalBooleanType->isSubtypeOf(type))
+        return partiallyAnalyzedNode;
+
+    // Convert onto boolean8
+    return addImplicitCastTo(partiallyAnalyzedNode, Boolean8::__staticType__());
+}
+
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node, bool concretizeEphemeralObjects)
 {
     if(node->analyzedType)
@@ -267,7 +296,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessa
 AnyValuePtr ASTSemanticAnalyzer::evaluateInCompileTime(const ASTNodePtr &node)
 {
     auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();
-    return evaluator->visitNode(analyzeNodeIfNeededWithTemporaryAutoType(node));
+    return evaluator->visitNodeCachingExplicitReturns(analyzeNodeIfNeededWithTemporaryAutoType(node));
 }
 
 ASTNodePtr ASTSemanticAnalyzer::guardCompileTimeEvaluationForNode(const ASTNodePtr &node, const ASTNodeSemanticAnalysisBlock &aBlock)
@@ -355,7 +384,11 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
         analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
     if(analyzedNode->isASTErrorNode())
         return analyzedNode;
-    
+
+    // If this is a control flow escape, then just return the node.
+    if(analyzedNode->analyzedType->isControlFlowEscapeType())
+        return analyzedNode;
+
     auto sourceType = analyzedNode->analyzedType;
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType);
     if(!typeConversionRule)
@@ -369,6 +402,10 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
     auto analyzedNode = node;
     if(!analyzedNode->analyzedType)
         analyzedNode = analyzeNodeIfNeededWithTemporaryAutoType(node);
+
+    // If this is a control flow escape, then just return the node.
+    if(analyzedNode->analyzedType->isControlFlowEscapeType())
+        return analyzedNode;
 
     assert(!expectedTypeSet.empty());
     if(expectedTypeSet.size() == 1)
@@ -718,19 +755,27 @@ AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &nod
     else
     {
         const auto expressionCount = analyzedNode->expressions.size();
-        bool hasReturnType = false;
+        bool hasControlFlowEscapeType = false;
+        TypePtr controlFlowEscapeType;
 
         for(size_t i = 0; i < expressionCount; ++i)
         {
             auto isLast = i + 1 >= expressionCount;
             auto &expression = analyzedNode->expressions[i];
 
-            if(isLast && !hasReturnType)
+            if(isLast && !hasControlFlowEscapeType)
                 expression = analyzeNodeIfNeededWithTypeInference(expression, currentExpectedType, true);
             else
                 expression = analyzeNodeIfNeededWithExpectedType(expression, voidType, true);
+
+            if(!hasControlFlowEscapeType && expression->analyzedType->isControlFlowEscapeType())
+            {
+                hasControlFlowEscapeType = true;
+                controlFlowEscapeType = expression->analyzedType;
+            }
         }
-        analyzedNode->analyzedType = analyzedNode->expressions.back()->analyzedType;
+
+        analyzedNode->analyzedType = hasControlFlowEscapeType ? controlFlowEscapeType : analyzedNode->expressions.back()->analyzedType;
     }
 
     return analyzedNode;
@@ -1727,6 +1772,148 @@ CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()
 
     return errors;
 }
+
+AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
+{
+    // If there are no branches, simplify by casting the condition to void.
+    if(!node->trueExpression && !node->falseExpression)
+        return analyzeNodeIfNeededWithExpectedType(node->condition, Type::getVoidType());
+
+    auto analyzedNode = std::make_shared<ASTIfNode> (*node);
+    analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
+
+    if(analyzedNode->trueExpression)
+        analyzedNode->trueExpression = analyzeNodeIfNeededWithAutoType(analyzedNode->trueExpression);
+
+    if(analyzedNode->falseExpression)
+        analyzedNode->falseExpression = analyzeNodeIfNeededWithAutoType(analyzedNode->falseExpression);
+
+    analyzedNode->analyzedType = Type::getVoidType();
+
+    if(analyzedNode->trueExpression && analyzedNode->falseExpression)
+    {
+        // TODO: Compute a proper coercion type.
+        if(analyzedNode->trueExpression->analyzedType == analyzedNode->falseExpression->analyzedType)
+            analyzedNode->analyzedType = analyzedNode->trueExpression->analyzedType;
+    }
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTWhileNode> (*node);
+    if(analyzedNode->condition)
+        analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
+
+    if(analyzedNode->bodyExpression)
+    {
+        // Increment the continue and break level count.
+        auto bodyEnvironment = environment->copyWithBreakAndContinueLevel(environment->breakLevelCount + 1, environment->continueLevelCount + 1);
+        analyzedNode->bodyExpression = withEnvironmentDoAnalysis(bodyEnvironment, [&]() {
+            return analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+        });
+    }
+
+    if(analyzedNode->continueExpression)
+        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+
+    analyzedNode->analyzedType = Type::getVoidType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTDoWhileNode> (*node);
+
+    if(analyzedNode->bodyExpression)
+    {
+        // Increment the continue and break level count.
+        auto bodyEnvironment = environment->copyWithBreakAndContinueLevel(environment->breakLevelCount + 1, environment->continueLevelCount + 1);
+        analyzedNode->bodyExpression = withEnvironmentDoAnalysis(bodyEnvironment, [&]() {
+            return analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+        });
+    }
+
+    if(analyzedNode->condition)
+        analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
+
+    if(analyzedNode->continueExpression)
+        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+
+    analyzedNode->analyzedType = Type::getVoidType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitReturnNode(const ASTReturnNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTReturnNode> (*node);
+    auto returnTargetMethod = environment->returnTargetMethod;
+    if(!returnTargetMethod)
+    {
+        // Discover further errors.
+        if(analyzedNode->expression)
+            analyzeNodeIfNeededWithAutoType(analyzedNode->expression);
+
+        return recordSemanticErrorInNode(analyzedNode, "Cannot use a return statement in this location.");
+    }
+
+    auto expectedResultType = returnTargetMethod->getFunctionalType()->getResultType();
+    if(analyzedNode->expression)
+    {
+        if(expectedResultType->isAutoType())
+        {
+            analyzedNode->expression = analyzeNodeIfNeededWithAutoType(analyzedNode->expression);
+            expectedResultType = returnTargetMethod->getFunctionalType()->getResultType();
+        }
+
+        if(expectedResultType->isAutoType())
+        {
+            auto inferredType = analyzedNode->expression->analyzedType;
+            if(inferredType->isControlFlowEscapeType())
+            {
+                analyzedNode->analyzedType = inferredType;
+                return analyzedNode;
+            }
+
+            returnTargetMethod->concretizeAutoResultTypeWith(inferredType);
+        }
+        else
+        {
+            analyzedNode->expression = analyzeNodeIfNeededWithExpectedType(analyzedNode->expression, expectedResultType);
+        }
+    }
+    else
+    {
+        if(expectedResultType->isAutoType())
+            returnTargetMethod->concretizeAutoResultTypeWith(Type::getVoidType());
+        else if(!expectedResultType->isVoidType())
+            return recordSemanticErrorInNode(analyzedNode, "A non-void result expression is required.");
+    }
+
+    analyzedNode->analyzedType = Type::getReturnType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitContinueNode(const ASTContinueNodePtr &node)
+{
+    if(environment->continueLevelCount == 0)
+        return recordSemanticErrorInNode(node, "Cannot use a continue statement in this location.");
+
+    auto analyzedNode = std::make_shared<ASTContinueNode> (*node);
+    analyzedNode->analyzedType = Type::getContinueType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitBreakNode(const ASTBreakNodePtr &node)
+{
+    if(environment->breakLevelCount == 0)
+        return recordSemanticErrorInNode(node, "Cannot use a break statement in this location.");
+
+    auto analyzedNode = std::make_shared<ASTBreakNode> (*node);
+    analyzedNode->analyzedType = Type::getBreakType();
+    return analyzedNode;
+}
+
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

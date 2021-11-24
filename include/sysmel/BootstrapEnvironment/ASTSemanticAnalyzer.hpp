@@ -37,6 +37,7 @@ public:
     ASTNodePtr analyzeNodeIfNeededWithTemporaryAutoType(const ASTNodePtr &node);
     ASTNodePtr analyzeNodeIfNeededWithAutoTypeInferenceMode(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable);
     ASTNodePtr analyzeNodeIfNeededWithCurrentExpectedType(const ASTNodePtr &node, bool concretizeEphemeralObjects = false);
+    ASTNodePtr analyzeNodeIfNeededWithBooleanExpectedType(const ASTNodePtr &node);
 
     AnyValuePtr adaptNodeAsMacroArgumentOfType(const ASTNodePtr &node, const TypePtr &expectedType);
 
@@ -103,6 +104,13 @@ public:
     virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node);
 
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node) override;
+
+    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node);
+    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node);
+    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node);
+    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node);
+    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node);
+    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node);
 
     ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);
     ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
