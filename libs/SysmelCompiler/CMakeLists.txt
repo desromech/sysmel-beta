@@ -8,6 +8,7 @@ set(BootstrapEnvironment_Sources
     AnyValue.cpp
     ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
+    ASTBreakNode.cpp
     ASTBuilder.cpp
     ASTCallNode.cpp
     ASTCastNode.cpp
@@ -16,6 +17,8 @@ set(BootstrapEnvironment_Sources
     ASTClosureNode.cpp
     ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
+    ASTContinueNode.cpp
+    ASTDoWhileNode.cpp
     ASTDowncastTypeConversionNode.cpp
     ASTEmptySourcePosition.cpp
     ASTEnumNode.cpp
@@ -26,6 +29,7 @@ set(BootstrapEnvironment_Sources
     ASTFunctionNode.cpp
     ASTGlobalVariableNode.cpp
     ASTIdentifierReferenceNode.cpp
+    ASTIfNode.cpp
     ASTImplicitCastNode.cpp
     ASTLexicalScopeNode.cpp
     ASTLiteralValueNode.cpp
@@ -50,6 +54,7 @@ set(BootstrapEnvironment_Sources
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
     ASTReinterpretCastNode.cpp
+    ASTReturnNode.cpp
     ASTSemanticAnalyzer.cpp
     ASTSemanticErrorNode.cpp
     ASTSequenceNode.cpp
@@ -66,6 +71,7 @@ set(BootstrapEnvironment_Sources
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVisitor.cpp
+    ASTWhileNode.cpp
     Auto.cpp
     AutoTypeInferenceSlot.cpp
     BootstrapExtensionMethods.cpp
@@ -73,6 +79,7 @@ set(BootstrapEnvironment_Sources
     BootstrapModule.cpp
     BootstrapType.cpp
     BootstrapTypeRegistration.cpp
+    BreakType.cpp
     CannotEvaluateMessage.cpp
     CannotEvaluateMessageInCompileTime.cpp
     CannotEvaluateUndefinedMessage.cpp
@@ -89,6 +96,8 @@ set(BootstrapEnvironment_Sources
     CompileTimeCleanUpScope.cpp
     CompileTimeEvaluationError.cpp
     ConstructorMethodTypeConversionRule.cpp
+    ContinueType.cpp
+    ControlFlowEscapeType.cpp
     ConversionMethodTypeConversionRule.cpp
     DeferredCompileTimeCodeFragment.cpp
     DerivedType.cpp

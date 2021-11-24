@@ -15,6 +15,13 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTImplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReinterpretCastNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIfNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTWhileNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTDoWhileNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReturnNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBreakNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
+
 /**
  * I am an utility for building AST nodes.
  */
@@ -34,6 +41,20 @@ public:
     ASTExplicitCastNodePtr explicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType);
     ASTImplicitCastNodePtr implicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType);
     ASTReinterpretCastNodePtr reinterpretCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType);
+
+    ASTIfNodePtr ifThen(const ASTNodePtr &condition, const ASTNodePtr &trueExpression);
+    ASTIfNodePtr ifThenElse(const ASTNodePtr &condition, const ASTNodePtr &trueExpression, const ASTNodePtr &falseExpression);
+
+    ASTWhileNodePtr whileDo(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression);
+    ASTWhileNodePtr whileDoContinueWith(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression);
+
+    ASTDoWhileNodePtr doWhile(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition);
+    ASTDoWhileNodePtr doWhileContinueWith(const ASTNodePtr &bodyExpression,  const ASTNodePtr &condition, const ASTNodePtr &continueExpression);
+
+    ASTReturnNodePtr returnValue(const ASTNodePtr &expression);
+    ASTReturnNodePtr returnVoid();
+    ASTBreakNodePtr breakThisLoop();
+    ASTContinueNodePtr continueThisLoop();
 
     ASTSourcePositionPtr sourcePosition;
 };

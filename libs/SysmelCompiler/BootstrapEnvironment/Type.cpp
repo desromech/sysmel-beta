@@ -111,9 +111,24 @@ bool Type::isVoidType() const
     return isSubtypeOf(getVoidType());
 }
 
+bool Type::isControlFlowEscapeType() const
+{
+    return isSubtypeOf(getControlFlowEscapeType());
+}
+
 bool Type::isReturnType() const
 {
     return isSubtypeOf(getReturnType());
+}
+
+bool Type::isBreakType() const
+{
+    return isSubtypeOf(getBreakType());
+}
+
+bool Type::isContinueType() const
+{
+    return isSubtypeOf(getContinueType());
 }
 
 bool Type::isLiteralValueType() const

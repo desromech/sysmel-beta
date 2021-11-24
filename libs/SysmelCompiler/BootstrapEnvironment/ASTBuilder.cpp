@@ -6,6 +6,13 @@
 #include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTReinterpretCastNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDoWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBreakNode.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -86,6 +93,92 @@ ASTReinterpretCastNodePtr ASTBuilder::reinterpretCastTo(const ASTNodePtr &expres
     node->sourcePosition = sourcePosition;
     node->expression = expression;
     node->targetType = targetType;
+    return node;
+}
+
+ASTIfNodePtr ASTBuilder::ifThen(const ASTNodePtr &condition, const ASTNodePtr &trueExpression)
+{
+    auto node = std::make_shared<ASTIfNode> ();
+    node->sourcePosition = sourcePosition;
+    node->condition = condition;
+    node->trueExpression = trueExpression;
+    return node;
+}
+
+ASTIfNodePtr ASTBuilder::ifThenElse(const ASTNodePtr &condition, const ASTNodePtr &trueExpression, const ASTNodePtr &falseExpression)
+{
+    auto node = std::make_shared<ASTIfNode> ();
+    node->sourcePosition = sourcePosition;
+    node->condition = condition;
+    node->trueExpression = trueExpression;
+    node->falseExpression = falseExpression;
+    return node;
+}
+
+ASTWhileNodePtr ASTBuilder::whileDo(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression)
+{
+    auto node = std::make_shared<ASTWhileNode> ();
+    node->sourcePosition = sourcePosition;
+    node->condition = condition;
+    node->bodyExpression = bodyExpression;
+    return node;
+}
+
+ASTWhileNodePtr ASTBuilder::whileDoContinueWith(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression)
+{
+    auto node = std::make_shared<ASTWhileNode> ();
+    node->sourcePosition = sourcePosition;
+    node->condition = condition;
+    node->bodyExpression = bodyExpression;
+    node->continueExpression = continueExpression;
+    return node;
+}
+
+ASTDoWhileNodePtr ASTBuilder::doWhile(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition)
+{
+    auto node = std::make_shared<ASTDoWhileNode> ();
+    node->sourcePosition = sourcePosition;
+    node->bodyExpression = bodyExpression;
+    node->condition = condition;
+    return node;
+}
+
+ASTDoWhileNodePtr ASTBuilder::doWhileContinueWith(const ASTNodePtr &bodyExpression,  const ASTNodePtr &condition, const ASTNodePtr &continueExpression)
+{
+    auto node = std::make_shared<ASTDoWhileNode> ();
+    node->sourcePosition = sourcePosition;
+    node->bodyExpression = bodyExpression;
+    node->condition = condition;
+    node->continueExpression = continueExpression;
+    return node;
+}
+
+ASTReturnNodePtr ASTBuilder::returnValue(const ASTNodePtr &expression)
+{
+    auto node = std::make_shared<ASTReturnNode> ();
+    node->sourcePosition = sourcePosition;
+    node->expression = expression;
+    return node;
+}
+
+ASTReturnNodePtr ASTBuilder::returnVoid()
+{
+    auto node = std::make_shared<ASTReturnNode> ();
+    node->sourcePosition = sourcePosition;
+    return node;
+}
+
+ASTBreakNodePtr ASTBuilder::breakThisLoop()
+{
+    auto node = std::make_shared<ASTBreakNode> ();
+    node->sourcePosition = sourcePosition;
+    return node;
+}
+
+ASTContinueNodePtr ASTBuilder::continueThisLoop()
+{
+    auto node = std::make_shared<ASTContinueNode> ();
+    node->sourcePosition = sourcePosition;
     return node;
 }
 

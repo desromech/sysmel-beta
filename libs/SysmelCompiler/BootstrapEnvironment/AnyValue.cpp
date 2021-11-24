@@ -394,6 +394,36 @@ bool AnyValue::isASTDowncastTypeConversionNode() const
     return false;
 }
 
+bool AnyValue::isASTIfNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTWhileNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTDoWhileNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTReturnNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTBreakNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTContinueNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;

@@ -516,6 +516,24 @@ public:
     /// Is this object an AST downcast type conversion node?
     virtual bool isASTDowncastTypeConversionNode() const;
 
+    /// Is this object an AST if node?
+    virtual bool isASTIfNode() const;
+
+    /// Is this object an AST while node?
+    virtual bool isASTWhileNode() const;
+
+    /// Is this object an AST do while node?
+    virtual bool isASTDoWhileNode() const;
+
+    /// Is this object an AST return node?
+    virtual bool isASTReturnNode() const;
+
+    /// Is this object an AST break node?
+    virtual bool isASTBreakNode() const;
+
+    /// Is this object an AST continue node?
+    virtual bool isASTContinueNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

@@ -47,13 +47,19 @@ public:
 
     static TypePtr getPragmaType();
     static TypePtr getArgumentVariableType();
+    static TypePtr getControlFlowEscapeType();
     static TypePtr getReturnType();
+    static TypePtr getContinueType();
+    static TypePtr getBreakType();
     static TypePtr getCompilationErrorValueType();
 
     bool isUndefinedType() const;
     bool isVoidType() const;
     bool isAutoType() const;
+    bool isControlFlowEscapeType() const;
     bool isReturnType() const;
+    bool isContinueType() const;
+    bool isBreakType() const;
     bool isLiteralValueType() const;
     bool isCompilationErrorValueType() const;
 

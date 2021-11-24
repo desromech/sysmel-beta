@@ -283,5 +283,35 @@ AnyValuePtr ASTVisitor::visitDowncastTypeConversionNode(const ASTDowncastTypeCon
     return visitTypeConversionNode(node);
 }
 
+AnyValuePtr ASTVisitor::visitIfNode(const ASTIfNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitWhileNode(const ASTWhileNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitDoWhileNode(const ASTDoWhileNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitReturnNode(const ASTReturnNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitContinueNode(const ASTContinueNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitBreakNode(const ASTBreakNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

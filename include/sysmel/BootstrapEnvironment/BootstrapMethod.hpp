@@ -180,10 +180,13 @@ private:
 
 
 template<typename MethodSignature, typename FT>
-BootstrapMethodBasePtr makeBootstrapMethod(const std::string &selector, FT &&functor)
+BootstrapMethodBasePtr makeBootstrapMethod(const std::string &selector, FT &&functor, MethodFlags flags = MethodFlags::None)
 {
     auto selectorSymbol = internSymbol(selector);
-    return std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    auto method = std::make_shared<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
+    method->addMethodFlags(flags);
+    method->registerInCurrentModule();
+    return method;
 }
 
 template<typename MethodSignature, typename FT>

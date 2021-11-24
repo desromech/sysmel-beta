@@ -47,6 +47,14 @@
 #include "sysmel/BootstrapEnvironment/ProtectedMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/PublicMetaBuilder.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDoWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBreakNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
+
 #include <fstream>
 #include <iostream>
 
@@ -456,6 +464,40 @@ void SysmelLanguageSupport::initialize()
         topLevelScope->setSymbolBinding(internSymbol("private"), metaBuilderFactoryFor<PrivateMetaBuilder> ("private"));
         topLevelScope->setSymbolBinding(internSymbol("protected"), metaBuilderFactoryFor<ProtectedMetaBuilder> ("protected"));
         topLevelScope->setSymbolBinding(internSymbol("public"), metaBuilderFactoryFor<PublicMetaBuilder> ("public"));
+
+        // Control flow macros.
+        topLevelScope->setSymbolBinding(internSymbol("if:then:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr)> ("if:then:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &condition, const ASTNodePtr &trueExpression) {
+            return macroContext->astBuilder->ifThen(condition, trueExpression);
+        }, MethodFlags::Macro));
+        topLevelScope->setSymbolBinding(internSymbol("if:then:else:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr, ASTNodePtr)> ("if:then:else:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &condition, const ASTNodePtr &trueExpression, const ASTNodePtr &falseExpression) {
+            return macroContext->astBuilder->ifThenElse(condition, trueExpression, falseExpression);
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("while:do:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr)> ("while:do:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &condition, const ASTNodePtr &bodyExpression) {
+            return macroContext->astBuilder->whileDo(condition, bodyExpression);
+        }, MethodFlags::Macro));
+        topLevelScope->setSymbolBinding(internSymbol("while:do:continueWith:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr, ASTNodePtr)> ("while:do:continueWith", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression) {
+            return macroContext->astBuilder->whileDoContinueWith(condition, bodyExpression, continueExpression);
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("do:while:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr)> ("do:while:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyExpression, const ASTNodePtr &condition) {
+            return macroContext->astBuilder->doWhile(bodyExpression, condition);
+        }, MethodFlags::Macro));
+        topLevelScope->setSymbolBinding(internSymbol("do:while:continueWith:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr, ASTNodePtr)> ("do:while:continueWith:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyExpression, const ASTNodePtr &condition, const ASTNodePtr &continueExpression) {
+            return macroContext->astBuilder->doWhileContinueWith(bodyExpression, condition, continueExpression);
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("return:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("return:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &valueExpression) {
+            return macroContext->astBuilder->returnValue(valueExpression);
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("break"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr)> ("break", [](const MacroInvocationContextPtr &macroContext) {
+            return macroContext->astBuilder->breakThisLoop();
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("continue"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr)> ("continue", [](const MacroInvocationContextPtr &macroContext) {
+            return macroContext->astBuilder->continueThisLoop();
+        }, MethodFlags::Macro));
     }
 }
 

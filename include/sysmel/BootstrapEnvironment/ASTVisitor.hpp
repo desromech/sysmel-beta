@@ -74,6 +74,13 @@ public:
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node);
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node);
     virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node);
+
+    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node);
+    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node);
+    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node);
+    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node);
+    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node);
+    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

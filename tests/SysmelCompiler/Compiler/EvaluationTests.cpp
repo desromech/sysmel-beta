@@ -518,6 +518,133 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(If)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function select(condition, a, b) := if: condition then: a else: b")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("select(true, 1, 2)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("select(false, 1, 2)"));
+
+                CHECK(evaluateString("public function selectBoolean8(condition: Boolean8, a: Int32, b: Int32) => Int32 := if: condition then: a else: b")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("selectBoolean8(true, 1, 2)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("selectBoolean8(false, 1, 2)"));
+            });
+        });
+    }
+
+    TEST(Return)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function returnObject(object) := {return: object . 2}")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnObject(1)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnObject(2)"));
+
+                CHECK(evaluateString("public function returnInt32(value: Int32) => Int32 := {return: value . -42}")->isFunctionTypeValue());
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnInt32(1)"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("returnInt32(2)"));
+            });
+        });
+    }
+
+    TEST(WhileDoContinueWith)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString(
+"public function sumNaturals(n) := {\n"
+"let sum mutable := 0.\n"
+"let i mutable := 0.\n"
+"while: (i <= n) do: {\n"
+"sum := sum + i\n"
+"} continueWith: (i := i + 1).\n"
+"sum\n"
+"}\n")->isFunctionTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sumNaturals(0)"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sumNaturals(1)"));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("sumNaturals(2)"));
+                CHECK_EQUAL(6, evaluateStringWithValueOfType<int32_t> ("sumNaturals(3)"));
+                CHECK_EQUAL(10, evaluateStringWithValueOfType<int32_t> ("sumNaturals(4)"));
+                CHECK_EQUAL(15, evaluateStringWithValueOfType<int32_t> ("sumNaturals(5)"));
+                CHECK_EQUAL(21, evaluateStringWithValueOfType<int32_t> ("sumNaturals(6)"));
+                CHECK_EQUAL(28, evaluateStringWithValueOfType<int32_t> ("sumNaturals(7)"));
+                CHECK_EQUAL(36, evaluateStringWithValueOfType<int32_t> ("sumNaturals(8)"));
+                CHECK_EQUAL(45, evaluateStringWithValueOfType<int32_t> ("sumNaturals(9)"));
+                CHECK_EQUAL(55, evaluateStringWithValueOfType<int32_t> ("sumNaturals(10)"));
+
+                CHECK(evaluateString(
+"public function sumNaturalsInt32(n: Int32) => Int32 := {\n"
+"let sum mutable type: Int32 := 0.\n"
+"let i mutable type: Int32 := 0.\n"
+"while: (i <= n) do: {\n"
+"sum := sum + i\n"
+"} continueWith: (i := i + 1).\n"
+"sum\n"
+"}\n")->isFunctionTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(0)"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(1)"));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(2)"));
+                CHECK_EQUAL(6, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(3)"));
+                CHECK_EQUAL(10, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(4)"));
+                CHECK_EQUAL(15, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(5)"));
+                CHECK_EQUAL(21, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(6)"));
+                CHECK_EQUAL(28, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(7)"));
+                CHECK_EQUAL(36, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(8)"));
+                CHECK_EQUAL(45, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(9)"));
+                CHECK_EQUAL(55, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(10)"));
+            });
+        });
+    }
+
+    TEST(DoWhileContinueWith)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString(
+"public function sumNaturals(n) := {\n"
+"let sum mutable := 0.\n"
+"let i mutable := 0.\n"
+"do: {\n"
+"sum := sum + i\n"
+"} while: (i < n) continueWith: (i := i + 1).\n"
+"sum\n"
+"}\n")->isFunctionTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sumNaturals(0)"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sumNaturals(1)"));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("sumNaturals(2)"));
+                CHECK_EQUAL(6, evaluateStringWithValueOfType<int32_t> ("sumNaturals(3)"));
+                CHECK_EQUAL(10, evaluateStringWithValueOfType<int32_t> ("sumNaturals(4)"));
+                CHECK_EQUAL(15, evaluateStringWithValueOfType<int32_t> ("sumNaturals(5)"));
+                CHECK_EQUAL(21, evaluateStringWithValueOfType<int32_t> ("sumNaturals(6)"));
+                CHECK_EQUAL(28, evaluateStringWithValueOfType<int32_t> ("sumNaturals(7)"));
+                CHECK_EQUAL(36, evaluateStringWithValueOfType<int32_t> ("sumNaturals(8)"));
+                CHECK_EQUAL(45, evaluateStringWithValueOfType<int32_t> ("sumNaturals(9)"));
+                CHECK_EQUAL(55, evaluateStringWithValueOfType<int32_t> ("sumNaturals(10)"));
+
+                CHECK(evaluateString(
+"public function sumNaturalsInt32(n: Int32) => Int32 := {\n"
+"let sum mutable type: Int32 := 0.\n"
+"let i mutable type: Int32 := 0.\n"
+"do: {\n"
+"sum := sum + i\n"
+"} while: (i < n) continueWith: (i := i + 1).\n"
+"sum\n"
+"}\n")->isFunctionTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(0)"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(1)"));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(2)"));
+                CHECK_EQUAL(6, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(3)"));
+                CHECK_EQUAL(10, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(4)"));
+                CHECK_EQUAL(15, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(5)"));
+                CHECK_EQUAL(21, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(6)"));
+                CHECK_EQUAL(28, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(7)"));
+                CHECK_EQUAL(36, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(8)"));
+                CHECK_EQUAL(45, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(9)"));
+                CHECK_EQUAL(55, evaluateStringWithValueOfType<int32_t> ("sumNaturalsInt32(10)"));
+            });
+        });
+    }
 
     TEST(Namespace)
     {

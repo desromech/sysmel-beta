@@ -21,7 +21,7 @@ MethodPtr metaBuilderFactoryFor (const std::string &name)
         auto result = std::make_shared<T> ();
         result->setMetaBuilderInstanceContext(context);
         return result;
-    });
+    }, MethodFlags::Macro);
 }
 
 } // End of namespace BootstrapEnvironment
