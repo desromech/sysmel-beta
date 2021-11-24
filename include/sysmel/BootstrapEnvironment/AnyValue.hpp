@@ -8,6 +8,7 @@
 #include "LargeInteger.hpp"
 #include "Fraction.hpp"
 #include "SExpression.hpp"
+#include "TypeInferenceMode.hpp"
 
 namespace SysmelMoebius
 {
@@ -41,6 +42,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTLiteralValueNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
@@ -67,6 +69,7 @@ struct StaticBootstrapDefinedTypeMetadata
     void (*addTypeConversionRules)(const TypePtr &type);
     bool (*canBeInstantiatedWithLiteralValue)(const AnyValuePtr &value);
     AnyValuePtr (*instantiateWithLiteralValue)(const AnyValuePtr &value);
+    TypePtr (*asInferredTypeForWithModeInEnvironment)(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
     bool isDynamicCompileTimeType;
     bool isLiteralValueMessageAnalyzer;
     bool isEphemeralCompileTimeObject;
@@ -112,6 +115,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__addTypeConversionRules__,
     &T::__canBeInstantiatedWithLiteralValue__,
     &T::__instantiateWithLiteralValue__,
+    &T::__asInferredTypeForWithModeInEnvironment__,
     T::__isDynamicCompileTimeType__,
     T::__isLiteralValueMessageAnalyzer__,
     T::__isEphemeralCompileTimeObject__,
@@ -301,32 +305,17 @@ public:
 
     static MethodCategories __instanceMacroMethods__();
     static MethodCategories __typeMacroMethods__();
-    static void __addTypeConversionRules__(const TypePtr &type)
-    {
-        (void)type;
-    }
+    static void __addTypeConversionRules__(const TypePtr &type);
     
     static TypePtr __staticType__()
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
 
-    static AnyValuePtr __basicNewValue__()
-    {
-        return std::make_shared<AnyValue> ();
-    }
-
-    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
-    {
-        (void)value;
-        return false;
-    }
-
-    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value)
-    {
-        (void)value;
-        return nullptr;
-    }
+    static AnyValuePtr __basicNewValue__();
+    static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
+    static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
 
     /// Retrieves the type of the object.
     virtual TypePtr getType() const

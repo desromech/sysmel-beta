@@ -2,6 +2,8 @@
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
 #include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
+#include "sysmel/BootstrapEnvironment/IdentityTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -90,6 +92,12 @@ PointerLikeTypeValuePtr TemporaryReferenceType::makeWithValue(const AnyValuePtr 
     return temporaryReference;
 }
 
+void TemporaryReferenceType::addDefaultTypeConversionRules()
+{
+    addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
+    addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
+}
+
 void TemporaryReferenceType::addSpecializedInstanceMethods()
 {
     auto pointerType = baseType->pointerFor(addressSpace);
@@ -104,15 +112,15 @@ void TemporaryReferenceType::addSpecializedInstanceMethods()
     });
 }
 
-TypePtr TemporaryReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
+TypePtr TemporaryReferenceType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
     switch(mode)
     {
     case TypeInferenceMode::Value:
     default:
-        return baseType->asInferredTypeWithMode(mode, isMutable);
+        return baseType->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, environment);
     case TypeInferenceMode::Reference:
-        return ref()->asInferredTypeWithMode(mode, isMutable);
+        return ref()->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, environment);
     case TypeInferenceMode::TemporaryReference:
         return shared_from_this();
     }

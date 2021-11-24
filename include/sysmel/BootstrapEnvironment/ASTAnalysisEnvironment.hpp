@@ -40,6 +40,7 @@ public:
     TypePtr defaultArgumentType;
     TypePtr defaultResultType;
     TypePtr defaultVariableType;
+    TypePtr literalValueInferrenceType;
 
     uint32_t continueLevelCount = 0;
     uint32_t breakLevelCount = 0;

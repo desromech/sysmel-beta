@@ -25,6 +25,94 @@ TypePtr WrapperTypeForReturning<Fraction>::apply()
 MethodCategories LiteralFraction::__instanceMethods__()
 {
     return MethodCategories{
+        {"comparisons", {
+            // =
+            makeMethodBinding<bool (Fraction, LargeInteger)> ("=", +[](const Fraction &a, const LargeInteger &b) {
+                return a == Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> ("=", +[](const Fraction &a, const Fraction &b) {
+                return a == b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> ("=", +[](const Fraction &a, double b) {
+                return a.asDouble() == b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, AnyValuePtr)> ("=", +[](const Fraction&, const AnyValuePtr &) {
+                return false;
+            }, MethodFlags::Pure),
+
+            // ~=
+            makeMethodBinding<bool (Fraction, LargeInteger)> ("~=", +[](const Fraction &a, const LargeInteger &b) {
+                return a != Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> ("~=", +[](const Fraction &a, const Fraction &b) {
+                return a != b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> ("~=", +[](const Fraction &a, double b) {
+                return a.asDouble() != b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, AnyValuePtr)> ("~=", +[](const Fraction&, const AnyValuePtr &) {
+                return true;
+            }, MethodFlags::Pure),
+
+            // <
+            makeMethodBinding<bool (Fraction, LargeInteger)> ("<", +[](const Fraction &a, const LargeInteger &b) {
+                return a < Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> ("<", +[](const Fraction &a, const Fraction &b) {
+                return a < b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> ("<", +[](const Fraction &a, double b) {
+                return a.asDouble() < b;
+            }, MethodFlags::Pure),
+
+            // <=
+            makeMethodBinding<bool (Fraction, LargeInteger)> ("<=", +[](const Fraction &a, const LargeInteger &b) {
+                return a <= Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> ("<=", +[](const Fraction &a, const Fraction &b) {
+                return a <= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> ("<=", +[](const Fraction &a, double b) {
+                return a.asDouble() <= b;
+            }, MethodFlags::Pure),
+
+            // >
+            makeMethodBinding<bool (Fraction, LargeInteger)> (">", +[](const Fraction &a, const LargeInteger &b) {
+                return a > Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> (">", +[](const Fraction &a, const Fraction &b) {
+                return a > b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> (">", +[](const Fraction &a, double b) {
+                return a.asDouble() > b;
+            }, MethodFlags::Pure),
+
+            // >=
+            makeMethodBinding<bool (Fraction, LargeInteger)> (">=", +[](const Fraction &a, const LargeInteger &b) {
+                return a >= Fraction{b};
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, Fraction)> (">=", +[](const Fraction &a, const Fraction &b) {
+                return a >= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (Fraction, double)> (">=", +[](const Fraction &a, double b) {
+                return a.asDouble() >= b;
+            }, MethodFlags::Pure),
+        }},
+
         {"arithmetic", {
             // Negation
             makeMethodBinding<Fraction (Fraction)> ("negated", +[](const Fraction &value) {

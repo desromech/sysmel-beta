@@ -108,5 +108,10 @@ AnyValuePtr BootstrapType::instantiatedWithLiteralValue(const AnyValuePtr &value
     return staticMetadata->instantiateWithLiteralValue(value);
 }
 
+TypePtr BootstrapType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
+{
+    return staticMetadata->asInferredTypeForWithModeInEnvironment(shared_from_this(), node, mode, isMutable, concreteLiterals, environment);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

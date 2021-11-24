@@ -22,17 +22,18 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTemporaryAuto()
     return result;
 }
 
-ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable)
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable, bool concreteLiterals)
 {
     auto result = std::make_shared<AutoTypeInferenceSlot> ();
     result->mode = mode;
     result->isMutable = isMutable;
-    return std::make_shared<ResultTypeInferenceSlot> ();
+    result->concreteLiterals = concreteLiterals;
+    return result;
 }
 
 ASTNodePtr AutoTypeInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    auto inferredType = node->analyzedType->asInferredTypeWithMode(mode, isMutable);
+    auto inferredType = node->analyzedType->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, semanticAnalyzer->environment);
     if(inferredType == node->analyzedType)
         return node;
 

@@ -34,10 +34,11 @@ public:
     virtual SExpression asSExpression() const override;
     
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
-    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable) override;
+    virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
 
     virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
+    virtual void addDefaultTypeConversionRules() override;
     void addSpecializedInstanceMethods();
 };
 

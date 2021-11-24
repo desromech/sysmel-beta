@@ -13,6 +13,43 @@ static BootstrapTypeRegistration<LiteralNumber> literalNumberTypeRegistration;
 MethodCategories LiteralNumber::__instanceMethods__()
 {
     return MethodCategories{
+        {"comparisons", {
+            // =
+            makeMethodBinding<bool (LiteralNumberPtr, AnyValuePtr)> ("=", +[](const LiteralNumberPtr &, const AnyValuePtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+            // ~=
+            makeMethodBinding<bool (LiteralNumberPtr, AnyValuePtr)> ("~=", +[](const LiteralNumberPtr &, const AnyValuePtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+
+            // <
+            makeMethodBinding<bool (LiteralNumberPtr, LiteralNumberPtr)> ("<", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+
+            // <=
+            makeMethodBinding<bool (LiteralNumberPtr, LiteralNumberPtr)> ("<=", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+
+            // >
+            makeMethodBinding<bool (LiteralNumberPtr, LiteralNumberPtr)> (">", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+
+            // >=
+            makeMethodBinding<bool (LiteralNumberPtr, LiteralNumberPtr)> (">=", +[](const LiteralNumberPtr &, const LiteralNumberPtr &) {
+                SysmelSelfSubclassResponsibility();
+                return false;
+            }, MethodFlags::Pure | MethodFlags::Abstract),
+        }},
+
         {"arithmetic", {
             // Negation
             makeMethodBinding<LiteralNumberPtr (LiteralNumberPtr)> ("negated", +[](const LiteralNumberPtr &) {

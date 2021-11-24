@@ -26,6 +26,93 @@ TypePtr WrapperTypeFor<LargeInteger>::apply()
 MethodCategories LiteralInteger::__instanceMethods__()
 {
     return MethodCategories{
+        {"comparisons", {
+            // =
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> ("=", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a == b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> ("=", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} == b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> ("=", +[](const LargeInteger &a, double b) {
+                return a.asDouble() == b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, AnyValuePtr)> ("=", +[](const LargeInteger&, const AnyValuePtr &) {
+                return false;
+            }, MethodFlags::Pure),
+
+            // ~=
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> ("~=", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a != b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> ("~=", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} != b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> ("~=", +[](const LargeInteger &a, double b) {
+                return a.asDouble() != b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, AnyValuePtr)> ("~=", +[](const LargeInteger&, const AnyValuePtr &) {
+                return true;
+            }, MethodFlags::Pure),
+
+            // <
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> ("<", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a < b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> ("<", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} < b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> ("<", +[](const LargeInteger &a, double b) {
+                return a.asDouble() < b;
+            }, MethodFlags::Pure),
+
+            // <=
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> ("<=", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a <= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> ("<=", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} <= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> ("<=", +[](const LargeInteger &a, double b) {
+                return a.asDouble() <= b;
+            }, MethodFlags::Pure),
+
+            // >
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> (">", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a > b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> (">", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} > b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> (">", +[](const LargeInteger &a, double b) {
+                return a.asDouble() > b;
+            }, MethodFlags::Pure),
+
+            // >=
+            makeMethodBinding<bool (LargeInteger, LargeInteger)> (">=", +[](const LargeInteger &a, const LargeInteger &b) {
+                return a >= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, Fraction)> (">=", +[](const LargeInteger &a, const Fraction &b) {
+                return Fraction{a} >= b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<bool (LargeInteger, double)> (">=", +[](const LargeInteger &a, double b) {
+                return a.asDouble() >= b;
+            }, MethodFlags::Pure),
+        }},
         {"arithmetic", {
             // Negation
             makeMethodBinding<LargeInteger (LargeInteger)> ("negated", +[](const LargeInteger &value) {

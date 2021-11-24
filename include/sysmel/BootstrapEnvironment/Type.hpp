@@ -3,7 +3,6 @@
 #pragma once
 
 #include "ModuleDefinedProgramEntity.hpp"
-#include "TypeInferenceMode.hpp"
 #include <functional>
 
 namespace SysmelMoebius
@@ -250,7 +249,7 @@ public:
     virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value);
 
     /// Type inference.
-    virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable);
+    virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
     
     /// Makes a pointer type where I am the base type.
     virtual PointerTypePtr pointer();

@@ -36,6 +36,8 @@ public:
     virtual AnyValuePtr basicNewValue() override;
     virtual bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value) override;
     virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value) override;
+    virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
+    
 protected:
     const StaticBootstrapDefinedTypeMetadata *staticMetadata;
 };

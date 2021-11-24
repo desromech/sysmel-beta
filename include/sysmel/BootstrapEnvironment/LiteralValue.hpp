@@ -22,6 +22,7 @@ public:
     static constexpr bool __isImmutableType__ = true;
 
     static void __addTypeConversionRules__(const TypePtr &type);
+    static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
 
     virtual bool isLiteralValue() const override;
     virtual bool isPureCompileTimeLiteralValue() const override;

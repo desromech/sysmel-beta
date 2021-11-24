@@ -24,6 +24,7 @@ public:
 
     TypeInferenceMode mode = TypeInferenceMode::Value;
     bool isMutable = false;
+    bool concreteLiterals = false; 
 };
 
 } // End of namespace BootstrapEnvironment

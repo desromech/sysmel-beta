@@ -37,6 +37,15 @@ TypePtr Type::getAnyValueType()
 MethodCategories AnyValue::__instanceMethods__()
 {
     return MethodCategories{
+        {"comparisons", {
+            makeIntrinsicMethodBinding<bool (AnyValuePtr, AnyValuePtr)> ("object.identity.equals", "==", +[](const AnyValuePtr &a, const AnyValuePtr &b){
+                return a == b;
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<bool (AnyValuePtr, AnyValuePtr)> ("object.identity.not-equals", "~~", +[](const AnyValuePtr &a, const AnyValuePtr &b){
+                return a != b;
+            }, MethodFlags::Pure),
+        }},
+
         {"accessing", {
             makeIntrinsicMethodBinding("object.get-type", "__type__", &AnyValue::getType, MethodFlags::Pure),
             makeIntrinsicMethodBinding<AnyValuePtr (AnyValuePtr)> ("object.yourself", "yourself", [](const AnyValuePtr &self) {
@@ -99,6 +108,38 @@ MethodCategories AnyValue::__instanceMacroMethods__()
 MethodCategories AnyValue::__typeMacroMethods__()
 {
     return MethodCategories{};
+}
+
+void AnyValue::__addTypeConversionRules__(const TypePtr &type)
+{
+    (void)type;
+}
+
+AnyValuePtr AnyValue::__basicNewValue__()
+{
+    return std::make_shared<AnyValue> ();
+}
+
+bool AnyValue::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
+{
+    (void)value;
+    return false;
+}
+
+AnyValuePtr AnyValue::__instantiateWithLiteralValue__(const AnyValuePtr &value)
+{
+    (void)value;
+    return nullptr;
+}
+
+TypePtr AnyValue::__asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
+{
+    (void)node;
+    (void)mode;
+    (void)isMutable;
+    (void)concreteLiterals;
+    (void)environment;
+    return selfType;
 }
 
 AnyValue::~AnyValue()

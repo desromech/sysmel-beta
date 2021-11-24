@@ -1,6 +1,8 @@
 #include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
+#include "sysmel/BootstrapEnvironment/IdentityTypeConversionRule.hpp"
+#include "sysmel/BootstrapEnvironment/ValueAsVoidTypeConversionRule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
@@ -92,6 +94,12 @@ PointerLikeTypeValuePtr ReferenceType::makeWithValue(const AnyValuePtr &value)
     return reference;
 }
 
+void ReferenceType::addDefaultTypeConversionRules()
+{
+    addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
+    addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
+}
+
 void ReferenceType::addSpecializedInstanceMethods()
 {
     auto pointerType = baseType->pointerFor(addressSpace);
@@ -111,27 +119,24 @@ void ReferenceType::addSpecializedInstanceMethods()
 
     // Define the assignment
     // TODO: Depend on the triviality of assignment.
-    if(baseType->isImmutableType())
-    {
-        addMethodCategories(MethodCategories{
-                {"assignment", {
-                    makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", shared_from_this(), shared_from_this(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
-                        self->baseValue->copyAssignValue(newValue);
-                        return self;
-                    }),
-                }
+    addMethodCategories(MethodCategories{
+            {"assignment", {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", shared_from_this(), shared_from_this(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
+                    self->baseValue->copyAssignValue(newValue);
+                    return self;
+                }),
             }
-        });
-    }
+        }
+    });
 }
 
-TypePtr ReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
+TypePtr ReferenceType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
     switch(mode)
     {
     case TypeInferenceMode::Value:
     default:
-        return baseType->asInferredTypeWithMode(mode, isMutable);
+        return baseType->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, environment);
     case TypeInferenceMode::Reference:
     case TypeInferenceMode::TemporaryReference:
         return shared_from_this();

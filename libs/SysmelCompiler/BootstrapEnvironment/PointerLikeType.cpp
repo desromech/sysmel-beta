@@ -56,6 +56,7 @@ bool PointerLikeType::hasGenericAddressSpace() const
 
 PointerLikeTypeValuePtr PointerLikeType::makeWithValue(const AnyValuePtr &value)
 {
+    (void)value;
     SysmelSelfSubclassResponsibility();
 }
 

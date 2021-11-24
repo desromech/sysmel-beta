@@ -808,10 +808,13 @@ AnyValuePtr Type::instantiatedWithLiteralValue(const AnyValuePtr &value)
     return nullptr;
 }
 
-TypePtr Type::asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable)
+TypePtr Type::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
+    (void)node;
     (void)mode;
     (void)isMutable;
+    (void)concreteLiterals;
+    (void)environment;
     return shared_from_this();
 }
 

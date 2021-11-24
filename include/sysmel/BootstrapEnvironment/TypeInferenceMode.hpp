@@ -16,7 +16,7 @@ enum class TypeInferenceMode : uint8_t
 {
     Value = 0,
     Reference,
-    TemporaryReference
+    TemporaryReference,
 };
 
 inline const char *typeInferenceModeToString(TypeInferenceMode kind)

@@ -433,4 +433,231 @@ SUITE(LiteralNumber)
             CHECK_EQUAL(LargeInteger{"93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000"}, wrapValue(LargeInteger{100})->perform<LargeInteger> ("factorial"));
         });
     }
+
+    TEST(Comparisons)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            // Integer - Integer
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> ("=", 0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("=", 0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("=", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("~=", 0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("~=", 0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> ("~=", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<=", 0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("<=", 0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<=", 0));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">", 0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> (">", 0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">", 0));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">=", 0));
+
+            // Integer - Fraction
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> ("~=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<=", Fraction{0, 1}));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">", Fraction{0, 1}));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> (">=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">=", Fraction{0, 1}));
+
+            // Fraction - Fraction
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> ("~=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<=", Fraction{0, 1}));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">", Fraction{0, 1}));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> (">=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">=", Fraction{0, 1}));
+
+            // Integer - Float
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> ("~=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1)->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(false, wrapValue(1)->perform<bool> ("<=", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">", 0.0));
+            CHECK_EQUAL(false, wrapValue(0)->perform<bool> (">", 0.0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(-1)->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0)->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(1)->perform<bool> (">=", 0.0));
+
+            // Fraction - Integer
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> ("=", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("=", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("=", 0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("~=", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("~=", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> ("~=", 0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<", 0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<=", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("<=", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<=", 0));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">", 0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> (">", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">", 0));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">=", 0));
+
+            // Fraction - Float
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> ("~=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(Fraction{-1, 1})->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{1, 1})->perform<bool> ("<=", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">", 0.0));
+            CHECK_EQUAL(false, wrapValue(Fraction{0, 1})->perform<bool> (">", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(Fraction{-1, 1})->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{0, 1})->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(Fraction{1, 1})->perform<bool> (">=", 0.0));
+
+            // Float - Integer
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> ("=", 0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("=", 0));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("=", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("~=", 0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("~=", 0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> ("~=", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("<", 0));
+            CHECK_EQUAL(false, wrapValue(1.)->perform<bool> ("<", 0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<=", 0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("<=", 0));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("<=", 0));
+
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> (">", 0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> (">", 0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> (">", 0));
+
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> (">=", 0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> (">=", 0));
+
+            // Float - Fraction
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("~=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> ("~=", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("<", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("<", Fraction{0, 1}));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("<=", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("<=", Fraction{0, 1}));
+
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> (">", Fraction{0, 1}));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> (">", Fraction{0, 1}));
+
+            // Float - Float
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("=", 0.0));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("~=", 0.0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> ("~=", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> ("<", 0.0));
+            CHECK_EQUAL(false, wrapValue(1.)->perform<bool> ("<", 0.0));
+
+            CHECK_EQUAL(true, wrapValue(-1.0)->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> ("<=", 0.0));
+            CHECK_EQUAL(false, wrapValue(1.0)->perform<bool> ("<=", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> (">", 0.0));
+            CHECK_EQUAL(false, wrapValue(0.0)->perform<bool> (">", 0.0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> (">", 0.0));
+
+            CHECK_EQUAL(false, wrapValue(-1.0)->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(0.0)->perform<bool> (">=", 0.0));
+            CHECK_EQUAL(true, wrapValue(1.0)->perform<bool> (">=", 0.0));
+        });
+    }
+
 }

@@ -57,6 +57,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
     result->defaultArgumentType = Type::getAnyValueType();
     result->defaultResultType = Type::getAnyValueType();
     result->defaultVariableType = Type::getAnyValueType();
+    result->literalValueInferrenceType = Type::getAnyValueType();
     return result;
 }
 
