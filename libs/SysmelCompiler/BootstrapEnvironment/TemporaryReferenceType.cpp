@@ -118,6 +118,11 @@ TypePtr TemporaryReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, b
     }
 }
 
+ASTNodePtr TemporaryReferenceType::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
 bool TemporaryReferenceTypeValue::isTemporaryReferenceTypeValue() const
 {
     return true;

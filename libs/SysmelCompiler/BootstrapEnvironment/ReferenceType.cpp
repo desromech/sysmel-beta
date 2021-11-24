@@ -138,6 +138,11 @@ TypePtr ReferenceType::asInferredTypeWithMode(TypeInferenceMode mode, bool isMut
     }
 }
 
+ASTNodePtr ReferenceType::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
 bool ReferenceTypeValue::isReferenceTypeValue() const
 {
     return true;

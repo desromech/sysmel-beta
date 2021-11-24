@@ -36,6 +36,8 @@ public:
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;
     virtual TypePtr asInferredTypeWithMode(TypeInferenceMode mode, bool isMutable) override;
 
+    virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
     void addSpecializedInstanceMethods();
 };
 

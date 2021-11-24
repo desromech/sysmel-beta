@@ -1815,7 +1815,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
     }
 
     if(analyzedNode->continueExpression)
-        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->continueExpression, Type::getVoidType());
 
     analyzedNode->analyzedType = Type::getVoidType();
     return analyzedNode;
@@ -1838,7 +1838,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
         analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
     if(analyzedNode->continueExpression)
-        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->bodyExpression, Type::getVoidType());
+        analyzedNode->continueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->continueExpression, Type::getVoidType());
 
     analyzedNode->analyzedType = Type::getVoidType();
     return analyzedNode;

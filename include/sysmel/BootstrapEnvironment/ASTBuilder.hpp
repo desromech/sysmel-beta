@@ -49,7 +49,7 @@ public:
     ASTWhileNodePtr whileDoContinueWith(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression);
 
     ASTDoWhileNodePtr doWhile(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition);
-    ASTDoWhileNodePtr doWhileContinueWith(const ASTNodePtr &bodyExpression,  const ASTNodePtr &condition, const ASTNodePtr &continueExpression);
+    ASTDoWhileNodePtr doWhileContinueWith(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition, const ASTNodePtr &continueExpression);
 
     ASTReturnNodePtr returnValue(const ASTNodePtr &expression);
     ASTReturnNodePtr returnVoid();

@@ -304,6 +304,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
         directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
 
     // Attempt going through the different expansion levels
+    auto startExpansionLevel = node->expansionLevel;
     while(uint8_t(node->expansionLevel) < uint8_t(MessageSendExpansionLevel::Count))
     {
         if(directSelectorValue)
@@ -316,6 +317,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
         node->expansionLevel = MessageSendExpansionLevel(uint8_t(node->expansionLevel) + 1);
     }
 
+    node->expansionLevel = startExpansionLevel;
     return analyzeUnboundMessageSendNode(node, semanticAnalyzer);
 }
 

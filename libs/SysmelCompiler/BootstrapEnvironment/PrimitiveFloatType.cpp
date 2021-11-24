@@ -76,28 +76,28 @@ struct IntrinsicPrimitiveFloatMethods
     {
         return MethodCategories{
             {"comparisons", {
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.equals", "=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.equals", "=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value == b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.equals", "==", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.equals", "==", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value == b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.not-equals", "~=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.not-equals", "~=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value != b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.not-equals", "~~", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.not-equals", "~~", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value != b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.less-than", "<", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.less-than", "<", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value < b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.less-equals", "<=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.less-equals", "<=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value <= b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.greater-than", ">", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.greater-than", ">", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value > b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("integer.greater-equals", ">=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("integer.greater-equals", ">=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value >= b->value);
                 }, MethodFlags::Pure),
             }},

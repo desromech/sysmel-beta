@@ -129,6 +129,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK_EQUAL(4, evaluateStringWithValueOfType<int> ("let a mutable := 42. a := 4"));
 
                 CHECK_EQUAL(4, evaluateStringWithValueOfType<int> ("let a mutable := 42. a := 4. a"));
+
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int> ("let a mutable := 1. let b mutable := 2. a + b"));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int> ("let a mutable := Int32(1). let b mutable := Int32(2). a + b"));
             });
         });
     }
