@@ -28,6 +28,8 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCompileTimeConstantNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
@@ -77,6 +79,7 @@
 #include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
+#include "sysmel/BootstrapEnvironment/CompileTimeConstant.hpp"
 
 #include "sysmel/BootstrapEnvironment/EnumType.hpp"
 #include "sysmel/BootstrapEnvironment/ClassType.hpp"
@@ -1029,6 +1032,75 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     // Set it in the analyzed node.
     analyzedNode->analyzedType = FieldVariable::__staticType__();
     analyzedNode->analyzedProgramEntity = fieldVariable;
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTimeConstantNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTCompileTimeConstantNode> (*node);
+
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::Internal;
+
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    CompileTimeConstantPtr compileTimeConstant;
+
+    // Check the name.
+    if(name)
+    {
+        // Forbid reserved names.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Compile time constant {1} overrides reserved name.", {{name->printString()}}));
+
+        auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+        if(boundSymbol)
+        {
+            if(!boundSymbol->isCompileTimeConstant())
+                return recordSemanticErrorInNode(analyzedNode, formatString("Compile time constant {1} overrides previous non-compile time constant definition in its parent program entity ({2}).",
+                    {{name->printString(), boundSymbol->printString()}}));
+
+            compileTimeConstant = std::static_pointer_cast<CompileTimeConstant> (boundSymbol);
+        }
+    }
+
+    TypePtr constantType;
+    if(analyzedNode->type)
+    {
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+        if(analyzedNode->type->isASTLiteralTypeNode())
+            constantType = std::static_pointer_cast<Type> (
+                std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type)->value
+            );
+    }
+
+    // Create the global variable.
+    if(!compileTimeConstant)
+    {
+        compileTimeConstant = std::make_shared<CompileTimeConstant> ();
+        compileTimeConstant->name = name;
+        compileTimeConstant->registerInCurrentModule();
+        compileTimeConstant->enqueuePendingSemanticAnalysis();
+
+        ownerEntity->recordChildProgramEntityDefinition(compileTimeConstant);
+        ownerEntity->bindProgramEntityWithVisibility(compileTimeConstant, analyzedNode->visibility);
+    }
+
+    if(constantType)
+        compileTimeConstant->valueType = constantType;
+
+    if(analyzedNode->value)
+    {
+        if(compileTimeConstant->valueCodeFragment)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Compile time constant variable {1} has multiple definitions for its value.", {{name->printString()}}));
+
+        compileTimeConstant->valueCodeFragment = DeferredCompileTimeCodeFragment::make(analyzedNode->value, environment);
+    }
+
+    analyzedNode->analyzedProgramEntity = compileTimeConstant;
+    analyzedNode->analyzedType = CompileTimeConstant::__staticType__();
     return analyzedNode;
 }
 

@@ -6,6 +6,7 @@
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTCompileTimeConstantNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTFunctionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMethodNode.hpp"
@@ -182,6 +183,11 @@ AnyValuePtr ASTVisitor::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &
 AnyValuePtr ASTVisitor::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
 {
     return visitVariableNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitCompileTimeConstantNode(const ASTCompileTimeConstantNodePtr &node)
+{
+    return visitProgramEntityNode(node);
 }
 
 AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &)

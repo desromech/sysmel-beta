@@ -860,4 +860,15 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(CompileTimeConstant)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto compileTimeConstant = evaluateString("public compileTime constant Test := 42.");
+                CHECK(compileTimeConstant->isCompileTimeConstant());
+                CHECK_EQUAL(42, evaluateString("Test")->unwrapAsInt32());
+            });
+        });
+    }
 }

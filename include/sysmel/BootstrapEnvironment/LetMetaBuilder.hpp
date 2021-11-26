@@ -19,7 +19,6 @@ class LetMetaBuilder : public SubtypeOf<VariableMetaBuilder, LetMetaBuilder>
 public:
     static constexpr char const __typeName__[] = "LetMetaBuilder";
 
-
 protected:
     virtual ASTNodePtr concretizeMetaBuilder() override;
 };

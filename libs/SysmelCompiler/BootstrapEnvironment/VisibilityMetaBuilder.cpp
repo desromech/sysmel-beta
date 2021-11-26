@@ -16,6 +16,10 @@
 #include "sysmel/BootstrapEnvironment/FieldMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/GlobalMetaBuilder.hpp"
 
+// Meta
+#include "sysmel/BootstrapEnvironment/CompileTimeMetaBuilder.hpp"
+
+
 namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
@@ -59,6 +63,10 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
             return delegateToMetaBuilderAt<FieldMetaBuilder> (node->sourcePosition);
         else if(selector == "global")
             return delegateToMetaBuilderAt<GlobalMetaBuilder> (node->sourcePosition);
+
+        // Meta
+        else if(selector == "compileTime")
+            return delegateToMetaBuilderAt<CompileTimeMetaBuilder> (node->sourcePosition);
     }
 
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);

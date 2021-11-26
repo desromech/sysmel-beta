@@ -15,6 +15,7 @@ set(BootstrapEnvironment_Sources
     ASTClassNode.cpp
     ASTCleanUpScopeNode.cpp
     ASTClosureNode.cpp
+    ASTCompileTimeConstantNode.cpp
     ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
     ASTContinueNode.cpp
@@ -94,7 +95,10 @@ set(BootstrapEnvironment_Sources
     CompilationErrorValue.cpp
     CompiledMethod.cpp
     CompileTimeCleanUpScope.cpp
+    CompileTimeConstant.cpp
+    CompileTimeConstantMetaBuilder.cpp
     CompileTimeEvaluationError.cpp
+    CompileTimeMetaBuilder.cpp
     ConstructorMethodTypeConversionRule.cpp
     ContinueType.cpp
     ControlFlowEscapeType.cpp

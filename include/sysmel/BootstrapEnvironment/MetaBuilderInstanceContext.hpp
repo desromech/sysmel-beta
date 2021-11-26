@@ -27,6 +27,7 @@ public:
 
     ProgramEntityVisibility programEntityVisibility = ProgramEntityVisibility::Default;
     MethodDispatchMode methodDispatchMode = MethodDispatchMode::Default;
+    bool isCompileTime = false;
 };
 
 } // End of namespace BootstrapEnvironment

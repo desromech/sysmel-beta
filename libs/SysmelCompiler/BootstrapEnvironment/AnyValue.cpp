@@ -335,6 +335,11 @@ bool AnyValue::isASTFieldVariableNode() const
     return false;
 }
 
+bool AnyValue::isASTCompileTimeConstantNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTLocalImmutableAccessNode() const
 {
     return false;
@@ -896,6 +901,21 @@ bool AnyValue::isTemporaryReferenceType() const
 }
 
 bool AnyValue::isTemporaryReferenceTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isCompileTimeConstant() const
+{
+    return false;
+}
+
+bool AnyValue::isTemplate() const
+{
+    return false;
+}
+
+bool AnyValue::isTemplateInstance() const
 {
     return false;
 }

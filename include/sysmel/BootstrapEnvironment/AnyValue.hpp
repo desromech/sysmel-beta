@@ -445,6 +445,9 @@ public:
     /// Is this object an AST field variable node?
     virtual bool isASTFieldVariableNode() const;
 
+    /// Is this object an AST field variable node?
+    virtual bool isASTCompileTimeConstantNode() const;
+
     /// Is this object an AST local immutable access node?
     virtual bool isASTLocalImmutableAccessNode() const;
 
@@ -783,6 +786,15 @@ public:
 
     // Is this a temporary reference type value?
     virtual bool isTemporaryReferenceTypeValue() const;
+
+    // Is this a compile time constant?
+    virtual bool isCompileTimeConstant() const;
+
+    // Is this a template?
+    virtual bool isTemplate() const;
+
+    // Is this a template instance?
+    virtual bool isTemplateInstance() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;
