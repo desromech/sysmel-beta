@@ -871,4 +871,29 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(TemplateStructure)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto templateEntity = evaluateString(
+"public template ValueBox (VT: Type) := struct definition: {\n"
+"public compileTime constant ValueType := VT.\n"
+"public field value type: ValueType.\n"
+"}.\n");
+                CHECK(templateEntity->isTemplate());
+
+                auto int32ValueBox = evaluateString("ValueBox(Int32)");
+                auto int32ValueBox2 = evaluateString("ValueBox(Int32)");
+                CHECK(int32ValueBox->isStructureType());
+                CHECK_EQUAL(int32ValueBox, int32ValueBox2);
+
+                auto int64ValueBox = evaluateString("ValueBox(Int64)");
+                auto int64ValueBox2 = evaluateString("ValueBox(Int64)");
+                CHECK(int64ValueBox->isStructureType());
+                CHECK_EQUAL(int64ValueBox, int64ValueBox2);
+                CHECK(int32ValueBox != int64ValueBox2);
+            });
+        });
+    }
 }
