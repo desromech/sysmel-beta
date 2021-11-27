@@ -32,6 +32,9 @@ public:
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
 
+    LiteralArrayPtr select(const AnyValuePtr &aBlock) const;
+    LiteralArrayPtr collect(const AnyValuePtr &aBlock) const;
+
 protected:
     AnyValuePtrList content;
 };

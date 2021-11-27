@@ -47,8 +47,8 @@ AnyValuePtr ASTParseErrorValidator::visitClosureNode(const ASTClosureNodePtr &no
 {
     for(const auto &argument : node->arguments)
         visitNode(argument);
-    if(node->returnType)
-        visitNode(node->returnType);
+    if(node->resultType)
+        visitNode(node->resultType);
     visitNode(node->body);
     return AnyValuePtr();
 }

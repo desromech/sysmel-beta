@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AST_CLOSURE_NODE_HPP
 #pragma once
 
-#include "ASTNode.hpp"
+#include "ASTProgramEntityNode.hpp"
 
 namespace SysmelMoebius
 {
@@ -21,7 +21,7 @@ enum class ASTClosureNodeKind : uint8_t
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTClosureNode : public SubtypeOf<ASTNode, ASTClosureNode>
+class ASTClosureNode : public SubtypeOf<ASTProgramEntityNode, ASTClosureNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTClosureNode";
@@ -32,7 +32,7 @@ public:
 
     ASTClosureNodeKind kind = ASTClosureNodeKind::Function;
     ASTNodePtrList arguments;
-    ASTNodePtr returnType;
+    ASTNodePtr resultType;
     ASTNodePtr body;
 };
 

@@ -49,7 +49,7 @@ bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
     {
         if(isPureMessageSend)
         {
-            if(!receiver->isPureCompileTimeEvaluableNode())
+            if(!argument->isPureCompileTimeEvaluableNode())
                 return false;
         }
         else

@@ -34,7 +34,7 @@ SExpression ASTClosureNode::asSExpression() const
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         argumentsSExpression,
-        returnType ? returnType->asSExpression() : nullptr,
+        resultType ? resultType->asSExpression() : nullptr,
         body->asSExpression(),
     }};
 }

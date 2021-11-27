@@ -179,7 +179,7 @@ public:
                 blockClosureNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
 
             if(signature->returnType)
-                blockClosureNode->returnType = std::any_cast<ResultType> (visitNode(*signature->returnType));
+                blockClosureNode->resultType = std::any_cast<ResultType> (visitNode(*signature->returnType));
             blockClosureNode->body = convertedSequence;
             
             return ResultType(blockClosureNode);

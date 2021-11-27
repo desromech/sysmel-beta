@@ -130,7 +130,9 @@ AnyValuePtr ASTCompileTimeEvaluator::visitNodeCachingExplicitReturns(const ASTNo
 }
 AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    assert(false);
+    auto method = std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity);
+    auto closureType = std::static_pointer_cast<ClosureType> (node->analyzedType);
+    return closureType->makeValueWithEnvironmentAndImplementation(currentCleanUpScope, method);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &)
@@ -308,7 +310,8 @@ AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNode
     {
         auto closureType = std::static_pointer_cast<ClosureType> (node->analyzedType);
         auto closure = closureType->makeValueWithEnvironmentAndImplementation(currentCleanUpScope, method);
-        currentCleanUpScope->setStoreBinding(method, closure);
+        if(!validAnyValue(method->getName())->isAnonymousNameSymbol())
+            currentCleanUpScope->setStoreBinding(method, closure);
         return closure;
     }
 

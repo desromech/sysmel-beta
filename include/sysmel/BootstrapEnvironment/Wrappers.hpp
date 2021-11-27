@@ -479,6 +479,20 @@ struct UnwrapValue<AnyValuePtr>
     }
 };
 
+template<typename T>
+struct UnwrapValue<std::vector<T>>
+{
+    static std::vector<T> apply(const AnyValuePtr &value)
+    {
+        const auto &elementList = value->unwrapAsArray();
+        std::vector<T> result;
+        result.reserve(elementList.size());
+        for(auto &el : elementList)
+            result.push_back(UnwrapValue<T>::apply(el));
+        return result;
+    }
+};
+
 struct UnwrapValueDummyBase {};
 
 template<typename T>

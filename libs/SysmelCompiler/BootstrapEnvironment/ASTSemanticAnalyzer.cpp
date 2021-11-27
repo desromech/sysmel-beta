@@ -552,7 +552,92 @@ AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTClosureNode> (*node);
+
+    // TODO: Use the current expected type to assist the function type inference.
+
+    // Analyze the arguments node.
+    bool hasError = false;
+    for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+    {
+        auto &arg = analyzedNode->arguments[i];
+        assert(arg->isASTArgumentDefinitionNode());
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        hasError = hasError || arg->isASTErrorNode();
+    }
+
+    // Evaluate the result type.
+    auto expectedResultType = currentExpectedType->getExpectedFunctionalResultType();
+    if(!analyzedNode->resultType)
+    {
+        if(expectedResultType)
+        {
+            analyzedNode->resultType = expectedResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else if(environment->defaultResultType)
+        {
+            analyzedNode->resultType = environment->defaultResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+        }
+        else
+        {
+            analyzedNode->resultType = recordSemanticErrorInNode(analyzedNode, "Function definition requires an explicit result type specification.");
+            hasError = true;
+        }
+    }
+
+    if(analyzedNode->resultType)
+    {
+        if(!analyzedNode->resultType->isASTErrorNode())
+            analyzedNode->resultType = evaluateTypeExpression(analyzedNode->resultType);
+
+        hasError = hasError || analyzedNode->resultType->isASTErrorNode();
+    }
+
+    CompiledMethodPtr compiledMethod;
+    auto ownerEntity = environment->localDefinitionsOwner;
+
+    // Add a default body if it is not present.
+    if(!analyzedNode->body)
+        analyzedNode->body = getVoidConstant()->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+
+    // Abort the remaining analysis of the closure on error.
+    if(hasError)
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // Create the function type.
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        argumentTypes.push_back(arg->analyzedType);
+    auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
+
+    // Create the compiled method if missing.
+    compiledMethod = std::make_shared<CompiledMethod> ();
+    compiledMethod->setDeclaration(analyzedNode);
+    compiledMethod->registerInCurrentModule();
+    compiledMethod->setClosureSignature(resultType, argumentTypes);
+
+    // Set the arguments declaration and definition node.
+    for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+    {
+        compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+        compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+    }
+
+    // Set the definition body.
+    compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
+
+    // Analyze the body.
+    auto analyzedBody = compiledMethod->analyzeDefinitionWith(shared_from_this());
+    if(analyzedBody->isASTErrorNode())
+        return analyzedBody;
+
+    analyzedNode->analyzedProgramEntity = compiledMethod;
+    analyzedNode->analyzedType = compiledMethod->getFunctionalType();
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node)

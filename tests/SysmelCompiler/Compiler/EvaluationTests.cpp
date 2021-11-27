@@ -1051,4 +1051,19 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(ClosureArgumentPassing)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK((std::vector<int> {1, 4, 9, 16, 25}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) collect: (function(x) := x*x)"));
+                CHECK((std::vector<int> {2, 4}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) select: (function(x) := x%2 = 0)"));
+                CHECK((std::vector<int> {1, 3, 5}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) select: (function(x) := x%2 = 1)"));
+
+                CHECK((std::vector<int> {1, 4, 9, 16, 25}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) collect: {:x | x*x }"));
+                CHECK((std::vector<int> {2, 4}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) select: {:x | x%2 = 0 }"));
+                CHECK((std::vector<int> {1, 3, 5}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) select: {:x | x%2 = 1 }"));
+            });
+        });
+    }
 }
