@@ -613,6 +613,12 @@ public:
     /// Is this object a literal array?
     virtual bool isLiteralArray() const;
 
+    /// Is this object a literal association?
+    virtual bool isLiteralAssociation() const;
+
+    /// Is this object a literal dictionary?
+    virtual bool isLiteralDictionary() const;
+
     /// Is this object a literal number?
     virtual bool isLiteralNumber() const;
 

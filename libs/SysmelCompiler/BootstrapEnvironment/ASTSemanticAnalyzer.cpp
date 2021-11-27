@@ -95,6 +95,8 @@
 #include "sysmel/BootstrapEnvironment/MessageChainReceiverName.hpp"
 
 #include "sysmel/BootstrapEnvironment/LiteralArray.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralAssociation.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
@@ -627,12 +629,63 @@ AnyValuePtr ASTSemanticAnalyzer::visitLiteralValueNode(const ASTLiteralValueNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTMakeAssociationNode> (*node);
+    analyzedNode->key = analyzeNodeIfNeededWithAutoType(analyzedNode->key);
+    if(!analyzedNode->value)
+        analyzedNode->value = getNilConstant()->asASTNodeRequiredInPosition(node->sourcePosition);
+    analyzedNode->value = analyzeNodeIfNeededWithAutoType(analyzedNode->value);
+    analyzedNode->analyzedType = LiteralAssociation::__staticType__();
+    return optimizeAnalyzedMakeAssociationNode(analyzedNode);
 }
 
+ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
+{
+    if(node->analyzedType == LiteralAssociation::__staticType__()
+        && node->key->isASTLiteralValueNode()
+        && node->value->isASTLiteralValueNode())
+    {
+        auto key = std::static_pointer_cast<ASTLiteralValueNode> (node->key)->value;
+        auto value = std::static_pointer_cast<ASTLiteralValueNode> (node->value)->value;
+        return analyzeNodeIfNeededWithCurrentExpectedType(
+            LiteralAssociation::makeWith(key, value)->asASTNodeRequiredInPosition(node->sourcePosition)
+        );
+    }
+
+    return node;
+}
+    
 AnyValuePtr ASTSemanticAnalyzer::visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTMakeDictionaryNode> (*node);
+    auto expectedDictionaryType = LiteralDictionary::__staticType__();
+    auto expectedAssociationType = LiteralAssociation::__staticType__();
+    for(auto &element : analyzedNode->elements)
+        element = analyzeNodeIfNeededWithExpectedType(element, expectedAssociationType);
+
+    analyzedNode->analyzedType = expectedDictionaryType;
+    return optimizeAnalyzedMakeDictionaryNode(analyzedNode);
+}
+
+ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node)
+{
+    if(node->analyzedType != LiteralDictionary::__staticType__())
+        return node;
+
+    // Make sure all of the elements are composed of literal value.
+    for(auto &el : node->elements)
+    {
+        if(!el->isASTLiteralValueNode())
+            return node;
+    }
+
+    AnyValuePtrList elements;
+    elements.reserve(node->elements.size());
+    for(auto &el : node->elements)
+        elements.push_back(std::static_pointer_cast<ASTLiteralValueNode> (el)->value);
+
+    return analyzeNodeIfNeededWithCurrentExpectedType(
+        LiteralDictionary::makeFor(elements)->asASTNodeRequiredInPosition(node->sourcePosition)
+    );
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node)

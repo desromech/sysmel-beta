@@ -132,6 +132,7 @@ set(BootstrapEnvironment_Sources
     LexicalScope.cpp
     LetMetaBuilder.cpp
     LiteralArray.cpp
+    LiteralAssociation.cpp
     LiteralBoolean.cpp
     LiteralBooleanTrue.cpp
     LiteralBooleanFalse.cpp
@@ -142,6 +143,7 @@ set(BootstrapEnvironment_Sources
     LiteralFraction.cpp
     LiteralPositiveInteger.cpp
     LiteralCharacter.cpp
+    LiteralDictionary.cpp
     LiteralString.cpp
     LiteralSymbol.cpp
     LiteralToTargetTypeConversionRule.cpp

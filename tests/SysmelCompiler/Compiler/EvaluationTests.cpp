@@ -61,6 +61,26 @@ SUITE(SysmelCompileTimeEvaluation)
 
                     CHECK(validAnyValue(literalArray[4])->isUndefined());
                 }
+
+                CHECK(evaluateString("#{}")->isLiteralDictionary());
+                {
+                    CHECK(evaluateString("#{Nil: . First: 1 . #Second : 2}")->isLiteralDictionary());
+                    auto literalDictionary = evaluateString("#{Nil: . First: 1 . #Second : 2}")->unwrapAsArray();
+                    CHECK_EQUAL(3u, literalDictionary.size());
+                    
+                    CHECK(literalDictionary[0]->isLiteralAssociation());
+                    CHECK_EQUAL(internSymbol("Nil"), literalDictionary[0]->perform<AnyValuePtr> ("key"));
+                    CHECK(validAnyValue(literalDictionary[0]->perform<AnyValuePtr> ("value"))->isUndefined());
+
+                    CHECK(literalDictionary[1]->isLiteralAssociation());
+                    CHECK_EQUAL(internSymbol("First"), literalDictionary[1]->perform<AnyValuePtr> ("key"));
+                    CHECK_EQUAL(1, literalDictionary[1]->perform<int> ("value"));
+
+                    CHECK(literalDictionary[2]->isLiteralAssociation());
+                    CHECK_EQUAL(internSymbol("Second"), literalDictionary[2]->perform<AnyValuePtr> ("key"));
+                    CHECK_EQUAL(2, literalDictionary[2]->perform<int> ("value"));
+                }
+
             });
         });
     }

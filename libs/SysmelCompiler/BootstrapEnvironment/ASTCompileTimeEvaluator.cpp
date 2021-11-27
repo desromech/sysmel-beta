@@ -47,6 +47,8 @@
 
 #include "sysmel/BootstrapEnvironment/ClosureType.hpp"
 #include "sysmel/BootstrapEnvironment/TupleType.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralAssociation.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralDictionary.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
@@ -54,6 +56,7 @@
 
 #include "sysmel/BootstrapEnvironment/ControlFlowUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
+#include "sysmel/BootstrapEnvironment/Error.hpp"
 
 namespace SysmelMoebius
 {
@@ -130,9 +133,9 @@ AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &n
     assert(false);
 }
 
-AnyValuePtr ASTCompileTimeEvaluator::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node)
+AnyValuePtr ASTCompileTimeEvaluator::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &)
 {
-    assert(false);
+    signalNewWithMessage<Error> ("Identifier reference nodes cannot be evaluated.");
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitCallNode(const ASTCallNodePtr &node)
@@ -157,12 +160,18 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLiteralValueNode(const ASTLiteralValue
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
 {
-    assert(false);
+    auto key = visitNode(node->key);
+    auto value = visitNode(node->value);
+    return LiteralAssociation::makeWith(key, value);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node)
 {
-    assert(false);
+    AnyValuePtrList elements;
+    elements.reserve(node->elements.size());
+    for(auto &el : node->elements)
+        elements.push_back(visitNode(el));
+    return LiteralDictionary::makeFor(elements);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node)

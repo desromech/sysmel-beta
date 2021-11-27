@@ -614,6 +614,16 @@ bool AnyValue::isLiteralArray() const
     return false;
 }
 
+bool AnyValue::isLiteralAssociation() const
+{
+    return false;
+}
+
+bool AnyValue::isLiteralDictionary() const
+{
+    return false;
+}
+
 bool AnyValue::isLiteralNumber() const
 {
     return false;
