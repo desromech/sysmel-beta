@@ -94,6 +94,8 @@
 
 #include "sysmel/BootstrapEnvironment/MessageChainReceiverName.hpp"
 
+#include "sysmel/BootstrapEnvironment/LiteralArray.hpp"
+#include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
 
@@ -554,7 +556,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
 {
     auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(node->identifier);
     if(!boundSymbol)
+    {
+        if(environment->isLiteralArrayAnalysisEnvironment)
+            return analyzeNodeIfNeededWithCurrentExpectedType(
+                validAnyValue(node->identifier)->asASTNodeRequiredInPosition(node->sourcePosition)
+            );
+
         return recordSemanticErrorInNode(node, formatString("Failed to find binding for identifier {0}.", {{node->identifier->printString()}}));
+    }
 
     auto analyzedNode = std::make_shared<ASTIdentifierReferenceNode> (*node);
     return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, shared_from_this());
@@ -627,7 +636,52 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeDictionaryNode(const ASTMakeDictionary
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node)
 {
-    assert(false);
+    auto literalEnvironment = environment;
+    if(!environment->isLiteralArrayAnalysisEnvironment)
+        literalEnvironment = literalEnvironment->languageSupport->createMakeLiteralArrayAnalysisEnvironment();
+
+    return withEnvironmentDoAnalysis(literalEnvironment, [&](){
+        auto analyzedNode = std::make_shared<ASTMakeLiteralArrayNode> (*node);
+        auto hasError = false;
+        ASTNodePtr errorNode;
+        for(auto &el : analyzedNode->elements)
+        {
+            el = analyzeNodeIfNeededWithAutoType(el);
+            if(el->isASTErrorNode())
+            {
+                if(!hasError)
+                    errorNode = el;
+                hasError = true;
+            }
+        }
+
+        if(hasError)
+            return errorNode;
+
+        analyzedNode->analyzedType = LiteralArray::__staticType__();
+        return optimizeAnalyzedMakeLiteralArrayNode(analyzedNode);
+    });
+}
+
+ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node)
+{
+    // Make sure that all of the elements are a literal value node.
+    for(auto &el : node->elements)
+    {
+        if(!el->isASTLiteralValueNode())
+            return node;
+    }
+
+    // Extract the literal values.
+    AnyValuePtrList elements;
+    elements.reserve(node->elements.size());
+    for(auto &el : node->elements)
+        elements.push_back(std::static_pointer_cast<ASTLiteralValueNode> (el)->value);
+
+    // Make a new literal value node with the literal elements. 
+    return analyzeNodeIfNeededWithCurrentExpectedType(
+        LiteralArray::makeFor(elements)->asASTNodeRequiredInPosition(node->sourcePosition)
+    );
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)

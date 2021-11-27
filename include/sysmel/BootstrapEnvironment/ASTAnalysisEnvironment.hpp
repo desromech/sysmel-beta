@@ -43,6 +43,8 @@ public:
     TypePtr defaultTemplateArgumentType;
     TypePtr literalValueInferrenceType;
 
+    bool isLiteralArrayAnalysisEnvironment = false;
+
     uint32_t continueLevelCount = 0;
     uint32_t breakLevelCount = 0;
 };

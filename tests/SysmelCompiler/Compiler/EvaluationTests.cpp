@@ -40,6 +40,27 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false"));
                 CHECK(evaluateString("void")->isVoid());
                 CHECK(evaluateString("nil")->isUndefined());
+
+                CHECK(evaluateString("#()")->isLiteralArray());
+                {
+                    CHECK(evaluateString("#(1 c true false nil)")->isLiteralArray());
+                    auto literalArray = evaluateString("#(1 c true false nil)")->unwrapAsArray();
+                    CHECK_EQUAL(5u, literalArray.size());
+                    
+                    CHECK(literalArray[0]->isLiteralInteger());
+                    CHECK_EQUAL(1, literalArray[0]->unwrapAsInt32());
+
+                    CHECK(literalArray[1]->isLiteralSymbol());
+                    CHECK_EQUAL("c", literalArray[1]->unwrapAsString());
+
+                    CHECK(literalArray[2]->isLiteralBoolean());
+                    CHECK_EQUAL(true, literalArray[2]->unwrapAsBoolean());
+
+                    CHECK(literalArray[3]->isLiteralBoolean());
+                    CHECK_EQUAL(false, literalArray[3]->unwrapAsBoolean());
+
+                    CHECK(validAnyValue(literalArray[4])->isUndefined());
+                }
             });
         });
     }

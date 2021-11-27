@@ -164,6 +164,16 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeDictionaryNode(const ASTMakeDictio
     assert(false);
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node)
+{
+    AnyValuePtrList result;
+    result.reserve(node->elements.size());
+    for(auto & el : node->elements)
+        result.push_back(visitNode(el));
+
+    return wrapValue(result);
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
     assert(false);

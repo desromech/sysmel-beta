@@ -53,6 +53,7 @@ public:
     ASTNodePtr analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node);
     ASTNodePtr analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro);
     ASTNodePtr optimizeAnalyzedMessageSend(const ASTMessageSendNodePtr &node);
+    ASTNodePtr optimizeAnalyzedMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node);
     
     ASTNodePtr analyzeCallNodeByConvertingToMessageSend(const ASTCallNodePtr &node);
 

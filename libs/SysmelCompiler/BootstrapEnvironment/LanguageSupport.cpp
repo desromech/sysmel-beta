@@ -72,6 +72,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnviron
     auto result = std::make_shared<ASTAnalysisEnvironment> ();
     result->lexicalScope = createMakeLiteralArrayTopLevelLexicalScope();
     result->languageSupport = shared_from_this();
+    result->isLiteralArrayAnalysisEnvironment = true;
     return result;
 }
 
