@@ -892,7 +892,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto int64ValueBox2 = evaluateString("ValueBox(Int64)");
                 CHECK(int64ValueBox->isStructureType());
                 CHECK_EQUAL(int64ValueBox, int64ValueBox2);
-                CHECK(int32ValueBox != int64ValueBox2);
+                CHECK(int32ValueBox != int64ValueBox);
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }

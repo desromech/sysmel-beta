@@ -98,6 +98,8 @@ public:
     /// This method performs the lookup for a macro fallback message with the specified selector only in this type.
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector) override;
 
+    virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
+
     /// Does this type support dynamic compile time message sends?
     virtual bool supportsDynamicCompileTimeMessageSend() const;
 

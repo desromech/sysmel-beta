@@ -243,7 +243,16 @@ AnyValuePtr Type::lookupMacroFallbackSelector(const AnyValuePtr &selector)
     return AnyValuePtr();
 }
 
-/// This method performs the semantic analysis of a call node with the specified semantic analyzer.
+AnyValuePtr Type::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    (void)accessingScope;
+    auto it = bindings.find(symbol);
+    if(it == bindings.end())
+        return nullptr;
+
+    return it->second.second;
+}
+
 ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     assert(node->function && node->function->analyzedType);
