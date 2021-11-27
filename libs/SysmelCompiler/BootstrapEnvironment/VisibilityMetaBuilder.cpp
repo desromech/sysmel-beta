@@ -18,7 +18,7 @@
 
 // Meta
 #include "sysmel/BootstrapEnvironment/CompileTimeMetaBuilder.hpp"
-
+#include "sysmel/BootstrapEnvironment/TemplateMetaBuilder.hpp"
 
 namespace SysmelMoebius
 {
@@ -67,6 +67,8 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
         // Meta
         else if(selector == "compileTime")
             return delegateToMetaBuilderAt<CompileTimeMetaBuilder> (node->sourcePosition);
+        else if(selector == "template")
+            return delegateToMetaBuilderAt<TemplateMetaBuilder> (node->sourcePosition);
     }
 
     return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);

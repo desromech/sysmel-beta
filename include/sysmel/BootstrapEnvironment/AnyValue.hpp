@@ -463,6 +463,9 @@ public:
     /// Is this object an AST method node?
     virtual bool isASTMethodNode() const;
 
+    /// Is this object an AST template node?
+    virtual bool isASTTemplateNode() const;
+
     /// Is this object an AST namespace node?
     virtual bool isASTNamespaceNode() const;
 

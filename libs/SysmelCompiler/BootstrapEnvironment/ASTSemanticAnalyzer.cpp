@@ -40,6 +40,7 @@
 #include "sysmel/BootstrapEnvironment/ASTStructNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTTemplateNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
@@ -79,6 +80,7 @@
 #include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
+#include "sysmel/BootstrapEnvironment/Template.hpp"
 #include "sysmel/BootstrapEnvironment/CompileTimeConstant.hpp"
 
 #include "sysmel/BootstrapEnvironment/EnumType.hpp"
@@ -94,8 +96,6 @@
 
 #include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
-
-#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -370,6 +370,9 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeByConvertingToMessageSend(const A
 
 AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
 {
+    if(!node)
+        return nullptr;
+
     assert(node->isASTLiteralValueNode());
     auto result = std::static_pointer_cast<ASTLiteralValueNode> (node)->value;
     return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
@@ -494,6 +497,37 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(co
             expectedType->printString(),
         }}));
 
+    return analyzedNode;
+}
+
+ASTNodePtr ASTSemanticAnalyzer::analyzeTemplateArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTArgumentDefinitionNode> (*node);
+    auto name = evaluateNameSymbolValue(analyzedNode->identifier);
+    analyzedNode->analyzedIdentifier = name;
+
+    // Analyze the argument type.
+    if(analyzedNode->type)
+    {
+        analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
+    }
+    else
+    {
+        if(!environment->defaultTemplateArgumentType)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Template argument {0} requires a explicit type specification.", {{validAnyValue(name)->printString()}}));
+        analyzedNode->type = environment->defaultArgumentType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+    }
+
+
+    // Make sure the type is not an error.
+    if(analyzedNode->type->isASTErrorNode())
+        return analyzedNode->type;
+
+    // Extract the argument type.
+    if(!analyzedNode->type->isASTLiteralTypeNode())
+        return recordSemanticErrorInNode(analyzedNode, formatString("Failed to define a type for argument {0}.", {{validAnyValue(name)->printString()}}));
+
+    analyzedNode->analyzedType = unwrapTypeFromLiteralValue(analyzedNode->type);
     return analyzedNode;
 }
 
@@ -844,6 +878,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
     // Create the local variable.
     auto localVariable = std::make_shared<LocalVariable> ();
     localVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
+    localVariable->setDeclarationNode(analyzedNode);
+    localVariable->setDefinitionNode(analyzedNode);
 
     // Record the program entity.
     environment->localDefinitionsOwner->recordChildProgramEntityDefinition(localVariable);
@@ -924,6 +960,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     {
         globalVariable = std::make_shared<GlobalVariable> ();
         globalVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
+        globalVariable->setDeclarationNode(analyzedNode);
+        globalVariable->setDefinitionNode(analyzedNode);
         globalVariable->registerInCurrentModule();
         globalVariable->enqueuePendingSemanticAnalysis();
 
@@ -937,6 +975,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
             return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} has multiple definitions for its initial value.", {{name->printString()}}));
 
         globalVariable->initialValueCodeFragment = DeferredCompileTimeCodeFragment::make(analyzedNode->initialValue, environment);
+        globalVariable->setDefinitionNode(analyzedNode);
     }
 
     // Set it in the analyzed node.
@@ -1014,6 +1053,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     {
         fieldVariable = std::make_shared<FieldVariable> ();
         fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
+        fieldVariable->setDeclarationNode(analyzedNode);
+        fieldVariable->setDefinitionNode(analyzedNode);
         fieldVariable->registerInCurrentModule();
         fieldVariable->enqueuePendingSemanticAnalysis();
 
@@ -1071,9 +1112,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
     {
         analyzedNode->type = evaluateTypeExpression(analyzedNode->type);
         if(analyzedNode->type->isASTLiteralTypeNode())
-            constantType = std::static_pointer_cast<Type> (
-                std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type)->value
-            );
+            constantType = unwrapTypeFromLiteralValue(analyzedNode->type);
     }
 
     // Create the global variable.
@@ -1275,6 +1314,108 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
     analyzedNode->analyzedProgramEntity = compiledMethod;
     analyzedNode->analyzedType = compiledMethod->getFunctionalType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &node)
+{
+    auto analyzedNode = std::make_shared<ASTTemplateNode> (*node);
+
+    // Concretize the default visibility.
+    if(analyzedNode->visibility == ProgramEntityVisibility::Default)
+        analyzedNode->visibility = ProgramEntityVisibility::Internal;
+
+    // Analyze the arguments node.
+    bool hasError = false;
+    for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+    {
+        auto &arg = analyzedNode->arguments[i];
+        assert(arg->isASTArgumentDefinitionNode());
+        arg = analyzeTemplateArgumentDefinitionNode(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg));
+        hasError = hasError || arg->isASTErrorNode();
+    }
+
+    // Evaluate the name.
+    auto name = evaluateNameSymbolValue(analyzedNode->name);
+
+    TemplatePtr templateEntity;
+    bool alreadyRegistered = false;
+    auto ownerEntity = environment->programEntityForPublicDefinitions;
+
+    // Check the name.
+    if(name)
+    {
+        // Forbid reserved names.
+        if(isNameReserved(name))
+            return recordSemanticErrorInNode(analyzedNode, formatString("Template {0} overrides reserved name.", {{name->printString()}}));
+
+        auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
+        if(boundSymbol)
+        {
+            if(!boundSymbol->isTemplate())
+                return recordSemanticErrorInNode(analyzedNode, formatString("Template {0} overrides previous non-namespace definition in its parent program entity ({1}).",
+                    {{name->printString(), boundSymbol->printString()}}));
+
+            templateEntity = std::static_pointer_cast<Template> (boundSymbol);
+            alreadyRegistered = true;
+        }
+    }
+
+    // Abort the remaining of the template error.
+    if(hasError)
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // Extract the argumnet types.
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        argumentTypes.push_back(arg->analyzedType);
+
+    // Create the template if missing.
+    if(!templateEntity)
+    {
+        templateEntity = std::make_shared<Template> ();
+        templateEntity->setName(name);
+        templateEntity->setDeclarationNode(analyzedNode);
+        templateEntity->setArgumentTypes(argumentTypes);
+        templateEntity->registerInCurrentModule();
+        templateEntity->enqueuePendingSemanticAnalysis();
+
+        // Set the arguments declaration node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            templateEntity->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+    }
+    else
+    {
+        // TODO: Validate the signature for matching types.
+    }
+
+    // Set the definition body.
+    if(analyzedNode->body)
+    {
+        // Set the arguments definition node.
+        for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
+            templateEntity->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+
+        // Add the definition body.
+        templateEntity->addDefinition(analyzedNode, analyzedNode->body, environment);
+    }
+
+    // Register the template.
+    if(name)
+    {
+        if(!alreadyRegistered)
+        {
+            ownerEntity->recordChildProgramEntityDefinition(templateEntity);
+            ownerEntity->bindProgramEntityWithVisibility(templateEntity, analyzedNode->visibility);
+        }
+    }
+
+    analyzedNode->analyzedProgramEntity = templateEntity;
+    analyzedNode->analyzedType = Template::__staticType__();
     return analyzedNode;
 }
 

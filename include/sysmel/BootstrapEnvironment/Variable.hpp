@@ -23,6 +23,8 @@ public:
     virtual bool isVariable() const override;
 
     virtual void setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType, bool definitionMutability, uint64_t definitionMinimalAlignment = 0);
+    virtual void setDeclarationNode(const ASTNodePtr &node);
+    virtual void setDefinitionNode(const ASTNodePtr &node);
 
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
@@ -46,6 +48,12 @@ public:
     }
 
 protected:
+    ASTSourcePositionPtr declarationPosition;
+    ASTNodePtr declarationNode;
+
+    ASTSourcePositionPtr definitionPosition;
+    ASTNodePtr definitionNode;
+
     AnyValuePtr name;
     TypePtr valueType;
     TypePtr referenceType;

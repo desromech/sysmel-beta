@@ -30,6 +30,23 @@ AnyValuePtr CompileTimeConstant::getName() const
     return name;
 }
 
+void CompileTimeConstant::setName(const AnyValuePtr &newName)
+{
+    name = newName;
+}
+
+void CompileTimeConstant::setDeclarationNode(const ASTNodePtr &node)
+{
+    declarationNode = node;
+    declarationPosition = node->sourcePosition;
+}
+
+void CompileTimeConstant::setDefinitionNode(const ASTNodePtr &node)
+{
+    definitionNode = node;
+    definitionPosition = node->sourcePosition;
+}
+
 void CompileTimeConstant::ensureSemanticAnalysis()
 {
     if(hasEvaluatedValueDefinition)

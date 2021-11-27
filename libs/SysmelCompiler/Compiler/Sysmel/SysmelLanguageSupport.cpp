@@ -42,10 +42,20 @@
 #include "sysmel/BootstrapEnvironment/LetMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/NamespaceMetaBuilder.hpp"
 
+#include "sysmel/BootstrapEnvironment/EnumMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/StructMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/UnionMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ClassMetaBuilder.hpp"
+
 #include "sysmel/BootstrapEnvironment/InternalMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/PrivateMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ProtectedMetaBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/PublicMetaBuilder.hpp"
+
+#include "sysmel/BootstrapEnvironment/FieldMetaBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/GlobalMetaBuilder.hpp"
+
+#include "sysmel/BootstrapEnvironment/CompileTimeMetaBuilder.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
@@ -56,7 +66,6 @@
 #include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
 
 #include <fstream>
-#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -460,10 +469,20 @@ void SysmelLanguageSupport::initialize()
         topLevelScope->setSymbolBinding(internSymbol("function"), metaBuilderFactoryFor<FunctionMetaBuilder> ("function"));
         topLevelScope->setSymbolBinding(internSymbol("namespace"), metaBuilderFactoryFor<NamespaceMetaBuilder> ("namespace"));
 
+        topLevelScope->setSymbolBinding(internSymbol("struct"), metaBuilderFactoryFor<StructMetaBuilder> ("struct"));
+        topLevelScope->setSymbolBinding(internSymbol("union"), metaBuilderFactoryFor<UnionMetaBuilder> ("union"));
+        topLevelScope->setSymbolBinding(internSymbol("class"), metaBuilderFactoryFor<ClassMetaBuilder> ("class"));
+        topLevelScope->setSymbolBinding(internSymbol("enum"), metaBuilderFactoryFor<EnumMetaBuilder> ("enum"));
+
         topLevelScope->setSymbolBinding(internSymbol("internal"), metaBuilderFactoryFor<InternalMetaBuilder> ("internal"));
         topLevelScope->setSymbolBinding(internSymbol("private"), metaBuilderFactoryFor<PrivateMetaBuilder> ("private"));
         topLevelScope->setSymbolBinding(internSymbol("protected"), metaBuilderFactoryFor<ProtectedMetaBuilder> ("protected"));
         topLevelScope->setSymbolBinding(internSymbol("public"), metaBuilderFactoryFor<PublicMetaBuilder> ("public"));
+
+        topLevelScope->setSymbolBinding(internSymbol("field"), metaBuilderFactoryFor<FieldMetaBuilder> ("field"));
+        topLevelScope->setSymbolBinding(internSymbol("global"), metaBuilderFactoryFor<GlobalMetaBuilder> ("global"));
+
+        topLevelScope->setSymbolBinding(internSymbol("compileTime"), metaBuilderFactoryFor<CompileTimeMetaBuilder> ("compileTime"));
 
         // Control flow macros.
         topLevelScope->setSymbolBinding(internSymbol("if:then:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr)> ("if:then:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &condition, const ASTNodePtr &trueExpression) {

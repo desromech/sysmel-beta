@@ -1,0 +1,42 @@
+#include "sysmel/BootstrapEnvironment/ASTTemplateNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/ASTVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+
+namespace SysmelMoebius
+{
+namespace BootstrapEnvironment
+{
+
+static BootstrapTypeRegistration<ASTTemplateNode> ASTTemplateNodeTypeRegistration;
+
+bool ASTTemplateNode::isASTTemplateNode() const
+{
+    return true;
+}
+
+AnyValuePtr ASTTemplateNode::accept(const ASTVisitorPtr &visitor)
+{
+    return visitor->visitTemplateNode(shared_from_this());
+}
+
+SExpression ASTTemplateNode::asSExpression() const
+{
+    SExpressionList argumentsSExpr;
+    argumentsSExpr.elements.reserve(arguments.size());
+    for(const auto &arg : arguments)
+        argumentsSExpr.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{SExpressionIdentifier{{"template"}},
+        sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
+        SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
+        name ? name->asSExpression() : nullptr,
+        argumentsSExpr,
+        body ? body->asSExpression() : nullptr,
+    }};
+}
+
+} // End of namespace BootstrapEnvironment
+} // End of namespace SysmelMoebius

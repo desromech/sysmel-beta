@@ -6,7 +6,6 @@
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include <algorithm>
-#include <iostream>
 
 namespace SysmelMoebius
 {

@@ -64,6 +64,7 @@ set(BootstrapEnvironment_Sources
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
     ASTStructNode.cpp
+    ASTTemplateNode.cpp
     ASTTypeConversionNode.cpp
     ASTTypeNode.cpp
     ASTUnionNode.cpp
@@ -194,6 +195,9 @@ set(BootstrapEnvironment_Sources
     StructMetaBuilder.cpp
     StructureType.cpp
     SubclassResponsibility.cpp
+    Template.cpp
+    TemplateInstance.cpp
+    TemplateMetaBuilder.cpp
     TemporaryReferenceType
     Type.cpp
     TypeConversionRule.cpp

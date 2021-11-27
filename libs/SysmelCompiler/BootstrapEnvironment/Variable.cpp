@@ -51,6 +51,18 @@ void Variable::setDefinitionParameters(const AnyValuePtr &definitionName, const 
     }
 }
 
+void Variable::setDeclarationNode(const ASTNodePtr &node)
+{
+    declarationNode = node;
+    declarationPosition = node->sourcePosition;
+}
+
+void Variable::setDefinitionNode(const ASTNodePtr &node)
+{
+    definitionNode = node;
+    definitionPosition = node->sourcePosition;
+}
+
 ASTNodePtr Variable::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     auto result = std::make_shared<ASTVariableAccessNode> ();

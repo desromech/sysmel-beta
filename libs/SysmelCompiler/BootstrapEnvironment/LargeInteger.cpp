@@ -4,7 +4,6 @@
 #include <math.h>
 #include <algorithm>
 #include <sstream>
-#include <iostream>
 
 namespace SysmelMoebius
 {

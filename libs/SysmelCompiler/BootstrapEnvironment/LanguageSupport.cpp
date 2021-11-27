@@ -55,6 +55,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
     result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
     result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions));
     result->defaultArgumentType = Type::getAnyValueType();
+    result->defaultTemplateArgumentType = Type::getAnyValueType();
     result->defaultResultType = Type::getAnyValueType();
     result->defaultVariableType = Type::getAnyValueType();
     result->literalValueInferrenceType = Type::getAnyValueType();

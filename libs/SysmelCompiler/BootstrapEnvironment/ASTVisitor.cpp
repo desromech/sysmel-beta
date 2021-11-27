@@ -15,6 +15,7 @@
 #include "sysmel/BootstrapEnvironment/ASTStructNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTUnionNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTClassNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTTemplateNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
@@ -242,6 +243,11 @@ AnyValuePtr ASTVisitor::visitUnionNode(const ASTUnionNodePtr &node)
 AnyValuePtr ASTVisitor::visitClassNode(const ASTClassNodePtr &node)
 {
     return visitTypeNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitTemplateNode(const ASTTemplateNodePtr &node)
+{
+    return visitProgramEntityNode(node);
 }
 
 AnyValuePtr ASTVisitor::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &)

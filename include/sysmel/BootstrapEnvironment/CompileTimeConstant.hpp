@@ -25,11 +25,21 @@ public:
 
     virtual void ensureSemanticAnalysis() override;
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
-    virtual AnyValuePtr getName() const override;
 
+    virtual AnyValuePtr getName() const override;
+    virtual void setName(const AnyValuePtr &newName);
+
+    void setDeclarationNode(const ASTNodePtr &node);
+    void setDefinitionNode(const ASTNodePtr &node);
 
 protected:
     friend class ASTSemanticAnalyzer;
+
+    ASTSourcePositionPtr declarationPosition;
+    ASTNodePtr declarationNode;
+
+    ASTSourcePositionPtr definitionPosition;
+    ASTNodePtr definitionNode;
 
     AnyValuePtr name;
     AnyValuePtr value;

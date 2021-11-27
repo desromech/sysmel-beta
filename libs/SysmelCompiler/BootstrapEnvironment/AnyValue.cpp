@@ -20,7 +20,6 @@
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
-#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -361,6 +360,11 @@ bool AnyValue::isASTFunctionNode() const
 }
 
 bool AnyValue::isASTMethodNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTTemplateNode() const
 {
     return false;
 }
@@ -937,7 +941,6 @@ std::string AnyValue::fullPrintString() const
 
 SExpression AnyValue::asSExpression() const
 {
-    std::cout << getType()->printString() << std::endl;
     SysmelSelfSubclassResponsibility();
 }
 
