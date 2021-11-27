@@ -28,6 +28,7 @@
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
 #include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
+#include "sysmel/BootstrapEnvironment/TupleType.hpp"
 
 #include <algorithm>
 
@@ -52,6 +53,8 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding("refFor:", &Type::refFor, MethodFlags::Pure),
             makeMethodBinding("tempRef", &Type::tempRef, MethodFlags::Pure),
             makeMethodBinding("tempRefFor:", &Type::tempRefFor, MethodFlags::Pure),
+
+            makeMethodBinding("&", &Type::appendTypeMakingTuple, MethodFlags::Pure),
         }},
     };
 }
@@ -855,6 +858,29 @@ PointerLikeTypePtr Type::tempRef()
 PointerLikeTypePtr Type::tempRefFor(const AnyValuePtr &addressSpace)
 {
     return TemporaryReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
+}
+
+TypePtr Type::asTupleType()
+{
+    return TupleType::make({shared_from_this()});
+}
+
+TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
+{
+    TypePtrList newElementTypes;
+    newElementTypes.push_back(shared_from_this());
+
+    if(nextType->isTupleType())
+    {
+        auto &nextTypes = std::static_pointer_cast<TupleType> (nextType)->elementTypes;
+        newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
+    }
+    else
+    {
+        newElementTypes.push_back(nextType);
+    }
+
+    return TupleType::make(newElementTypes);
 }
 
 } // End of namespace BootstrapEnvironment

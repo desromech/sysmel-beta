@@ -839,7 +839,42 @@ bool AnyValue::isUnionTypeValue() const
     return false;
 }
 
+bool AnyValue::isTupleType() const
+{
+    return false;
+}
+
+bool AnyValue::isTupleTypeValue() const
+{
+    return false;
+}
+
+bool AnyValue::isVariantType() const
+{
+    return false;
+}
+
+bool AnyValue::isVariantTypeValue() const
+{
+    return false;
+}
+
 bool AnyValue::isDerivedType() const
+{
+    return false;
+}
+
+bool AnyValue::isConstDerivedType() const
+{
+    return false;
+}
+
+bool AnyValue::isVolatileDerivedType() const
+{
+    return false;
+}
+
+bool AnyValue::isRestrictDerivedType() const
 {
     return false;
 }

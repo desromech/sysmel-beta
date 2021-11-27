@@ -748,8 +748,29 @@ public:
     // Is this an union type value?
     virtual bool isUnionTypeValue() const;
 
+    // Is this a tuple type?
+    virtual bool isTupleType() const;
+
+    // Is this a tuple value?
+    virtual bool isTupleTypeValue() const;
+
+    // Is this a variant type?
+    virtual bool isVariantType() const;
+
+    // Is this a variant type value?
+    virtual bool isVariantTypeValue() const;
+
     // Is this a derived type?
     virtual bool isDerivedType() const;
+
+    // Is this a const type?
+    virtual bool isConstDerivedType() const;
+
+    // Is this a volatile type?
+    virtual bool isVolatileDerivedType() const;
+
+    // Is this a restrict derived type?
+    virtual bool isRestrictDerivedType() const;
 
     // Is this a derived type value?
     virtual bool isDerivedTypeValue() const;

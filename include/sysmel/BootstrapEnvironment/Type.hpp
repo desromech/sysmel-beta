@@ -16,6 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
@@ -271,6 +272,12 @@ public:
     /// Makes a temporary reference type where I am the base type with the specified address space.
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace);
 
+    /// Wraps myself in a tuple type.
+    virtual TypePtr asTupleType();
+
+    /// Appends a type for making a tuple.
+    virtual TypePtr appendTypeMakingTuple(const TypePtr &nextType);
+    
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);

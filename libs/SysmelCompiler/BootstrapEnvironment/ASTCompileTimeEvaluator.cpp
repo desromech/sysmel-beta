@@ -46,6 +46,7 @@
 #include "sysmel/BootstrapEnvironment/Variable.hpp"
 
 #include "sysmel/BootstrapEnvironment/ClosureType.hpp"
+#include "sysmel/BootstrapEnvironment/TupleType.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
@@ -176,7 +177,26 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeLiteralArrayNode(const ASTMakeLite
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
-    assert(false);
+    AnyValuePtrList elements;
+    elements.reserve(node->elements.size());
+
+    for(auto &el : node->elements)
+    {
+        auto elementValue = visitNode(el);
+        if(!el->analyzedType->isVoidType())
+            elements.push_back(elementValue);
+    }
+
+    switch(elements.size())
+    {
+    case 0:
+        return getVoidConstant();
+    case 1:
+        return elements.back();
+    default:
+        assert(node->analyzedType->isTupleType());
+        return std::static_pointer_cast<TupleType> (node->analyzedType)->makeWithElements(elements);
+    }
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMessageSendNode(const ASTMessageSendNodePtr &node)

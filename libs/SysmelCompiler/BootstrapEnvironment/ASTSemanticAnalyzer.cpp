@@ -98,6 +98,7 @@
 #include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
+#include "sysmel/BootstrapEnvironment/TupleType.hpp"
 
 namespace SysmelMoebius
 {
@@ -686,7 +687,31 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
-    assert(false);
+    auto analyzedNode = std::make_shared<ASTMakeTupleNode> (*node);
+
+    TypePtrList elementTypes;
+    elementTypes.reserve(analyzedNode->elements.size());
+
+    bool hasError = false;
+    ASTNodePtr errorNode;
+    for(auto &el : analyzedNode->elements)
+    {
+        el = analyzeNodeIfNeededWithAutoType(el);
+        if(el->isASTErrorNode())
+        {
+            if(!hasError)
+                errorNode = el;
+            hasError = true;
+        }
+
+        elementTypes.push_back(el->analyzedType);
+    }
+
+    if(hasError)
+        return errorNode;
+
+    analyzedNode->analyzedType = TupleType::make(elementTypes);
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNodePtr &node)

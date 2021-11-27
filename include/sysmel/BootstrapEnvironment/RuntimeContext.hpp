@@ -86,6 +86,8 @@ protected:
     friend class PointerType;
     friend class ReferenceType;
     friend class TemporaryReferenceType;
+    friend class TupleType;
+    friend class VariantType;
     
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;
@@ -93,7 +95,8 @@ protected:
     std::map<std::pair<TypePtr, AnyValuePtr>, PointerTypePtr> pointerTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, ReferenceTypePtr> referenceTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, TemporaryReferenceTypePtr> temporaryReferenceTypeCache;
-    std::map<std::vector<TypePtr>, TupleTypePtr> tupleTypeCache;
+    std::map<TypePtrList, TupleTypePtr> tupleTypeCache;
+    std::map<TypePtrList, TupleTypePtr> variantTypeCache;
 };
 
 } // End of namespace BootstrapEnvironment

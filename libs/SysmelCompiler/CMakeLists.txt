@@ -199,6 +199,7 @@ set(BootstrapEnvironment_Sources
     TemplateInstance.cpp
     TemplateMetaBuilder.cpp
     TemporaryReferenceType
+    TupleType.cpp
     Type.cpp
     TypeConversionRule.cpp
     TypeMetaBuilder.cpp
