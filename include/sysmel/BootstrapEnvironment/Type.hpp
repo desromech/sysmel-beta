@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ModuleDefinedProgramEntity.hpp"
+#include "TypeDecorationFlags.hpp"
 #include <functional>
 
 namespace SysmelMoebius
@@ -277,7 +278,22 @@ public:
 
     /// Appends a type for making a tuple.
     virtual TypePtr appendTypeMakingTuple(const TypePtr &nextType);
-    
+
+    /// Adds the const decoration to this type.
+    virtual TypePtr withConst();
+
+    /// Adds the restrict decoration to this type.
+    virtual TypePtr withRestrict();
+
+    /// Adds the volatile decoration to this type.
+    virtual TypePtr withVolatile();
+
+    /// Adds the specified decorations to this type.
+    virtual TypePtr withDecorations(TypeDecorationFlags decorations);
+
+    /// Removes the decorations of this type.
+    virtual TypePtr asUndecoratedType();
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);

@@ -104,6 +104,7 @@ set(BootstrapEnvironment_Sources
     ContinueType.cpp
     ControlFlowEscapeType.cpp
     ConversionMethodTypeConversionRule.cpp
+    DecoratedType.cpp
     DeferredCompileTimeCodeFragment.cpp
     DerivedType.cpp
     CompilerObject.cpp

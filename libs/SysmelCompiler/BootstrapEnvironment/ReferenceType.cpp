@@ -70,6 +70,12 @@ PointerLikeTypePtr ReferenceType::tempRefFor(const AnyValuePtr &newAddressSpace)
     return baseType->refFor(newAddressSpace);
 }
 
+TypePtr ReferenceType::withDecorations(TypeDecorationFlags decorations)
+{
+    (void)decorations;
+    return shared_from_this();
+}
+
 std::string ReferenceType::printString() const
 {
     if(hasGenericAddressSpace())

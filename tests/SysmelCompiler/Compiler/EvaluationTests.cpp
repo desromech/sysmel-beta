@@ -228,6 +228,75 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(DecoratedTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                {
+                    auto a = evaluateString("Int32 const");
+                    auto b = evaluateString("Int32 const");
+                    CHECK(a->isDecoratedType());
+                    CHECK(a->isConstDecoratedType());
+                    CHECK(b->isDecoratedType());
+                    CHECK(b->isConstDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 volatile");
+                    auto b = evaluateString("Int32 volatile");
+                    CHECK(a->isDecoratedType());
+                    CHECK(a->isVolatileDecoratedType());
+                    CHECK(b->isDecoratedType());
+                    CHECK(b->isVolatileDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 restrict");
+                    auto b = evaluateString("Int32 restrict");
+                    CHECK(a->isDecoratedType());
+                    CHECK(a->isRestrictDecoratedType());
+                    CHECK(b->isDecoratedType());
+                    CHECK(b->isRestrictDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 const volatile");
+                    auto b = evaluateString("Int32 volatile const");
+                    CHECK(a->isDecoratedType());
+                    CHECK(a->isConstDecoratedType());
+                    CHECK(a->isVolatileDecoratedType());
+                    CHECK(b->isDecoratedType());
+                    CHECK(b->isConstDecoratedType());
+                    CHECK(b->isVolatileDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 ref const");
+                    auto b = evaluateString("Int32 ref");
+                    CHECK(a->isReferenceType());
+                    CHECK(!a->isDecoratedType());
+                    CHECK(!a->isConstDecoratedType());
+                    CHECK(!a->isVolatileDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 tempRef const");
+                    auto b = evaluateString("Int32 tempRef");
+                    CHECK(a->isTemporaryReferenceType());
+                    CHECK(!a->isDecoratedType());
+                    CHECK(!a->isConstDecoratedType());
+                    CHECK(!a->isVolatileDecoratedType());
+                    CHECK_EQUAL(a, b);
+                }
+            });
+        });
+    }
+
     TEST(TupleTypes)
     {
         RuntimeContext::create()->activeDuring([&](){

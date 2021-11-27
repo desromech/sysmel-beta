@@ -25,6 +25,7 @@
 #include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
 
+#include "sysmel/BootstrapEnvironment/DecoratedType.hpp"
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
 #include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
@@ -53,6 +54,10 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding("refFor:", &Type::refFor, MethodFlags::Pure),
             makeMethodBinding("tempRef", &Type::tempRef, MethodFlags::Pure),
             makeMethodBinding("tempRefFor:", &Type::tempRefFor, MethodFlags::Pure),
+
+            makeMethodBinding("const", &Type::withConst, MethodFlags::Pure),
+            makeMethodBinding("restrict", &Type::withRestrict, MethodFlags::Pure),
+            makeMethodBinding("volatile", &Type::withVolatile, MethodFlags::Pure),
 
             makeMethodBinding("&", &Type::appendTypeMakingTuple, MethodFlags::Pure),
         }},
@@ -881,6 +886,31 @@ TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
     }
 
     return TupleType::make(newElementTypes);
+}
+
+TypePtr Type::withConst()
+{
+    return withDecorations(TypeDecorationFlags::Const);
+}
+
+TypePtr Type::withRestrict()
+{
+    return withDecorations(TypeDecorationFlags::Restrict);
+}
+
+TypePtr Type::withVolatile()
+{
+    return withDecorations(TypeDecorationFlags::Volatile);
+}
+
+TypePtr Type::withDecorations(TypeDecorationFlags decorations)
+{
+    return DecoratedType::make(shared_from_this(), decorations);
+}
+
+TypePtr Type::asUndecoratedType()
+{
+    return shared_from_this();
 }
 
 } // End of namespace BootstrapEnvironment

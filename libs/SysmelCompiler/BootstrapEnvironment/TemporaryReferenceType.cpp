@@ -68,6 +68,12 @@ PointerLikeTypePtr TemporaryReferenceType::tempRefFor(const AnyValuePtr &newAddr
     return baseType->tempRefFor(newAddressSpace);
 }
 
+TypePtr TemporaryReferenceType::withDecorations(TypeDecorationFlags decorations)
+{
+    (void)decorations;
+    return shared_from_this();
+}
+
 std::string TemporaryReferenceType::printString() const
 {
     if(hasGenericAddressSpace())

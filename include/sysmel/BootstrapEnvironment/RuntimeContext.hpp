@@ -14,6 +14,7 @@ namespace BootstrapEnvironment
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LanguageSupport);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(DecoratedType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemporaryReferenceType);
@@ -83,6 +84,7 @@ protected:
     friend class FunctionType;
     friend class ClosureType;
     friend class MethodType;
+    friend class DecoratedType;
     friend class PointerType;
     friend class ReferenceType;
     friend class TemporaryReferenceType;
@@ -92,6 +94,7 @@ protected:
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;
 
+    std::map<std::pair<TypePtr, uint32_t>, DecoratedTypePtr> decoratedTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, PointerTypePtr> pointerTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, ReferenceTypePtr> referenceTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, TemporaryReferenceTypePtr> temporaryReferenceTypeCache;

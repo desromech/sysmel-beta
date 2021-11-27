@@ -763,17 +763,23 @@ public:
     // Is this a derived type?
     virtual bool isDerivedType() const;
 
-    // Is this a const type?
-    virtual bool isConstDerivedType() const;
-
-    // Is this a volatile type?
-    virtual bool isVolatileDerivedType() const;
-
-    // Is this a restrict derived type?
-    virtual bool isRestrictDerivedType() const;
-
     // Is this a derived type value?
     virtual bool isDerivedTypeValue() const;
+
+    // Is this a decorated type?
+    virtual bool isDecoratedType() const;
+
+    // Is this a decorated type value?
+    virtual bool isDecoratedTypeValue() const;
+
+    // Is this a const type?
+    virtual bool isConstDecoratedType() const;
+
+    // Is this a volatile type?
+    virtual bool isVolatileDecoratedType() const;
+
+    // Is this a restrict derived type?
+    virtual bool isRestrictDecoratedType() const;
 
     // Is this an enum type?
     virtual bool isEnumType() const;

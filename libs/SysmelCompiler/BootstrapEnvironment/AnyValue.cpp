@@ -864,17 +864,27 @@ bool AnyValue::isDerivedType() const
     return false;
 }
 
-bool AnyValue::isConstDerivedType() const
+bool AnyValue::isDecoratedType() const
 {
     return false;
 }
 
-bool AnyValue::isVolatileDerivedType() const
+bool AnyValue::isDecoratedTypeValue() const
 {
     return false;
 }
 
-bool AnyValue::isRestrictDerivedType() const
+bool AnyValue::isConstDecoratedType() const
+{
+    return false;
+}
+
+bool AnyValue::isVolatileDecoratedType() const
+{
+    return false;
+}
+
+bool AnyValue::isRestrictDecoratedType() const
 {
     return false;
 }

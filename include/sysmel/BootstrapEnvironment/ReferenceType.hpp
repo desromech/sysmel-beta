@@ -29,6 +29,7 @@ public:
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace) override;
     virtual PointerLikeTypePtr tempRef() override;
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace) override;
+    virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
