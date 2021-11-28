@@ -112,7 +112,9 @@ set(BootstrapEnvironment_Sources
     DivisionByZeroError.cpp
     DomainError.cpp
     DowncastTypeConversionRule.cpp
+    EnumConstant.cpp
     EnumMetaBuilder.cpp
+    EnumRawValueLookupScope.cpp
     EnumType.cpp
     Error.cpp
     Exception.cpp

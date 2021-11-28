@@ -24,6 +24,7 @@ public:
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     AnyValuePtr identifier;
+    AnyValuePtr binding;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -2,6 +2,10 @@
 #include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 
@@ -176,6 +180,22 @@ void ProgramEntity::addMacroFallbackMethodCategories(const MethodCategories &cat
 bool ProgramEntity::canHaveFields() const
 {
     return false;
+}
+
+void ProgramEntity::addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity)
+{
+    auto self = shared_from_this();
+    programEntity->addMacroMethodCategories({{"accessing", {
+        makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> (symbol, [=](const MacroInvocationContextPtr &macroContext) {
+            return macroContext->astBuilder->identifierWithBinding(symbol, self);
+        }, MethodFlags::Macro),
+    }}});
+}
+
+void ProgramEntity::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &type)
+{
+    (void)symbol;
+    (void)type;
 }
 
 } // End of namespace BootstrapEnvironment

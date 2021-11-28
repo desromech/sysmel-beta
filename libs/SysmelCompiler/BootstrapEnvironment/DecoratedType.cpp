@@ -60,27 +60,27 @@ bool DecoratedType::isNullableType() const
     return baseType->isNullableType();
 }
 
-bool DecoratedType::isImmutableType() const
+bool DecoratedType::isImmutableType()
 {
     return baseType->isImmutableType();
 }
 
-bool DecoratedType::hasTrivialInitialization() const
+bool DecoratedType::hasTrivialInitialization()
 {
     return baseType->hasTrivialInitialization();
 }
 
-bool DecoratedType::hasTrivialFinalization() const
+bool DecoratedType::hasTrivialFinalization()
 {
     return baseType->hasTrivialFinalization();
 }
 
-bool DecoratedType::hasTrivialCopyingFrom() const
+bool DecoratedType::hasTrivialCopyingFrom()
 {
     return baseType->hasTrivialCopyingFrom();
 }
 
-bool DecoratedType::hasTrivialMovingFrom() const
+bool DecoratedType::hasTrivialMovingFrom()
 {
     return baseType->hasTrivialMovingFrom();
 }

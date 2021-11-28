@@ -43,27 +43,27 @@ bool ArrayType::isNullableType() const
     return false;
 }
 
-bool ArrayType::isImmutableType() const
+bool ArrayType::isImmutableType()
 {
     return elementType->isImmutableType();
 }
 
-bool ArrayType::hasTrivialInitialization() const
+bool ArrayType::hasTrivialInitialization()
 {
     return elementType->hasTrivialInitialization();
 }
 
-bool ArrayType::hasTrivialFinalization() const
+bool ArrayType::hasTrivialFinalization()
 {
     return elementType->hasTrivialFinalization();
 }
 
-bool ArrayType::hasTrivialCopyingFrom() const
+bool ArrayType::hasTrivialCopyingFrom()
 {
     return elementType->hasTrivialCopyingFrom();
 }
 
-bool ArrayType::hasTrivialMovingFrom() const
+bool ArrayType::hasTrivialMovingFrom()
 {
     return elementType->hasTrivialMovingFrom();
 }

@@ -116,19 +116,19 @@ public:
     virtual bool isNullableType() const;
 
     /// Is this a value that cannot be modified?
-    virtual bool isImmutableType() const;
+    virtual bool isImmutableType();
 
     /// Is this a type with a trivial initialization?
-    virtual bool hasTrivialInitialization() const;
+    virtual bool hasTrivialInitialization();
 
     /// Is this a type with a trivial finalization?
-    virtual bool hasTrivialFinalization() const;
+    virtual bool hasTrivialFinalization();
 
     /// Is this a type with a trivial copy process?
-    virtual bool hasTrivialCopyingFrom() const;
+    virtual bool hasTrivialCopyingFrom();
 
     /// Is this a type with a trivial movement process?
-    virtual bool hasTrivialMovingFrom() const;
+    virtual bool hasTrivialMovingFrom();
 
     /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

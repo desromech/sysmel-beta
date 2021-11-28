@@ -29,7 +29,8 @@ SExpression ASTIdentifierReferenceNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"identifier"}},
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
-        identifier->asSExpression()}};
+        identifier->asSExpression(),
+        binding ? binding->asSExpression() : nullptr}};
 }
 
 ASTNodePtr ASTIdentifierReferenceNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)

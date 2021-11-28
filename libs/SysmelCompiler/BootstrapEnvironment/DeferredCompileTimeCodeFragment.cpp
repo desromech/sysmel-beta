@@ -44,7 +44,16 @@ AnyValuePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluate()
     return analyzeAndEvaluateWithExpectedType(AnyValue::__staticType__());
 }
 
+void DeferredCompileTimeCodeFragment::analyzeAndEvaluateAsValuesForEnumType(const EnumTypePtr &enumType)
+{
+    auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
+    analyzer->environment = environment;
+    analyzer->analyzeAndEvaluateAsValuesForEnumType(codeFragment, enumType);
 
+    auto analysisError = analyzer->makeCompilationError();
+    if(analysisError)
+        analysisError->signal();
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

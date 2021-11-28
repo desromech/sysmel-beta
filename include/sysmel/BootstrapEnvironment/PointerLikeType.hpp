@@ -23,11 +23,11 @@ public:
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
 
     virtual bool isNullableType() const override;
-    virtual bool isImmutableType() const override;
-    virtual bool hasTrivialInitialization() const override;
-    virtual bool hasTrivialFinalization() const override;
-    virtual bool hasTrivialCopyingFrom() const override;
-    virtual bool hasTrivialMovingFrom() const override;
+    virtual bool isImmutableType() override;
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialCopyingFrom() override;
+    virtual bool hasTrivialMovingFrom() override;
 
     bool hasGenericAddressSpace() const;
 

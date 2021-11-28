@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainMessageNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
@@ -32,6 +34,9 @@ public:
 
     virtual bool isASTBuilder() const override;
 
+    ASTIdentifierReferenceNodePtr identifier(const AnyValuePtr &identifier);
+    ASTIdentifierReferenceNodePtr identifierWithBinding(const AnyValuePtr &identifier, const AnyValuePtr &binding);
+    
     ASTLiteralValueNodePtr literal(const AnyValuePtr &value);
     ASTLiteralValueNodePtr literalSymbol(const std::string &symbol);
     ASTMessageChainNodePtr messageChain(const ASTNodePtr &receiver, const ASTNodePtrList &messages);

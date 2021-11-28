@@ -34,27 +34,27 @@ bool BootstrapType::isNullableType() const
     return staticMetadata->isNullableType;
 }
 
-bool BootstrapType::isImmutableType() const
+bool BootstrapType::isImmutableType()
 {
     return staticMetadata->isImmutableType;
 }
 
-bool BootstrapType::hasTrivialInitialization() const
+bool BootstrapType::hasTrivialInitialization()
 {
     return staticMetadata->hasTrivialInitialization;
 }
 
-bool BootstrapType::hasTrivialFinalization() const
+bool BootstrapType::hasTrivialFinalization()
 {
     return staticMetadata->hasTrivialFinalization;
 }
 
-bool BootstrapType::hasTrivialCopyingFrom() const
+bool BootstrapType::hasTrivialCopyingFrom()
 {
     return staticMetadata->hasTrivialCopyingFrom;
 }
 
-bool BootstrapType::hasTrivialMovingFrom() const
+bool BootstrapType::hasTrivialMovingFrom()
 {
     return staticMetadata->hasTrivialMovingFrom;
 }

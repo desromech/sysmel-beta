@@ -207,16 +207,25 @@ TypePtr Type::asReceiverType()
 
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
 {
+    if(isMetaType())
+        getInstanceType()->evaluateAllPendingBodyBlockCodeFragments();
+    evaluateAllPendingBodyBlockCodeFragments();
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
 AnyValuePtr Type::lookupLocalMacroSelector(const AnyValuePtr &selector)
 {
+    if(isMetaType())
+        getInstanceType()->evaluateAllPendingBodyBlockCodeFragments();
+    evaluateAllPendingBodyBlockCodeFragments();
     return macroMethodDictionary ? macroMethodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
 AnyValuePtr Type::lookupLocalMacroFallbackSelector(const AnyValuePtr &selector)
 {
+    if(isMetaType())
+        getInstanceType()->evaluateAllPendingBodyBlockCodeFragments();
+    evaluateAllPendingBodyBlockCodeFragments();
     return macroFallbackMethodDictionary ? macroFallbackMethodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
@@ -366,27 +375,27 @@ bool Type::isNullableType() const
     return true;
 }
 
-bool Type::isImmutableType() const
+bool Type::isImmutableType()
 {
     return false;
 }
 
-bool Type::hasTrivialInitialization() const
+bool Type::hasTrivialInitialization()
 {
     return false;
 }
 
-bool Type::hasTrivialFinalization() const
+bool Type::hasTrivialFinalization()
 {
     return false;
 }
 
-bool Type::hasTrivialCopyingFrom() const
+bool Type::hasTrivialCopyingFrom()
 {
     return false;
 }
 
-bool Type::hasTrivialMovingFrom() const
+bool Type::hasTrivialMovingFrom()
 {
     return false;
 }
@@ -585,6 +594,21 @@ void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisi
         signalNewWithMessage<Error> ("Expected a new symbol binding.");
 
     bindings[symbol] = std::make_pair(visibility, binding);
+    
+    if(symbol->isLiteralSymbol() && visibility == ProgramEntityVisibility::Public)
+    {
+        if(isMetaType())
+        {
+            if(!binding->isFieldVariable())
+                binding->addPublicAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
+            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
+        }
+        else
+        {
+            binding->addPublicAccessingMethodsWithSymbolOnto(symbol, getType());
+            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
+        }
+    }
 }
 
 void Type::addDefaultTypeConversionRules()

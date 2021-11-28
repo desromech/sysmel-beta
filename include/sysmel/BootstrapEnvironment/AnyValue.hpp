@@ -832,6 +832,9 @@ public:
     // Is this a compile time constant?
     virtual bool isCompileTimeConstant() const;
 
+    // Is this an enum constant?
+    virtual bool isEnumConstant() const;
+
     // Is this a template?
     virtual bool isTemplate() const;
 

@@ -979,6 +979,11 @@ bool AnyValue::isCompileTimeConstant() const
     return false;
 }
 
+bool AnyValue::isEnumConstant() const
+{
+    return false;
+}
+
 bool AnyValue::isTemplate() const
 {
     return false;

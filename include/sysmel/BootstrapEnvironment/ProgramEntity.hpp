@@ -101,6 +101,12 @@ public:
 
     /// Does this program entity support the definition of fields?
     virtual bool canHaveFields() const;
+
+    /// This makes accessor for public the program entity.
+    virtual void addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity);
+
+    /// This makes instance accessor for the public program entity.
+    virtual void addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &programEntity);
 };
 
 } // End of namespace BootstrapEnvironment

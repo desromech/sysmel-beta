@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageChainNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageChainMessageNode.hpp"
@@ -25,6 +26,23 @@ static BootstrapTypeRegistration<ASTBuilder> ASTBuilderTypeRegistration;
 bool ASTBuilder::isASTBuilder() const
 {
     return true;
+}
+
+ASTIdentifierReferenceNodePtr ASTBuilder::identifier(const AnyValuePtr &identifier)
+{
+    auto node = std::make_shared<ASTIdentifierReferenceNode> ();
+    node->sourcePosition = sourcePosition;
+    node->identifier = identifier;
+    return node;
+}
+
+ASTIdentifierReferenceNodePtr ASTBuilder::identifierWithBinding(const AnyValuePtr &identifier, const AnyValuePtr &binding)
+{
+    auto node = std::make_shared<ASTIdentifierReferenceNode> ();
+    node->sourcePosition = sourcePosition;
+    node->identifier = identifier;
+    node->binding = binding;
+    return node;
 }
 
 ASTLiteralValueNodePtr ASTBuilder::literal(const AnyValuePtr &value)

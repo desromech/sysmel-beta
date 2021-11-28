@@ -15,6 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Error);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationError);
 
 typedef std::function<ASTNodePtr ()> ASTNodeSemanticAnalysisBlock;
@@ -64,6 +65,8 @@ public:
     ASTNodePtr analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType);
     ASTNodePtr analyzeTemplateArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     ASTNodePtr analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType);
+    void analyzeAndEvaluateAsValuesForEnumType(const ASTNodePtr &node, const EnumTypePtr &enumType);
+    AnyValuePtr analyzeAndEvaluateValueForEnumType(const AnyValuePtr &lastValue, const ASTMakeAssociationNodePtr &node, const EnumTypePtr &enumType);
 
     virtual AnyValuePtr visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node) override;
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;

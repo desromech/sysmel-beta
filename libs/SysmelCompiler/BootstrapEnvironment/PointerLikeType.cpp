@@ -24,27 +24,27 @@ bool PointerLikeType::isNullableType() const
     return false;
 }
 
-bool PointerLikeType::isImmutableType() const
+bool PointerLikeType::isImmutableType()
 {
     return true;
 }
 
-bool PointerLikeType::hasTrivialInitialization() const
+bool PointerLikeType::hasTrivialInitialization()
 {
     return true;
 }
 
-bool PointerLikeType::hasTrivialFinalization() const
+bool PointerLikeType::hasTrivialFinalization()
 {
     return true;
 }
 
-bool PointerLikeType::hasTrivialCopyingFrom() const
+bool PointerLikeType::hasTrivialCopyingFrom()
 {
     return true;
 }
 
-bool PointerLikeType::hasTrivialMovingFrom() const
+bool PointerLikeType::hasTrivialMovingFrom()
 {
     return true;
 }

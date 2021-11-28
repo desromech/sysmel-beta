@@ -84,6 +84,7 @@
 #include "sysmel/BootstrapEnvironment/CompileTimeConstant.hpp"
 
 #include "sysmel/BootstrapEnvironment/EnumType.hpp"
+#include "sysmel/BootstrapEnvironment/EnumRawValueLookupScope.hpp"
 #include "sysmel/BootstrapEnvironment/ClassType.hpp"
 #include "sysmel/BootstrapEnvironment/StructureType.hpp"
 #include "sysmel/BootstrapEnvironment/UnionType.hpp"
@@ -99,7 +100,9 @@
 #include "sysmel/BootstrapEnvironment/LiteralDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/LanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/LiteralBoolean.hpp"
+#include "sysmel/BootstrapEnvironment/LiteralInteger.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveBooleanType.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveNumberType.hpp"
 #include "sysmel/BootstrapEnvironment/TupleType.hpp"
 
 namespace SysmelMoebius
@@ -642,7 +645,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node)
 {
-    auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(node->identifier);
+    auto boundSymbol = node->binding ? node->binding : environment->lexicalScope->lookupSymbolRecursively(node->identifier);
     if(!boundSymbol)
     {
         if(environment->isLiteralArrayAnalysisEnvironment)
@@ -1904,6 +1907,65 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
     analyzedNode->analyzedProgramEntity = enumType;
     analyzedNode->analyzedType = enumType->getType();
     return analyzedNode;
+}
+
+void ASTSemanticAnalyzer::analyzeAndEvaluateAsValuesForEnumType(const ASTNodePtr &node, const EnumTypePtr &enumType)
+{
+    if(node->isASTMakeDictionaryNode())
+    {
+        auto makeDictionaryNode = std::static_pointer_cast<ASTMakeDictionaryNode> (node);
+        AnyValuePtr lastValue = nullptr;
+        for(auto &element : makeDictionaryNode->elements)
+        {
+            assert(element->isASTMakeAssociationNode());
+            lastValue = analyzeAndEvaluateValueForEnumType(lastValue, std::static_pointer_cast<ASTMakeAssociationNode> (element), enumType);
+        }
+
+        return;
+    }
+
+    auto analyzedNode = analyzeNodeIfNeededWithAutoType(node);
+    enumType->addValues(analyzedNode, evaluateInCompileTime(analyzedNode));
+}
+
+AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyValuePtr &lastValue, const ASTMakeAssociationNodePtr &node, const EnumTypePtr &enumType)
+{
+    auto analyzedKey = analyzeNodeIfNeededWithAutoType(node->key);
+    auto key = evaluateInCompileTime(analyzedKey);
+
+    auto value = lastValue;
+    auto valueNode = node->value;
+    auto baseType = enumType->getBaseType();
+    if(!valueNode)
+    {
+        if(baseType->isSubtypeOf(LiteralNumber::__staticType__()) ||
+            baseType->isSubtypeOf(PrimitiveNumberType::__staticType__()))
+        {
+            auto builder = std::make_shared<ASTBuilder> ();
+            builder->sourcePosition = node->sourcePosition;
+            valueNode = builder->sendToWithArguments(builder->literalSymbol("+"), builder->literal(lastValue), {
+                builder->literal(LiteralInteger::makeFor(LargeInteger{1}))
+            });
+        }
+    }
+
+    if(valueNode)
+    {
+        auto enumScope = std::make_shared<EnumRawValueLookupScope> ();
+        enumScope->parent = environment->lexicalScope;
+        enumScope->enumType = enumType;
+
+        auto valueEnvironment = environment->copyWithLexicalScope(LexicalScope::makeWithParent(enumScope));
+        auto analyzedValueNode = withEnvironmentDoAnalysis(valueEnvironment, [&](){
+            return analyzeNodeIfNeededWithExpectedType(valueNode, baseType);
+        });
+        
+        if(!analyzedValueNode->isASTErrorNode())
+            value = evaluateInCompileTime(analyzedValueNode);
+    }
+
+    enumType->addValue(node, key, value);
+    return value;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)

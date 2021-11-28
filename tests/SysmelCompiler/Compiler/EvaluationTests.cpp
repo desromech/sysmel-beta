@@ -1101,11 +1101,16 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDeclaration = evaluateString("public enum TestEnum.");
                 CHECK(enumDeclaration->isEnumType());
                 
-                auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{}; definition: {}.");
+                auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{First: 1. Second:. #Third : 3 . Fifth: Third + 2}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
                 CHECK_EQUAL(UInt32::__staticType__(), std::static_pointer_cast<EnumType> (enumDefinition)->getBaseType());
                 CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<EnumType> (enumDefinition)->getDefinitionModule());
+
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("TestEnum First"));
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("TestEnum Second"));
+                CHECK_EQUAL(3u, evaluateStringWithValueOfType<uint32_t> ("TestEnum Third"));
+                CHECK_EQUAL(5u, evaluateStringWithValueOfType<uint32_t> ("TestEnum Fifth"));
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });

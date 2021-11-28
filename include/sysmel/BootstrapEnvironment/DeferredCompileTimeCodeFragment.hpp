@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumType);
 
 /**
  * I am a compile time code fragment whose semantic analysis and evaluation is deferred into different phases of the compile time process.
@@ -25,6 +26,7 @@ public:
     AnyValuePtr analyzeAndEvaluateWithExpectedType(const TypePtr &expectedType);
     TypePtr analyzeAndEvaluateAsTypeExpression();
     AnyValuePtr analyzeAndEvaluate();
+    void analyzeAndEvaluateAsValuesForEnumType(const EnumTypePtr &enumType);
 
     ASTNodePtr codeFragment;
     ASTAnalysisEnvironmentPtr environment;

@@ -29,11 +29,11 @@ public:
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
 
     virtual bool isNullableType() const override;
-    virtual bool isImmutableType() const override;
-    virtual bool hasTrivialInitialization() const override;
-    virtual bool hasTrivialFinalization() const override;
-    virtual bool hasTrivialCopyingFrom() const override;
-    virtual bool hasTrivialMovingFrom() const override;
+    virtual bool isImmutableType() override;
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialCopyingFrom() override;
+    virtual bool hasTrivialMovingFrom() override;
 
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
