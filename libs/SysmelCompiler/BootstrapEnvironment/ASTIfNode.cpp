@@ -32,5 +32,13 @@ SExpression ASTIfNode::asSExpression() const
     }};
 }
 
+void ASTIfNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(condition) aBlock(condition);
+    if(trueExpression) aBlock(trueExpression);
+    if(falseExpression) aBlock(falseExpression);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

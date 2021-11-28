@@ -20,12 +20,14 @@ public:
     static constexpr char const __typeName__[] = "ASTFunctionalNode";
 
     virtual bool isASTFunctionalNode() const override;
+    
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     bool isRegisteredInLexicalScope() const;
     
     ASTNodePtr name;
-    ASTNodePtr resultType;
     ASTNodePtrList arguments;
+    ASTNodePtr resultType;
     ASTNodePtr body;
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;

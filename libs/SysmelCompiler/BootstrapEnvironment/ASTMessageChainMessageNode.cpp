@@ -46,5 +46,13 @@ ASTMessageSendNodePtr ASTMessageChainMessageNode::asMessageSendNodeWithReceiver(
     return result;
 }
 
+void ASTMessageChainMessageNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(selector) aBlock(selector);
+    for(auto &arg : arguments)
+        aBlock(arg);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

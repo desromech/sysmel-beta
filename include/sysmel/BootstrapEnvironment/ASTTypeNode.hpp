@@ -20,6 +20,8 @@ public:
 
     virtual bool isASTTypeNode() const override;
 
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+
     ASTNodePtr name;
     ASTNodePtr body;
     ASTNodePtr alignment;

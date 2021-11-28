@@ -32,5 +32,12 @@ SExpression ASTEnumNode::asSExpression() const
     }};
 }
 
+void ASTEnumNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(valueType) aBlock(valueType);
+    if(values) aBlock(values);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

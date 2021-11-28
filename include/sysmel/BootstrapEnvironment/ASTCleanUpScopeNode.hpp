@@ -24,6 +24,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual ASTNodePtr asInlinedBlockBodyNode() override;
+    
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     ASTNodePtr body;
 

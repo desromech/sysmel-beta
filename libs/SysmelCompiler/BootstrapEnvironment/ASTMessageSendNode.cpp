@@ -101,5 +101,14 @@ ASTNodePtr ASTMessageSendNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzer
     return SuperType::parseAsArgumentNodeWith(semanticAnalyzer);
 }
 
+void ASTMessageSendNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(selector) aBlock(selector);
+    if(receiver) aBlock(receiver);
+    for(auto &arg : arguments)
+        aBlock(arg);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

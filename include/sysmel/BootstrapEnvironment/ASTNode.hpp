@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CompilerObject.hpp"
+#include <functional>
 
 namespace SysmelMoebius
 {
@@ -78,6 +79,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTImplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReinterpretCastNode);
 
+typedef std::function<void (const ASTNodePtr &)> ASTIterationBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -103,6 +105,11 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor);
 
     virtual std::string printString() const;
+
+    virtual ASTNodePtrList children();
+    virtual void childrenDo(const ASTIterationBlock &aBlock);
+    virtual void allChildrenDo(const ASTIterationBlock &aBlock);
+    virtual void withAllChildrenDo(const ASTIterationBlock &aBlock);
 
     ASTSourcePositionPtr sourcePosition;
     TypePtr analyzedType;

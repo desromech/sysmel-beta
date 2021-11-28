@@ -29,5 +29,14 @@ SExpression ASTCompileTimeConstantNode::asSExpression() const
         value ? value->asSExpression() : nullptr,
     }};
 }
+
+void ASTCompileTimeConstantNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(name) aBlock(name);
+    if(type) aBlock(type);
+    if(value) aBlock(value);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

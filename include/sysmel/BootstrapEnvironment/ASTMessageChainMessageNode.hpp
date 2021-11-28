@@ -20,6 +20,8 @@ public:
     virtual bool isASTMessageChainMessageNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+    
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     ASTMessageSendNodePtr asMessageSendNodeWithReceiver(const ASTNodePtr &newReceiver);
 

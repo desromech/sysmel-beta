@@ -18,6 +18,8 @@ public:
     static constexpr char const __typeName__[] = "ASTCastNode";
 
     virtual bool isASTCastNode() const override;
+    
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     ASTNodePtr expression;
     ASTNodePtr targetType;

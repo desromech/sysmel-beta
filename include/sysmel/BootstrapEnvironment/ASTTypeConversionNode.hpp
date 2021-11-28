@@ -19,6 +19,8 @@ public:
 
     virtual bool isASTTypeConversionNode() const override;
 
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+
     ASTNodePtr expression;
 };
 

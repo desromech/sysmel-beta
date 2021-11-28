@@ -25,6 +25,8 @@ public:
 
     virtual ASTNodePtr asInlinedBlockBodyNode() override;
 
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+
     ASTNodePtr body;
     LexicalScopePtr analyzedScope;
 };

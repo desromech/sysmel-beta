@@ -23,6 +23,8 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+
     ASTNodePtr name;
     ASTNodePtr body;
 };

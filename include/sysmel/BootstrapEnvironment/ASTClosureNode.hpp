@@ -29,6 +29,8 @@ public:
     virtual bool isASTClosureNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+    
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     ASTClosureNodeKind kind = ASTClosureNodeKind::Function;
     ASTNodePtrList arguments;

@@ -39,5 +39,14 @@ SExpression ASTSequenceNode::asSExpression() const
     return sexpr;
 }
 
+void ASTSequenceNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    for(auto &pragma : pragmas)
+        aBlock(pragma);
+    for(auto &expr : expressions)
+        aBlock(expr);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

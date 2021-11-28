@@ -14,5 +14,14 @@ bool ASTVariableNode::isASTVariableNode() const
     return true;
 }
 
+void ASTVariableNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(name) aBlock(name);
+    if(type) aBlock(type);
+    if(alignment) aBlock(alignment);
+    if(initialValue) aBlock(initialValue);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

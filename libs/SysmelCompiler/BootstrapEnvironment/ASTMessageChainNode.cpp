@@ -36,5 +36,13 @@ SExpression ASTMessageChainNode::asSExpression() const
     }};
 }
 
+void ASTMessageChainNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(receiver) aBlock(receiver);
+    for(auto &message : messages)
+        aBlock(message);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -73,6 +73,37 @@ std::string ASTNode::printString() const
     return sexpressionToPrettyString(asSExpression());
 }
 
+ASTNodePtrList ASTNode::children()
+{
+    ASTNodePtrList result;
+    childrenDo([&](const ASTNodePtr &child) {
+        if(child)
+            result.push_back(child);
+    });
+
+    return result;
+}
+
+void ASTNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    (void)aBlock;
+}
+
+void ASTNode::allChildrenDo(const ASTIterationBlock &aBlock)
+{
+    ASTIterationBlock recursiveBlock = [&](const ASTNodePtr &child) {
+        aBlock(child);
+        child->childrenDo(recursiveBlock);
+    };
+
+    childrenDo(recursiveBlock);
+}
+
+void ASTNode::withAllChildrenDo(const ASTIterationBlock &aBlock)
+{
+    aBlock(shared_from_this());
+    allChildrenDo(aBlock);
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

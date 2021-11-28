@@ -36,5 +36,11 @@ ASTNodePtr ASTLexicalScopeNode::asInlinedBlockBodyNode()
     return body ? body->asInlinedBlockBodyNode() : nullptr;
 }
 
+void ASTLexicalScopeNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(body) aBlock(body);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

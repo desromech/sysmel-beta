@@ -27,8 +27,16 @@ SExpression ASTProgramEntityExtensionNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"extension"}},
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
+        programEntity->asSExpression(),
         body->asSExpression(),
     }};
+}
+
+void ASTProgramEntityExtensionNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    if(programEntity) aBlock(programEntity);
+    if(body) aBlock(body);
 }
 
 } // End of namespace BootstrapEnvironment

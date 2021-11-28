@@ -35,5 +35,12 @@ SExpression ASTMakeLiteralArrayNode::asSExpression() const
     return sexpr;
 }
 
+void ASTMakeLiteralArrayNode::childrenDo(const ASTIterationBlock &aBlock)
+{
+    SuperType::childrenDo(aBlock);
+    for(auto &el : elements)
+        aBlock(el);
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

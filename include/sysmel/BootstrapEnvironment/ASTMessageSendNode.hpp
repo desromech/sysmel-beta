@@ -22,6 +22,8 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
+    virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     bool isPureCompileTimeLiteralMessage() const;
