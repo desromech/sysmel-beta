@@ -85,7 +85,7 @@ int main(int argc, const char *argv[])
 {
     int exitCode = 0;
 
-    RuntimeContext::create()->activeDuring([&](){
+    RuntimeContext::createForScripting()->activeDuring([&](){
         ScriptModule::create()->activeDuring([&](){
             for(int i = 1; i < argc; ++i)
             {

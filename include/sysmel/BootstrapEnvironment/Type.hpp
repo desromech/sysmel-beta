@@ -46,6 +46,8 @@ public:
     static TypePtr getVoidType();
     static TypePtr getAutoType();
     static TypePtr getNamespaceType();
+    static TypePtr getIntPointerType();
+    static TypePtr getUIntPointerType();
 
     static TypePtr getPragmaType();
     static TypePtr getArgumentVariableType();

@@ -22,12 +22,12 @@ SUITE(BootstrapModule)
 {
     TEST(Default)
     {
-        CHECK(RuntimeContext::create()->getBootstrapModule());
+        CHECK(RuntimeContext::createForScripting()->getBootstrapModule());
     }
 
     TEST(CoreTypes)
     {
-        auto context = RuntimeContext::create();
+        auto context = RuntimeContext::createForScripting();
         context->activeDuring([&](){
             auto module = context->getBootstrapModule();
 

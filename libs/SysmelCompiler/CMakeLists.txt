@@ -193,6 +193,7 @@ set(BootstrapEnvironment_Sources
     ResultTypeInferenceSlot.cpp
     ReturnType.cpp
     RuntimeContext.cpp
+    RuntimeContextTargetDescription.cpp
     ScriptModule.cpp
     SemanticError.cpp
     SExpression.cpp

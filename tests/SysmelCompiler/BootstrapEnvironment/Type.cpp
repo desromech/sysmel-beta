@@ -13,7 +13,7 @@ SUITE(Type)
 {
     TEST(RankToMatchType)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_EQUAL(0, LiteralPositiveInteger::__staticType__()->rankToMatchType(LiteralPositiveInteger::__staticType__()));
             CHECK_EQUAL(1, LiteralInteger::__staticType__()->rankToMatchType(LiteralPositiveInteger::__staticType__()));
             CHECK_EQUAL(2, LiteralInteger::__staticType__()->rankToMatchType(LiteralCharacter::__staticType__()));

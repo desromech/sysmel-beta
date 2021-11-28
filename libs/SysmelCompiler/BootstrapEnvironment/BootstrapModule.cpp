@@ -89,6 +89,13 @@ void BootstrapModule::initialize()
         if(!metadata->sysmelLanguageTopLevelName.empty())
             bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol(metadata->sysmelLanguageTopLevelName), ProgramEntityVisibility::Public, bootstrapType);
     }
+
+    // IntPointer and UIntPointer
+    bootstrapEnvironmentNamespace->bindSymbolWithVisibility(internSymbol("IntPointer"), ProgramEntityVisibility::Public, Type::getIntPointerType());
+    bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol("IntPointer"), ProgramEntityVisibility::Public, Type::getIntPointerType());
+
+    bootstrapEnvironmentNamespace->bindSymbolWithVisibility(internSymbol("UIntPointer"), ProgramEntityVisibility::Public, Type::getUIntPointerType());
+    bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol("UIntPointer"), ProgramEntityVisibility::Public, Type::getUIntPointerType());
 }
 
 bool BootstrapModule::isBootstrapModule() const

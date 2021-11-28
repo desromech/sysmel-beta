@@ -2,6 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_RUNTIME_CONTEXT_HPP
 #pragma once
 
+#include "RuntimeContextTargetDescription.hpp"
 #include "ProgramEntity.hpp"
 #include "Exception.hpp"
 #include <map>
@@ -36,7 +37,8 @@ class RuntimeContext : public SubtypeOf<ProgramEntity, RuntimeContext>
 public:
     static constexpr char const __typeName__[] = "RuntimeContext";
 
-    static RuntimeContextPtr create();
+    static RuntimeContextPtr createForTarget(const RuntimeContextTargetDescription &target);
+    static RuntimeContextPtr createForScripting();
 
     static RuntimeContextPtr getActive();
     static void setActive(const RuntimeContextPtr &aRuntimeContext);
@@ -90,6 +92,11 @@ public:
         return &memoryPool;
     }
 
+    const RuntimeContextTargetDescription &getTargetDescription()
+    {
+        return target;
+    }
+
 protected:
     friend class FunctionType;
     friend class ClosureType;
@@ -104,6 +111,7 @@ protected:
     friend class LiteralSymbol;
     
     RefCountedObjectMemoryPool memoryPool;
+    RuntimeContextTargetDescription target;
 
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;

@@ -220,7 +220,7 @@ SUITE(LargeInteger)
 
     TEST(DivisionByZeroError)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_THROW(LargeInteger{1}/LargeInteger{0}, ExceptionWrapper);
             CHECK_THROW(LargeInteger{0}/LargeInteger{0}, ExceptionWrapper);
         });

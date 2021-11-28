@@ -2,6 +2,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "IntrinsicPrimitiveIntegerMethods.hpp"
 
 namespace SysmelMoebius
@@ -22,6 +23,17 @@ static BootstrapTypeRegistration<Int64> Int64TypeRegistration;
 bool PrimitiveIntegerType::isPrimitiveIntegerTypeValue() const
 {
     return true;
+}
+
+
+TypePtr Type::getIntPointerType()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerSize == 4 ? Int32::__staticType__() : Int64::__staticType__();
+}
+
+TypePtr Type::getUIntPointerType()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerSize == 4 ? UInt32::__staticType__() : UInt64::__staticType__();
 }
 
 MethodCategories UInt8::__instanceMethods__()

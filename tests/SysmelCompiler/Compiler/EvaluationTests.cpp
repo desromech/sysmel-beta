@@ -34,7 +34,7 @@ SUITE(SysmelCompileTimeEvaluation)
 {
     TEST(Literals)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int> ("0"));
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int> ("1"));
@@ -91,7 +91,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(CompileTimeTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("LiteralValue")->isType());
                 CHECK(evaluateString("LiteralInteger")->isType());
@@ -105,7 +105,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PrimitiveTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("Boolean8")->isType());
 
@@ -126,13 +126,16 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK(evaluateString("Float16")->isType());
                 CHECK(evaluateString("Float32")->isType());
                 CHECK(evaluateString("Float64")->isType());
+
+                CHECK(evaluateString("UIntPointer")->isType());
+                CHECK(evaluateString("IntPointer")->isType());
             });
         });
     }
 
     TEST(Arithmetic)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(2, evaluateStringWithValueOfType<int> ("1 + 1"));
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int> ("1 - 1"));
@@ -152,7 +155,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(ImmutableLocalVariable)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a := 42. a"));
@@ -167,7 +170,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(MutableLocalVariable)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a mutable := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("let a mutable := 42. a"));
@@ -183,7 +186,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PointerLikeTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Int32 pointer");
@@ -254,7 +257,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(DecoratedTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Int32 const");
@@ -323,7 +326,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(ArrayTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Int32 array");
@@ -346,7 +349,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(TupleTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Int32 & Void");
@@ -401,7 +404,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(VariantTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Int32 | Void");
@@ -460,7 +463,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(FunctionTypes)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 {
                     auto a = evaluateString("Void => Void");
@@ -547,7 +550,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(ImmutableGlobalVariable)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("public global A := 42"));
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("A"));
@@ -557,7 +560,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(NullaryFunction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("function f() => LiteralInteger := 42")->isClosureTypeValue());
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("function f() => LiteralInteger := 42. f()."));
@@ -570,7 +573,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PublicNullaryFunction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("public function f() => LiteralInteger := 42")->isFunctionTypeValue());
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<int> ("f()."));
@@ -583,7 +586,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(SingleArgumentFunction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isClosureTypeValue());
                 CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("function plusOne(x: LiteralInteger) => LiteralInteger := x + 1. plusOne(42)."));
@@ -596,7 +599,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PublicSingleArgumentFunction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("public function plusOne(x: LiteralInteger) => LiteralInteger := x + 1")->isFunctionTypeValue());
                 CHECK_EQUAL(43, evaluateStringWithValueOfType<int> ("plusOne(42)."));
@@ -609,7 +612,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PrimitiveInt32Sum)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("public function sum(a: Int32, b: Int32) => Int32 := a + b")->isFunctionTypeValue());
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("sum(Int32(), Int32())."));
@@ -626,7 +629,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PrimitiveTypeConstruction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("Boolean8(false)"));
                 CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("Boolean8(true)"));
@@ -679,7 +682,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PrimitiveTypeImplicitCastConstruction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false implicitCastTo: Boolean8"));
                 CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("true implicitCastTo: Boolean8"));
@@ -735,7 +738,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(PrimitiveTypeExplicitCastConstruction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(false, evaluateStringWithValueOfType<bool> ("false castTo: Boolean8"));
                 CHECK_EQUAL(true, evaluateStringWithValueOfType<bool> ("true castTo: Boolean8"));
@@ -840,7 +843,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(ImmutableCopyConstructor)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("Int8(Int8(-1))"));
                 CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("Int16(Int16(-1))"));
@@ -861,7 +864,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(If)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("public function select(condition, a, b) := if: condition then: a else: b")->isFunctionTypeValue());
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("select(true, 1, 2)"));
@@ -876,7 +879,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Return)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString("public function returnObject(object) := {return: object}")->isFunctionTypeValue());
                 CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("returnObject(1)"));
@@ -899,7 +902,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(WhileDoContinueWith)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString(
 "public function sumNaturals(n) := {\n"
@@ -948,7 +951,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(DoWhileContinueWith)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK(evaluateString(
 "public function sumNaturals(n) := {\n"
@@ -997,7 +1000,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Namespace)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto first = evaluateString("namespace TestNamespace");
                 CHECK(first->isNamespace());
@@ -1016,7 +1019,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(NamespaceMethod)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 evaluateString("namespace TestNamespace definition: { public method square: x := x*x }");
 
@@ -1029,7 +1032,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Struct)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDeclaration = evaluateString("public struct TestStruct.");
                 CHECK(structDeclaration->isStructureType());
@@ -1046,7 +1049,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Union)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto unionDeclaration = evaluateString("public union TestUnion.");
                 CHECK(unionDeclaration->isUnionType());
@@ -1063,7 +1066,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Class)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto classDeclaration = evaluateString("public class TestClass.");
                 CHECK(classDeclaration->isClassType());
@@ -1080,7 +1083,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(SuperClass)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto superclass = evaluateString("public class SuperClass definition: {}.");
                 CHECK(superclass->isClassType());
@@ -1096,7 +1099,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(Enum)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto enumDeclaration = evaluateString("public enum TestEnum.");
                 CHECK(enumDeclaration->isEnumType());
@@ -1119,7 +1122,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(StructField)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {public field int32Field type: Int32}.");
                 CHECK(structDefinition->isStructureType());
@@ -1134,7 +1137,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(StructMethod)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {public method square: x := x*x}.");
                 CHECK(structDefinition->isStructureType());
@@ -1146,7 +1149,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(StructExtensionMethod)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
@@ -1161,7 +1164,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(EmptyStructBasicNewValue)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
@@ -1176,7 +1179,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(EmptyStructNewValue)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
@@ -1191,7 +1194,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(EmptyStructNewValue2)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
@@ -1206,7 +1209,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(CompileTimeConstant)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto compileTimeConstant = evaluateString("public compileTime constant Test := 42.");
                 CHECK(compileTimeConstant->isCompileTimeConstant());
@@ -1217,7 +1220,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(TemplateStructure)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 auto templateEntity = evaluateString(
 "public template ValueBox (VT: Type) := struct definition: {\n"
@@ -1244,7 +1247,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
     TEST(ClosureArgumentPassing)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
                 CHECK((std::vector<int> {1, 4, 9, 16, 25}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) collect: (function(x) := x*x)"));
                 CHECK((std::vector<int> {2, 4}) == evaluateStringWithValueOfType<std::vector<int>> ("#(1 2 3 4 5) select: (function(x) := x%2 = 0)"));

@@ -10,7 +10,7 @@ SUITE(LiteralNumber)
 {
     TEST(LiteralPositiveIntegerTestingMethods)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralNumber());
             CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralInteger());
             CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralPositiveInteger());
@@ -25,7 +25,7 @@ SUITE(LiteralNumber)
 
     TEST(LiteralNegativeIntegerTestingMethods)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNumber());
             CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralInteger());
             CHECK(!LiteralInteger::makeFor(LargeInteger{-1})->isLiteralPositiveInteger());
@@ -35,7 +35,7 @@ SUITE(LiteralNumber)
 
     TEST(Negated)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer
             CHECK_EQUAL(LargeInteger{0}, wrapValue(LargeInteger{0})->perform<LargeInteger> ("negated"));
             CHECK_EQUAL(LargeInteger{-1}, wrapValue(LargeInteger{1})->perform<LargeInteger> ("negated"));
@@ -64,7 +64,7 @@ SUITE(LiteralNumber)
 
     TEST(Addition)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer - Integer
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("+", 0));
             CHECK_EQUAL(1, wrapValue(1)->perform<int> ("+", 0));
@@ -126,7 +126,7 @@ SUITE(LiteralNumber)
 
     TEST(Subtraction)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer - Integer
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("-", 0));
             CHECK_EQUAL(1, wrapValue(1)->perform<int> ("-", 0));
@@ -179,7 +179,7 @@ SUITE(LiteralNumber)
 
     TEST(Multiplication)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer - Integer
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("*", 0));
             CHECK_EQUAL(0, wrapValue(1)->perform<int> ("*", 0));
@@ -268,7 +268,7 @@ SUITE(LiteralNumber)
 
     TEST(Division)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer - Integer => Integer
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("/", 1));
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("/", -1));
@@ -330,7 +330,7 @@ SUITE(LiteralNumber)
 
     TEST(IntegerDivision)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("//", 1));
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("//", -1));
 
@@ -342,7 +342,7 @@ SUITE(LiteralNumber)
 
     TEST(IntegerRemainder)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", 1));
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("%", -1));
 
@@ -380,7 +380,7 @@ SUITE(LiteralNumber)
 
     TEST(IntegerRemainder2)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", 1));
             CHECK_EQUAL(0, wrapValue(0)->perform<int> ("\\\\", -1));
 
@@ -418,7 +418,7 @@ SUITE(LiteralNumber)
 
     TEST(Factorial)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK_EQUAL(LargeInteger{1}, wrapValue(LargeInteger{0})->perform<LargeInteger> ("factorial"));
             CHECK_EQUAL(LargeInteger{2}, wrapValue(LargeInteger{2})->perform<LargeInteger> ("factorial"));
             CHECK_EQUAL(LargeInteger{6}, wrapValue(LargeInteger{3})->perform<LargeInteger> ("factorial"));
@@ -440,7 +440,7 @@ SUITE(LiteralNumber)
 
     TEST(Comparisons)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             // Integer - Integer
             CHECK_EQUAL(false, wrapValue(-1)->perform<bool> ("=", 0));
             CHECK_EQUAL(true, wrapValue(0)->perform<bool> ("=", 0));

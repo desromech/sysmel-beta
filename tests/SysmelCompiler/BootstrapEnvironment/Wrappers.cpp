@@ -8,7 +8,7 @@ SUITE(BootstrapModule)
 {
     TEST(Integer)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(wrapValue(0)->isLiteralPositiveInteger());
             CHECK_EQUAL(0, wrapValue(0)->unwrapAsInt32());
             CHECK_EQUAL(0, unwrapValue<int> (wrapValue(0)));
@@ -25,7 +25,7 @@ SUITE(BootstrapModule)
 
     TEST(Float)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(wrapValue(0.0)->isLiteralFloat());
             CHECK_EQUAL(0.0, wrapValue(0.0)->unwrapAsFloat64());
             CHECK_EQUAL(0.0, unwrapValue<double> (wrapValue(0.0)));
@@ -46,7 +46,7 @@ SUITE(BootstrapModule)
 
     TEST(Character)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(wrapValue('A')->isLiteralCharacter());
             CHECK_EQUAL('A', wrapValue('A')->unwrapAsChar8());
             CHECK_EQUAL('A', unwrapValue<char> (wrapValue('A')));
@@ -55,7 +55,7 @@ SUITE(BootstrapModule)
 
     TEST(String)
     {
-        RuntimeContext::create()->activeDuring([&](){
+        RuntimeContext::createForScripting()->activeDuring([&](){
             CHECK(wrapValue("Hello World")->isLiteralString());
             CHECK_EQUAL("Hello World", wrapValue("Hello World")->unwrapAsString());
             CHECK_EQUAL("Hello World", unwrapValue<std::string> (wrapValue("Hello World")));

@@ -17,13 +17,19 @@ RefCountedObjectMemoryPool *RefCountedObjectMemoryPool::getActive()
     return RuntimeContext::getActive()->getContextMemoryPool();
 }
 
-RuntimeContextPtr RuntimeContext::create()
+RuntimeContextPtr RuntimeContext::createForTarget(const RuntimeContextTargetDescription &target)
 {
     auto result = basicMakeGlobalSingletonObject<RuntimeContext> ();
+    result->target = target;
     result->activeDuring([&](){
         result->initialize();
     });
     return result;
+}
+
+RuntimeContextPtr RuntimeContext::createForScripting()
+{
+    return createForTarget(RuntimeContextTargetDescription::makeForScripting());
 }
 
 void RuntimeContext::initialize()
