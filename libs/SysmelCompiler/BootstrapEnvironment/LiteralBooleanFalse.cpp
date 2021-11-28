@@ -16,7 +16,7 @@ AnyValuePtr getFalseConstant()
 
 LiteralBooleanFalsePtr LiteralBooleanFalse::uniqueInstance()
 {
-    auto singleton = basicMakeObject<LiteralBooleanFalse> ();
+    static auto singleton = basicMakeGlobalSingletonObject<LiteralBooleanFalse> ();
     return singleton;
 }
 

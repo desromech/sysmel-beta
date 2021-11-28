@@ -27,7 +27,7 @@ AnyValuePtr getVoidConstant()
 
 VoidPtr Void::uniqueInstance()
 {
-    auto singleton = basicMakeObject<Void> ();
+    static auto singleton = basicMakeGlobalSingletonObject<Void> ();
     return singleton;
 }
 

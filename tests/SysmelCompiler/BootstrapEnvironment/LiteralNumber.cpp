@@ -10,23 +10,27 @@ SUITE(LiteralNumber)
 {
     TEST(LiteralPositiveIntegerTestingMethods)
     {
-        CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralNumber());
-        CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralInteger());
-        CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralPositiveInteger());
-        CHECK(!LiteralInteger::makeFor(LargeInteger{0})->isLiteralNegativeInteger());
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralNumber());
+            CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralInteger());
+            CHECK(LiteralInteger::makeFor(LargeInteger{0})->isLiteralPositiveInteger());
+            CHECK(!LiteralInteger::makeFor(LargeInteger{0})->isLiteralNegativeInteger());
 
-        CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralNumber());
-        CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralInteger());
-        CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralPositiveInteger());
-        CHECK(!LiteralInteger::makeFor(LargeInteger{1})->isLiteralNegativeInteger());
+            CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralNumber());
+            CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralInteger());
+            CHECK(LiteralInteger::makeFor(LargeInteger{1})->isLiteralPositiveInteger());
+            CHECK(!LiteralInteger::makeFor(LargeInteger{1})->isLiteralNegativeInteger());
+        });
     }
 
     TEST(LiteralNegativeIntegerTestingMethods)
     {
-        CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNumber());
-        CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralInteger());
-        CHECK(!LiteralInteger::makeFor(LargeInteger{-1})->isLiteralPositiveInteger());
-        CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNegativeInteger());
+        RuntimeContext::create()->activeDuring([&](){
+            CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNumber());
+            CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralInteger());
+            CHECK(!LiteralInteger::makeFor(LargeInteger{-1})->isLiteralPositiveInteger());
+            CHECK(LiteralInteger::makeFor(LargeInteger{-1})->isLiteralNegativeInteger());
+        });
     }
 
     TEST(Negated)

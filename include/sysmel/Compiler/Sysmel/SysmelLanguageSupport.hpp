@@ -9,8 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-class SysmelLanguageSupport;
-typedef std::shared_ptr<SysmelLanguageSupport> SysmelLanguageSupportPtr;
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SysmelLanguageSupport);
 
 /**
  * I am the interface for all of the language adapters. A language adapters takes care of actually

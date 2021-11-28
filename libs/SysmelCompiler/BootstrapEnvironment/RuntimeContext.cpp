@@ -12,10 +12,14 @@ static BootstrapTypeRegistration<RuntimeContext> runtimeContextTypeRegistration;
 
 static thread_local RuntimeContextPtr activeRuntimeContextInThisThread;
 
+RefCountedObjectMemoryPool *RefCountedObjectMemoryPool::getActive()
+{
+    return RuntimeContext::getActive()->getContextMemoryPool();
+}
 
 RuntimeContextPtr RuntimeContext::create()
 {
-    auto result = basicMakeObject<RuntimeContext> ();
+    auto result = basicMakeGlobalSingletonObject<RuntimeContext> ();
     result->activeDuring([&](){
         result->initialize();
     });

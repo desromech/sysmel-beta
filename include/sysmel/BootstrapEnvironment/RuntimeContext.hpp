@@ -85,6 +85,11 @@ public:
         return sysmelLanguageSupport;
     }
 
+    RefCountedObjectMemoryPool *getContextMemoryPool()
+    {
+        return &memoryPool;
+    }
+
 protected:
     friend class FunctionType;
     friend class ClosureType;
@@ -98,6 +103,8 @@ protected:
     friend class VariantType;
     friend class LiteralSymbol;
     
+    RefCountedObjectMemoryPool memoryPool;
+
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;
 

@@ -14,7 +14,7 @@ namespace BootstrapEnvironment
 template<typename T>
 MethodPtr metaBuilderFactoryFor (const std::string &name)
 {
-    return makeBootstrapMethod<std::shared_ptr<T> (MacroInvocationContextPtr)> (name, [](const MacroInvocationContextPtr &macroContext) {
+    return makeBootstrapMethod<ObjectPtr<T> (MacroInvocationContextPtr)> (name, [](const MacroInvocationContextPtr &macroContext) {
         auto context = basicMakeObject<MetaBuilderInstanceContext> ();
         context->instanceNode = macroContext->receiverNode;
 

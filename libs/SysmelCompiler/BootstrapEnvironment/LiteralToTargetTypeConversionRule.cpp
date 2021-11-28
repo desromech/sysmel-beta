@@ -13,7 +13,7 @@ static BootstrapTypeRegistration<LiteralToTargetTypeConversionRule> valueAsVoidT
 
 TypeConversionRulePtr LiteralToTargetTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = basicMakeObject<LiteralToTargetTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeGlobalSingletonObject<LiteralToTargetTypeConversionRule> ();
     return singleton;
 }
 

@@ -188,6 +188,7 @@ set(BootstrapEnvironment_Sources
     ProgramModule.cpp
     ProtectedMetaBuilder.cpp
     PublicMetaBuilder.cpp
+    RefCountedObject.cpp
     ReferenceType.cpp
     ResultTypeInferenceSlot.cpp
     ReturnType.cpp

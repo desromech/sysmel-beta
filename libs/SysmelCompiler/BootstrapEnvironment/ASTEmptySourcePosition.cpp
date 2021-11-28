@@ -10,7 +10,7 @@ static BootstrapTypeRegistration<ASTEmptySourcePosition> ASTEmptySourcePositionT
 
 ASTSourcePositionPtr ASTSourcePosition::empty()
 {
-    static auto singleton = basicMakeObject<ASTEmptySourcePosition> ();
+    static auto singleton = basicMakeGlobalSingletonObject<ASTEmptySourcePosition> ();
     return singleton;
 }
 

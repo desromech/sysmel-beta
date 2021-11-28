@@ -21,7 +21,7 @@ AnyValuePtr getCompilationErrorValueConstant()
 
 CompilationErrorValuePtr CompilationErrorValue::uniqueInstance()
 {
-    auto singleton = basicMakeObject<CompilationErrorValue> ();
+    static auto singleton = basicMakeGlobalSingletonObject<CompilationErrorValue> ();
     return singleton;
 }
 

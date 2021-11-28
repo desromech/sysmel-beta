@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<IdentityTypeConversionRule> identityTypeConvers
 
 TypeConversionRulePtr IdentityTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = basicMakeObject<IdentityTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeGlobalSingletonObject<IdentityTypeConversionRule> ();
     return singleton;
 }
 

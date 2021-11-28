@@ -2,50 +2,18 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_ANY_VALUE_HPP
 #pragma once
 
-#include <memory>
 #include <string>
 #include <vector>
 #include "LargeInteger.hpp"
 #include "Fraction.hpp"
 #include "SExpression.hpp"
 #include "TypeInferenceMode.hpp"
+#include "RefCountedObject.hpp"
 
 namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
-
-template<typename T>
-using ObjectPtr = std::shared_ptr<T>;
-
-template<typename T>
-using ObjectWeakPtr = std::weak_ptr<T>;
-
-template<typename T, typename...Args>
-ObjectPtr<T> basicMakeObject(Args&&... args)
-{
-    return std::make_shared<T> (std::forward<Args> (args)...);
-}
-
-template<typename T, typename...Args>
-ObjectPtr<T> makeObject(Args&&... args)
-{
-    auto result = basicMakeObject<T> (std::forward<Args> (args)...);
-    result->initialize();
-    return result;
-}
-
-template<typename T, typename U>
-ObjectPtr<T> staticObjectCast(const ObjectPtr<U> &object)
-{
-    return std::static_pointer_cast<T> (object);
-}
-
-template<typename T, typename U>
-ObjectPtr<T> dynamicObjectCast(const ObjectPtr<U> &object)
-{
-    return std::dynamic_pointer_cast<T> (object);
-}
 
 #define SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
     class className; \
@@ -239,7 +207,7 @@ public:
 
     ObjectPtr<SelfType> selfFromThis()
     {
-        return staticObjectCast<SelfType> (SuperType::shared_from_this());
+        return ObjectPtr<SelfType>::fromThis(static_cast<SelfType*> (this));
     }
 };
 
@@ -255,7 +223,7 @@ public:
 
     ObjectPtr<SelfType> selfFromThis()
     {
-        return staticObjectCast<SelfType> (SuperType::shared_from_this());
+        return ObjectPtr<SelfType>::fromThis(static_cast<SelfType*> (this));
     }
 };
 
@@ -312,7 +280,7 @@ ClosureTypePtr getOrCreateClosureType(const TypePtr &resultType, const TypePtrLi
 /**
  * I am the base interface for any value that is passed through the interpreter.
  */
-class AnyValue : public std::enable_shared_from_this<AnyValue>
+class AnyValue : public RefCountedObject
 {
 public:
     typedef void SuperType;
@@ -351,7 +319,7 @@ public:
 
     AnyValuePtr selfFromThis()
     {
-        return shared_from_this();
+        return AnyValuePtr::fromThis(this);
     }
 
     /// Retrieves the type of the object.
@@ -1006,7 +974,6 @@ public:
     {
         return perform<ResultType> (internSymbol(selector), arguments...);
     }
-
 };
 
 inline AnyValuePtr validAnyValue(const AnyValuePtr &value)

@@ -10,7 +10,7 @@ typedef std::shared_ptr<StaticBootstrapDefinedTypeMetadataList> StaticBootstrapD
 
 static StaticBootstrapDefinedTypeMetadataListPtr getOrCreateMetadataList()
 {
-    static StaticBootstrapDefinedTypeMetadataListPtr singleton = basicMakeObject<StaticBootstrapDefinedTypeMetadataList> ();
+    static StaticBootstrapDefinedTypeMetadataListPtr singleton = std::make_shared<StaticBootstrapDefinedTypeMetadataList> ();
     return singleton;
 }
 

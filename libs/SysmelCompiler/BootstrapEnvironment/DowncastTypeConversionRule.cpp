@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<DowncastTypeConversionRule> valueAsVoidTypeConv
 
 TypeConversionRulePtr DowncastTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = basicMakeObject<DowncastTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeGlobalSingletonObject<DowncastTypeConversionRule> ();
     return singleton;
 }
 

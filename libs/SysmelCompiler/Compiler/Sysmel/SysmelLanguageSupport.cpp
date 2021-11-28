@@ -92,7 +92,7 @@ public:
         if(it != convertedSourceCollectionMap.end())
             return it->second;
 
-        auto result = std::make_shared<BootstrapEnvironment::ASTSourceCode> ();
+        auto result = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTSourceCode> ();
         result->name = originalSourceCollection->name;
         result->contents = originalSourceCollection->text;
         convertedSourceCollectionMap.insert(std::make_pair(originalSourceCollection, result));
@@ -108,7 +108,7 @@ public:
         if(it != convertedSourcePositionMap.end())
             return it->second;
 
-        auto result = std::make_shared<BootstrapEnvironment::ASTSourceCodePosition> ();
+        auto result = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTSourceCodePosition> ();
         result->sourceCode = convertSourceCollection(originalSourcePosition.collection);
         result->startPosition = originalSourcePosition.startPosition;
 
@@ -128,7 +128,7 @@ public:
 
     virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTParseErrorNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTParseErrorNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->errorMessage = node.errorMessage;
         return ResultType(convertedNode);
@@ -136,7 +136,7 @@ public:
 
     virtual std::any visitExpressionListNode(ASTExpressionListNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTSequenceNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTSequenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expressions.reserve(node.expressions.size());
         for(auto expr : node.expressions)
@@ -149,7 +149,7 @@ public:
     
     virtual std::any visitPragmaNode(ASTPragmaNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTPragmaNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTPragmaNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
@@ -162,7 +162,7 @@ public:
     
     virtual std::any visitBlockNode(ASTBlockNode &node) override
     {
-        auto convertedSequence = std::static_pointer_cast<BootstrapEnvironment::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
+        auto convertedSequence = BootstrapEnvironment::staticObjectCast<BootstrapEnvironment::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
         auto blockPosition = convertSourcePosition(node.sourcePosition);
 
         convertedSequence->pragmas.reserve(node.pragmas.size());
@@ -172,7 +172,7 @@ public:
         if(node.blockClosureSignature)
         {
             auto signature = std::static_pointer_cast<ASTBlockClosureSignatureNode> (node.blockClosureSignature);
-            auto blockClosureNode = std::make_shared<BootstrapEnvironment::ASTClosureNode> ();
+            auto blockClosureNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTClosureNode> ();
             blockClosureNode->kind = BootstrapEnvironment::ASTClosureNodeKind::Block;
             blockClosureNode->arguments.reserve(signature->arguments.size());
             for(const auto &arg : signature->arguments)
@@ -186,11 +186,11 @@ public:
         }
         else
         {
-            auto lexicalScope = std::make_shared<BootstrapEnvironment::ASTLexicalScopeNode> ();
+            auto lexicalScope = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLexicalScopeNode> ();
             lexicalScope->sourcePosition = blockPosition;
             lexicalScope->body = convertedSequence;
 
-            auto cleanUpScope = std::make_shared<BootstrapEnvironment::ASTCleanUpScopeNode> ();
+            auto cleanUpScope = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTCleanUpScopeNode> ();
             cleanUpScope->sourcePosition = blockPosition;
             cleanUpScope->body = lexicalScope;
             return ResultType(cleanUpScope);
@@ -199,7 +199,7 @@ public:
     
     virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node)
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTArgumentDefinitionNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTArgumentDefinitionNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         if(node.identifier)
             convertedNode->identifier = std::any_cast<ResultType> (visitNode(*node.identifier));
@@ -216,7 +216,7 @@ public:
 
     virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -224,7 +224,7 @@ public:
 
     virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -232,7 +232,7 @@ public:
 
     virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -240,7 +240,7 @@ public:
 
     virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
         return ResultType(convertedNode);
@@ -248,7 +248,7 @@ public:
 
     virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(internSymbol(node.value));
         return ResultType(convertedNode);
@@ -256,7 +256,7 @@ public:
 
     virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTIdentifierReferenceNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTIdentifierReferenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->identifier = internSymbol(node.identifier);
         return ResultType(convertedNode);
@@ -264,7 +264,7 @@ public:
 
     virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMessageSendNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
@@ -281,7 +281,7 @@ public:
 
     virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageChainNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMessageChainNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
@@ -296,7 +296,7 @@ public:
 
     virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageChainMessageNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMessageChainMessageNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
@@ -312,7 +312,7 @@ public:
     {
         auto sourcePosition = convertSourcePosition(node.sourcePosition);
 
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTCallNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTCallNode> ();
         convertedNode->sourcePosition = sourcePosition;
         convertedNode->function = std::any_cast<ResultType> (visitNode(*node.callable));
 
@@ -327,10 +327,10 @@ public:
     {
         auto sourcePosition = convertSourcePosition(node.sourcePosition);
 
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMessageSendNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMessageSendNode> ();
         convertedNode->sourcePosition = sourcePosition;
 
-        auto selector = std::make_shared<BootstrapEnvironment::ASTLiteralValueNode>  ();
+        auto selector = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTLiteralValueNode>  ();
         selector->sourcePosition = sourcePosition;
         selector->setValueAndType(internSymbol("[]"));
 
@@ -345,7 +345,7 @@ public:
 
     virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeTupleNode>  ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMakeTupleNode>  ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(auto &element : node.elements)
@@ -356,7 +356,7 @@ public:
 
     virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeDictionaryNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMakeDictionaryNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(const auto &element : node.elements)
@@ -367,7 +367,7 @@ public:
 
     virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeAssociationNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMakeAssociationNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         if(node.key)
             convertedNode->key = std::any_cast<ResultType> (visitNode(*node.key));
@@ -379,7 +379,7 @@ public:
 
     virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTMakeLiteralArrayNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTMakeLiteralArrayNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(const auto &element : node.elements)
@@ -390,7 +390,7 @@ public:
 
     virtual std::any visitQuoteNode(ASTQuoteNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuoteNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
         return ResultType(convertedNode);
@@ -398,7 +398,7 @@ public:
 
     virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuasiQuoteNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTQuasiQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
         return ResultType(convertedNode);
@@ -406,7 +406,7 @@ public:
 
     virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTQuasiUnquoteNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTQuasiUnquoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
         return ResultType(convertedNode);
@@ -414,7 +414,7 @@ public:
 
     virtual std::any visitSpliceNode(ASTSpliceNode &node) override
     {
-        auto convertedNode = std::make_shared<BootstrapEnvironment::ASTSpliceNode> ();
+        auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTSpliceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
         return ResultType(convertedNode);
@@ -442,7 +442,7 @@ MethodCategories SysmelLanguageSupport::__typeMethods__()
 
 SysmelLanguageSupportPtr SysmelLanguageSupport::uniqueInstance()
 {
-    return std::static_pointer_cast<SysmelLanguageSupport> (RuntimeContext::getActive()->getSysmelLanguageSupport());
+    return BootstrapEnvironment::staticObjectCast<SysmelLanguageSupport> (RuntimeContext::getActive()->getSysmelLanguageSupport());
 }
 
 void SysmelLanguageSupport::initialize()
@@ -450,7 +450,7 @@ void SysmelLanguageSupport::initialize()
     SuperType::initialize();
 
     {
-        keywordScope = std::make_shared<LexicalScope> ();
+        keywordScope = BootstrapEnvironment::basicMakeObject<LexicalScope> ();
         keywordScope->setSymbolBinding(internSymbol("true"), getTrueConstant());
         keywordScope->setSymbolBinding(internSymbol("false"), getFalseConstant());
         keywordScope->setSymbolBinding(internSymbol("nil"), getNilConstant());
@@ -458,7 +458,7 @@ void SysmelLanguageSupport::initialize()
     }
 
     {
-        topLevelScope = std::make_shared<LexicalScope> ();
+        topLevelScope = BootstrapEnvironment::basicMakeObject<LexicalScope> ();
         topLevelScope->parent = keywordScope;
 
         // Use the language namespace.

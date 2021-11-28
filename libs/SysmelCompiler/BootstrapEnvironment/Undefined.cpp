@@ -21,7 +21,7 @@ AnyValuePtr getNilConstant()
 
 UndefinedPtr Undefined::uniqueInstance()
 {
-    auto singleton = basicMakeObject<Undefined> ();
+    static auto singleton = basicMakeGlobalSingletonObject<Undefined> ();
     return singleton;
 }
 

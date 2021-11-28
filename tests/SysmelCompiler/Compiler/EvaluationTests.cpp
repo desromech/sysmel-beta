@@ -469,7 +469,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isFunctionType());
                     CHECK_EQUAL(a, b);
 
-                    auto functionType = std::static_pointer_cast<FunctionType> (a);
+                    auto functionType = staticObjectCast<FunctionType> (a);
                     CHECK_EQUAL(0u, functionType->getArgumentCount());
                     CHECK_EQUAL(Type::getVoidType(), functionType->getResultType());
                 }
@@ -481,7 +481,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isFunctionType());
                     CHECK_EQUAL(a, b);
 
-                    auto functionType = std::static_pointer_cast<FunctionType> (a);
+                    auto functionType = staticObjectCast<FunctionType> (a);
                     CHECK_EQUAL(2u, functionType->getArgumentCount());
                     CHECK_EQUAL(Int64::__staticType__(), functionType->getArgument(0));
                     CHECK_EQUAL(Int32::__staticType__(), functionType->getArgument(1));
@@ -495,7 +495,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isClosureType());
                     CHECK_EQUAL(a, b);
 
-                    auto closureType = std::static_pointer_cast<ClosureType> (a);
+                    auto closureType = staticObjectCast<ClosureType> (a);
                     CHECK_EQUAL(0u, closureType->getArgumentCount());
                     CHECK_EQUAL(Type::getVoidType(), closureType->getResultType());
                 }
@@ -507,7 +507,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isClosureType());
                     CHECK_EQUAL(a, b);
 
-                    auto closureType = std::static_pointer_cast<ClosureType> (a);
+                    auto closureType = staticObjectCast<ClosureType> (a);
                     CHECK_EQUAL(2u, closureType->getArgumentCount());
                     CHECK_EQUAL(Int64::__staticType__(), closureType->getArgument(0));
                     CHECK_EQUAL(Int32::__staticType__(), closureType->getArgument(1));
@@ -521,7 +521,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isMethodType());
                     CHECK_EQUAL(a, b);
 
-                    auto methodType = std::static_pointer_cast<MethodType> (a);
+                    auto methodType = staticObjectCast<MethodType> (a);
                     CHECK_EQUAL(Type::getVoidType(), methodType->getReceiverType());
                     CHECK_EQUAL(0u, methodType->getArgumentCount());
                     CHECK_EQUAL(Type::getVoidType(), methodType->getResultType());
@@ -534,7 +534,7 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isMethodType());
                     CHECK_EQUAL(a, b);
 
-                    auto methodType = std::static_pointer_cast<MethodType> (a);
+                    auto methodType = staticObjectCast<MethodType> (a);
                     CHECK_EQUAL(2u, methodType->getArgumentCount());
                     CHECK_EQUAL(UInt8::__staticType__(), methodType->getReceiverType());
                     CHECK_EQUAL(Int64::__staticType__(), methodType->getArgument(0));
@@ -1037,7 +1037,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
                 CHECK_EQUAL(structDeclaration, structDefinition);
-                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<StructureType> (structDefinition)->getDefinitionModule());
+                CHECK_EQUAL(Module::getActive(), staticObjectCast<StructureType> (structDefinition)->getDefinitionModule());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1054,7 +1054,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto unionDefinition = evaluateString("public union TestUnion definition: {}.");
                 CHECK(unionDefinition->isUnionType());
                 CHECK_EQUAL(unionDeclaration, unionDefinition);
-                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<UnionType> (unionDefinition)->getDefinitionModule());
+                CHECK_EQUAL(Module::getActive(), staticObjectCast<UnionType> (unionDefinition)->getDefinitionModule());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1071,7 +1071,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto classDefinition = evaluateString("public class TestClass definition: {}.");
                 CHECK(classDefinition->isClassType());
                 CHECK_EQUAL(classDeclaration, classDefinition);
-                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<ClassType> (classDefinition)->getDefinitionModule());
+                CHECK_EQUAL(Module::getActive(), staticObjectCast<ClassType> (classDefinition)->getDefinitionModule());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1087,7 +1087,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 
                 auto subclass = evaluateString("public class SubClass superclass: SuperClass; definition: {}.");
                 CHECK(subclass->isClassType());
-                CHECK_EQUAL(superclass, std::static_pointer_cast<Type> (subclass)->getSupertype());
+                CHECK_EQUAL(superclass, staticObjectCast<Type> (subclass)->getSupertype());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1104,8 +1104,8 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{First: 1. Second:. #Third : 3 . Fifth: Third + 2}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
-                CHECK_EQUAL(UInt32::__staticType__(), std::static_pointer_cast<EnumType> (enumDefinition)->getBaseType());
-                CHECK_EQUAL(Module::getActive(), std::static_pointer_cast<EnumType> (enumDefinition)->getDefinitionModule());
+                CHECK_EQUAL(UInt32::__staticType__(), staticObjectCast<EnumType> (enumDefinition)->getBaseType());
+                CHECK_EQUAL(Module::getActive(), staticObjectCast<EnumType> (enumDefinition)->getDefinitionModule());
 
                 CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("TestEnum First"));
                 CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("TestEnum Second"));
@@ -1126,7 +1126,7 @@ SUITE(SysmelCompileTimeEvaluation)
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
 
-                auto structType = std::static_pointer_cast<StructureType> (structDefinition);
+                auto structType = staticObjectCast<StructureType> (structDefinition);
                 CHECK_EQUAL(1u, structType->fields.size());
             });
         });
