@@ -64,13 +64,13 @@ void Template::setArgumentTypes(const TypePtrList &argumentTypes)
 void Template::setArgumentDeclarationNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
     assert(index < arguments.size());
-    arguments[index]->setDeclarationNode(argumentNode);
+    arguments[index]->setArgumentDeclarationNode(argumentNode);
 }
 
 void Template::setArgumentDefinitionNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
     assert(index < arguments.size());
-    arguments[index]->setDefinitionNode(argumentNode);
+    arguments[index]->setArgumentDefinitionNode(argumentNode);
 }
 
 TemplateInstancePtr Template::getOrCreateTemplateInstanceWithArguments(const AnyValuePtrList &instanceArguments)

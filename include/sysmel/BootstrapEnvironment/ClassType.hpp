@@ -20,7 +20,7 @@ class ClassType : public SubMetaTypeOf<AggregateTypeWithFields, ClassType>
 public:
     virtual bool isClassType() const override;
 
-    virtual TypePtr getSupertype() const;
+    virtual TypePtr getSupertype() const override;
 
     /// This method enqueue the analysis of a body block.
     virtual void enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);

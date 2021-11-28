@@ -45,14 +45,14 @@ SExpression ASTSourceCodePosition::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"position"}},
         sourceCode->asSExpression(),
-        LargeInteger{startPosition},
-        LargeInteger{endPosition},
+        LargeInteger{uint64_t(startPosition)},
+        LargeInteger{uint64_t(endPosition)},
 
-        LargeInteger{startLine},
-        LargeInteger{startColumn},
+        LargeInteger{uint64_t(startLine)},
+        LargeInteger{uint64_t(startColumn)},
 
-        LargeInteger{endLine},
-        LargeInteger{endColumn},
+        LargeInteger{uint64_t(endLine)},
+        LargeInteger{uint64_t(endColumn)},
     }};
 }
 

@@ -5,6 +5,7 @@
 #include "ModuleDefinedProgramEntity.hpp"
 #include "TypeDecorationFlags.hpp"
 #include <functional>
+#include <unordered_map>
 
 namespace SysmelMoebius
 {
@@ -80,7 +81,7 @@ public:
     virtual void registerSubtype(const TypePtr &subtype);
 
     /// Converts this type into a specific receiver type.
-    virtual TypePtr asReceiverType();
+    virtual TypePtr asReceiverType() override;
 
     /// This method performs the lookup for a macro message with the specified selector.
     virtual AnyValuePtr lookupMacroSelector(const AnyValuePtr &selector) override;
@@ -133,7 +134,7 @@ public:
     virtual bool hasTrivialMovingFrom();
 
     /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
-    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     /// This method performs the semantic analysis of a message send node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
@@ -145,7 +146,7 @@ public:
     virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
     /// This method performs the concretion of an ephemeral compile time object.
-    virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;

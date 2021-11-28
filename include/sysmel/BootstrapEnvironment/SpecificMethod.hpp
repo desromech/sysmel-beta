@@ -31,9 +31,9 @@ public:
     virtual void setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
     virtual void setClosureSignature(const TypePtr &resultType, const TypePtrList &argumentTypes);
 
-    virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex);
+    virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex) override;
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
-    virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual bool isMacroMethod() const override;
 

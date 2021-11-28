@@ -107,13 +107,13 @@ void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumen
 void CompiledMethod::setArgumentDeclarationNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
     assert(index < arguments.size());
-    arguments[index]->setDeclarationNode(argumentNode);
+    arguments[index]->setArgumentDeclarationNode(argumentNode);
 }
 
 void CompiledMethod::setArgumentDefinitionNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
     assert(index < arguments.size());
-    arguments[index]->setDefinitionNode(argumentNode);
+    arguments[index]->setArgumentDefinitionNode(argumentNode);
 }
 
 ASTNodePtr CompiledMethod::analyzeDefinitionWith(const ASTSemanticAnalyzerPtr &analyzer)

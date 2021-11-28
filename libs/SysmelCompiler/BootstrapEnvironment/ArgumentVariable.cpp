@@ -27,14 +27,16 @@ void ArgumentVariable::setType(const TypePtr &type)
     referenceType = type;
 }
 
-void ArgumentVariable::setDeclarationNode(const ASTArgumentDefinitionNodePtr &node)
+void ArgumentVariable::setArgumentDeclarationNode(const ASTArgumentDefinitionNodePtr &node)
 {
     name = node->analyzedIdentifier;
+    setDeclarationNode(node);
 }
 
-void ArgumentVariable::setDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
+void ArgumentVariable::setArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
     name = node->analyzedIdentifier;
+    setDefinitionNode(node);
 }
 
 

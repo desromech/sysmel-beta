@@ -17,7 +17,7 @@ class MetaType : public SubtypeOf<Type, MetaType>
 public:
     static constexpr char const __typeName__[] = "MetaType";
 
-    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual void setThisType(const TypePtr &instanceType);
 

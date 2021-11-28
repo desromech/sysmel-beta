@@ -24,7 +24,7 @@ public:
 
     static ClosureTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
     
-    virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation);
+    virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation) override;
 };
 
 /**

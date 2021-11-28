@@ -108,18 +108,18 @@ public:
     virtual AnyValuePtr visitTemplateNode(const ASTTemplateNodePtr &node) override;
     virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
-    virtual AnyValuePtr visitExplicitCastNode(const ASTExplicitCastNodePtr &node);
-    virtual AnyValuePtr visitImplicitCastNode(const ASTImplicitCastNodePtr &node);
-    virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node);
+    virtual AnyValuePtr visitExplicitCastNode(const ASTExplicitCastNodePtr &node) override;
+    virtual AnyValuePtr visitImplicitCastNode(const ASTImplicitCastNodePtr &node) override;
+    virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node) override;
 
     virtual AnyValuePtr visitTypeConversionNode(const ASTTypeConversionNodePtr &node) override;
 
-    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node);
-    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node);
-    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node);
-    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node);
-    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node);
-    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node);
+    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node) override;
+    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node) override;
+    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node) override;
+    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node) override;
+    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
+    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
 
     ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);
     ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);

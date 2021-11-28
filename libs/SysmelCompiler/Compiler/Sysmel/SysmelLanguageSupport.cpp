@@ -197,7 +197,7 @@ public:
         }
     }
     
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node)
+    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) override
     {
         auto convertedNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTArgumentDefinitionNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
@@ -208,7 +208,7 @@ public:
         return ResultType(convertedNode);
     }
     
-    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &)
+    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &) override
     {
         // This should be unreachable.
         return std::any();

@@ -24,10 +24,10 @@ public:
     static constexpr bool __isLiteralValueMessageAnalyzer__ = true;
     static constexpr bool __isEphemeralCompileTimeObject__ = true;
 
-    virtual bool isMetaBuilder() const;
+    virtual bool isMetaBuilder() const override;
 
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
-    virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     virtual ASTNodePtr concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context);
 

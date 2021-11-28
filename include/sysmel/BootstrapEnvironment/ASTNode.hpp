@@ -104,7 +104,7 @@ public:
 
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor);
 
-    virtual std::string printString() const;
+    virtual std::string printString() const override;
 
     virtual ASTNodePtrList children();
     virtual void childrenDo(const ASTIterationBlock &aBlock);

@@ -19,7 +19,7 @@ class TemplateMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, Temp
 public:
     static constexpr char const __typeName__[] = "TemplateMetaBuilder";
 
-    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
 protected:
     virtual ASTNodePtr concretizeMetaBuilder() override;

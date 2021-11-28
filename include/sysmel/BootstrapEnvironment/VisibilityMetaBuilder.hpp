@@ -20,7 +20,7 @@ class VisibilityMetaBuilder : public SubtypeOf<MetaBuilder, VisibilityMetaBuilde
 public:
     static constexpr char const __typeName__[] = "VisibilityMetaBuilder";
 
-    virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context);
+    virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context) override;
 
     virtual ProgramEntityVisibility getVisibility() const;
 

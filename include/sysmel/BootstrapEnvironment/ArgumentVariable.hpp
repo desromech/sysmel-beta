@@ -23,8 +23,8 @@ public:
     virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope) override;
 
     void setType(const TypePtr &type);
-    void setDeclarationNode(const ASTArgumentDefinitionNodePtr &node);
-    void setDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
+    void setArgumentDeclarationNode(const ASTArgumentDefinitionNodePtr &node);
+    void setArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
 };
 
 } // End of namespace BootstrapEnvironment

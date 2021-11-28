@@ -19,7 +19,7 @@ class FunctionMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, Func
 public:
     static constexpr char const __typeName__[] = "FunctionMetaBuilder";
 
-    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
 protected:
     virtual ASTNodePtr concretizeMetaBuilder() override;

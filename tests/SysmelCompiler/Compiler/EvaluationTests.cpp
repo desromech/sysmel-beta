@@ -146,9 +146,9 @@ SUITE(SysmelCompileTimeEvaluation)
                 CHECK_EQUAL(5.5, evaluateStringWithValueOfType<double> ("2.5 + 3"));
                 CHECK_EQUAL(5.5, evaluateStringWithValueOfType<double> ("2.5+3"));
 
-                CHECK_EQUAL(Fraction({1}, {2}), evaluateStringWithValueOfType<Fraction> ("1/2"));
-                CHECK_EQUAL(Fraction({3}, {2}), evaluateStringWithValueOfType<Fraction> ("1 + 1/2"));
-                CHECK_EQUAL(Fraction({3}, {2}), evaluateStringWithValueOfType<Fraction> ("1/2 + 1"));
+                CHECK_EQUAL(Fraction(1, 2), evaluateStringWithValueOfType<Fraction> ("1/2"));
+                CHECK_EQUAL(Fraction(3, 2), evaluateStringWithValueOfType<Fraction> ("1 + 1/2"));
+                CHECK_EQUAL(Fraction(3, 2), evaluateStringWithValueOfType<Fraction> ("1/2 + 1"));
             });
         });
     }

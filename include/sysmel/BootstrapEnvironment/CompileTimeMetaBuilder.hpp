@@ -19,7 +19,7 @@ class CompileTimeMetaBuilder : public SubtypeOf<MetaBuilder, CompileTimeMetaBuil
 public:
     static constexpr char const __typeName__[] = "CompileTimeMetaBuilder";
 
-    virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context);
+    virtual void setMetaBuilderInstanceContext(const MetaBuilderInstanceContextPtr &context) override;
 
 protected:
     virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
