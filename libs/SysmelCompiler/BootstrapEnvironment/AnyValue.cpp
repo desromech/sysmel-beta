@@ -964,6 +964,16 @@ bool AnyValue::isTemporaryReferenceTypeValue() const
     return false;
 }
 
+bool AnyValue::isArrayType() const
+{
+    return false;
+}
+
+bool AnyValue::isArrayTypeValue() const
+{
+    return false;
+}
+
 bool AnyValue::isCompileTimeConstant() const
 {
     return false;

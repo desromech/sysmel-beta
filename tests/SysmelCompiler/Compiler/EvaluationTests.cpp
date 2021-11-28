@@ -317,6 +317,29 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(ArrayTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                {
+                    auto a = evaluateString("Int32 array");
+                    auto b = evaluateString("Int32 array: 0");
+                    CHECK(a->isArrayType());
+                    CHECK(b->isArrayType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 array");
+                    auto b = evaluateString("Int32 const array: 0");
+                    CHECK(a->isArrayType());
+                    CHECK(b->isArrayType());
+                    CHECK_EQUAL(a, b);
+                }
+            });
+        });
+    }
+
     TEST(TupleTypes)
     {
         RuntimeContext::create()->activeDuring([&](){
@@ -355,6 +378,77 @@ SUITE(SysmelCompileTimeEvaluation)
                     auto tupleInstance = evaluateString("Int32(1), Int64(2), Int8(3)");
                     CHECK(tupleInstance->isTupleTypeValue());
                     CHECK_EQUAL(tupleInstance->getType(), a);
+                }
+
+                {
+                    auto a = evaluateString("Int32 & Int64 & Int8");
+                    auto b = evaluateString("Int32 const & Int64 volatile & Int8 restrict");
+                    CHECK(a->isTupleType());
+                    CHECK(b->isTupleType());
+                    CHECK_EQUAL(a, b);
+
+                    auto tupleInstance = evaluateString("Int32(1), Int64(2), Int8(3)");
+                    CHECK(tupleInstance->isTupleTypeValue());
+                    CHECK_EQUAL(tupleInstance->getType(), a);
+                }
+            });
+        });
+    }
+
+    TEST(VariantTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                {
+                    auto a = evaluateString("Int32 | Void");
+                    auto b = evaluateString("Void | Int32");
+                    CHECK_EQUAL(a, Int32::__staticType__());
+                    CHECK_EQUAL(b, Int32::__staticType__());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    CHECK_EQUAL(Type::getVoidType(), evaluateString("Void | Void"));
+                }
+
+                {
+                    auto a = evaluateString("Int32 | Int64");
+                    auto b = evaluateString("Int32 | Int64");
+                    CHECK(a->isVariantType());
+                    CHECK(b->isVariantType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("(Int32 | Int64) | Int8");
+                    auto b = evaluateString("Int32 | (Int64 | Int8)");
+                    CHECK(a->isVariantType());
+                    CHECK(b->isVariantType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 | Int64 | Int8");
+                    auto b = evaluateString("Int32 | Int64 | Int8 | Int64");
+                    CHECK(a->isVariantType());
+                    CHECK(b->isVariantType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 | Int64 | Int8");
+                    auto b = evaluateString("Int32 const | Int64 volatile | Int8 restrict");
+                    CHECK(a->isVariantType());
+                    CHECK(b->isVariantType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32 | Int64 | Int8");
+                    auto b = evaluateString("Int32 | Int64 | Int8 | Int32 const | Int64 volatile | Int8 restrict");
+                    CHECK(a->isVariantType());
+                    CHECK(b->isVariantType());
+                    CHECK_EQUAL(a, b);
                 }
             });
         });

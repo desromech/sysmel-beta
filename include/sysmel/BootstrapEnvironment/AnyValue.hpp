@@ -823,6 +823,12 @@ public:
     // Is this a temporary reference type value?
     virtual bool isTemporaryReferenceTypeValue() const;
 
+    // Is this an array type?
+    virtual bool isArrayType() const;
+
+    // Is this an array type value?
+    virtual bool isArrayTypeValue() const;
+
     // Is this a compile time constant?
     virtual bool isCompileTimeConstant() const;
 

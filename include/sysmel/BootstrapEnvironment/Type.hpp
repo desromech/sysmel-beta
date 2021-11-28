@@ -17,6 +17,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(TypeConversionRule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
@@ -273,11 +274,20 @@ public:
     /// Makes a temporary reference type where I am the base type with the specified address space.
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace);
 
+    /// Makes a zero-sized array type of myself.
+    virtual ArrayTypePtr arrayWithoutSize();
+
+    /// Makes an array type of myself with the specified size.
+    virtual ArrayTypePtr arrayWithSize(uint64_t size);
+
     /// Wraps myself in a tuple type.
     virtual TypePtr asTupleType();
 
     /// Appends a type for making a tuple.
     virtual TypePtr appendTypeMakingTuple(const TypePtr &nextType);
+
+    /// Appends a type for making a variant.
+    virtual TypePtr appendTypeMakingVariant(const TypePtr &nextType);
 
     /// Adds the const decoration to this type.
     virtual TypePtr withConst();

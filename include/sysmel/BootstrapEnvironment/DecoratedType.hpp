@@ -37,6 +37,7 @@ public:
 
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
+    virtual TypePtr asUndecoratedType() override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

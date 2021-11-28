@@ -19,6 +19,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemporaryReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VariantType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureType);
@@ -88,6 +90,7 @@ protected:
     friend class PointerType;
     friend class ReferenceType;
     friend class TemporaryReferenceType;
+    friend class ArrayType;
     friend class TupleType;
     friend class VariantType;
     
@@ -98,8 +101,9 @@ protected:
     std::map<std::pair<TypePtr, AnyValuePtr>, PointerTypePtr> pointerTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, ReferenceTypePtr> referenceTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, TemporaryReferenceTypePtr> temporaryReferenceTypeCache;
+    std::map<std::pair<TypePtr, uint64_t>, ArrayTypePtr> arrayTypeCache;
     std::map<TypePtrList, TupleTypePtr> tupleTypeCache;
-    std::map<TypePtrList, TupleTypePtr> variantTypeCache;
+    std::map<TypePtrList, VariantTypePtr> variantTypeCache;
 };
 
 } // End of namespace BootstrapEnvironment

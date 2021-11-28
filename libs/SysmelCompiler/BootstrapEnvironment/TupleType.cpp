@@ -18,10 +18,11 @@ TypePtr TupleType::make(const TypePtrList &elementTypes)
 
     for(auto &elementType : elementTypes)
     {
-        if(elementType->isVoidType())
+        auto undecoratedType = elementType->asUndecoratedType();
+        if(undecoratedType->isVoidType())
             continue;
 
-        normalizedTypes.push_back(elementType);
+        normalizedTypes.push_back(undecoratedType);
     }
 
     switch(normalizedTypes.size())
@@ -55,6 +56,16 @@ TupleTypePtr TupleType::makeNormalized(const TypePtrList &elementTypes)
 bool TupleType::isTupleType() const
 {
     return true;
+}
+
+bool TupleType::supportsDynamicCompileTimeMessageSend() const
+{
+    return false;
+}
+
+bool TupleType::isNullableType() const
+{
+    return false;
 }
 
 std::string TupleType::printString() const

@@ -2,10 +2,11 @@ set(BootstrapEnvironment_Sources
     AggregateType.cpp
     AggregateTypeWithFields.cpp
     AmbiguousMatchingPatternsFound.cpp
+    AnyValue.cpp
     ArgumentCountError.cpp
     ArgumentVariable.cpp
     ArithmeticError.cpp
-    AnyValue.cpp
+    ArrayType.cpp
     ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
     ASTBreakNode.cpp
@@ -214,6 +215,7 @@ set(BootstrapEnvironment_Sources
     ValueBox.cpp
     ValueAsVoidTypeConversionRule.cpp
     Variable.cpp
+    VariantType.cpp
     VariableMetaBuilder.cpp
     VisibilityMetaBuilder.cpp
     Void.cpp

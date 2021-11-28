@@ -29,7 +29,9 @@
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
 #include "sysmel/BootstrapEnvironment/ReferenceType.hpp"
 #include "sysmel/BootstrapEnvironment/TemporaryReferenceType.hpp"
+#include "sysmel/BootstrapEnvironment/ArrayType.hpp"
 #include "sysmel/BootstrapEnvironment/TupleType.hpp"
+#include "sysmel/BootstrapEnvironment/VariantType.hpp"
 
 #include <algorithm>
 
@@ -48,6 +50,9 @@ MethodCategories Type::__instanceMethods__()
         }},
 
         {"type composition", {
+            makeMethodBinding("array", &Type::arrayWithoutSize, MethodFlags::Pure),
+            makeMethodBinding("array:", &Type::arrayWithSize, MethodFlags::Pure),
+
             makeMethodBinding("pointer", &Type::pointer, MethodFlags::Pure),
             makeMethodBinding("pointerFor:", &Type::pointerFor, MethodFlags::Pure),
             makeMethodBinding("ref", &Type::ref, MethodFlags::Pure),
@@ -60,6 +65,7 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding("volatile", &Type::withVolatile, MethodFlags::Pure),
 
             makeMethodBinding("&", &Type::appendTypeMakingTuple, MethodFlags::Pure),
+            makeMethodBinding("|", &Type::appendTypeMakingVariant, MethodFlags::Pure),
         }},
     };
 }
@@ -865,6 +871,16 @@ PointerLikeTypePtr Type::tempRefFor(const AnyValuePtr &addressSpace)
     return TemporaryReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
 }
 
+ArrayTypePtr Type::arrayWithoutSize()
+{
+    return arrayWithSize(0);
+}
+
+ArrayTypePtr Type::arrayWithSize(uint64_t size)
+{
+    return ArrayType::make(shared_from_this(), size);
+}
+
 TypePtr Type::asTupleType()
 {
     return TupleType::make({shared_from_this()});
@@ -886,6 +902,24 @@ TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
     }
 
     return TupleType::make(newElementTypes);
+}
+
+TypePtr Type::appendTypeMakingVariant(const TypePtr &nextType)
+{
+    TypePtrList newElementTypes;
+    newElementTypes.push_back(shared_from_this());
+
+    if(nextType->isVariantType())
+    {
+        auto &nextTypes = std::static_pointer_cast<VariantType> (nextType)->elementTypes;
+        newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
+    }
+    else
+    {
+        newElementTypes.push_back(nextType);
+    }
+
+    return VariantType::make(newElementTypes);
 }
 
 TypePtr Type::withConst()

@@ -90,6 +90,11 @@ TypePtr DecoratedType::withDecorations(TypeDecorationFlags newDecorations)
     return make(baseType, decorations | newDecorations);
 }
 
+TypePtr DecoratedType::asUndecoratedType()
+{
+    return baseType;
+}
+
 TypePtr DecoratedType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
     // Remove the decoration from the value type inference.
