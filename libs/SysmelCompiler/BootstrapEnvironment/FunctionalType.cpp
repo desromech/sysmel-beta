@@ -41,11 +41,18 @@ std::string FunctionalType::printString() const
 {
     std::ostringstream out;
     out << '(';
-    for(size_t i = 0; i < arguments.size(); ++i)
+    if(arguments.empty())
     {
-        if(i > 0)
-            out << ", ";
-        out << arguments[i]->printString();
+        out << "Void";
+    }
+    else
+    {
+        for(size_t i = 0; i < arguments.size(); ++i)
+        {
+            if(i > 0)
+                out << ", ";
+            out << arguments[i]->printString();
+        }
     }
     out << ") => ";
     out << result->printString();

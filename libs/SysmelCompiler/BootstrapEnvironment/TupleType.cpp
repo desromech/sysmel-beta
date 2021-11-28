@@ -2,6 +2,7 @@
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
 #include <sstream>
 
 namespace SysmelMoebius
@@ -150,6 +151,11 @@ TypePtr TupleType::appendTypeMakingTuple(const TypePtr &nextType)
     }
 
     return TupleType::make(newElementTypes);
+}
+
+TypePtr TupleType::appendResultTypeMakingFunctionType(const TypePtr &nextType)
+{
+    return FunctionType::make(nextType, elementTypes);
 }
 
 void TupleType::addSpecializedInstanceMethods()

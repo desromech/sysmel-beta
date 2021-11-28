@@ -4,7 +4,11 @@
 #include "sysmel/BootstrapEnvironment/StructureType.hpp"
 #include "sysmel/BootstrapEnvironment/ClassType.hpp"
 #include "sysmel/BootstrapEnvironment/UnionType.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
+#include "sysmel/BootstrapEnvironment/ClosureType.hpp"
+#include "sysmel/BootstrapEnvironment/MethodType.hpp"
 #include "sysmel/BootstrapEnvironment/PrimitiveIntegerType.hpp"
+#include "sysmel/BootstrapEnvironment/PrimitiveFloatType.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
@@ -449,6 +453,93 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(a->isVariantType());
                     CHECK(b->isVariantType());
                     CHECK_EQUAL(a, b);
+                }
+            });
+        });
+    }
+
+    TEST(FunctionTypes)
+    {
+        RuntimeContext::create()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                {
+                    auto a = evaluateString("Void => Void");
+                    auto b = evaluateString("Void => Void");
+                    CHECK(a->isFunctionType());
+                    CHECK(b->isFunctionType());
+                    CHECK_EQUAL(a, b);
+
+                    auto functionType = std::static_pointer_cast<FunctionType> (a);
+                    CHECK_EQUAL(0u, functionType->getArgumentCount());
+                    CHECK_EQUAL(Type::getVoidType(), functionType->getResultType());
+                }
+
+                {
+                    auto a = evaluateString("(Int64 & Int32) => Float32");
+                    auto b = evaluateString("(Int64 & Int32) => Float32");
+                    CHECK(a->isFunctionType());
+                    CHECK(b->isFunctionType());
+                    CHECK_EQUAL(a, b);
+
+                    auto functionType = std::static_pointer_cast<FunctionType> (a);
+                    CHECK_EQUAL(2u, functionType->getArgumentCount());
+                    CHECK_EQUAL(Int64::__staticType__(), functionType->getArgument(0));
+                    CHECK_EQUAL(Int32::__staticType__(), functionType->getArgument(1));
+                    CHECK_EQUAL(Float32::__staticType__(), functionType->getResultType());
+                }
+
+                {
+                    auto a = evaluateString("(Void => Void) closure");
+                    auto b = evaluateString("(Void => Void) closure");
+                    CHECK(a->isClosureType());
+                    CHECK(b->isClosureType());
+                    CHECK_EQUAL(a, b);
+
+                    auto closureType = std::static_pointer_cast<ClosureType> (a);
+                    CHECK_EQUAL(0u, closureType->getArgumentCount());
+                    CHECK_EQUAL(Type::getVoidType(), closureType->getResultType());
+                }
+
+                {
+                    auto a = evaluateString("((Int64 & Int32) => Float32) closure");
+                    auto b = evaluateString("((Int64 & Int32) => Float32) closure");
+                    CHECK(a->isClosureType());
+                    CHECK(b->isClosureType());
+                    CHECK_EQUAL(a, b);
+
+                    auto closureType = std::static_pointer_cast<ClosureType> (a);
+                    CHECK_EQUAL(2u, closureType->getArgumentCount());
+                    CHECK_EQUAL(Int64::__staticType__(), closureType->getArgument(0));
+                    CHECK_EQUAL(Int32::__staticType__(), closureType->getArgument(1));
+                    CHECK_EQUAL(Float32::__staticType__(), closureType->getResultType());
+                }
+
+                {
+                    auto a = evaluateString("(Void => Void) methodWithReceiver: Void");
+                    auto b = evaluateString("(Void => Void) methodWithReceiver: Void");
+                    CHECK(a->isMethodType());
+                    CHECK(b->isMethodType());
+                    CHECK_EQUAL(a, b);
+
+                    auto methodType = std::static_pointer_cast<MethodType> (a);
+                    CHECK_EQUAL(Type::getVoidType(), methodType->getReceiverType());
+                    CHECK_EQUAL(0u, methodType->getArgumentCount());
+                    CHECK_EQUAL(Type::getVoidType(), methodType->getResultType());
+                }
+
+                {
+                    auto a = evaluateString("((Int64 & Int32) => Float32) methodWithReceiver: UInt8");
+                    auto b = evaluateString("((Int64 & Int32) => Float32) methodWithReceiver: UInt8");
+                    CHECK(a->isMethodType());
+                    CHECK(b->isMethodType());
+                    CHECK_EQUAL(a, b);
+
+                    auto methodType = std::static_pointer_cast<MethodType> (a);
+                    CHECK_EQUAL(2u, methodType->getArgumentCount());
+                    CHECK_EQUAL(UInt8::__staticType__(), methodType->getReceiverType());
+                    CHECK_EQUAL(Int64::__staticType__(), methodType->getArgument(0));
+                    CHECK_EQUAL(Int32::__staticType__(), methodType->getArgument(1));
+                    CHECK_EQUAL(Float32::__staticType__(), methodType->getResultType());
                 }
             });
         });

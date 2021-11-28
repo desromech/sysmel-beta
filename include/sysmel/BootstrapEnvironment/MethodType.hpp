@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class MethodType : public FunctionalType
+class MethodType : public SubMetaTypeOf<FunctionalType, MethodType>
 {
 public:
     virtual bool isMethodType() const override;
@@ -25,6 +25,8 @@ public:
 
     virtual TypePtr getReceiverType() const override;
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
+    
+    virtual std::string printString() const override;
 
 protected:
     TypePtr receiverType;

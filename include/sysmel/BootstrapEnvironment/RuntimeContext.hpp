@@ -5,6 +5,7 @@
 #include "ProgramEntity.hpp"
 #include "Exception.hpp"
 #include <map>
+#include <tuple>
 
 namespace SysmelMoebius
 {
@@ -104,6 +105,10 @@ protected:
     std::map<std::pair<TypePtr, uint64_t>, ArrayTypePtr> arrayTypeCache;
     std::map<TypePtrList, TupleTypePtr> tupleTypeCache;
     std::map<TypePtrList, VariantTypePtr> variantTypeCache;
+
+    std::map<std::pair<TypePtr, TypePtrList>, FunctionTypePtr> functionTypeCache;
+    std::map<std::pair<TypePtr, TypePtrList>, ClosureTypePtr> closureTypeCache;
+    std::map<std::tuple<TypePtr, TypePtr, TypePtrList>, MethodTypePtr> methodTypeCache;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -1,5 +1,9 @@
 #include "sysmel/BootstrapEnvironment/FunctionType.hpp"
+#include "sysmel/BootstrapEnvironment/ClosureType.hpp"
+#include "sysmel/BootstrapEnvironment/MethodType.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
 namespace SysmelMoebius
 {
@@ -10,10 +14,22 @@ static BootstrapTypeRegistration<FunctionTypeValue> functionalTypeRegistration;
 
 FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList &arguments)
 {
+    auto canonicalResultType = resultType->asUndecoratedType();
+    auto canonicalArgumentTypes = arguments;
+    for(auto &el : canonicalArgumentTypes)
+        el = el->asUndecoratedType();
+
+    auto &cache = RuntimeContext::getActive()->functionTypeCache;
+    auto it = cache.find({canonicalResultType, canonicalArgumentTypes});
+    if(it != cache.end())
+        return it->second;
+
     auto result = std::make_shared<FunctionType> ();
     result->setSupertypeAndImplicitMetaType(FunctionTypeValue::__staticType__());
-    result->arguments = arguments;
-    result->result = resultType;
+    result->arguments = canonicalArgumentTypes;
+    result->result = canonicalResultType;
+    cache.insert({{canonicalResultType, canonicalArgumentTypes}, result});
+    result->addSpecializedMethods();
     return result;
 }
 
@@ -38,6 +54,22 @@ FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValueP
     result->type = shared_from_this();
     result->functionalImplementation = implementation;
     return result;
+}
+
+void FunctionType::addSpecializedMethods()
+{
+    getType()->addMethodCategories(MethodCategories{
+        {"type composition", {
+            makeMethodBinding<TypePtr (TypePtr)> ("closure", +[](const TypePtr &self) {
+                auto selfFunctionType = std::static_pointer_cast<FunctionType> (self);
+                return ClosureType::make(selfFunctionType->result, selfFunctionType->arguments);
+            }, MethodFlags::Pure),
+            makeMethodBinding<TypePtr (TypePtr, TypePtr)> ("methodWithReceiver:", +[](const TypePtr &self, const TypePtr &receiverType) {
+                auto selfFunctionType = std::static_pointer_cast<FunctionType> (self);
+                return MethodType::make(receiverType, selfFunctionType->result, selfFunctionType->arguments);
+            }, MethodFlags::Pure),
+        }}
+    });
 }
 
 bool FunctionTypeValue::isFunctionTypeValue() const

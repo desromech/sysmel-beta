@@ -32,6 +32,7 @@
 #include "sysmel/BootstrapEnvironment/ArrayType.hpp"
 #include "sysmel/BootstrapEnvironment/TupleType.hpp"
 #include "sysmel/BootstrapEnvironment/VariantType.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionType.hpp"
 
 #include <algorithm>
 
@@ -66,6 +67,7 @@ MethodCategories Type::__instanceMethods__()
 
             makeMethodBinding("&", &Type::appendTypeMakingTuple, MethodFlags::Pure),
             makeMethodBinding("|", &Type::appendTypeMakingVariant, MethodFlags::Pure),
+            makeMethodBinding("=>", &Type::appendResultTypeMakingFunctionType, MethodFlags::Pure),
         }},
     };
 }
@@ -920,6 +922,14 @@ TypePtr Type::appendTypeMakingVariant(const TypePtr &nextType)
     }
 
     return VariantType::make(newElementTypes);
+}
+
+TypePtr Type::appendResultTypeMakingFunctionType(const TypePtr &resultType)
+{
+    if(isVoidType())
+        return FunctionType::make(resultType, {});
+    else
+        return FunctionType::make(resultType, {shared_from_this()});
 }
 
 TypePtr Type::withConst()

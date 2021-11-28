@@ -1,4 +1,5 @@
 #include "sysmel/BootstrapEnvironment/ClosureType.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -10,10 +11,21 @@ static BootstrapTypeRegistration<ClosureTypeValue> functionalTypeRegistration;
 
 ClosureTypePtr ClosureType::make(const TypePtr &resultType, const TypePtrList &arguments)
 {
+    auto canonicalResultType = resultType->asUndecoratedType();
+    auto canonicalArgumentTypes = arguments;
+    for(auto &el : canonicalArgumentTypes)
+        el = el->asUndecoratedType();
+
+    auto &cache = RuntimeContext::getActive()->closureTypeCache;
+    auto it = cache.find({canonicalResultType, canonicalArgumentTypes});
+    if(it != cache.end())
+        return it->second;
+
     auto result = std::make_shared<ClosureType> ();
-    result->arguments = arguments;
-    result->result = resultType;
+    result->arguments = canonicalArgumentTypes;
+    result->result = canonicalResultType;
     result->setSupertypeAndImplicitMetaType(ClosureTypeValue::__staticType__());
+    cache.insert({{canonicalResultType, canonicalArgumentTypes}, result});
     return result;
 }
 

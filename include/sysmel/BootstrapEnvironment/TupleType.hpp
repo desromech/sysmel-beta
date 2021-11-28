@@ -35,6 +35,7 @@ public:
 
     virtual TypePtr asTupleType() override;
     virtual TypePtr appendTypeMakingTuple(const TypePtr &nextType) override;
+    virtual TypePtr appendResultTypeMakingFunctionType(const TypePtr &nextType) override;
 
     void addSpecializedInstanceMethods();
 

@@ -289,6 +289,9 @@ public:
     /// Appends a type for making a variant.
     virtual TypePtr appendTypeMakingVariant(const TypePtr &nextType);
 
+    /// Appends a type for making a variant.
+    virtual TypePtr appendResultTypeMakingFunctionType(const TypePtr &nextType);
+
     /// Adds the const decoration to this type.
     virtual TypePtr withConst();
 
