@@ -17,6 +17,12 @@ class RefCountedObject;
 class RefCountedObjectMemoryPool
 {
 public:
+    struct AllocationHeader
+    {
+        AllocationHeader *next;
+        AllocationHeader *previous;
+    };
+
     static RefCountedObjectMemoryPool *getActive();
     static RefCountedObjectMemoryPool *getGlobalSingleton();
 
@@ -28,7 +34,8 @@ public:
 
 private:
     bool shuttingDown = false;
-    std::unordered_set<RefCountedObject*> allocatedObjects;
+    AllocationHeader *firstAllocation = nullptr;
+    AllocationHeader *lastAllocation = nullptr;
 };
 
 class RefCountedObject

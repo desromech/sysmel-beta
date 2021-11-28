@@ -22,29 +22,66 @@ RefCountedObjectMemoryPool::~RefCountedObjectMemoryPool()
 {
     assert(!shuttingDown);
     shuttingDown = true;
-    for(auto object : allocatedObjects)
+
+    // First pass: disconnect from the memory pool.
+    for(auto position = firstAllocation; position; position = position->next)
+    {
+        auto object = reinterpret_cast<RefCountedObject*> (&position[1]);
         object->setRefCountedMemoryPool(nullptr);
-    for(auto object : allocatedObjects)
+    }
+
+    // Second pass: force destroy the objects.
+    for(auto position = firstAllocation; position; position = position->next)
+    {
+        auto object = reinterpret_cast<RefCountedObject*> (&position[1]);
         object->memoryPoolForcedDestroy();
-    for(auto object : allocatedObjects)
-        free(object);
+    }
+
+    // Third pass: free the object memory.
+    for(auto position = firstAllocation; position;)
+    {
+        auto pointer = position;
+        position = position->next;
+        free(pointer);
+    }
 }
 
 void* RefCountedObjectMemoryPool::allocateMemory(size_t size)
 {
     assert(!shuttingDown);
-    auto result = malloc(size);
-    memset(result, 0, size);
-    allocatedObjects.insert(reinterpret_cast<RefCountedObject*> (result));
-    return result;
+    auto allocationSize = sizeof(AllocationHeader) + size;
+    auto header = reinterpret_cast<AllocationHeader*> (malloc(allocationSize));
+    memset(header, 0, allocationSize);
+
+    if(lastAllocation)
+        lastAllocation->next = header;
+    header->previous = lastAllocation;
+    lastAllocation = header;
+    if(!firstAllocation)
+        firstAllocation = lastAllocation;
+
+    return &header[1];
 }
 
 void RefCountedObjectMemoryPool::releaseMemoryFor(const RefCountedObject *object)
 {
     auto nonConstObject = const_cast<RefCountedObject*> (object);
-    free(nonConstObject);
-    if(!shuttingDown)
-        allocatedObjects.erase(allocatedObjects.find(nonConstObject));
+    auto header = &reinterpret_cast<AllocationHeader*> (nonConstObject)[-1];
+
+    // Update the previous side.
+    if(header->previous)
+        header->previous->next = header->next;
+    else
+        firstAllocation = header->next;
+
+    // Update the next side.
+    if(header->next)
+        header->next->previous = header->previous;
+    else
+        lastAllocation = header->previous;
+
+    // Free the header.
+    free(header);
 }
 
 } // End of namespace BootstrapEnvironment
