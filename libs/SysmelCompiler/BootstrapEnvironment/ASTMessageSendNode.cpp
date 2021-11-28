@@ -21,7 +21,7 @@ bool ASTMessageSendNode::isASTMessageSendNode() const
 
 AnyValuePtr ASTMessageSendNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMessageSendNode(shared_from_this());
+    return visitor->visitMessageSendNode(selfFromThis());
 }
 
 bool ASTMessageSendNode::isPureCompileTimeLiteralMessage() const
@@ -82,15 +82,15 @@ ASTNodePtr ASTMessageSendNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzer
 {
     if(!receiver && arguments.size() == 1 && selector->isASTLiteralSymbolValue())
     {
-        auto rawIdentifierValue = std::static_pointer_cast<ASTLiteralValueNode> (selector)->value;
+        auto rawIdentifierValue = staticObjectCast<ASTLiteralValueNode> (selector)->value;
         auto identifier = rawIdentifierValue->asUnarySelectorConvertedToIdentifier();
         if(identifier && !identifier->isUndefined())
         {
-            auto identifierNode = std::make_shared<ASTLiteralValueNode> ();
+            auto identifierNode = basicMakeObject<ASTLiteralValueNode> ();
             identifierNode->sourcePosition = selector->sourcePosition;
             identifierNode->setValueAndType(identifier);
 
-            auto result = std::make_shared<ASTArgumentDefinitionNode> ();
+            auto result = basicMakeObject<ASTArgumentDefinitionNode> ();
             result->sourcePosition = sourcePosition;
             result->identifier = identifierNode;
             result->type = arguments[0];

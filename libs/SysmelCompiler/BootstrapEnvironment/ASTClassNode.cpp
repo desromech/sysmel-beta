@@ -17,7 +17,7 @@ bool ASTClassNode::isASTClassNode() const
 
 AnyValuePtr ASTClassNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitClassNode(shared_from_this());
+    return visitor->visitClassNode(selfFromThis());
 }
 
 SExpression ASTClassNode::asSExpression() const

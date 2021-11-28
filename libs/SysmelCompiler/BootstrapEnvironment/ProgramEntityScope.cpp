@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<ProgramEntityScope> ProgramEntityScopeRegistrat
 
 ProgramEntityScopePtr ProgramEntityScope::make(const IdentifierLookupScopePtr &parent, const ProgramEntityPtr &programEntity)
 {
-    auto result = std::make_shared<ProgramEntityScope> ();
+    auto result = basicMakeObject<ProgramEntityScope> ();
     result->parent = parent;
     result->programEntity = programEntity;
     return result;
@@ -19,7 +19,7 @@ ProgramEntityScopePtr ProgramEntityScope::make(const IdentifierLookupScopePtr &p
 
 AnyValuePtr ProgramEntityScope::lookupSymbolLocally(const AnyValuePtr &symbol)
 {
-    return programEntity->lookupLocalSymbolFromScope(symbol, shared_from_this());
+    return programEntity->lookupLocalSymbolFromScope(symbol, selfFromThis());
 }
 
 } // End of namespace BootstrapEnvironment

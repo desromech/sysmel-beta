@@ -19,7 +19,7 @@ bool ASTMakeLiteralArrayNode::isASTMakeLiteralArrayNode() const
 
 AnyValuePtr ASTMakeLiteralArrayNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMakeLiteralArrayNode(shared_from_this());
+    return visitor->visitMakeLiteralArrayNode(selfFromThis());
 }
 
 SExpression ASTMakeLiteralArrayNode::asSExpression() const

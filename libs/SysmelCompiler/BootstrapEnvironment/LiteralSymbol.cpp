@@ -2,6 +2,7 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include <unordered_map>
 
 namespace SysmelMoebius
@@ -10,24 +11,23 @@ namespace BootstrapEnvironment
 {
 static BootstrapTypeRegistration<LiteralSymbol> literalSymbolTypeRegistration;
 
-static std::unordered_map<std::string, std::shared_ptr<LiteralSymbol>> SymbolInternTable;
+static std::unordered_map<std::string, ObjectPtr<LiteralSymbol>> SymbolInternTable;
 
 TypePtr Type::getLiteralSymbolValue()
 {
     return LiteralSymbol::__staticType__();
 }
 
-std::shared_ptr<LiteralSymbol> LiteralSymbol::intern(const std::string &value)
+ObjectPtr<LiteralSymbol> LiteralSymbol::intern(const std::string &value)
 {
-    auto it = SymbolInternTable.find(value);
-    if(it != SymbolInternTable.end())
-    {
+    auto &table = RuntimeContext::getActive()->symbolInternTable;
+    auto it = table.find(value);
+    if(it != table.end())
         return it->second;
-    }
 
-    auto newSymbol = std::make_shared<LiteralSymbol> ();
+    auto newSymbol = basicMakeObject<LiteralSymbol> ();
     newSymbol->value = value;
-    SymbolInternTable.insert(std::make_pair(value, newSymbol));
+    table.insert({value, newSymbol});
     return newSymbol;
 }
 

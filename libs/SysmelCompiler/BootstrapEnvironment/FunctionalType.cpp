@@ -62,7 +62,7 @@ std::string FunctionalType::printString() const
 
 ASTNodePtr FunctionalType::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    return semanticAnalyzer->analyzeCallNodeWithFunctionalType(node, shared_from_this());
+    return semanticAnalyzer->analyzeCallNodeWithFunctionalType(node, selfFromThis());
 }
 
 FunctionalTypeValuePtr FunctionalType::makeValueWithImplementation(const AnyValuePtr &)

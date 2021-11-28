@@ -19,7 +19,7 @@ bool ASTCleanUpScopeNode::isASTCleanUpScopeNode() const
 
 AnyValuePtr ASTCleanUpScopeNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitCleanUpScopeNode(shared_from_this());
+    return visitor->visitCleanUpScopeNode(selfFromThis());
 }
 
 SExpression ASTCleanUpScopeNode::asSExpression() const

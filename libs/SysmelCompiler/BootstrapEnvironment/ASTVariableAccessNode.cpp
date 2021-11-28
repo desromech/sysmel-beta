@@ -19,7 +19,7 @@ bool ASTVariableAccessNode::isASTVariableAccessNode() const
 
 AnyValuePtr ASTVariableAccessNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitVariableAccessNode(shared_from_this());
+    return visitor->visitVariableAccessNode(selfFromThis());
 }
 
 SExpression ASTVariableAccessNode::asSExpression() const

@@ -17,7 +17,7 @@ TypePtr WrapperTypeFor<AnyValuePtrList>::apply()
 
 LiteralArrayPtr LiteralArray::makeFor(const AnyValuePtrList &content)
 {
-    auto result = std::make_shared<LiteralArray> ();
+    auto result = basicMakeObject<LiteralArray> ();
     result->content = content;
     return result;
 }
@@ -68,7 +68,7 @@ SExpression LiteralArray::asSExpression() const
 
 LiteralArrayPtr LiteralArray::select(const AnyValuePtr &aBlock) const
 {
-    auto result = std::make_shared<LiteralArray> ();
+    auto result = basicMakeObject<LiteralArray> ();
     for(auto & el : content)
     {
         if(validAnyValue(aBlock->applyWithArguments({el}))->unwrapAsBoolean())
@@ -80,7 +80,7 @@ LiteralArrayPtr LiteralArray::select(const AnyValuePtr &aBlock) const
 
 LiteralArrayPtr LiteralArray::collect(const AnyValuePtr &aBlock) const
 {
-    auto result = std::make_shared<LiteralArray> ();
+    auto result = basicMakeObject<LiteralArray> ();
     result->content.reserve(content.size());
     for(auto & el : content)
         result->content.push_back(aBlock->applyWithArguments({el}));

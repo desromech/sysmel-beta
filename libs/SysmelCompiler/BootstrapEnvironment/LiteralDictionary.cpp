@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<LiteralDictionary> literalArrayRegistration;
 
 LiteralDictionaryPtr LiteralDictionary::makeFor(const AnyValuePtrList &elements)
 {
-    auto result = std::make_shared<LiteralDictionary> ();
+    auto result = basicMakeObject<LiteralDictionary> ();
     result->elements = elements;
     return result;
 }

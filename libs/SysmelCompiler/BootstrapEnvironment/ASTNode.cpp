@@ -45,12 +45,12 @@ bool ASTNode::isPureCompileTimeEvaluableNode() const
 ASTNodePtr ASTNode::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
     (void)requiredSourcePosition;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 ASTNodePtr ASTNode::asInlinedBlockBodyNode()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 bool ASTNode::isASTIdentifierSymbolValue() const
@@ -65,7 +65,7 @@ bool ASTNode::isASTLiteralTypeNode() const
 
 ASTNodePtr ASTNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    return semanticAnalyzer->recordSemanticErrorInNode(shared_from_this(), "This is not a valid argument argument specification.");
+    return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "This is not a valid argument argument specification.");
 }
 
 std::string ASTNode::printString() const
@@ -101,7 +101,7 @@ void ASTNode::allChildrenDo(const ASTIterationBlock &aBlock)
 
 void ASTNode::withAllChildrenDo(const ASTIterationBlock &aBlock)
 {
-    aBlock(shared_from_this());
+    aBlock(selfFromThis());
     allChildrenDo(aBlock);
 }
 

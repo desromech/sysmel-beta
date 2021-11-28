@@ -59,7 +59,7 @@ AnyValuePtr WrapValue<Fraction>::apply(const Fraction &value)
 
 AnyValuePtr WrapValue<double>::apply(double value)
 {
-    return std::make_shared<LiteralFloat> (value);
+    return basicMakeObject<LiteralFloat> (value);
 }
 
 AnyValuePtr WrapValue<std::string>::apply(const std::string &value)

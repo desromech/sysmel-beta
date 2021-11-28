@@ -42,16 +42,16 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &method, const An
     {
         if(!existent->isPatternMatchingMethod())
         {
-            auto newPatternMatchingMethod = std::make_shared<PatternMatchingMethod> (selector);
-            newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (existent));
-            newPatternMatchingMethod->addPattern(std::static_pointer_cast<Method> (method));
+            auto newPatternMatchingMethod = basicMakeObject<PatternMatchingMethod> (selector);
+            newPatternMatchingMethod->addPattern(staticObjectCast<Method> (existent));
+            newPatternMatchingMethod->addPattern(staticObjectCast<Method> (method));
             newPatternMatchingMethod->registerInCurrentModule();
             dictionary[selector] = newPatternMatchingMethod;
         }
         else
         {
-            auto patternMatchingMethod = std::static_pointer_cast<PatternMatchingMethod> (existent);
-            patternMatchingMethod->addPattern(std::static_pointer_cast<Method> (method));
+            auto patternMatchingMethod = staticObjectCast<PatternMatchingMethod> (existent);
+            patternMatchingMethod->addPattern(staticObjectCast<Method> (method));
         }
         return;
     }

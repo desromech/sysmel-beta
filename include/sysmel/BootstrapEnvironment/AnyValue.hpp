@@ -15,10 +15,42 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+template<typename T>
+using ObjectPtr = std::shared_ptr<T>;
+
+template<typename T>
+using ObjectWeakPtr = std::weak_ptr<T>;
+
+template<typename T, typename...Args>
+ObjectPtr<T> basicMakeObject(Args&&... args)
+{
+    return std::make_shared<T> (std::forward<Args> (args)...);
+}
+
+template<typename T, typename...Args>
+ObjectPtr<T> makeObject(Args&&... args)
+{
+    auto result = basicMakeObject<T> (std::forward<Args> (args)...);
+    result->initialize();
+    return result;
+}
+
+template<typename T, typename U>
+ObjectPtr<T> staticObjectCast(const ObjectPtr<U> &object)
+{
+    return std::static_pointer_cast<T> (object);
+}
+
+template<typename T, typename U>
+ObjectPtr<T> dynamicObjectCast(const ObjectPtr<U> &object)
+{
+    return std::dynamic_pointer_cast<T> (object);
+}
+
 #define SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
     class className; \
-    typedef std::shared_ptr<className> className ##Ptr; \
-    typedef std::weak_ptr<className> className ##WeakPtr;
+    typedef ObjectPtr<className> className ##Ptr; \
+    typedef ObjectWeakPtr<className> className ##WeakPtr;
 
 #define SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(className) \
     SYSMEL_DECLARE_BOOTSTRAP_CLASS(className) \
@@ -195,7 +227,7 @@ public:
     static AnyValuePtr __basicNewValue__()
     {
         if constexpr(std::is_constructible<SelfType>::value)
-            return std::make_shared<SelfType> ();
+            return basicMakeObject<SelfType> ();
         else
             return getNilConstant();
     }
@@ -205,9 +237,9 @@ public:
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
 
-    std::shared_ptr<SelfType> shared_from_this()
+    ObjectPtr<SelfType> selfFromThis()
     {
-        return std::static_pointer_cast<SelfType> (SuperType::shared_from_this());
+        return staticObjectCast<SelfType> (SuperType::shared_from_this());
     }
 };
 
@@ -221,9 +253,9 @@ public:
     static constexpr char const __typeName__[] = "";
     static constexpr char const __sysmelTypeName__[] = "";
 
-    std::shared_ptr<SelfType> shared_from_this()
+    ObjectPtr<SelfType> selfFromThis()
     {
-        return std::static_pointer_cast<SelfType> (SuperType::shared_from_this());
+        return staticObjectCast<SelfType> (SuperType::shared_from_this());
     }
 };
 
@@ -316,6 +348,11 @@ public:
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
     static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
+
+    AnyValuePtr selfFromThis()
+    {
+        return shared_from_this();
+    }
 
     /// Retrieves the type of the object.
     virtual TypePtr getType() const

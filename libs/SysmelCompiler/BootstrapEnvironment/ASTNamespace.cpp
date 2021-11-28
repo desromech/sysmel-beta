@@ -18,7 +18,7 @@ bool ASTNamespaceNode::isASTNamespaceNode() const
 
 AnyValuePtr ASTNamespaceNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitNamespaceNode(shared_from_this());
+    return visitor->visitNamespaceNode(selfFromThis());
 }
 
 SExpression ASTNamespaceNode::asSExpression() const

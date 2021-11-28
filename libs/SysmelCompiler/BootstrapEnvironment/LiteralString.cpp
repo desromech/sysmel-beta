@@ -16,7 +16,7 @@ TypePtr WrapperTypeFor<std::string>::apply()
 
 LiteralStringPtr LiteralString::makeFor(const std::string &value)
 {
-    auto result = std::make_shared<LiteralString> ();
+    auto result = basicMakeObject<LiteralString> ();
     result->value = value;
     return result;
 }

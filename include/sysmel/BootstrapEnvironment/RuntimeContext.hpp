@@ -5,6 +5,7 @@
 #include "ProgramEntity.hpp"
 #include "Exception.hpp"
 #include <map>
+#include <unordered_map>
 #include <tuple>
 
 namespace SysmelMoebius
@@ -25,6 +26,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 
 /**
  * I represent an active runtime context in the object model environment.
@@ -57,7 +59,7 @@ public:
             RuntimeContextPtr oldActive;
         } restoreActive;
 
-        setActive(shared_from_this());
+        setActive(selfFromThis());
 
         // Make sure to invoke what on the exception so that it can be readed outside this context.
         try
@@ -94,6 +96,7 @@ protected:
     friend class ArrayType;
     friend class TupleType;
     friend class VariantType;
+    friend class LiteralSymbol;
     
     BootstrapModulePtr bootstrapModule;
     LanguageSupportPtr sysmelLanguageSupport;
@@ -109,6 +112,8 @@ protected:
     std::map<std::pair<TypePtr, TypePtrList>, FunctionTypePtr> functionTypeCache;
     std::map<std::pair<TypePtr, TypePtrList>, ClosureTypePtr> closureTypeCache;
     std::map<std::tuple<TypePtr, TypePtr, TypePtrList>, MethodTypePtr> methodTypeCache;
+
+    std::unordered_map<std::string, LiteralSymbolPtr> symbolInternTable;
 };
 
 } // End of namespace BootstrapEnvironment

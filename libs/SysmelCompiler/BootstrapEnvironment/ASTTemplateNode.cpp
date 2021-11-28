@@ -18,7 +18,7 @@ bool ASTTemplateNode::isASTTemplateNode() const
 
 AnyValuePtr ASTTemplateNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitTemplateNode(shared_from_this());
+    return visitor->visitTemplateNode(selfFromThis());
 }
 
 SExpression ASTTemplateNode::asSExpression() const

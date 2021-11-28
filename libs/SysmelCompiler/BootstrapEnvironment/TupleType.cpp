@@ -46,7 +46,7 @@ TupleTypePtr TupleType::makeNormalized(const TypePtrList &elementTypes)
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<TupleType> ();
+    auto result = basicMakeObject<TupleType> ();
     result->setSupertypeAndImplicitMetaType(TupleTypeValue::__staticType__());
     result->elementTypes = elementTypes;
     cache.insert({elementTypes, result});
@@ -116,8 +116,8 @@ SExpression TupleType::asSExpression() const
 
 AnyValuePtr TupleType::basicNewValue()
 {
-    auto tuple = std::make_shared<TupleTypeValue> ();
-    tuple->type = shared_from_this();
+    auto tuple = basicMakeObject<TupleTypeValue> ();
+    tuple->type = selfFromThis();
     tuple->elements.reserve(elementTypes.size());
     for(auto & elType : elementTypes)
         tuple->elements.push_back(elType->basicNewValue());
@@ -126,15 +126,15 @@ AnyValuePtr TupleType::basicNewValue()
 
 TupleTypeValuePtr TupleType::makeWithElements(const AnyValuePtrList &elements)
 {
-    auto tuple = std::make_shared<TupleTypeValue> ();
-    tuple->type = shared_from_this();
+    auto tuple = basicMakeObject<TupleTypeValue> ();
+    tuple->type = selfFromThis();
     tuple->elements = elements;
     return tuple;
 }
 
 TypePtr TupleType::asTupleType()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 TypePtr TupleType::appendTypeMakingTuple(const TypePtr &nextType)
@@ -142,7 +142,7 @@ TypePtr TupleType::appendTypeMakingTuple(const TypePtr &nextType)
     auto newElementTypes = elementTypes;
     if(nextType->isTupleType())
     {
-        auto &nextTypes = std::static_pointer_cast<TupleType> (nextType)->elementTypes;
+        auto &nextTypes = staticObjectCast<TupleType> (nextType)->elementTypes;
         newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
     }
     else

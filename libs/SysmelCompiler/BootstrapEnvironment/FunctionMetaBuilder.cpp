@@ -45,7 +45,7 @@ ASTNodePtr FunctionMetaBuilder::analyzeMessageSendNodeWithSelector(const std::st
 
 ASTNodePtr FunctionMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTFunctionNode> ();
+    auto result = basicMakeObject<ASTFunctionNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
     result->dispatchMode = instanceContext->methodDispatchMode;

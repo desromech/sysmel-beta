@@ -33,8 +33,6 @@ public:
     virtual SExpression asSExpression() const override;
 };
 
-typedef std::shared_ptr<LiteralSymbol> LiteralSymbolPtr;
-
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 

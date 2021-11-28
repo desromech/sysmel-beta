@@ -19,7 +19,7 @@ bool ASTErrorNode::isASTErrorNode() const
 
 AnyValuePtr ASTErrorNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitErrorNode(shared_from_this());
+    return visitor->visitErrorNode(selfFromThis());
 }
 
 SExpression ASTErrorNode::asSExpression() const
@@ -31,7 +31,7 @@ SExpression ASTErrorNode::asSExpression() const
 
 CompilationErrorPtr ASTErrorNode::asCompilationError()
 {
-    auto result = std::make_shared<CompilationError> ();
+    auto result = basicMakeObject<CompilationError> ();
     result->setMessageText(errorMessage);
     return result;
 }

@@ -18,7 +18,7 @@ bool PrimitiveBooleanType::isPrimitiveBooleanTypeValue() const
 
 Boolean8Ptr Boolean8::make(bool value)
 {
-    auto result = std::make_shared<Boolean8> ();
+    auto result = basicMakeObject<Boolean8> ();
     result->value = value;
     return result;
 }

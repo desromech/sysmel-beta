@@ -27,7 +27,7 @@ void GlobalVariable::ensureEvaluationOfInitialValue()
     {
         assert(referenceType->isReferenceLikeType());
         currentValueOrValueBox = evaluatedValue->asMutableStoreValue();
-        referenceValue = std::static_pointer_cast<PointerLikeType> (referenceType)->makeWithValue(currentValueOrValueBox);
+        referenceValue = staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(currentValueOrValueBox);
     }
     else
     {

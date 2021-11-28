@@ -18,7 +18,7 @@ bool ArgumentVariable::isArgumentVariable() const
 
 AnyValuePtr ArgumentVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
 {
-    return compileTimeCleanUpScope->lookupStoreBindingRecursively(shared_from_this());
+    return compileTimeCleanUpScope->lookupStoreBindingRecursively(selfFromThis());
 }
 
 void ArgumentVariable::setType(const TypePtr &type)

@@ -18,7 +18,7 @@ bool ASTLocalImmutableAccessNode::isASTLocalImmutableAccessNode() const
 
 AnyValuePtr ASTLocalImmutableAccessNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitLocalImmutableAccessNode(shared_from_this());
+    return visitor->visitLocalImmutableAccessNode(selfFromThis());
 }
 
 SExpression ASTLocalImmutableAccessNode::asSExpression() const

@@ -17,7 +17,7 @@ bool ASTStructNode::isASTStructNode() const
 
 AnyValuePtr ASTStructNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitStructNode(shared_from_this());
+    return visitor->visitStructNode(selfFromThis());
 }
 
 SExpression ASTStructNode::asSExpression() const

@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<IdentityTypeConversionRule> identityTypeConvers
 
 TypeConversionRulePtr IdentityTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = std::make_shared<IdentityTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeObject<IdentityTypeConversionRule> ();
     return singleton;
 }
 

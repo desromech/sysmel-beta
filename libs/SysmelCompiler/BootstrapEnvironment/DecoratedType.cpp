@@ -21,7 +21,7 @@ TypePtr DecoratedType::make(const TypePtr &baseType, TypeDecorationFlags decorat
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<DecoratedType> ();
+    auto result = basicMakeObject<DecoratedType> ();
     result->setSupertypeAndImplicitMetaType(DecoratedTypeValue::__staticType__());
     result->baseType = baseType;
     result->decorations = decorations;
@@ -144,8 +144,8 @@ SExpression DecoratedType::asSExpression() const
 
 DecoratedTypeValuePtr DecoratedType::makeWithValue(const AnyValuePtr &value)
 {
-    auto pointer = std::make_shared<DecoratedTypeValue> ();
-    pointer->type = shared_from_this();
+    auto pointer = basicMakeObject<DecoratedTypeValue> ();
+    pointer->type = selfFromThis();
     pointer->baseValue = value;
     return pointer;
 }

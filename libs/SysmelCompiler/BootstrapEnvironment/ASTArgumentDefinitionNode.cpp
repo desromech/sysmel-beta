@@ -18,7 +18,7 @@ bool ASTArgumentDefinitionNode::isASTArgumentDefinitionNode() const
 
 AnyValuePtr ASTArgumentDefinitionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitArgumentDefinitionNode(shared_from_this());
+    return visitor->visitArgumentDefinitionNode(selfFromThis());
 }
 
 SExpression ASTArgumentDefinitionNode::asSExpression() const

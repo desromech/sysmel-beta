@@ -31,7 +31,7 @@ ASTNodePtr CompileTimeConstantMetaBuilder::analyzeMessageSendNodeWithSelector(co
 
 ASTNodePtr CompileTimeConstantMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTCompileTimeConstantNode> ();
+    auto result = basicMakeObject<ASTCompileTimeConstantNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

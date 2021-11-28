@@ -115,14 +115,14 @@ static BootstrapTypeRegistration<ASTSemanticAnalyzer> ASTSemanticAnalyzerTypeReg
 static TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
 {
     assert(node->isASTLiteralTypeNode());
-    return std::static_pointer_cast<Type> (
-        std::static_pointer_cast<ASTLiteralValueNode> (node)->value
+    return staticObjectCast<Type> (
+        staticObjectCast<ASTLiteralValueNode> (node)->value
     );
 }
 
 ASTNodePtr ASTSemanticAnalyzer::recordSemanticErrorInNode(const ASTNodePtr &errorNode, const std::string &message)
 {
-    auto semanticErrorNode = std::make_shared<ASTSemanticErrorNode> ();
+    auto semanticErrorNode = basicMakeObject<ASTSemanticErrorNode> ();
     semanticErrorNode->sourcePosition = errorNode->sourcePosition;
     semanticErrorNode->errorMessage = message;
     semanticErrorNode->analyzedType = Type::getCompilationErrorValueType();
@@ -132,7 +132,7 @@ ASTNodePtr ASTSemanticAnalyzer::recordSemanticErrorInNode(const ASTNodePtr &erro
 
 ASTNodePtr ASTSemanticAnalyzer::recordCompileTimeEvaluationErrorInNode(const ASTNodePtr &errorNode, const ErrorPtr &evaluationError)
 {
-    auto compileTimeErrorNode = std::make_shared<ASTCompileTimeEvaluationErrorNode> ();
+    auto compileTimeErrorNode = basicMakeObject<ASTCompileTimeEvaluationErrorNode> ();
     compileTimeErrorNode->sourcePosition = errorNode->sourcePosition;
     compileTimeErrorNode->errorMessage = evaluationError->getDescription();
     compileTimeErrorNode->caughtError = evaluationError;
@@ -143,22 +143,22 @@ ASTNodePtr ASTSemanticAnalyzer::recordCompileTimeEvaluationErrorInNode(const AST
 
 MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTIdentifierReferenceNodePtr &node)
 {
-    auto result = std::make_shared<MacroInvocationContext> ();
+    auto result = basicMakeObject<MacroInvocationContext> ();
     result->receiverNode = node;
     result->selfType = Type::getVoidType();
-    result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder = basicMakeObject<ASTBuilder> ();
     result->astBuilder->sourcePosition = node->sourcePosition;
     return result;
 }
 
 MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node)
 {
-    auto result = std::make_shared<MacroInvocationContext> ();
+    auto result = basicMakeObject<MacroInvocationContext> ();
     result->receiverNode = node->receiver;
     result->selfType = Type::getVoidType();
     if(node->receiver && node->receiver->analyzedType)
         result->selfType = node->receiver->analyzedType;
-    result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder = basicMakeObject<ASTBuilder> ();
     result->astBuilder->sourcePosition = node->sourcePosition;
     return result;
 }
@@ -166,14 +166,14 @@ MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(con
 MacroInvocationContextPtr ASTSemanticAnalyzer::makeMacroInvocationContextFor(const ASTNodePtr &node)
 {
     if(node->isASTMessageSendNode())
-        return makeMacroInvocationContextFor(std::static_pointer_cast<ASTMessageSendNode> (node));
+        return makeMacroInvocationContextFor(staticObjectCast<ASTMessageSendNode> (node));
     else if(node->isASTIdentifierReferenceNode())
-        return makeMacroInvocationContextFor(std::static_pointer_cast<ASTIdentifierReferenceNode> (node));
+        return makeMacroInvocationContextFor(staticObjectCast<ASTIdentifierReferenceNode> (node));
 
-    auto result = std::make_shared<MacroInvocationContext> ();
+    auto result = basicMakeObject<MacroInvocationContext> ();
     result->receiverNode = node;
     result->selfType = Type::getVoidType();
-    result->astBuilder = std::make_shared<ASTBuilder> ();
+    result->astBuilder = basicMakeObject<ASTBuilder> ();
     result->astBuilder->sourcePosition = node->sourcePosition;
     return result;
 }
@@ -201,7 +201,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithTypeInference(const ASTNo
         currentExpectedType = oldExpectedType;
     });
 
-    return typeInferenceSlot->concretizeTypeInferenceOfNodeWith(analyzedNode, shared_from_this());
+    return typeInferenceSlot->concretizeTypeInferenceOfNodeWith(analyzedNode, selfFromThis());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects)
@@ -256,11 +256,11 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const
     auto analysisResult = visitNode(node);
     assert(analysisResult->isASTNode());
 
-    auto analysisResultNode = std::static_pointer_cast<ASTNode> (analysisResult);
+    auto analysisResultNode = staticObjectCast<ASTNode> (analysisResult);
     assert(analysisResultNode->analyzedType);
 
     if(concretizeEphemeralObjects && analysisResultNode->isASTLiteralValueNode() && analysisResultNode->analyzedType->isEphemeralCompileTimeObject())
-        return analysisResultNode->analyzedType->concretizeEphemeralCompileTimeObject(std::static_pointer_cast<ASTLiteralValueNode> (analysisResultNode), shared_from_this());
+        return analysisResultNode->analyzedType->concretizeEphemeralCompileTimeObject(staticObjectCast<ASTLiteralValueNode> (analysisResultNode), selfFromThis());
 
     return analysisResultNode;
 }
@@ -306,7 +306,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessa
 
 AnyValuePtr ASTSemanticAnalyzer::evaluateInCompileTime(const ASTNodePtr &node)
 {
-    auto evaluator = std::make_shared<ASTCompileTimeEvaluator> ();
+    auto evaluator = basicMakeObject<ASTCompileTimeEvaluator> ();
     return evaluator->visitNodeCachingExplicitReturns(analyzeNodeIfNeededWithTemporaryAutoType(node));
 }
 
@@ -320,7 +320,7 @@ ASTNodePtr ASTSemanticAnalyzer::guardCompileTimeEvaluationForNode(const ASTNodeP
     {
         auto exception = exceptionWrapper.getException();
         if(exception->isKindOf<Error> ())
-            return recordCompileTimeEvaluationErrorInNode(node, std::static_pointer_cast<Error> (exception));
+            return recordCompileTimeEvaluationErrorInNode(node, staticObjectCast<Error> (exception));
 
         // Propagate the exception.
         throw exceptionWrapper;
@@ -358,14 +358,14 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMessageSend(const ASTMessageSend
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeByConvertingToMessageSend(const ASTCallNodePtr &node)
 {
-    auto messageSendNode = std::make_shared<ASTMessageSendNode> ();
+    auto messageSendNode = basicMakeObject<ASTMessageSendNode> ();
     messageSendNode->sourcePosition = node->sourcePosition;
 
-    auto selector = std::make_shared<ASTLiteralValueNode> ();
+    auto selector = basicMakeObject<ASTLiteralValueNode> ();
     selector->sourcePosition = node->sourcePosition;
     selector->setValueAndType(internSymbol("()"));
 
-    auto argumentsNode = std::make_shared<ASTMakeTupleNode> ();
+    auto argumentsNode = basicMakeObject<ASTMakeTupleNode> ();
     argumentsNode->sourcePosition = node->sourcePosition;
     argumentsNode->elements = node->arguments;
 
@@ -382,7 +382,7 @@ AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
         return nullptr;
 
     assert(node->isASTLiteralValueNode());
-    auto result = std::static_pointer_cast<ASTLiteralValueNode> (node)->value;
+    auto result = staticObjectCast<ASTLiteralValueNode> (node)->value;
     return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
 }
 
@@ -408,7 +408,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeAtIntoWith(analyzedNode, node->sourcePosition, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedNode, node->sourcePosition, targetType, selfFromThis());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
@@ -450,7 +450,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
 
     // Single conversion rule found.
     if(bestConversionRules.size() == 1)
-        return bestConversionRules[0].first->convertNodeAtIntoWith(node, node->sourcePosition, bestConversionRules[0].second, shared_from_this());
+        return bestConversionRules[0].first->convertNodeAtIntoWith(node, node->sourcePosition, bestConversionRules[0].second, selfFromThis());
 
     // No conversion, or ambiguous conversion rule found.
     return analyzedNode;
@@ -463,7 +463,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDe
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType)
 {
-    auto analyzedNode = std::make_shared<ASTArgumentDefinitionNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTArgumentDefinitionNode> (*node);
     auto name = evaluateNameSymbolValue(analyzedNode->identifier);
     analyzedNode->analyzedIdentifier = name;
 
@@ -510,7 +510,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(co
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeTemplateArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTArgumentDefinitionNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTArgumentDefinitionNode> (*node);
     auto name = evaluateNameSymbolValue(analyzedNode->identifier);
     analyzedNode->analyzedIdentifier = name;
 
@@ -541,7 +541,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeTemplateArgumentDefinitionNode(const ASTA
 
 AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTCleanUpScopeNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTCleanUpScopeNode> (*node);
     analyzedNode->analyzedScope = CleanUpScope::makeWithParent(environment->cleanUpScope);
 
     auto newEnvironment = environment->copyWithCleanUpcope(analyzedNode->analyzedScope);
@@ -555,7 +555,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTClosureNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTClosureNode> (*node);
 
     // TODO: Use the current expected type to assist the function type inference.
 
@@ -565,7 +565,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
     {
         auto &arg = analyzedNode->arguments[i];
         assert(arg->isASTArgumentDefinitionNode());
-        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
 
@@ -618,7 +618,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
     auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
 
     // Create the compiled method if missing.
-    compiledMethod = std::make_shared<CompiledMethod> ();
+    compiledMethod = basicMakeObject<CompiledMethod> ();
     compiledMethod->setDeclaration(analyzedNode);
     compiledMethod->registerInCurrentModule();
     compiledMethod->setClosureSignature(resultType, argumentTypes);
@@ -626,15 +626,15 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
     // Set the arguments declaration and definition node.
     for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
-        compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
-        compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+        compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+        compiledMethod->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
 
     // Set the definition body.
     compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
 
     // Analyze the body.
-    auto analyzedBody = compiledMethod->analyzeDefinitionWith(shared_from_this());
+    auto analyzedBody = compiledMethod->analyzeDefinitionWith(selfFromThis());
     if(analyzedBody->isASTErrorNode())
         return analyzedBody;
 
@@ -656,15 +656,15 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
         return recordSemanticErrorInNode(node, formatString("Failed to find binding for identifier {0}.", {{node->identifier->printString()}}));
     }
 
-    auto analyzedNode = std::make_shared<ASTIdentifierReferenceNode> (*node);
-    return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, shared_from_this());
+    auto analyzedNode = basicMakeObject<ASTIdentifierReferenceNode> (*node);
+    return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, selfFromThis());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTCallNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTCallNode> (*node);
     analyzedNode->function = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->function);
-    return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, shared_from_this());
+    return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, selfFromThis());
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType)
@@ -695,8 +695,8 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallN
 
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTLexicalScopeNode> (*node);
-    analyzedNode->analyzedScope = std::make_shared<LexicalScope> ();
+    auto analyzedNode = basicMakeObject<ASTLexicalScopeNode> (*node);
+    analyzedNode->analyzedScope = basicMakeObject<LexicalScope> ();
     analyzedNode->analyzedScope->parent = environment->lexicalScope;
 
     auto newEnvironment = environment->copyWithLexicalScope(analyzedNode->analyzedScope);
@@ -710,14 +710,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)
 {
-    auto result = std::make_shared<ASTLiteralValueNode> (*node);
+    auto result = basicMakeObject<ASTLiteralValueNode> (*node);
     result->analyzedType = node->type;
     return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTMakeAssociationNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMakeAssociationNode> (*node);
     analyzedNode->key = analyzeNodeIfNeededWithAutoType(analyzedNode->key);
     if(!analyzedNode->value)
         analyzedNode->value = getNilConstant()->asASTNodeRequiredInPosition(node->sourcePosition);
@@ -732,8 +732,8 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeAssociationNode(const ASTMak
         && node->key->isASTLiteralValueNode()
         && node->value->isASTLiteralValueNode())
     {
-        auto key = std::static_pointer_cast<ASTLiteralValueNode> (node->key)->value;
-        auto value = std::static_pointer_cast<ASTLiteralValueNode> (node->value)->value;
+        auto key = staticObjectCast<ASTLiteralValueNode> (node->key)->value;
+        auto value = staticObjectCast<ASTLiteralValueNode> (node->value)->value;
         return analyzeNodeIfNeededWithCurrentExpectedType(
             LiteralAssociation::makeWith(key, value)->asASTNodeRequiredInPosition(node->sourcePosition)
         );
@@ -744,7 +744,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeAssociationNode(const ASTMak
     
 AnyValuePtr ASTSemanticAnalyzer::visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTMakeDictionaryNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMakeDictionaryNode> (*node);
     auto expectedDictionaryType = LiteralDictionary::__staticType__();
     auto expectedAssociationType = LiteralAssociation::__staticType__();
     for(auto &element : analyzedNode->elements)
@@ -769,7 +769,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeDictionaryNode(const ASTMake
     AnyValuePtrList elements;
     elements.reserve(node->elements.size());
     for(auto &el : node->elements)
-        elements.push_back(std::static_pointer_cast<ASTLiteralValueNode> (el)->value);
+        elements.push_back(staticObjectCast<ASTLiteralValueNode> (el)->value);
 
     return analyzeNodeIfNeededWithCurrentExpectedType(
         LiteralDictionary::makeFor(elements)->asASTNodeRequiredInPosition(node->sourcePosition)
@@ -783,7 +783,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeLiteralArrayNode(const ASTMakeLiteralA
         literalEnvironment = literalEnvironment->languageSupport->createMakeLiteralArrayAnalysisEnvironment();
 
     return withEnvironmentDoAnalysis(literalEnvironment, [&](){
-        auto analyzedNode = std::make_shared<ASTMakeLiteralArrayNode> (*node);
+        auto analyzedNode = basicMakeObject<ASTMakeLiteralArrayNode> (*node);
         auto hasError = false;
         ASTNodePtr errorNode;
         for(auto &el : analyzedNode->elements)
@@ -818,7 +818,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
     AnyValuePtrList elements;
     elements.reserve(node->elements.size());
     for(auto &el : node->elements)
-        elements.push_back(std::static_pointer_cast<ASTLiteralValueNode> (el)->value);
+        elements.push_back(staticObjectCast<ASTLiteralValueNode> (el)->value);
 
     // Make a new literal value node with the literal elements. 
     return analyzeNodeIfNeededWithCurrentExpectedType(
@@ -828,7 +828,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTMakeTupleNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMakeTupleNode> (*node);
 
     TypePtrList elementTypes;
     elementTypes.reserve(analyzedNode->elements.size());
@@ -866,23 +866,23 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
 
     // Single message degenerate case.
     if(node->messages.size() == 1)
-        return std::static_pointer_cast<ASTMessageChainMessageNode> (node->messages[0])->asMessageSendNodeWithReceiver(node->receiver);
+        return staticObjectCast<ASTMessageChainMessageNode> (node->messages[0])->asMessageSendNodeWithReceiver(node->receiver);
 
     // Turn into a sequence of receiver-less messages.
     if(!node->receiver)
     {
-        auto result = std::make_shared<ASTSequenceNode> ();
+        auto result = basicMakeObject<ASTSequenceNode> ();
         result->sourcePosition = node->sourcePosition;
         result->expressions.reserve(node->messages.size());
         for(auto &message : node->messages)
         {
-            auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(nullptr);
+            auto convertedMessage = staticObjectCast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(nullptr);
             result->expressions.push_back(convertedMessage);
         }
         return analyzeNodeIfNeededWithCurrentExpectedType(result);
     }
 
-    auto analyzedNode = std::make_shared<ASTMessageChainNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMessageChainNode> (*node);
     analyzedNode->receiver = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->receiver);
 
     // Support inline analysis of meta-builders.
@@ -891,37 +891,37 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         auto result = analyzedNode->receiver;
         for(auto &message : analyzedNode->messages)
         {
-            auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(analyzedNode->receiver);
+            auto convertedMessage = staticObjectCast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(analyzedNode->receiver);
             result = analyzeNodeIfNeededWithTemporaryAutoType(convertedMessage);
         }
         return result;
     }
 
     // Expand into a sequence with a variable
-    auto result = std::make_shared<ASTSequenceNode> ();
+    auto result = basicMakeObject<ASTSequenceNode> ();
     result->sourcePosition = node->sourcePosition;
     result->expressions.reserve(1 + node->messages.size());
 
     // Make the receiver variable name;
-    auto receiverVariableName = std::make_shared<MessageChainReceiverName> ();
+    auto receiverVariableName = basicMakeObject<MessageChainReceiverName> ();
     receiverVariableName->sourcePosition = node->sourcePosition;
 
     // Create a receiver variable.
-    auto receiverVariable = std::make_shared<ASTLocalVariableNode> ();
+    auto receiverVariable = basicMakeObject<ASTLocalVariableNode> ();
     receiverVariable->name = receiverVariableName->asASTNodeRequiredInPosition(node->sourcePosition);
     receiverVariable->initialValue = node->receiver;
     receiverVariable->typeInferenceMode = TypeInferenceMode::TemporaryReference;
     result->expressions.push_back(receiverVariable);
 
     // Create the receiver identifier.
-    auto receiverIdentifier = std::make_shared<ASTIdentifierReferenceNode> ();
+    auto receiverIdentifier = basicMakeObject<ASTIdentifierReferenceNode> ();
     receiverIdentifier->sourcePosition = node->sourcePosition;
     receiverIdentifier->identifier = receiverVariableName;
 
     // Convert the chained messages.
     for(auto &message : analyzedNode->messages)
     {
-        auto convertedMessage = std::static_pointer_cast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(receiverIdentifier);
+        auto convertedMessage = staticObjectCast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(receiverIdentifier);
         result->expressions.push_back(convertedMessage);
     }
 
@@ -930,7 +930,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTMessageSendNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMessageSendNode> (*node);
     analyzedNode->selector = analyzeNodeIfNeededWithAutoType(analyzedNode->selector);
 
     if(analyzedNode->receiver)
@@ -938,26 +938,26 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
         analyzedNode->receiver = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->receiver);
 
         // Delegate to the receiver type.
-        return analyzedNode->receiver->analyzedType->analyzeMessageSendNode(analyzedNode, shared_from_this());
+        return analyzedNode->receiver->analyzedType->analyzeMessageSendNode(analyzedNode, selfFromThis());
     }
     else
     {
         if(!analyzedNode->selector->isASTLiteralValueNode())
             return recordSemanticErrorInNode(node, "Cannot analyze message send without receiver that has a non-literal selector.");
 
-        auto literalSelectorNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->selector);
+        auto literalSelectorNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->selector);
         auto literalSelector = literalSelectorNode->value;
         auto boundSymbol = environment->lexicalScope->lookupSymbolRecursively(literalSelectorNode->value);
         if(!boundSymbol)
             return recordSemanticErrorInNode(node, formatString("Failed to find a definition for a message without receiver using the {0} selector.", {{literalSelector->printString()}}));
 
-        return boundSymbol->analyzeMessageSendNode(analyzedNode, shared_from_this());
+        return boundSymbol->analyzeMessageSendNode(analyzedNode, selfFromThis());
     }
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr &node)
 {
-    auto result = std::make_shared<ASTParseErrorNode> (*node);
+    auto result = basicMakeObject<ASTParseErrorNode> (*node);
     result->analyzedType = Type::getCompilationErrorValueType();
     recordedErrors.push_back(result);
     return result;
@@ -965,7 +965,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr 
 
 AnyValuePtr ASTSemanticAnalyzer::visitPragmaNode(const ASTPragmaNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTPragmaNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTPragmaNode> (*node);
     analyzedNode->selector = analyzeNodeIfNeededWithExpectedType(analyzedNode->selector, Type::getLiteralSymbolValue());
     for(auto &argument : node->arguments)
         argument = analyzeNodeIfNeededWithExpectedType(argument, Type::getLiteralValueType());
@@ -986,14 +986,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuoteNode(const ASTQuoteNodePtr &node)
 {
-    auto result = std::make_shared<ASTQuoteNode> (*node);
+    auto result = basicMakeObject<ASTQuoteNode> (*node);
     result->analyzedType = ASTNode::__staticType__();
     return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTSequenceNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTSequenceNode> (*node);
 
     // Simplify the single element sequence.
     if(analyzedNode->pragmas.empty() && analyzedNode->expressions.size() == 1)
@@ -1045,7 +1045,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTLocalVariableNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTLocalVariableNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
@@ -1085,10 +1085,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
     auto valueType = Type::getUndefinedType();
     if(analyzedNode->type->isASTLiteralValueNode())
     {
-        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
         assert(literalTypeNode->value->isType());
 
-        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+        valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
 
     // Make sure the initial value is analyzed.
@@ -1096,7 +1096,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
         analyzedNode->initialValue = analyzeNodeIfNeededWithExpectedType(analyzedNode->initialValue, valueType, true);
 
     // Create the local variable.
-    auto localVariable = std::make_shared<LocalVariable> ();
+    auto localVariable = basicMakeObject<LocalVariable> ();
     localVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
     localVariable->setDeclarationNode(analyzedNode);
     localVariable->setDefinitionNode(analyzedNode);
@@ -1116,7 +1116,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
 
 AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTGlobalVariableNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTGlobalVariableNode> (*node);
     
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1141,7 +1141,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
                 return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} overrides previous non-global variable definition in its parent program entity ({2}).",
                     {{name->printString(), boundSymbol->printString()}}));
 
-            globalVariable = std::static_pointer_cast<GlobalVariable> (boundSymbol);
+            globalVariable = staticObjectCast<GlobalVariable> (boundSymbol);
         }
     }
 
@@ -1165,10 +1165,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     auto valueType = Type::getUndefinedType();
     if(analyzedNode->type->isASTLiteralValueNode())
     {
-        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
         assert(literalTypeNode->value->isType());
 
-        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+        valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
 
     // Make sure the initial value is analyzed.
@@ -1178,7 +1178,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     // Create the global variable.
     if(!globalVariable)
     {
-        globalVariable = std::make_shared<GlobalVariable> ();
+        globalVariable = basicMakeObject<GlobalVariable> ();
         globalVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         globalVariable->setDeclarationNode(analyzedNode);
         globalVariable->setDefinitionNode(analyzedNode);
@@ -1206,7 +1206,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
 
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTFieldVariableNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTFieldVariableNode> (*node);
     
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1234,7 +1234,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
                 return recordSemanticErrorInNode(analyzedNode, formatString("Field {0} overrides previous non-field variable definition in its parent program entity ({1}).",
                     {{name->printString(), boundSymbol->printString()}}));
 
-            fieldVariable = std::static_pointer_cast<FieldVariable> (boundSymbol);
+            fieldVariable = staticObjectCast<FieldVariable> (boundSymbol);
         }
     }
 
@@ -1258,10 +1258,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     auto valueType = Type::getUndefinedType();
     if(analyzedNode->type->isASTLiteralValueNode())
     {
-        auto literalTypeNode = std::static_pointer_cast<ASTLiteralValueNode> (analyzedNode->type);
+        auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
         assert(literalTypeNode->value->isType());
 
-        valueType = std::static_pointer_cast<Type> (literalTypeNode->value);
+        valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
 
     // Make sure the initial value is analyzed.
@@ -1271,7 +1271,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     // Create the global variable.
     if(!fieldVariable)
     {
-        fieldVariable = std::make_shared<FieldVariable> ();
+        fieldVariable = basicMakeObject<FieldVariable> ();
         fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         fieldVariable->setDeclarationNode(analyzedNode);
         fieldVariable->setDefinitionNode(analyzedNode);
@@ -1298,7 +1298,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
 
 AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTimeConstantNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTCompileTimeConstantNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTCompileTimeConstantNode> (*node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1323,7 +1323,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
                 return recordSemanticErrorInNode(analyzedNode, formatString("Compile time constant {1} overrides previous non-compile time constant definition in its parent program entity ({2}).",
                     {{name->printString(), boundSymbol->printString()}}));
 
-            compileTimeConstant = std::static_pointer_cast<CompileTimeConstant> (boundSymbol);
+            compileTimeConstant = staticObjectCast<CompileTimeConstant> (boundSymbol);
         }
     }
 
@@ -1338,7 +1338,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
     // Create the global variable.
     if(!compileTimeConstant)
     {
-        compileTimeConstant = std::make_shared<CompileTimeConstant> ();
+        compileTimeConstant = basicMakeObject<CompileTimeConstant> ();
         compileTimeConstant->name = name;
         compileTimeConstant->registerInCurrentModule();
         compileTimeConstant->enqueuePendingSemanticAnalysis();
@@ -1365,7 +1365,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
 
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTVariableAccessNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTVariableAccessNode> (*node);
     auto variable = analyzedNode->variable;
     analyzedNode->analyzedType = analyzedNode->isAccessedByReference ? variable->getReferenceType() : variable->getValueType();
     return analyzedNode;
@@ -1373,7 +1373,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
 
 AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTFunctionNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTFunctionNode> (*node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1387,7 +1387,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     {
         auto &arg = analyzedNode->arguments[i];
         assert(arg->isASTArgumentDefinitionNode());
-        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
 
@@ -1450,7 +1450,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
                     return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-namespace definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                compiledMethod = std::static_pointer_cast<CompiledMethod> (boundSymbol);
+                compiledMethod = staticObjectCast<CompiledMethod> (boundSymbol);
                 alreadyRegistered = true;
             }
         }
@@ -1477,7 +1477,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     // Create the compiled method if missing.
     if(!compiledMethod)
     {
-        compiledMethod = std::make_shared<CompiledMethod> ();
+        compiledMethod = basicMakeObject<CompiledMethod> ();
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
         compiledMethod->registerInCurrentModule();
@@ -1490,7 +1490,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
     else
     {
@@ -1502,7 +1502,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     {
         // Set the arguments definition node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            compiledMethod->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
 
         // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
@@ -1527,7 +1527,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     // If this is a local definition, analyze in place.
     if(isLocalDefinition)
     {
-        auto analyzedBody = compiledMethod->analyzeDefinitionWith(shared_from_this());
+        auto analyzedBody = compiledMethod->analyzeDefinitionWith(selfFromThis());
         if(analyzedBody->isASTErrorNode())
             return analyzedBody;
     }
@@ -1539,7 +1539,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
 AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTTemplateNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTTemplateNode> (*node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1551,7 +1551,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
     {
         auto &arg = analyzedNode->arguments[i];
         assert(arg->isASTArgumentDefinitionNode());
-        arg = analyzeTemplateArgumentDefinitionNode(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg));
+        arg = analyzeTemplateArgumentDefinitionNode(staticObjectCast<ASTArgumentDefinitionNode> (arg));
         hasError = hasError || arg->isASTErrorNode();
     }
 
@@ -1576,7 +1576,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
                 return recordSemanticErrorInNode(analyzedNode, formatString("Template {0} overrides previous non-namespace definition in its parent program entity ({1}).",
                     {{name->printString(), boundSymbol->printString()}}));
 
-            templateEntity = std::static_pointer_cast<Template> (boundSymbol);
+            templateEntity = staticObjectCast<Template> (boundSymbol);
             alreadyRegistered = true;
         }
     }
@@ -1597,7 +1597,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
     // Create the template if missing.
     if(!templateEntity)
     {
-        templateEntity = std::make_shared<Template> ();
+        templateEntity = basicMakeObject<Template> ();
         templateEntity->setName(name);
         templateEntity->setDeclarationNode(analyzedNode);
         templateEntity->setArgumentTypes(argumentTypes);
@@ -1606,7 +1606,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
 
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            templateEntity->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            templateEntity->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
     else
     {
@@ -1618,7 +1618,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
     {
         // Set the arguments definition node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            templateEntity->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            templateEntity->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
 
         // Add the definition body.
         templateEntity->addDefinition(analyzedNode, analyzedNode->body, environment);
@@ -1641,7 +1641,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
 
 AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTMethodNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTMethodNode> (*node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1653,7 +1653,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     {
         auto &arg = analyzedNode->arguments[i];
         assert(arg->isASTArgumentDefinitionNode());
-        arg = analyzeArgumentDefinitionNodeWithExpectedType(std::static_pointer_cast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
 
@@ -1706,7 +1706,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
             return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} overrides previous non-method definition in its parent program entity ({2}).",
                 {{name->printString(), previousMethod->printString()}}));
 
-        compiledMethod = std::static_pointer_cast<CompiledMethod> (previousMethod);
+        compiledMethod = staticObjectCast<CompiledMethod> (previousMethod);
         alreadyRegistered = true;
     }
 
@@ -1727,14 +1727,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     // Create the compiled method if missing.
     if(!compiledMethod)
     {
-        compiledMethod = std::make_shared<CompiledMethod> ();
+        compiledMethod = basicMakeObject<CompiledMethod> ();
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
         compiledMethod->setMethodSignature(receiverType, resultType, argumentTypes);
 
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            compiledMethod->setArgumentDeclarationNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
 
         compiledMethod->registerInCurrentModule();
     }
@@ -1748,7 +1748,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     {
         // Set the arguments definition node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
-            compiledMethod->setArgumentDefinitionNode(i, std::static_pointer_cast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+            compiledMethod->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
 
         // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
@@ -1769,7 +1769,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTNamespaceNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTNamespaceNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
@@ -1794,7 +1794,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
                     return recordSemanticErrorInNode(analyzedNode, formatString("Namespace ({1}) overrides previous non-namespace definition in its parent namespace ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                namespaceEntity = std::static_pointer_cast<Namespace> (boundSymbol);
+                namespaceEntity = staticObjectCast<Namespace> (boundSymbol);
             }
         }
 
@@ -1835,7 +1835,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
 
 AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTEnumNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTEnumNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -1856,7 +1856,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
                     return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous non-class definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                enumType = std::static_pointer_cast<EnumType> (boundSymbol);
+                enumType = staticObjectCast<EnumType> (boundSymbol);
             }
         }
 
@@ -1873,7 +1873,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
     // Create the class type.
     if(!enumType)
     {
-        enumType = std::make_shared<EnumType> ();
+        enumType = basicMakeObject<EnumType> ();
         enumType->setName(name);
         enumType->setBaseType(AnyValue::__staticType__());
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
@@ -1913,12 +1913,12 @@ void ASTSemanticAnalyzer::analyzeAndEvaluateAsValuesForEnumType(const ASTNodePtr
 {
     if(node->isASTMakeDictionaryNode())
     {
-        auto makeDictionaryNode = std::static_pointer_cast<ASTMakeDictionaryNode> (node);
+        auto makeDictionaryNode = staticObjectCast<ASTMakeDictionaryNode> (node);
         AnyValuePtr lastValue = nullptr;
         for(auto &element : makeDictionaryNode->elements)
         {
             assert(element->isASTMakeAssociationNode());
-            lastValue = analyzeAndEvaluateValueForEnumType(lastValue, std::static_pointer_cast<ASTMakeAssociationNode> (element), enumType);
+            lastValue = analyzeAndEvaluateValueForEnumType(lastValue, staticObjectCast<ASTMakeAssociationNode> (element), enumType);
         }
 
         return;
@@ -1941,7 +1941,7 @@ AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyVal
         if(baseType->isSubtypeOf(LiteralNumber::__staticType__()) ||
             baseType->isSubtypeOf(PrimitiveNumberType::__staticType__()))
         {
-            auto builder = std::make_shared<ASTBuilder> ();
+            auto builder = basicMakeObject<ASTBuilder> ();
             builder->sourcePosition = node->sourcePosition;
             valueNode = builder->sendToWithArguments(builder->literalSymbol("+"), builder->literal(lastValue), {
                 builder->literal(LiteralInteger::makeFor(LargeInteger{1}))
@@ -1951,7 +1951,7 @@ AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyVal
 
     if(valueNode)
     {
-        auto enumScope = std::make_shared<EnumRawValueLookupScope> ();
+        auto enumScope = basicMakeObject<EnumRawValueLookupScope> ();
         enumScope->parent = environment->lexicalScope;
         enumScope->enumType = enumType;
 
@@ -1970,7 +1970,7 @@ AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyVal
 
 AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTClassNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTClassNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -1991,7 +1991,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
                     return recordSemanticErrorInNode(analyzedNode, formatString("Class ({1}) overrides previous non-class definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                classType = std::static_pointer_cast<ClassType> (boundSymbol);
+                classType = staticObjectCast<ClassType> (boundSymbol);
             }
         }
 
@@ -2008,7 +2008,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
     // Create the class type.
     if(!classType)
     {
-        classType = std::make_shared<ClassType> ();
+        classType = basicMakeObject<ClassType> ();
         classType->setName(name);
         classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
         classType->registerInCurrentModule();
@@ -2038,7 +2038,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTStructNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTStructNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -2059,7 +2059,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
                     return recordSemanticErrorInNode(analyzedNode, formatString("Structure ({1}) overrides previous non-structure definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                structureType = std::static_pointer_cast<StructureType> (boundSymbol);
+                structureType = staticObjectCast<StructureType> (boundSymbol);
             }
         }
 
@@ -2076,7 +2076,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
     // Create the structure type.
     if(!structureType)
     {
-        structureType = std::make_shared<StructureType> ();
+        structureType = basicMakeObject<StructureType> ();
         structureType->setName(name);
         structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
         structureType->registerInCurrentModule();
@@ -2099,7 +2099,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTUnionNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTUnionNode> (*node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -2120,7 +2120,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
                     return recordSemanticErrorInNode(analyzedNode, formatString("Union ({1}) overrides previous non-union definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                unionType = std::static_pointer_cast<UnionType> (boundSymbol);
+                unionType = staticObjectCast<UnionType> (boundSymbol);
             }
         }
 
@@ -2137,7 +2137,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
     // Create the union type.
     if(!unionType)
     {
-        unionType = std::make_shared<UnionType> ();
+        unionType = basicMakeObject<UnionType> ();
         unionType->setName(name);
         unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
         unionType->registerInCurrentModule();
@@ -2160,7 +2160,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTProgramEntityExtensionNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTProgramEntityExtensionNode> (*node);
     analyzedNode->programEntity = analyzeNodeIfNeededWithExpectedType(analyzedNode->programEntity, ProgramEntity::__staticType__());
     if(analyzedNode->programEntity->isASTErrorNode())
         return analyzedNode->programEntity;
@@ -2169,7 +2169,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgra
     if(!programEntity || !programEntity->isProgramEntity())
         return recordSemanticErrorInNode(node, "Failed to evaluate in compile time the corresponding program entity.");
 
-    analyzedNode->analyzedProgramEntity = std::static_pointer_cast<ProgramEntity> (programEntity);
+    analyzedNode->analyzedProgramEntity = staticObjectCast<ProgramEntity> (programEntity);
     analyzedNode->analyzedType = analyzedNode->analyzedProgramEntity->getType();
 
     if(analyzedNode->body)
@@ -2191,15 +2191,15 @@ AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNode
         return targetTypeNode;
 
     auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = std::static_pointer_cast<Type> (
-        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    auto targetType = staticObjectCast<Type> (
+        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
     );
 
     auto typeConversionRule = sourceType->findExplicitTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, selfFromThis());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNodePtr &node)
@@ -2212,15 +2212,15 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
         return targetTypeNode;
 
     auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = std::static_pointer_cast<Type> (
-        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    auto targetType = staticObjectCast<Type> (
+        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
     );
 
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, selfFromThis());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
@@ -2233,15 +2233,15 @@ AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCa
         return targetTypeNode;
 
     auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = std::static_pointer_cast<Type> (
-        std::static_pointer_cast<ASTLiteralValueNode> (targetTypeNode)->value
+    auto targetType = staticObjectCast<Type> (
+        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
     );
 
     auto typeConversionRule = sourceType->findReinterpretTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
-    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, shared_from_this());
+    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, selfFromThis());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)
@@ -2258,7 +2258,7 @@ CompilationErrorPtr ASTSemanticAnalyzer::makeCompilationError()
     if(recordedErrors.size() == 1)
         return recordedErrors.back()->asCompilationError();
 
-    auto errors = std::make_shared<CompilationErrors> ();
+    auto errors = basicMakeObject<CompilationErrors> ();
     for(const auto &node : recordedErrors)
         errors->errors.push_back(node->asCompilationError());
 
@@ -2271,7 +2271,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
     if(!node->trueExpression && !node->falseExpression)
         return analyzeNodeIfNeededWithExpectedType(node->condition, Type::getVoidType());
 
-    auto analyzedNode = std::make_shared<ASTIfNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTIfNode> (*node);
     analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
     if(analyzedNode->trueExpression)
@@ -2293,7 +2293,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTWhileNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTWhileNode> (*node);
     if(analyzedNode->condition)
         analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
@@ -2315,7 +2315,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTDoWhileNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTDoWhileNode> (*node);
 
     if(analyzedNode->bodyExpression)
     {
@@ -2338,7 +2338,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitReturnNode(const ASTReturnNodePtr &node)
 {
-    auto analyzedNode = std::make_shared<ASTReturnNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTReturnNode> (*node);
     auto returnTargetMethod = environment->returnTargetMethod;
     if(!returnTargetMethod)
     {
@@ -2391,7 +2391,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitContinueNode(const ASTContinueNodePtr &nod
     if(environment->continueLevelCount == 0)
         return recordSemanticErrorInNode(node, "Cannot use a continue statement in this location.");
 
-    auto analyzedNode = std::make_shared<ASTContinueNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTContinueNode> (*node);
     analyzedNode->analyzedType = Type::getContinueType();
     return analyzedNode;
 }
@@ -2401,7 +2401,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitBreakNode(const ASTBreakNodePtr &node)
     if(environment->breakLevelCount == 0)
         return recordSemanticErrorInNode(node, "Cannot use a break statement in this location.");
 
-    auto analyzedNode = std::make_shared<ASTBreakNode> (*node);
+    auto analyzedNode = basicMakeObject<ASTBreakNode> (*node);
     analyzedNode->analyzedType = Type::getBreakType();
     return analyzedNode;
 }

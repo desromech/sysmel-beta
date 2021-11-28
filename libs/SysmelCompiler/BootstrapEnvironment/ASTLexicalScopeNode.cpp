@@ -19,7 +19,7 @@ bool ASTLexicalScopeNode::isASTLexicalScopeNode() const
 
 AnyValuePtr ASTLexicalScopeNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitLexicalScopeNode(shared_from_this());
+    return visitor->visitLexicalScopeNode(selfFromThis());
 }
 
 SExpression ASTLexicalScopeNode::asSExpression() const

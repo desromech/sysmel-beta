@@ -85,7 +85,7 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
 void BootstrapType::addDefaultTypeConversionRules()
 {
     SuperType::addDefaultTypeConversionRules();
-    staticMetadata->addTypeConversionRules(shared_from_this());
+    staticMetadata->addTypeConversionRules(selfFromThis());
 }
 
 std::string BootstrapType::printString() const
@@ -110,7 +110,7 @@ AnyValuePtr BootstrapType::instantiatedWithLiteralValue(const AnyValuePtr &value
 
 TypePtr BootstrapType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
-    return staticMetadata->asInferredTypeForWithModeInEnvironment(shared_from_this(), node, mode, isMutable, concreteLiterals, environment);
+    return staticMetadata->asInferredTypeForWithModeInEnvironment(selfFromThis(), node, mode, isMutable, concreteLiterals, environment);
 }
 
 } // End of namespace BootstrapEnvironment

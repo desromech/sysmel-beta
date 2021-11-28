@@ -16,7 +16,7 @@ AnyValuePtr getFalseConstant()
 
 LiteralBooleanFalsePtr LiteralBooleanFalse::uniqueInstance()
 {
-    auto singleton = std::make_shared<LiteralBooleanFalse> ();
+    auto singleton = basicMakeObject<LiteralBooleanFalse> ();
     return singleton;
 }
 

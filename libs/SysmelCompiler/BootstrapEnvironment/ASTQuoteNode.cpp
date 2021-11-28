@@ -19,7 +19,7 @@ bool ASTQuoteNode::isASTQuoteNode() const
 
 AnyValuePtr ASTQuoteNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitQuoteNode(shared_from_this());
+    return visitor->visitQuoteNode(selfFromThis());
 }
 
 SExpression ASTQuoteNode::asSExpression() const

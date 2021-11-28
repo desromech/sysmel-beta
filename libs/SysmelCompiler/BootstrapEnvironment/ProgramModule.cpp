@@ -10,7 +10,7 @@ static BootstrapTypeRegistration<ProgramModule> programModuleTypeRegistration;
 
 ProgramModulePtr ProgramModule::create(const std::string &name)
 {
-    auto result = std::make_shared<ProgramModule> ();
+    auto result = basicMakeObject<ProgramModule> ();
     result->name = name;
     result->activeDuring([&](){
         result->initialize();

@@ -34,7 +34,7 @@ bool ASTLiteralValueNode::isASTLiteralTypeNode() const
 
 AnyValuePtr ASTLiteralValueNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitLiteralValueNode(shared_from_this());
+    return visitor->visitLiteralValueNode(selfFromThis());
 }
 
 void ASTLiteralValueNode::setValueAndType(const AnyValuePtr &theValue)

@@ -17,13 +17,13 @@ bool ValueBox::isValueBox() const
 AnyValuePtr ValueBox::copyAssignValue(const AnyValuePtr &newValue)
 {
     value = newValue;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 AnyValuePtr ValueBox::accessVariableAsReferenceWithType(const TypePtr &referenceType)
 {
     if(referenceType->isReferenceLikeType())
-        return std::static_pointer_cast<PointerLikeType> (referenceType)->makeWithValue(value);
+        return staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(value);
     return value;
 }
 

@@ -19,7 +19,7 @@ bool ASTQuasiUnquoteNode::isASTQuasiUnquoteNode() const
 
 AnyValuePtr ASTQuasiUnquoteNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitQuasiUnquoteNode(shared_from_this());
+    return visitor->visitQuasiUnquoteNode(selfFromThis());
 }
 
 SExpression ASTQuasiUnquoteNode::asSExpression() const

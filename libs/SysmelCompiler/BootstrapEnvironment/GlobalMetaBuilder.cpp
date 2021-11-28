@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<GlobalMetaBuilder> globalMetaBuilderTypeRegistr
 
 ASTNodePtr GlobalMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTGlobalVariableNode> ();
+    auto result = basicMakeObject<ASTGlobalVariableNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

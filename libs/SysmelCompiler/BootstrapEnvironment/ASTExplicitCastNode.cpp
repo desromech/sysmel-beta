@@ -17,7 +17,7 @@ bool ASTExplicitCastNode::isASTExplicitCastNode() const
 
 AnyValuePtr ASTExplicitCastNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitExplicitCastNode(shared_from_this());
+    return visitor->visitExplicitCastNode(selfFromThis());
 }
 
 SExpression ASTExplicitCastNode::asSExpression() const

@@ -18,7 +18,7 @@ bool ASTDoWhileNode::isASTDoWhileNode() const
 
 AnyValuePtr ASTDoWhileNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitDoWhileNode(shared_from_this());
+    return visitor->visitDoWhileNode(selfFromThis());
 }
 
 SExpression ASTDoWhileNode::asSExpression() const

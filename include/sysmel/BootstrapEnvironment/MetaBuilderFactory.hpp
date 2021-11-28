@@ -15,10 +15,10 @@ template<typename T>
 MethodPtr metaBuilderFactoryFor (const std::string &name)
 {
     return makeBootstrapMethod<std::shared_ptr<T> (MacroInvocationContextPtr)> (name, [](const MacroInvocationContextPtr &macroContext) {
-        auto context = std::make_shared<MetaBuilderInstanceContext> ();
+        auto context = basicMakeObject<MetaBuilderInstanceContext> ();
         context->instanceNode = macroContext->receiverNode;
 
-        auto result = std::make_shared<T> ();
+        auto result = basicMakeObject<T> ();
         result->setMetaBuilderInstanceContext(context);
         return result;
     }, MethodFlags::Macro);

@@ -22,7 +22,7 @@ MethodTypePtr MethodType::make(const TypePtr &receiverType, const TypePtr &resul
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<MethodType> ();
+    auto result = basicMakeObject<MethodType> ();
     result->receiverType = canonicalReceiverType;
     result->arguments = canonicalArgumentTypes;
     result->result = canonicalResultType;
@@ -38,8 +38,8 @@ TypePtr MethodType::getReceiverType() const
 
 FunctionalTypeValuePtr MethodType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
-    auto result = std::make_shared<MethodTypeValue> ();
-    result->type = shared_from_this();
+    auto result = basicMakeObject<MethodTypeValue> ();
+    result->type = selfFromThis();
     result->functionalImplementation = implementation;
     return result;
 }

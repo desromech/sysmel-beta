@@ -18,7 +18,7 @@ bool ASTCallNode::isASTCallNode() const
 
 AnyValuePtr ASTCallNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitCallNode(shared_from_this());
+    return visitor->visitCallNode(selfFromThis());
 }
 
 SExpression ASTCallNode::asSExpression() const

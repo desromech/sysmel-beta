@@ -19,7 +19,7 @@ bool ASTMakeDictionaryNode::isASTMakeDictionaryNode() const
 
 AnyValuePtr ASTMakeDictionaryNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMakeDictionaryNode(shared_from_this());
+    return visitor->visitMakeDictionaryNode(selfFromThis());
 }
 
 SExpression ASTMakeDictionaryNode::asSExpression() const

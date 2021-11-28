@@ -20,7 +20,7 @@ TypePtr Type::getNamespaceType()
 
 NamespacePtr Namespace::makeWithName(const AnyValuePtr &name)
 {
-    auto result = std::make_shared<Namespace> ();
+    auto result = basicMakeObject<Namespace> ();
     result->name = name;
     return result;
 }
@@ -53,7 +53,7 @@ ASTNodePtr Namespace::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, 
 {
     if(node->selector->isASTLiteralValueNode())
     {
-        auto directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+        auto directSelectorValue = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
 
         // Attempt going through the different expansion levels
         while(uint8_t(node->expansionLevel) < uint8_t(MessageSendExpansionLevel::Count))
@@ -109,14 +109,14 @@ AnyValuePtr Namespace::lookupLocalMacroFallbackSelector(const AnyValuePtr &selec
 void Namespace::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
-        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
 void Namespace::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!methodDictionary)
-        methodDictionary = std::make_shared<MethodDictionary> ();
+        methodDictionary = basicMakeObject<MethodDictionary> ();
 
     methodDictionary->addMethodWithSelector(method, selector);
 }
@@ -124,7 +124,7 @@ void Namespace::addMethodWithSelector(const AnyValuePtr &method, const AnyValueP
 void Namespace::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
-        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 

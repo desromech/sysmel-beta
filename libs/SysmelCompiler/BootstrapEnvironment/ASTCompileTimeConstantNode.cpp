@@ -17,7 +17,7 @@ bool ASTCompileTimeConstantNode::isASTCompileTimeConstantNode() const
 
 AnyValuePtr ASTCompileTimeConstantNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitCompileTimeConstantNode(shared_from_this());
+    return visitor->visitCompileTimeConstantNode(selfFromThis());
 }
 
 SExpression ASTCompileTimeConstantNode::asSExpression() const

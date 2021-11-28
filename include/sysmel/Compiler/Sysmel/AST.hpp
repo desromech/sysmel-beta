@@ -47,7 +47,7 @@ struct ASTQuasiUnquoteNode;
 struct ASTSpliceNode;
 
 struct ASTVisitor;
-struct ASTNode : std::enable_shared_from_this<ASTNode>
+struct ASTNode
 {
     virtual ~ASTNode() {}
     

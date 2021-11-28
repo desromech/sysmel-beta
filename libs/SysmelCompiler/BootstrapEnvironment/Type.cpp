@@ -78,9 +78,9 @@ TypePtr Type::extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode
 
     if(receiverNode->isASTLiteralTypeNode())
     {
-        auto typeValue = std::static_pointer_cast<ASTLiteralValueNode> (receiverNode)->value;
+        auto typeValue = staticObjectCast<ASTLiteralValueNode> (receiverNode)->value;
         assert(typeValue && typeValue->isType());
-        return std::static_pointer_cast<Type> (typeValue);
+        return staticObjectCast<Type> (typeValue);
     }
 
     return receiverNode->analyzedType->getInstanceType();
@@ -91,13 +91,13 @@ MethodCategories Type::__instanceMacroMethods__()
     return MethodCategories{
         {"accessing", {
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("extend:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
-                auto extensionNode = std::make_shared<ASTProgramEntityExtensionNode> ();
+                auto extensionNode = basicMakeObject<ASTProgramEntityExtensionNode> ();
                 extensionNode->programEntity = macroContext->receiverNode;
                 extensionNode->body = bodyNode;
                 return extensionNode;
             }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("definition:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
-                auto extensionNode = std::make_shared<ASTProgramEntityExtensionNode> ();
+                auto extensionNode = basicMakeObject<ASTProgramEntityExtensionNode> ();
                 extensionNode->programEntity = macroContext->receiverNode;
                 extensionNode->body = bodyNode;
                 return extensionNode;
@@ -202,7 +202,7 @@ void Type::registerSubtype(const TypePtr &subtype)
 
 TypePtr Type::asReceiverType()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
@@ -295,7 +295,7 @@ ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAn
     // Allow the actual function to analyze the call. This is typically used by metabuilders.
     if(supportsMessageAnalysisByLiteralValueReceivers() && node->function->isASTLiteralValueNode())
     {
-        auto literalValue = std::static_pointer_cast<ASTLiteralValueNode> (node->function)->value;
+        auto literalValue = staticObjectCast<ASTLiteralValueNode> (node->function)->value;
         return literalValue->analyzeCallNode(node, semanticAnalyzer);
     }
 
@@ -311,7 +311,7 @@ ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const
     // Allow the actual instance to analyze the message. This is typically used by metabuilders.
     if(supportsMessageAnalysisByLiteralValueReceivers() && node->receiver->isASTLiteralValueNode())
     {
-        auto literalValue = std::static_pointer_cast<ASTLiteralValueNode> (node->receiver)->value;
+        auto literalValue = staticObjectCast<ASTLiteralValueNode> (node->receiver)->value;
         return literalValue->analyzeMessageSendNode(node, semanticAnalyzer);
     }
 
@@ -335,7 +335,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
 
     AnyValuePtr directSelectorValue;
     if(node->selector->isASTLiteralValueNode())
-        directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+        directSelectorValue = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
 
     // Attempt going through the different expansion levels
     auto startExpansionLevel = node->expansionLevel;
@@ -412,7 +412,7 @@ ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node
 
     if(node->selector->isASTLiteralSymbolValue())
     {
-        auto directSelectorValue = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+        auto directSelectorValue = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
         return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Failed to find matching message for selector {0} in receiver of type '{1}'.", {{directSelectorValue->printString(), printString()}}));
     }
     
@@ -436,7 +436,7 @@ void Type::addConstructor(const AnyValuePtr &constructorMethod)
     if(!constructorMethod->isSpecificMethod())
         signalNewWithMessage<UnsupportedOperation> ("Cannot add a non-specific method as a constructor in a type.");
 
-    constructors.push_back(std::static_pointer_cast<SpecificMethod> (constructorMethod));
+    constructors.push_back(staticObjectCast<SpecificMethod> (constructorMethod));
 }
 
 void Type::addConstructors(const AnyValuePtrList &constructorMethods)
@@ -450,7 +450,7 @@ void Type::addConversion(const AnyValuePtr &conversionMethod)
     if(!conversionMethod->isSpecificMethod())
         signalNewWithMessage<UnsupportedOperation> ("Cannot add a non-specific method as a conversion in a type.");
 
-    conversions.push_back(std::static_pointer_cast<SpecificMethod> (conversionMethod));
+    conversions.push_back(staticObjectCast<SpecificMethod> (conversionMethod));
 }
 
 void Type::addConversions(const AnyValuePtrList &conversionMethods)
@@ -462,27 +462,27 @@ void Type::addConversions(const AnyValuePtrList &conversionMethods)
 void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
-        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
 void Type::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!methodDictionary)
-        methodDictionary = std::make_shared<MethodDictionary> ();
+        methodDictionary = basicMakeObject<MethodDictionary> ();
     methodDictionary->addMethodWithSelector(method, selector);
 }
 
 void Type::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
-        macroMethodDictionary = std::make_shared<MethodDictionary> ();
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
 TypePtr Type::getInstanceType()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 TypePtr Type::getMetaType()
@@ -548,7 +548,7 @@ void Type::allSubtypesDo(const TypeIterationBlock &aBlock)
 
 void Type::withAllSubtypesDo(const TypeIterationBlock &aBlock)
 {
-    aBlock(shared_from_this());
+    aBlock(selfFromThis());
     allSubtypesDo(aBlock);
 }
 
@@ -600,13 +600,13 @@ void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisi
         if(isMetaType())
         {
             if(!binding->isFieldVariable())
-                binding->addPublicAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
-            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
+                binding->addPublicAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
+            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
         }
         else
         {
             binding->addPublicAccessingMethodsWithSymbolOnto(symbol, getType());
-            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, shared_from_this());
+            binding->addPublicInstanceAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
         }
     }
 }
@@ -642,7 +642,7 @@ void Type::addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule)
 
 TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
 {
-    auto sourceType = shared_from_this();
+    auto sourceType = selfFromThis();
     for(auto & rule : implicitTypeConversionRules)
     {
         if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
@@ -680,7 +680,7 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
 
 TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
 {
-    auto sourceType = shared_from_this();
+    auto sourceType = selfFromThis();
     for(auto & rule : explicitTypeConversionRules)
     {
         if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
@@ -712,7 +712,7 @@ TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodeP
 
 TypeConversionRulePtr Type::findReinterpretTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
 {
-    auto sourceType = shared_from_this();
+    auto sourceType = selfFromThis();
     for(auto & rule : reinterpretTypeConversionRules)
     {
         if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
@@ -783,7 +783,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
         auto argumentType = argument->analyzedType;
 
         // Copy constructor.
-        if(argumentType == shared_from_this())
+        if(argumentType == selfFromThis())
             return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(
                 expandCopyConstruction(semanticAnalyzer->makeMacroInvocationContextFor(node), argument)
             );
@@ -795,7 +795,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
     if(!constructors.empty())
     {
         // Make a synthetic message send node.
-        auto messageSendNode = std::make_shared<ASTMessageSendNode> ();
+        auto messageSendNode = basicMakeObject<ASTMessageSendNode> ();
         messageSendNode->sourcePosition = node->sourcePosition;
         messageSendNode->selector = internSymbol("()")->asASTNodeRequiredInPosition(node->sourcePosition);
         messageSendNode->receiver = asASTNodeRequiredInPosition(node->sourcePosition);
@@ -864,37 +864,37 @@ TypePtr Type::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, Typ
     (void)isMutable;
     (void)concreteLiterals;
     (void)environment;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 PointerTypePtr Type::pointer()
 {
-    return PointerType::make(shared_from_this());
+    return PointerType::make(selfFromThis());
 }
 
 PointerTypePtr Type::pointerFor(const AnyValuePtr &addressSpace)
 {
-    return PointerType::makeWithAddressSpace(shared_from_this(), addressSpace);
+    return PointerType::makeWithAddressSpace(selfFromThis(), addressSpace);
 }
 
 ReferenceTypePtr Type::ref()
 {
-    return ReferenceType::make(shared_from_this());
+    return ReferenceType::make(selfFromThis());
 }
 
 ReferenceTypePtr Type::refFor(const AnyValuePtr &addressSpace)
 {
-    return ReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
+    return ReferenceType::makeWithAddressSpace(selfFromThis(), addressSpace);
 }
 
 PointerLikeTypePtr Type::tempRef()
 {
-    return TemporaryReferenceType::make(shared_from_this());
+    return TemporaryReferenceType::make(selfFromThis());
 }
 
 PointerLikeTypePtr Type::tempRefFor(const AnyValuePtr &addressSpace)
 {
-    return TemporaryReferenceType::makeWithAddressSpace(shared_from_this(), addressSpace);
+    return TemporaryReferenceType::makeWithAddressSpace(selfFromThis(), addressSpace);
 }
 
 ArrayTypePtr Type::arrayWithoutSize()
@@ -904,22 +904,22 @@ ArrayTypePtr Type::arrayWithoutSize()
 
 ArrayTypePtr Type::arrayWithSize(uint64_t size)
 {
-    return ArrayType::make(shared_from_this(), size);
+    return ArrayType::make(selfFromThis(), size);
 }
 
 TypePtr Type::asTupleType()
 {
-    return TupleType::make({shared_from_this()});
+    return TupleType::make({selfFromThis()});
 }
 
 TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
 {
     TypePtrList newElementTypes;
-    newElementTypes.push_back(shared_from_this());
+    newElementTypes.push_back(selfFromThis());
 
     if(nextType->isTupleType())
     {
-        auto &nextTypes = std::static_pointer_cast<TupleType> (nextType)->elementTypes;
+        auto &nextTypes = staticObjectCast<TupleType> (nextType)->elementTypes;
         newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
     }
     else
@@ -933,11 +933,11 @@ TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
 TypePtr Type::appendTypeMakingVariant(const TypePtr &nextType)
 {
     TypePtrList newElementTypes;
-    newElementTypes.push_back(shared_from_this());
+    newElementTypes.push_back(selfFromThis());
 
     if(nextType->isVariantType())
     {
-        auto &nextTypes = std::static_pointer_cast<VariantType> (nextType)->elementTypes;
+        auto &nextTypes = staticObjectCast<VariantType> (nextType)->elementTypes;
         newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
     }
     else
@@ -953,7 +953,7 @@ TypePtr Type::appendResultTypeMakingFunctionType(const TypePtr &resultType)
     if(isVoidType())
         return FunctionType::make(resultType, {});
     else
-        return FunctionType::make(resultType, {shared_from_this()});
+        return FunctionType::make(resultType, {selfFromThis()});
 }
 
 TypePtr Type::withConst()
@@ -973,12 +973,12 @@ TypePtr Type::withVolatile()
 
 TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 {
-    return DecoratedType::make(shared_from_this(), decorations);
+    return DecoratedType::make(selfFromThis(), decorations);
 }
 
 TypePtr Type::asUndecoratedType()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 } // End of namespace BootstrapEnvironment

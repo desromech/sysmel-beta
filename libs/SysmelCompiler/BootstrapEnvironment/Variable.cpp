@@ -27,7 +27,7 @@ AnyValuePtr Variable::getName() const
 AnyValuePtr Variable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
 {
     (void)compileTimeCleanUpScope;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 void Variable::setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType, bool definitionMutability, uint64_t definitionMinimalAlignment)
@@ -65,9 +65,9 @@ void Variable::setDefinitionNode(const ASTNodePtr &node)
 
 ASTNodePtr Variable::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    auto result = std::make_shared<ASTVariableAccessNode> ();
+    auto result = basicMakeObject<ASTVariableAccessNode> ();
     result->sourcePosition = node->sourcePosition;
-    result->variable = shared_from_this();
+    result->variable = selfFromThis();
     result->isAccessedByReference = isMutable_;
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
 }

@@ -14,21 +14,21 @@ static BootstrapTypeRegistration<ASTAnalysisEnvironment> ASTAnalysisEnvironmentT
 
 ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithLexicalScope(const LexicalScopePtr &newScope)
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> (*this);
+    auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
     result->lexicalScope = newScope;
     return result;
 }
 
 ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithCleanUpcope(const CleanUpScopePtr &cleanUpScope)
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> (*this);
+    auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
     result->cleanUpScope = cleanUpScope;
     return result;
 }
 
 ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyForPublicProgramEntityBody(const ProgramEntityPtr &publicProgramEntity)
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> (*this);
+    auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
     result->programEntityForPublicDefinitions = publicProgramEntity;
     result->cleanUpScope = CleanUpScope::makeWithParent(cleanUpScope);
     result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(lexicalScope, publicProgramEntity));
@@ -39,7 +39,7 @@ ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyForPublicProgramEntityBody
 
 ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithBreakAndContinueLevel(uint32_t newBreakLevelCount, uint32_t newContinueLevelCount)
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> (*this);
+    auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
     result->breakLevelCount = newBreakLevelCount;
     result->continueLevelCount = newContinueLevelCount;
     return result;

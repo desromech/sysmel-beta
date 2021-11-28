@@ -69,7 +69,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
         totalRank += argumentRank;
     }
 
-    return MethodPatternMatchingResult{shared_from_this(), totalRank};
+    return MethodPatternMatchingResult{selfFromThis(), totalRank};
 }
 
 TypePtr SpecificMethod::getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex)
@@ -110,7 +110,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
         totalRank += argumentRank;
     }
 
-    return MethodPatternMatchingResult{shared_from_this(), totalRank};
+    return MethodPatternMatchingResult{selfFromThis(), totalRank};
 }
 
 bool SpecificMethod::isMacroMethod() const
@@ -130,7 +130,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     {
         AnyValuePtr macroSelector;
         if(node->selector && node->selector->isASTLiteralSymbolValue())
-            macroSelector = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value;
+            macroSelector = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
 
         auto macroInvocationContext = semanticAnalyzer->makeMacroInvocationContextFor(node);
 
@@ -144,7 +144,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
             auto argument = node->arguments[i];
             auto adaptedArgument = semanticAnalyzer->adaptNodeAsMacroArgumentOfType(argument, expectedType);
             if(adaptedArgument->isASTErrorNode())
-                errorNode = std::static_pointer_cast<ASTErrorNode> (adaptedArgument);
+                errorNode = staticObjectCast<ASTErrorNode> (adaptedArgument);
 
             macroArguments.push_back(adaptedArgument);
         }
@@ -187,7 +187,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
 
     // FIXME: Improve the criteria for direct message sends.
     node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || functionalType->getReceiverType()->isVoidType();
-    node->analyzedBoundMessage = shared_from_this();
+    node->analyzedBoundMessage = selfFromThis();
     node->analyzedType = functionalType->getResultType();
     node->isPureMessageSend = isPure();
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
@@ -212,9 +212,9 @@ ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierRef
     // Is this a closure?
     if(functionalType->isClosureType())
     {
-        auto result = std::make_shared<ASTLocalImmutableAccessNode> ();
+        auto result = basicMakeObject<ASTLocalImmutableAccessNode> ();
         result->sourcePosition = node->sourcePosition;
-        result->bindingName = shared_from_this();
+        result->bindingName = selfFromThis();
         result->analyzedType = functionalType;
         return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
     }
@@ -228,7 +228,7 @@ FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
         return nullptr;
 
     if(!functionalValue)
-        functionalValue = functionalType->makeValueWithImplementation(shared_from_this());
+        functionalValue = functionalType->makeValueWithImplementation(selfFromThis());
     return functionalValue;
 }
 

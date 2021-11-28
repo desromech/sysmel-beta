@@ -41,7 +41,7 @@ ASTNodePtr MetaBuilder::analyzeMessageSendNode(const ASTMessageSendNodePtr &node
 {
     if(node && node->selector->isASTLiteralSymbolValue())
     {
-        auto selector = std::static_pointer_cast<ASTLiteralValueNode> (node->selector)->value->asString();
+        auto selector = staticObjectCast<ASTLiteralValueNode> (node->selector)->value->asString();
         return analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
     }
 
@@ -56,14 +56,14 @@ ASTNodePtr MetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &se
 
 ASTNodePtr MetaBuilder::concretizeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    auto newNode = std::make_shared<ASTCallNode> (*partiallyAnalyzedNode);
+    auto newNode = basicMakeObject<ASTCallNode> (*partiallyAnalyzedNode);
     newNode->function = concretizeMetaBuilder();
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(newNode);
 }
 
 ASTNodePtr MetaBuilder::concretizeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    auto newNode = std::make_shared<ASTMessageSendNode> (*partiallyAnalyzedNode);
+    auto newNode = basicMakeObject<ASTMessageSendNode> (*partiallyAnalyzedNode);
     newNode->receiver = concretizeMetaBuilder();
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(newNode);
 }
@@ -76,7 +76,7 @@ ASTNodePtr MetaBuilder::concretizeMetaBuilder()
 ASTNodePtr MetaBuilder::concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     (void)node;
-    assert(node->value == shared_from_this());
+    assert(node->value == selfFromThis());
     return concretizeMetaBuilderAndAnalyzeWith(semanticAnalyzer);
 }
 

@@ -31,7 +31,7 @@ TypePtr MetaType::getInstanceType()
 
 TypePtr MetaType::getMetaType()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 std::string MetaType::printString() const

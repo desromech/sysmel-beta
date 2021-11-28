@@ -12,19 +12,19 @@ static BootstrapTypeRegistration<AutoTypeInferenceSlot> AutoTypeInferenceSlotTyp
 
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAuto()
 {
-    return std::make_shared<AutoTypeInferenceSlot> ();
+    return basicMakeObject<AutoTypeInferenceSlot> ();
 }
 
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTemporaryAuto()
 {
-    auto result = std::make_shared<AutoTypeInferenceSlot> ();
+    auto result = basicMakeObject<AutoTypeInferenceSlot> ();
     result->mode = TypeInferenceMode::TemporaryReference;
     return result;
 }
 
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInferenceMode mode, bool isMutable, bool concreteLiterals)
 {
-    auto result = std::make_shared<AutoTypeInferenceSlot> ();
+    auto result = basicMakeObject<AutoTypeInferenceSlot> ();
     result->mode = mode;
     result->isMutable = isMutable;
     result->concreteLiterals = concreteLiterals;

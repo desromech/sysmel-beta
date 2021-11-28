@@ -13,7 +13,7 @@ static BootstrapTypeRegistration<ValueAsVoidTypeConversionRule> valueAsVoidTypeC
 
 TypeConversionRulePtr ValueAsVoidTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = std::make_shared<ValueAsVoidTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeObject<ValueAsVoidTypeConversionRule> ();
     return singleton;
 }
 
@@ -35,7 +35,7 @@ ASTNodePtr ValueAsVoidTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr
     (void)semanticAnalyzer;
     assert(node->analyzedType);
 
-    auto result = std::make_shared<ASTValueAsVoidTypeConversionNode> ();
+    auto result = basicMakeObject<ASTValueAsVoidTypeConversionNode> ();
     result->sourcePosition = sourcePosition;
     result->expression = node;
     result->analyzedType = targetType;

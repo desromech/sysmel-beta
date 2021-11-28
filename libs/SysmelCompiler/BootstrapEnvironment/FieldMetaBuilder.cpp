@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<FieldMetaBuilder> fieldMetaBuilderTypeRegistrat
 
 ASTNodePtr FieldMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTFieldVariableNode> ();
+    auto result = basicMakeObject<ASTFieldVariableNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

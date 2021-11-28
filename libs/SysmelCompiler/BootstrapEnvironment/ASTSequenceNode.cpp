@@ -18,7 +18,7 @@ bool ASTSequenceNode::isASTSequenceNode() const
 
 AnyValuePtr ASTSequenceNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitSequenceNode(shared_from_this());
+    return visitor->visitSequenceNode(selfFromThis());
 }
 
 SExpression ASTSequenceNode::asSExpression() const

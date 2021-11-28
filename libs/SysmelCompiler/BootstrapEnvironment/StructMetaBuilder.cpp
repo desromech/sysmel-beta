@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<StructMetaBuilder> structMetaBuilderTypeRegistr
 
 ASTNodePtr StructMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTStructNode> ();
+    auto result = basicMakeObject<ASTStructNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

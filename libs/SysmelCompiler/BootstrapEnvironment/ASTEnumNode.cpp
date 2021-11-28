@@ -17,7 +17,7 @@ bool ASTEnumNode::isASTEnumNode() const
 
 AnyValuePtr ASTEnumNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitEnumNode(shared_from_this());
+    return visitor->visitEnumNode(selfFromThis());
 }
 
 SExpression ASTEnumNode::asSExpression() const

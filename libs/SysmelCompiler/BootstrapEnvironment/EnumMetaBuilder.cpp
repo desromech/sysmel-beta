@@ -31,7 +31,7 @@ ASTNodePtr EnumMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string
 
 ASTNodePtr EnumMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTEnumNode> ();
+    auto result = basicMakeObject<ASTEnumNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

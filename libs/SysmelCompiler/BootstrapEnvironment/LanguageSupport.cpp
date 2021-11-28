@@ -50,8 +50,8 @@ MethodCategories LanguageSupport::__instanceMethods__()
 
 ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> ();
-    result->languageSupport = shared_from_this();
+    auto result = basicMakeObject<ASTAnalysisEnvironment> ();
+    result->languageSupport = selfFromThis();
     result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
     result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions));
     result->defaultArgumentType = Type::getAnyValueType();
@@ -64,21 +64,21 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 
 LexicalScopePtr LanguageSupport::createDefaultTopLevelLexicalScope()
 {
-    return std::make_shared<LexicalScope> ();
+    return basicMakeObject<LexicalScope> ();
 }
 
 ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnvironment()
 {
-    auto result = std::make_shared<ASTAnalysisEnvironment> ();
+    auto result = basicMakeObject<ASTAnalysisEnvironment> ();
     result->lexicalScope = createMakeLiteralArrayTopLevelLexicalScope();
-    result->languageSupport = shared_from_this();
+    result->languageSupport = selfFromThis();
     result->isLiteralArrayAnalysisEnvironment = true;
     return result;
 }
 
 LexicalScopePtr LanguageSupport::createMakeLiteralArrayTopLevelLexicalScope()
 {
-    return std::make_shared<LexicalScope> ();
+    return basicMakeObject<LexicalScope> ();
 }
 
 ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)
@@ -97,14 +97,14 @@ CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast
 {
     // Validate the AST.
     {
-        auto parseErrorValidator = std::make_shared<ASTParseErrorValidator> ();
+        auto parseErrorValidator = basicMakeObject<ASTParseErrorValidator> ();
         parseErrorValidator->visitNode(ast);
         auto parseError = parseErrorValidator->makeCompilationError();
         if(parseError)
             parseError->signal();
     }
 
-    auto scriptMethod = std::make_shared<CompiledMethod> ();
+    auto scriptMethod = basicMakeObject<CompiledMethod> ();
     scriptMethod->setFunctionSignature(Type::getAutoType(), TypePtrList{});
     scriptMethod->setDefinition(ast, ast, environment);
     scriptMethod->ensureSemanticAnalysis();

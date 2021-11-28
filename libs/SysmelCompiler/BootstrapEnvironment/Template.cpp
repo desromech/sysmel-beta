@@ -54,7 +54,7 @@ void Template::setArgumentTypes(const TypePtrList &argumentTypes)
     arguments.reserve(argumentTypes.size());
     for(const auto &type : argumentTypes)
     {
-        auto argument = std::make_shared<ArgumentVariable> ();
+        auto argument = basicMakeObject<ArgumentVariable> ();
         recordChildProgramEntityDefinition(argument);
         argument->setType(type);
         arguments.push_back(argument);
@@ -80,7 +80,7 @@ TemplateInstancePtr Template::getOrCreateTemplateInstanceWithArguments(const Any
     if(it != instanceCache.end())
         return it->second;
 
-    auto instance = std::make_shared<TemplateInstance> ();
+    auto instance = basicMakeObject<TemplateInstance> ();
     instanceCache.insert({instanceArguments, instance});
 
     for(size_t i = 0; i < instanceArguments.size(); ++i)

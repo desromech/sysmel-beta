@@ -18,7 +18,7 @@ bool ASTDowncastTypeConversionNode::isASTDowncastTypeConversionNode() const
 
 AnyValuePtr ASTDowncastTypeConversionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitDowncastTypeConversionNode(shared_from_this());
+    return visitor->visitDowncastTypeConversionNode(selfFromThis());
 }
 
 SExpression ASTDowncastTypeConversionNode::asSExpression() const

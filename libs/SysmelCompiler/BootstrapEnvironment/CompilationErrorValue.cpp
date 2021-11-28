@@ -21,7 +21,7 @@ AnyValuePtr getCompilationErrorValueConstant()
 
 CompilationErrorValuePtr CompilationErrorValue::uniqueInstance()
 {
-    auto singleton = std::make_shared<CompilationErrorValue> ();
+    auto singleton = basicMakeObject<CompilationErrorValue> ();
     return singleton;
 }
 

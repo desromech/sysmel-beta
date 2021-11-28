@@ -35,14 +35,14 @@ protected:
 template<typename T>
 [[noreturn]] void signalNew()
 {
-    std::make_shared<T> ()->signal();
+    basicMakeObject<T> ()->signal();
     abort();
 }
 
 template<typename T>
 [[noreturn]] void signalNewWithMessage(const std::string &message)
 {
-    std::make_shared<T> ()->signalWithMessage(message);
+    basicMakeObject<T> ()->signalWithMessage(message);
     abort();
 }
 

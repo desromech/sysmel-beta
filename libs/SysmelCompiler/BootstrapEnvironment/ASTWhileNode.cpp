@@ -18,7 +18,7 @@ bool ASTWhileNode::isASTWhileNode() const
 
 AnyValuePtr ASTWhileNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitWhileNode(shared_from_this());
+    return visitor->visitWhileNode(selfFromThis());
 }
 
 SExpression ASTWhileNode::asSExpression() const

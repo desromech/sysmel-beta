@@ -25,7 +25,7 @@ void AggregateTypeWithFields::recordChildProgramEntityDefinition(const ProgramEn
     SuperType::recordChildProgramEntityDefinition(newChild);
     
     if(newChild->isFieldVariable())
-        fields.push_back(std::static_pointer_cast<FieldVariable> (newChild));
+        fields.push_back(staticObjectCast<FieldVariable> (newChild));
 }
 
 bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const

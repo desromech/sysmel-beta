@@ -19,7 +19,7 @@ bool ASTParseErrorNode::isASTParseErrorNode() const
 
 AnyValuePtr ASTParseErrorNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitParseErrorNode(shared_from_this());
+    return visitor->visitParseErrorNode(selfFromThis());
 }
 
 SExpression ASTParseErrorNode::asSExpression() const
@@ -31,8 +31,8 @@ SExpression ASTParseErrorNode::asSExpression() const
 
 CompilationErrorPtr ASTParseErrorNode::asCompilationError()
 {
-    auto result = std::make_shared<ParseError> ();
-    result->parseErrorNode = shared_from_this();
+    auto result = basicMakeObject<ParseError> ();
+    result->parseErrorNode = selfFromThis();
     return result;
 }
 } // End of namespace BootstrapEnvironment

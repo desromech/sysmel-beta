@@ -25,12 +25,12 @@ template<typename T>
 struct IntrinsicPrimitiveFloatMethods
 {
     typedef T PrimitiveFloat;
-    typedef std::shared_ptr<PrimitiveFloat> PrimitiveFloatPtr;
+    typedef ObjectPtr<PrimitiveFloat> PrimitiveFloatPtr;
     typedef typename PrimitiveFloat::ValueType ValueType;
 
     static PrimitiveFloatPtr makeValue(const ValueType &value)
     {
-        auto box = std::make_shared<PrimitiveFloat> ();
+        auto box = basicMakeObject<PrimitiveFloat> ();
         box->value = value;
         return box;
     }

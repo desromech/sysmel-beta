@@ -43,7 +43,7 @@ void TemplateInstance::evaluateDefinitionFragment(const TemplateDefinitionFragme
         scope->setSymbolBinding(key, validAnyValue(value));
 
     auto evaluationEnvironment = fragment.environment->copyWithLexicalScope(scope);
-    auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
+    auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
     analyzer->environment = evaluationEnvironment;
 
     auto analyzedBody = analyzer->analyzeNodeIfNeededWithAutoType(fragment.bodyNode);

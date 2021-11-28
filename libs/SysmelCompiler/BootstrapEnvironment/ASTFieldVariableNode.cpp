@@ -18,7 +18,7 @@ bool ASTFieldVariableNode::isASTFieldVariableNode() const
 
 AnyValuePtr ASTFieldVariableNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitFieldVariableNode(shared_from_this());
+    return visitor->visitFieldVariableNode(selfFromThis());
 }
 
 SExpression ASTFieldVariableNode::asSExpression() const

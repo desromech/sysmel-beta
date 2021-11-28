@@ -16,7 +16,7 @@ AnyValuePtr getTrueConstant()
 
 LiteralBooleanTruePtr LiteralBooleanTrue::uniqueInstance()
 {
-    auto singleton = std::make_shared<LiteralBooleanTrue> ();
+    auto singleton = basicMakeObject<LiteralBooleanTrue> ();
     return singleton;
 }
 

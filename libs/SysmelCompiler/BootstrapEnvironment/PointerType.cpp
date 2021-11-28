@@ -23,7 +23,7 @@ PointerTypePtr PointerType::makeWithAddressSpace(const TypePtr &baseType, const 
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<PointerType> ();
+    auto result = basicMakeObject<PointerType> ();
     result->setSupertypeAndImplicitMetaType(PointerTypeValue::__staticType__());
     result->baseType = baseType;
     result->addressSpace = addressSpace;
@@ -55,8 +55,8 @@ SExpression PointerType::asSExpression() const
 
 PointerLikeTypeValuePtr PointerType::makeWithValue(const AnyValuePtr &value)
 {
-    auto pointer = std::make_shared<PointerTypeValue> ();
-    pointer->type = shared_from_this();
+    auto pointer = basicMakeObject<PointerTypeValue> ();
+    pointer->type = selfFromThis();
     pointer->baseValue = value;
     return pointer;
 }
@@ -67,10 +67,10 @@ void PointerType::addSpecializedInstanceMethods()
 
     addMethodCategories(MethodCategories{
             {"accessing", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "value", shared_from_this(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "value", selfFromThis(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
                     return referenceType->makeWithValue(value->baseValue);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "_", shared_from_this(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "_", selfFromThis(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
                     return referenceType->makeWithValue(value->baseValue);
                 }, MethodFlags::Pure),
             }

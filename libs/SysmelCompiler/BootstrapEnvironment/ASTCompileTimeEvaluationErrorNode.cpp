@@ -19,7 +19,7 @@ bool ASTCompileTimeEvaluationErrorNode::isASTCompileTimeEvaluationErrorNode() co
 
 AnyValuePtr ASTCompileTimeEvaluationErrorNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitCompileTimeEvaluationErrorNode(shared_from_this());
+    return visitor->visitCompileTimeEvaluationErrorNode(selfFromThis());
 }
 
 SExpression ASTCompileTimeEvaluationErrorNode::asSExpression() const
@@ -31,8 +31,8 @@ SExpression ASTCompileTimeEvaluationErrorNode::asSExpression() const
 
 CompilationErrorPtr ASTCompileTimeEvaluationErrorNode::asCompilationError()
 {
-    auto result = std::make_shared<CompileTimeEvaluationError> ();
-    result->compileTimeEvaluationErrorNode = shared_from_this();
+    auto result = basicMakeObject<CompileTimeEvaluationError> ();
+    result->compileTimeEvaluationErrorNode = selfFromThis();
     result->caughtError = caughtError;
     return result;
 }

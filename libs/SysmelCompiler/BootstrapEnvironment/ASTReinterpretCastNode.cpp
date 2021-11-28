@@ -17,7 +17,7 @@ bool ASTReinterpretCastNode::isASTReinterpretCastNode() const
 
 AnyValuePtr ASTReinterpretCastNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitReinterpretCastNode(shared_from_this());
+    return visitor->visitReinterpretCastNode(selfFromThis());
 }
 
 SExpression ASTReinterpretCastNode::asSExpression() const

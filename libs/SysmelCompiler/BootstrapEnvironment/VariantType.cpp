@@ -52,7 +52,7 @@ VariantTypePtr VariantType::makeNormalized(const TypePtrList &elementTypes)
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<VariantType> ();
+    auto result = basicMakeObject<VariantType> ();
     result->setSupertypeAndImplicitMetaType(VariantTypeValue::__staticType__());
     result->elementTypes = elementTypes;
     cache.insert({elementTypes, result});
@@ -122,8 +122,8 @@ SExpression VariantType::asSExpression() const
 
 AnyValuePtr VariantType::basicNewValue()
 {
-    auto variant = std::make_shared<VariantTypeValue> ();
-    variant->type = shared_from_this();
+    auto variant = basicMakeObject<VariantTypeValue> ();
+    variant->type = selfFromThis();
     variant->wrappedElement = elementTypes.front()->basicNewValue();
     return variant;
 }
@@ -133,7 +133,7 @@ TypePtr VariantType::appendTypeMakingVariant(const TypePtr &nextType)
     auto newElementTypes = elementTypes;
     if(nextType->isVariantType())
     {
-        auto &nextTypes = std::static_pointer_cast<VariantType> (nextType)->elementTypes;
+        auto &nextTypes = staticObjectCast<VariantType> (nextType)->elementTypes;
         newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
     }
     else

@@ -11,12 +11,12 @@ static BootstrapTypeRegistration<LexicalScope> LexicalScopeRegistration;
 
 LexicalScopePtr LexicalScope::makeEmpty()
 {
-    return std::make_shared<LexicalScope> ();
+    return basicMakeObject<LexicalScope> ();
 }
 
 LexicalScopePtr LexicalScope::makeWithParent(const IdentifierLookupScopePtr &parent)
 {
-    auto result = std::make_shared<LexicalScope> ();
+    auto result = basicMakeObject<LexicalScope> ();
     result->parent = parent;
     return result;
 }
@@ -47,7 +47,7 @@ AnyValuePtr LexicalScope::lookupSymbolRecursively(const AnyValuePtr &symbol)
 
     for(const auto &nspace : usedNamespaces)
     {
-        auto found = nspace->lookupExportedSymbolFromScope(symbol, shared_from_this());
+        auto found = nspace->lookupExportedSymbolFromScope(symbol, selfFromThis());
         if(found)
             return found;
     }

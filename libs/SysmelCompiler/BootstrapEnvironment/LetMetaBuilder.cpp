@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<LetMetaBuilder> letMetaBuilderTypeRegistration;
 
 ASTNodePtr LetMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTLocalVariableNode> ();
+    auto result = basicMakeObject<ASTLocalVariableNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
 
     result->name = nameNode;

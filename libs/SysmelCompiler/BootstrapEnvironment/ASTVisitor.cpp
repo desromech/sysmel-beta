@@ -38,7 +38,7 @@ static BootstrapTypeRegistration<ASTVisitor> ASTVisitorTypeRegistration;
 
 AnyValuePtr ASTVisitor::visitNode(const ASTNodePtr &node)
 {
-    return node->accept(shared_from_this());
+    return node->accept(selfFromThis());
 }
 
 AnyValuePtr ASTVisitor::visitArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &)

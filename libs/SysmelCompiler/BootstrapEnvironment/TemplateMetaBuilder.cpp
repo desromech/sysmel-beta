@@ -40,7 +40,7 @@ ASTNodePtr TemplateMetaBuilder::analyzeMessageSendNodeWithSelector(const std::st
 
 ASTNodePtr TemplateMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTTemplateNode> ();
+    auto result = basicMakeObject<ASTTemplateNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 

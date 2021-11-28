@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<ConversionMethodTypeConversionRule> valueAsVoid
 
 TypeConversionRulePtr ConversionMethodTypeConversionRule::makeFor(const TypePtr &sourceType, const TypePtr &destinationType, const MethodPtr &method)
 {
-    auto rule = std::make_shared<ConversionMethodTypeConversionRule> ();
+    auto rule = basicMakeObject<ConversionMethodTypeConversionRule> ();
     rule->sourceType = sourceType;
     rule->destinationType = destinationType;
     rule->method = method;
@@ -36,7 +36,7 @@ ASTNodePtr ConversionMethodTypeConversionRule::convertNodeAtIntoWith(const ASTNo
     (void)targetType;
     assert(node->analyzedType);
 
-    auto result = std::make_shared<ASTMessageSendNode> ();
+    auto result = basicMakeObject<ASTMessageSendNode> ();
     result->sourcePosition = sourcePosition;
     result->selector = validAnyValue(method->getName())->asASTNodeRequiredInPosition(sourcePosition);
     result->receiver = node;

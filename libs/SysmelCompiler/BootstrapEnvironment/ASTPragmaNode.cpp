@@ -19,7 +19,7 @@ bool ASTPragmaNode::isASTPragmaNode() const
 
 AnyValuePtr ASTPragmaNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitPragmaNode(shared_from_this());
+    return visitor->visitPragmaNode(selfFromThis());
 }
 
 SExpression ASTPragmaNode::asSExpression() const

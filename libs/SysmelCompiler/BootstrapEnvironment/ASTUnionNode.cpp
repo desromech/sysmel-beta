@@ -17,7 +17,7 @@ bool ASTUnionNode::isASTUnionNode() const
 
 AnyValuePtr ASTUnionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitUnionNode(shared_from_this());
+    return visitor->visitUnionNode(selfFromThis());
 }
 
 SExpression ASTUnionNode::asSExpression() const

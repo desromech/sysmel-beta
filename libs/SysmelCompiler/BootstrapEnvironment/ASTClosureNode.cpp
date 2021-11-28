@@ -20,7 +20,7 @@ bool ASTClosureNode::isASTClosureNode() const
 
 AnyValuePtr ASTClosureNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitClosureNode(shared_from_this());
+    return visitor->visitClosureNode(selfFromThis());
 }
 
 SExpression ASTClosureNode::asSExpression() const

@@ -18,7 +18,7 @@ bool ASTBreakNode::isASTBreakNode() const
 
 AnyValuePtr ASTBreakNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitBreakNode(shared_from_this());
+    return visitor->visitBreakNode(selfFromThis());
 }
 
 SExpression ASTBreakNode::asSExpression() const

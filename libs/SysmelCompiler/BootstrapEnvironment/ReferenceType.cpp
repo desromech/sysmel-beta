@@ -25,7 +25,7 @@ ReferenceTypePtr ReferenceType::makeWithAddressSpace(const TypePtr &baseType, co
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<ReferenceType> ();
+    auto result = basicMakeObject<ReferenceType> ();
     result->setSupertypeAndImplicitMetaType(ReferenceTypeValue::__staticType__());
     result->baseType = baseType;
     result->addressSpace = addressSpace;
@@ -46,26 +46,26 @@ bool ReferenceType::isReferenceLikeType() const
 
 ReferenceTypePtr ReferenceType::ref()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 ReferenceTypePtr ReferenceType::refFor(const AnyValuePtr &newAddressSpace)
 {
     if(addressSpace == newAddressSpace)
-        return shared_from_this();
+        return selfFromThis();
 
     return baseType->refFor(newAddressSpace);
 }
 
 PointerLikeTypePtr ReferenceType::tempRef()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 PointerLikeTypePtr ReferenceType::tempRefFor(const AnyValuePtr &newAddressSpace)
 {
     if(addressSpace == newAddressSpace)
-        return shared_from_this();
+        return selfFromThis();
 
     return baseType->refFor(newAddressSpace);
 }
@@ -73,7 +73,7 @@ PointerLikeTypePtr ReferenceType::tempRefFor(const AnyValuePtr &newAddressSpace)
 TypePtr ReferenceType::withDecorations(TypeDecorationFlags decorations)
 {
     (void)decorations;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 std::string ReferenceType::printString() const
@@ -94,8 +94,8 @@ SExpression ReferenceType::asSExpression() const
 
 PointerLikeTypeValuePtr ReferenceType::makeWithValue(const AnyValuePtr &value)
 {
-    auto reference = std::make_shared<ReferenceTypeValue> ();
-    reference->type = shared_from_this();
+    auto reference = basicMakeObject<ReferenceTypeValue> ();
+    reference->type = selfFromThis();
     reference->baseValue = value;
     return reference;
 }
@@ -112,14 +112,14 @@ void ReferenceType::addSpecializedInstanceMethods()
 
     addMethodCategories(MethodCategories{
             {"accessing", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr)> ("reference.to.pointer", "address", shared_from_this(), pointerType, {}, [=](const ReferenceTypeValuePtr &self) {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr)> ("reference.to.pointer", "address", selfFromThis(), pointerType, {}, [=](const ReferenceTypeValuePtr &self) {
                     return pointerType->makeWithValue(self->baseValue);
                 }, MethodFlags::Pure),
             }
         }
     });
 
-    addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", shared_from_this(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
+    addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", selfFromThis(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
         return validAnyValue(self->baseValue)->accessVariableAsValueWithType(baseType);
     }));
 
@@ -127,7 +127,7 @@ void ReferenceType::addSpecializedInstanceMethods()
     // TODO: Depend on the triviality of assignment.
     addMethodCategories(MethodCategories{
             {"assignment", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", shared_from_this(), shared_from_this(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", selfFromThis(), selfFromThis(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
                     self->baseValue->copyAssignValue(newValue);
                     return self;
                 }),
@@ -145,7 +145,7 @@ TypePtr ReferenceType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &
         return baseType->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, environment);
     case TypeInferenceMode::Reference:
     case TypeInferenceMode::TemporaryReference:
-        return shared_from_this();
+        return selfFromThis();
     }
 }
 

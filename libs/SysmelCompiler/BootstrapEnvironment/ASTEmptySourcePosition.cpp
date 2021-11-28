@@ -10,7 +10,7 @@ static BootstrapTypeRegistration<ASTEmptySourcePosition> ASTEmptySourcePositionT
 
 ASTSourcePositionPtr ASTSourcePosition::empty()
 {
-    static auto singleton = std::make_shared<ASTEmptySourcePosition> ();
+    static auto singleton = basicMakeObject<ASTEmptySourcePosition> ();
     return singleton;
 }
 

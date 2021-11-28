@@ -26,7 +26,7 @@ TemporaryReferenceTypePtr TemporaryReferenceType::makeWithAddressSpace(const Typ
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<TemporaryReferenceType> ();
+    auto result = basicMakeObject<TemporaryReferenceType> ();
     result->setSupertypeAndImplicitMetaType(TemporaryReferenceTypeValue::__staticType__());
     result->baseType = baseType;
     result->addressSpace = addressSpace;
@@ -57,13 +57,13 @@ ReferenceTypePtr TemporaryReferenceType::refFor(const AnyValuePtr &newAddressSpa
 
 PointerLikeTypePtr TemporaryReferenceType::tempRef()
 {
-    return shared_from_this();
+    return selfFromThis();
 }
 
 PointerLikeTypePtr TemporaryReferenceType::tempRefFor(const AnyValuePtr &newAddressSpace)
 {
     if(addressSpace == newAddressSpace)
-        return shared_from_this();
+        return selfFromThis();
 
     return baseType->tempRefFor(newAddressSpace);
 }
@@ -71,7 +71,7 @@ PointerLikeTypePtr TemporaryReferenceType::tempRefFor(const AnyValuePtr &newAddr
 TypePtr TemporaryReferenceType::withDecorations(TypeDecorationFlags decorations)
 {
     (void)decorations;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 std::string TemporaryReferenceType::printString() const
@@ -92,8 +92,8 @@ SExpression TemporaryReferenceType::asSExpression() const
 
 PointerLikeTypeValuePtr TemporaryReferenceType::makeWithValue(const AnyValuePtr &value)
 {
-    auto temporaryReference = std::make_shared<TemporaryReferenceTypeValue> ();
-    temporaryReference->type = shared_from_this();
+    auto temporaryReference = basicMakeObject<TemporaryReferenceTypeValue> ();
+    temporaryReference->type = selfFromThis();
     temporaryReference->baseValue = value;
     return temporaryReference;
 }
@@ -110,7 +110,7 @@ void TemporaryReferenceType::addSpecializedInstanceMethods()
 
     addMethodCategories(MethodCategories{
             {"accessing", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (TemporaryReferenceTypeValuePtr)> ("reference.to.pointer", "address", shared_from_this(), pointerType, {}, [=](const TemporaryReferenceTypeValuePtr &value) {
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (TemporaryReferenceTypeValuePtr)> ("reference.to.pointer", "address", selfFromThis(), pointerType, {}, [=](const TemporaryReferenceTypeValuePtr &value) {
                     return pointerType->makeWithValue(value->baseValue);
                 }, MethodFlags::Pure),
             }
@@ -128,7 +128,7 @@ TypePtr TemporaryReferenceType::asInferredTypeForWithModeInEnvironment(const AST
     case TypeInferenceMode::Reference:
         return ref()->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, environment);
     case TypeInferenceMode::TemporaryReference:
-        return shared_from_this();
+        return selfFromThis();
     }
 }
 

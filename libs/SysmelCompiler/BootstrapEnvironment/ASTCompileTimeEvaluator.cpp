@@ -130,8 +130,8 @@ AnyValuePtr ASTCompileTimeEvaluator::visitNodeCachingExplicitReturns(const ASTNo
 }
 AnyValuePtr ASTCompileTimeEvaluator::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    auto method = std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity);
-    auto closureType = std::static_pointer_cast<ClosureType> (node->analyzedType);
+    auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
+    auto closureType = staticObjectCast<ClosureType> (node->analyzedType);
     return closureType->makeValueWithEnvironmentAndImplementation(currentCleanUpScope, method);
 }
 
@@ -206,7 +206,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
         return elements.back();
     default:
         assert(node->analyzedType->isTupleType());
-        return std::static_pointer_cast<TupleType> (node->analyzedType)->makeWithElements(elements);
+        return staticObjectCast<TupleType> (node->analyzedType)->makeWithElements(elements);
     }
 }
 
@@ -250,7 +250,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
 
     AnyValuePtr initialValue;
 
-    auto variable = std::static_pointer_cast<Variable> (node->analyzedProgramEntity);
+    auto variable = staticObjectCast<Variable> (node->analyzedProgramEntity);
     if(node->initialValue)
     {
         initialValue = visitNode(node->initialValue);
@@ -268,7 +268,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
         assert(referenceType->isReferenceLikeType());
 
         auto mutableValue = storeValue->asMutableStoreValue();
-        storeValue = std::static_pointer_cast<PointerLikeType> (referenceType)->makeWithValue(mutableValue);
+        storeValue = staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(mutableValue);
     }
 
     currentCleanUpScope->setStoreBinding(node->analyzedProgramEntity, storeValue);
@@ -278,7 +278,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
 
 AnyValuePtr ASTCompileTimeEvaluator::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
 {
-    return std::static_pointer_cast<Variable> (node->analyzedProgramEntity)->findStoreBindingInCompileTime(currentCleanUpScope)
+    return staticObjectCast<Variable> (node->analyzedProgramEntity)->findStoreBindingInCompileTime(currentCleanUpScope)
         ->accessVariableAsReferenceWithType(node->analyzedType);
 }
 
@@ -305,10 +305,10 @@ AnyValuePtr ASTCompileTimeEvaluator::visitProgramEntityNode(const ASTProgramEnti
 
 AnyValuePtr ASTCompileTimeEvaluator::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
-    auto method = std::static_pointer_cast<CompiledMethod> (node->analyzedProgramEntity);
+    auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
     if(node->analyzedType->isClosureType())
     {
-        auto closureType = std::static_pointer_cast<ClosureType> (node->analyzedType);
+        auto closureType = staticObjectCast<ClosureType> (node->analyzedType);
         auto closure = closureType->makeValueWithEnvironmentAndImplementation(currentCleanUpScope, method);
         if(!validAnyValue(method->getName())->isAnonymousNameSymbol())
             currentCleanUpScope->setStoreBinding(method, closure);

@@ -14,7 +14,7 @@ static BootstrapTypeRegistration<DeferredCompileTimeCodeFragment> localVariableT
 
 DeferredCompileTimeCodeFragmentPtr DeferredCompileTimeCodeFragment::make(ASTNodePtr codeFragment, ASTAnalysisEnvironmentPtr environment)
 {
-    auto result = std::make_shared<DeferredCompileTimeCodeFragment> ();
+    auto result = basicMakeObject<DeferredCompileTimeCodeFragment> ();
     result->codeFragment = codeFragment;
     result->environment = environment;
     return result;
@@ -22,7 +22,7 @@ DeferredCompileTimeCodeFragmentPtr DeferredCompileTimeCodeFragment::make(ASTNode
 
 AnyValuePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluateWithExpectedType(const TypePtr &expectedType)
 {
-    auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
+    auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
     analyzer->environment = environment;
     codeFragment = analyzer->analyzeNodeIfNeededWithExpectedType(codeFragment, expectedType);
     auto analysisError = analyzer->makeCompilationError();
@@ -36,7 +36,7 @@ TypePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluateAsTypeExpression()
 {
     auto result = analyzeAndEvaluateWithExpectedType(Type::__staticType__());
     assert(result->isType());
-    return std::static_pointer_cast<Type> (result);
+    return staticObjectCast<Type> (result);
 }
 
 AnyValuePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluate()
@@ -46,7 +46,7 @@ AnyValuePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluate()
 
 void DeferredCompileTimeCodeFragment::analyzeAndEvaluateAsValuesForEnumType(const EnumTypePtr &enumType)
 {
-    auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
+    auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
     analyzer->environment = environment;
     analyzer->analyzeAndEvaluateAsValuesForEnumType(codeFragment, enumType);
 

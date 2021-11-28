@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<DowncastTypeConversionRule> valueAsVoidTypeConv
 
 TypeConversionRulePtr DowncastTypeConversionRule::uniqueInstance()
 {
-    static TypeConversionRulePtr singleton = std::make_shared<DowncastTypeConversionRule> ();
+    static TypeConversionRulePtr singleton = basicMakeObject<DowncastTypeConversionRule> ();
     return singleton;
 }
 
@@ -34,7 +34,7 @@ ASTNodePtr DowncastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &n
     (void)semanticAnalyzer;
     assert(node->analyzedType);
 
-    auto result = std::make_shared<ASTDowncastTypeConversionNode> ();
+    auto result = basicMakeObject<ASTDowncastTypeConversionNode> ();
     result->sourcePosition = sourcePosition;
     result->expression = node;
     result->analyzedType = targetType;

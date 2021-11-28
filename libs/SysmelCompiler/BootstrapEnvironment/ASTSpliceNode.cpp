@@ -18,7 +18,7 @@ bool ASTSpliceNode::isASTSpliceNode() const
 }
 AnyValuePtr ASTSpliceNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitSpliceNode(shared_from_this());
+    return visitor->visitSpliceNode(selfFromThis());
 }
 
 SExpression ASTSpliceNode::asSExpression() const

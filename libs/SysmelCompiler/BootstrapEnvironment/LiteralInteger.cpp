@@ -124,13 +124,13 @@ MethodCategories LiteralInteger::__instanceMethods__()
 
             // Addition
             makeMethodBinding<LiteralCharacterPtr (LargeInteger, LiteralCharacterPtr)> ("+", +[](const LargeInteger &a, const LiteralCharacterPtr &b) {
-                auto result = std::make_shared<LiteralCharacter> ();
+                auto result = basicMakeObject<LiteralCharacter> ();
                 result->value = a + b->getValue();
                 return result;
             }, MethodFlags::Pure),
 
             makeMethodBinding<LiteralCharacterPtr (LiteralCharacterPtr, LargeInteger)> ("+", +[](const LiteralCharacterPtr &a, const LargeInteger &b) {
-                auto result = std::make_shared<LiteralCharacter> ();
+                auto result = basicMakeObject<LiteralCharacter> ();
                 result->value = a->getValue() + b;
                 return result;
             }, MethodFlags::Pure),
@@ -227,9 +227,9 @@ LiteralIntegerPtr LiteralInteger::makeFor(const LargeInteger &value)
 {
     LiteralIntegerPtr result;
     if(value.isNegative())
-        result = std::make_shared<LiteralNegativeInteger> ();
+        result = basicMakeObject<LiteralNegativeInteger> ();
     else
-        result = std::make_shared<LiteralPositiveInteger> ();
+        result = basicMakeObject<LiteralPositiveInteger> ();
     result->value = value;
     return result;
 }
@@ -238,16 +238,16 @@ LiteralIntegerPtr LiteralInteger::makeFor(LargeInteger &&value)
 {
     LiteralIntegerPtr result;
     if(value.isNegative())
-        result = std::make_shared<LiteralNegativeInteger> ();
+        result = basicMakeObject<LiteralNegativeInteger> ();
     else
-        result = std::make_shared<LiteralPositiveInteger> ();
+        result = basicMakeObject<LiteralPositiveInteger> ();
     result->value = std::move(value);
     return result;
 }
 
 LiteralCharacterPtr LiteralInteger::makeForCharacter(char32_t value)
 {
-    LiteralCharacterPtr result = std::make_shared<LiteralCharacter> ();
+    LiteralCharacterPtr result = basicMakeObject<LiteralCharacter> ();
     result->value = LargeInteger{value};
     return result;
 }

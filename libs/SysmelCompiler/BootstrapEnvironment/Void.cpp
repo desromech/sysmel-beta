@@ -27,7 +27,7 @@ AnyValuePtr getVoidConstant()
 
 VoidPtr Void::uniqueInstance()
 {
-    auto singleton = std::make_shared<Void> ();
+    auto singleton = basicMakeObject<Void> ();
     return singleton;
 }
 

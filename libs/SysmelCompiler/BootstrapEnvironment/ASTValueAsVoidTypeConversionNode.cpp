@@ -18,7 +18,7 @@ bool ASTValueAsVoidTypeConversionNode::isASTValueAsVoidTypeConversionNode() cons
 
 AnyValuePtr ASTValueAsVoidTypeConversionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitValueAsVoidTypeConversionNode(shared_from_this());
+    return visitor->visitValueAsVoidTypeConversionNode(selfFromThis());
 }
 
 SExpression ASTValueAsVoidTypeConversionNode::asSExpression() const

@@ -10,7 +10,7 @@ static BootstrapTypeRegistration<LiteralAssociation> literalArrayRegistration;
 
 LiteralAssociationPtr LiteralAssociation::makeWith(const AnyValuePtr &key, const AnyValuePtr &value)
 {
-    auto result = std::make_shared<LiteralAssociation> ();
+    auto result = basicMakeObject<LiteralAssociation> ();
     result->key = key;
     result->value = value;
     return result;

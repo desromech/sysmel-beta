@@ -20,7 +20,7 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForType(const TypePtr &e
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtrList &expectedTypeSet)
 {
     assert(!expectedTypeSet.empty());
-    auto typeInferenceSlot = std::make_shared<ExpectedTypeSetInferenceSlot> ();
+    auto typeInferenceSlot = basicMakeObject<ExpectedTypeSetInferenceSlot> ();
     typeInferenceSlot->expectedTypeSet = expectedTypeSet;
     return typeInferenceSlot;
 }

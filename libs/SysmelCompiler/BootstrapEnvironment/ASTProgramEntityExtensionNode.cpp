@@ -19,7 +19,7 @@ bool ASTProgramEntityExtensionNode::isASTProgramEntityExtensionNode() const
 
 AnyValuePtr ASTProgramEntityExtensionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitProgramEntityExtensionNode(shared_from_this());
+    return visitor->visitProgramEntityExtensionNode(selfFromThis());
 }
 
 SExpression ASTProgramEntityExtensionNode::asSExpression() const

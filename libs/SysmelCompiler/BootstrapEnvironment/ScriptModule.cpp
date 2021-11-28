@@ -9,7 +9,7 @@ static BootstrapTypeRegistration<ScriptModule> scriptModuleTypeRegistration;
 
 ScriptModulePtr ScriptModule::create()
 {
-    auto result = std::make_shared<ScriptModule> ();
+    auto result = basicMakeObject<ScriptModule> ();
     result->activeDuring([&](){
         result->initialize();
     });

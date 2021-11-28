@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<Exception> exceptionTypeRegistration;
 
 void Exception::signal()
 {
-    throw ExceptionWrapper(shared_from_this());
+    throw ExceptionWrapper(selfFromThis());
 }
 
 void Exception::signalWithMessage(const std::string &message)

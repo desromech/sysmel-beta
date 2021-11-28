@@ -184,7 +184,7 @@ bool ProgramEntity::canHaveFields() const
 
 void ProgramEntity::addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity)
 {
-    auto self = shared_from_this();
+    auto self = selfFromThis();
     programEntity->addMacroMethodCategories({{"accessing", {
         makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> (symbol, [=](const MacroInvocationContextPtr &macroContext) {
             return macroContext->astBuilder->identifierWithBinding(symbol, self);

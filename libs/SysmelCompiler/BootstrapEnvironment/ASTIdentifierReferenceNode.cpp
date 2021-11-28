@@ -21,7 +21,7 @@ bool ASTIdentifierReferenceNode::isASTIdentifierReferenceNode() const
 
 AnyValuePtr ASTIdentifierReferenceNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitIdentifierReferenceNode(shared_from_this());
+    return visitor->visitIdentifierReferenceNode(selfFromThis());
 }
 
 SExpression ASTIdentifierReferenceNode::asSExpression() const
@@ -36,11 +36,11 @@ SExpression ASTIdentifierReferenceNode::asSExpression() const
 ASTNodePtr ASTIdentifierReferenceNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     (void)semanticAnalyzer;
-    auto nameNode = std::make_shared<ASTLiteralValueNode> ();
+    auto nameNode = basicMakeObject<ASTLiteralValueNode> ();
     nameNode->sourcePosition = sourcePosition;
     nameNode->setValueAndType(identifier);
 
-    auto result = std::make_shared<ASTArgumentDefinitionNode> ();
+    auto result = basicMakeObject<ASTArgumentDefinitionNode> ();
     result->sourcePosition = sourcePosition;
     result->identifier = nameNode;
 

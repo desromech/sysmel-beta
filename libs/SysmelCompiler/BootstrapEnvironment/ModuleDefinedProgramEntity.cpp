@@ -29,7 +29,7 @@ void ModuleDefinedProgramEntity::registerInCurrentModule()
     if(!currentModule)
         signalNewWithMessage<Error> ("An active module is required here.");
 
-    currentModule->registerProgramEntity(shared_from_this());
+    currentModule->registerProgramEntity(selfFromThis());
     definitionModule = currentModule;
 }
 
@@ -39,7 +39,7 @@ void ModuleDefinedProgramEntity::ensureSemanticAnalysis()
 
 void ModuleDefinedProgramEntity::enqueuePendingSemanticAnalysis()
 {
-    Module::getActive()->enqueueProgramEntitySemanticAnalysis(shared_from_this());
+    Module::getActive()->enqueueProgramEntitySemanticAnalysis(selfFromThis());
 }
 
 } // End of namespace BootstrapEnvironment

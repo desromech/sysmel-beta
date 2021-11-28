@@ -19,7 +19,7 @@ bool ASTSemanticErrorNode::isASTSemanticErrorNode() const
 
 AnyValuePtr ASTSemanticErrorNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitSemanticErrorNode(shared_from_this());
+    return visitor->visitSemanticErrorNode(selfFromThis());
 }
 
 SExpression ASTSemanticErrorNode::asSExpression() const
@@ -31,8 +31,8 @@ SExpression ASTSemanticErrorNode::asSExpression() const
 
 CompilationErrorPtr ASTSemanticErrorNode::asCompilationError()
 {
-    auto result = std::make_shared<SemanticError> ();
-    result->semanticErrorNode = shared_from_this();
+    auto result = basicMakeObject<SemanticError> ();
+    result->semanticErrorNode = selfFromThis();
     return result;
 }
 } // End of namespace BootstrapEnvironment

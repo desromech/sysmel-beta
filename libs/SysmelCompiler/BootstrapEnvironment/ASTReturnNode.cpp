@@ -18,7 +18,7 @@ bool ASTReturnNode::isASTReturnNode() const
 
 AnyValuePtr ASTReturnNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitReturnNode(shared_from_this());
+    return visitor->visitReturnNode(selfFromThis());
 }
 
 SExpression ASTReturnNode::asSExpression() const

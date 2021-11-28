@@ -184,7 +184,7 @@ LiteralNumberPtr LiteralFraction::makeFor(const Fraction &value)
     else if(value.denominator.isOne())
         return LiteralInteger::makeFor(value.numerator);
     
-    auto result = std::make_shared<LiteralFraction> ();
+    auto result = basicMakeObject<LiteralFraction> ();
     result->value = value;
     return result;
 }

@@ -24,7 +24,7 @@ FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList 
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<FunctionType> ();
+    auto result = basicMakeObject<FunctionType> ();
     result->setSupertypeAndImplicitMetaType(FunctionTypeValue::__staticType__());
     result->arguments = canonicalArgumentTypes;
     result->result = canonicalResultType;
@@ -50,8 +50,8 @@ bool FunctionType::isFunctionType() const
 
 FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
-    auto result = std::make_shared<FunctionTypeValue> ();
-    result->type = shared_from_this();
+    auto result = basicMakeObject<FunctionTypeValue> ();
+    result->type = selfFromThis();
     result->functionalImplementation = implementation;
     return result;
 }
@@ -61,11 +61,11 @@ void FunctionType::addSpecializedMethods()
     getType()->addMethodCategories(MethodCategories{
         {"type composition", {
             makeMethodBinding<TypePtr (TypePtr)> ("closure", +[](const TypePtr &self) {
-                auto selfFunctionType = std::static_pointer_cast<FunctionType> (self);
+                auto selfFunctionType = staticObjectCast<FunctionType> (self);
                 return ClosureType::make(selfFunctionType->result, selfFunctionType->arguments);
             }, MethodFlags::Pure),
             makeMethodBinding<TypePtr (TypePtr, TypePtr)> ("methodWithReceiver:", +[](const TypePtr &self, const TypePtr &receiverType) {
-                auto selfFunctionType = std::static_pointer_cast<FunctionType> (self);
+                auto selfFunctionType = staticObjectCast<FunctionType> (self);
                 return MethodType::make(receiverType, selfFunctionType->result, selfFunctionType->arguments);
             }, MethodFlags::Pure),
         }}

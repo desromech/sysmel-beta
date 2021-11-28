@@ -28,7 +28,7 @@ bool ASTUpcastTypeConversionNode::isPureCompileTimeEvaluableNode() const
 
 AnyValuePtr ASTUpcastTypeConversionNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitUpcastTypeConversionNode(shared_from_this());
+    return visitor->visitUpcastTypeConversionNode(selfFromThis());
 }
 
 SExpression ASTUpcastTypeConversionNode::asSExpression() const

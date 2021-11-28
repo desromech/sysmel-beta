@@ -11,7 +11,7 @@ typedef std::shared_ptr<BootstrapExtensionMethodsList> BootstrapExtensionMethods
 
 static BootstrapExtensionMethodsListPtr getOrCreateExtensionMethodList()
 {
-    static BootstrapExtensionMethodsListPtr singleton = std::make_shared<BootstrapExtensionMethodsList> ();
+    static BootstrapExtensionMethodsListPtr singleton = basicMakeObject<BootstrapExtensionMethodsList> ();
     return singleton;
 }
 

@@ -61,8 +61,8 @@ ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
     auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
     auto lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
     result->lexicalScope = lexicalScope;
-    result->returnTargetMethod = shared_from_this();
-    result->localDefinitionsOwner = shared_from_this();
+    result->returnTargetMethod = selfFromThis();
+    result->localDefinitionsOwner = selfFromThis();
 
     // Add the arguments to the lexical scope.
     for(auto &arg : arguments)
@@ -97,7 +97,7 @@ void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumen
     arguments.reserve(argumentTypes.size());
     for(const auto &type : argumentTypes)
     {
-        auto argument = std::make_shared<ArgumentVariable> ();
+        auto argument = basicMakeObject<ArgumentVariable> ();
         recordChildProgramEntityDefinition(argument);
         argument->setType(type);
         arguments.push_back(argument);
@@ -134,7 +134,7 @@ void CompiledMethod::ensureSemanticAnalysis()
     if(analyzedBodyNode || !isDefined())
         return;
 
-    auto analyzer = std::make_shared<ASTSemanticAnalyzer> ();
+    auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
     analyzeDefinitionWith(analyzer);
     auto compilationError = analyzer->makeCompilationError();
     if(compilationError)
@@ -172,7 +172,7 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
 
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
     setArgumentsInEvaluationEnvironment(receiver, arguments, evaluationEnvironment);
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
+    return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
 AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
@@ -181,9 +181,9 @@ AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closu
     assert(closure->isCompileTimeCleanUpScope());
     validateBeforeCompileTimeEvaluation();
 
-    auto evaluationEnvironment = CompileTimeCleanUpScope::makeWithParent(std::static_pointer_cast<CompileTimeCleanUpScope> (closure));
+    auto evaluationEnvironment = CompileTimeCleanUpScope::makeWithParent(staticObjectCast<CompileTimeCleanUpScope> (closure));
     setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
+    return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
 void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &receiver, const AnyValuePtrList &argumentValues, const CompileTimeCleanUpScopePtr &environment)
@@ -198,7 +198,7 @@ void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &rece
     // Check the argument count.
     if(arguments.size() != argumentValues.size())
     {
-        auto error = std::make_shared<ArgumentCountError> ();
+        auto error = basicMakeObject<ArgumentCountError> ();
         error->expectedCount = functionalType->getArgumentCount();
         error->callCount = arguments.size();
         error->signal();
@@ -215,7 +215,7 @@ AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &a
     validateBeforeCompileTimeEvaluation();
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
     setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
-    return std::make_shared<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
+    return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
 void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)

@@ -19,7 +19,7 @@ bool ASTMessageChainMessageNode::isASTMessageChainMessageNode() const
 
 AnyValuePtr ASTMessageChainMessageNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMessageChainMessageNode(shared_from_this());
+    return visitor->visitMessageChainMessageNode(selfFromThis());
 }
 
 SExpression ASTMessageChainMessageNode::asSExpression() const
@@ -38,7 +38,7 @@ SExpression ASTMessageChainMessageNode::asSExpression() const
 
 ASTMessageSendNodePtr ASTMessageChainMessageNode::asMessageSendNodeWithReceiver(const ASTNodePtr &newReceiver)
 {
-    auto result = std::make_shared<ASTMessageSendNode> ();
+    auto result = basicMakeObject<ASTMessageSendNode> ();
     result->sourcePosition = sourcePosition;
     result->receiver = newReceiver;
     result->selector = selector;

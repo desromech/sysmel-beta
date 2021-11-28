@@ -42,7 +42,7 @@ public:
             ModulePtr oldActive;
         } restoreActive;
 
-        setActive(shared_from_this());
+        setActive(selfFromThis());
         f();
     }
     

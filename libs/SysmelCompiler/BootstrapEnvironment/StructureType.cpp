@@ -16,8 +16,8 @@ bool StructureType::isStructureType() const
 
 AnyValuePtr StructureType::basicNewValue()
 {
-    auto result = std::make_shared<StructureTypeValue> ();
-    result->type = shared_from_this();
+    auto result = basicMakeObject<StructureTypeValue> ();
+    result->type = selfFromThis();
     // TODO: Initialize the slots.
     return result;
 }

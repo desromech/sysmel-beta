@@ -19,7 +19,7 @@ bool ASTLocalVariableNode::isASTLocalVariableNode() const
 
 AnyValuePtr ASTLocalVariableNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitLocalVariableNode(shared_from_this());
+    return visitor->visitLocalVariableNode(selfFromThis());
 }
 
 SExpression ASTLocalVariableNode::asSExpression() const

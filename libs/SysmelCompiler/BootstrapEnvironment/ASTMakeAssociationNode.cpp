@@ -19,7 +19,7 @@ bool ASTMakeAssociationNode::isASTMakeAssociationNode() const
 
 AnyValuePtr ASTMakeAssociationNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMakeAssociationNode(shared_from_this());
+    return visitor->visitMakeAssociationNode(selfFromThis());
 }
 
 SExpression ASTMakeAssociationNode::asSExpression() const

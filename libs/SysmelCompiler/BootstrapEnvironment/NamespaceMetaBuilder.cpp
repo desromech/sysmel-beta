@@ -26,7 +26,7 @@ ASTNodePtr NamespaceMetaBuilder::analyzeMessageSendNodeWithSelector(const std::s
 
 ASTNodePtr NamespaceMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTNamespaceNode> ();
+    auto result = basicMakeObject<ASTNamespaceNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
 
     result->name = nameNode;

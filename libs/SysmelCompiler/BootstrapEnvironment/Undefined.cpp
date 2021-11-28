@@ -21,7 +21,7 @@ AnyValuePtr getNilConstant()
 
 UndefinedPtr Undefined::uniqueInstance()
 {
-    auto singleton = std::make_shared<Undefined> ();
+    auto singleton = basicMakeObject<Undefined> ();
     return singleton;
 }
 

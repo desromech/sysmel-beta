@@ -18,7 +18,7 @@ bool ASTMethodNode::isASTMethodNode() const
 
 AnyValuePtr ASTMethodNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMethodNode(shared_from_this());
+    return visitor->visitMethodNode(selfFromThis());
 }
 
 SExpression ASTMethodNode::asSExpression() const

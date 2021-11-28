@@ -19,7 +19,7 @@ bool ASTGlobalVariableNode::isASTGlobalVariableNode() const
 
 AnyValuePtr ASTGlobalVariableNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitGlobalVariableNode(shared_from_this());
+    return visitor->visitGlobalVariableNode(selfFromThis());
 }
 
 SExpression ASTGlobalVariableNode::asSExpression() const

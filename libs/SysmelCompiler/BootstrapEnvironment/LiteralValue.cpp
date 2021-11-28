@@ -47,12 +47,12 @@ bool LiteralValue::isPureCompileTimeLiteralValue() const
 
 bool LiteralValue::canBeConcretizedWithType(const TypePtr &targetType)
 {
-    return targetType->canBeInstantiatedWithLiteralValue(shared_from_this());
+    return targetType->canBeInstantiatedWithLiteralValue(selfFromThis());
 }
 
 AnyValuePtr LiteralValue::concretizeWithType(const TypePtr &targetType)
 {
-    return targetType->instantiatedWithLiteralValue(shared_from_this());
+    return targetType->instantiatedWithLiteralValue(selfFromThis());
 }
 
 TypePtr LiteralValue::getStandardConcreteType()

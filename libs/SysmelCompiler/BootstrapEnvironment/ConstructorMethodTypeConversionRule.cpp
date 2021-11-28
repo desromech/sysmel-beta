@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<ConstructorMethodTypeConversionRule> valueAsVoi
 
 TypeConversionRulePtr ConstructorMethodTypeConversionRule::makeFor(const TypePtr &sourceType, const TypePtr &destinationType, const MethodPtr &method)
 {
-    auto rule = std::make_shared<ConstructorMethodTypeConversionRule> ();
+    auto rule = basicMakeObject<ConstructorMethodTypeConversionRule> ();
     rule->sourceType = sourceType;
     rule->destinationType = destinationType;
     rule->method = method;
@@ -36,7 +36,7 @@ ASTNodePtr ConstructorMethodTypeConversionRule::convertNodeAtIntoWith(const ASTN
 {
     assert(node->analyzedType);
 
-    auto sendNode = std::make_shared<ASTMessageSendNode> ();
+    auto sendNode = basicMakeObject<ASTMessageSendNode> ();
     sendNode->sourcePosition = sourcePosition;
     sendNode->selector = validAnyValue(method->getName())->asASTNodeRequiredInPosition(sourcePosition);
     sendNode->receiver = targetType->asASTNodeRequiredInPosition(sourcePosition);

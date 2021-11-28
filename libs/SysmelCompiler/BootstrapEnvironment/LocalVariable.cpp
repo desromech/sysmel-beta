@@ -16,7 +16,7 @@ bool LocalVariable::isLocalVariable() const
 
 AnyValuePtr LocalVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
 {
-    return compileTimeCleanUpScope->lookupStoreBindingRecursively(shared_from_this());
+    return compileTimeCleanUpScope->lookupStoreBindingRecursively(selfFromThis());
 }
 
 } // End of namespace BootstrapEnvironment

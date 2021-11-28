@@ -21,8 +21,8 @@ void BootstrapModule::initialize()
     bootstrapDefinedTypeTable.reserve(bootstrapDefinedTypeTable.size());
     for(const auto &metadata : bootstrapMetadataList)
     {
-        auto type = std::make_shared<BootstrapType> ();
-        auto metaType = std::make_shared<MetaType> ();
+        auto type = basicMakeObject<BootstrapType> ();
+        auto metaType = basicMakeObject<MetaType> ();
         type->registerInCurrentModule();
         metaType->registerInCurrentModule();
         type->setType(metaType);
@@ -37,7 +37,7 @@ void BootstrapModule::initialize()
     // Second pass: initialize the bootstrap types.
     for(size_t i = 0; i < bootstrapMetadataList.size(); ++i)
     {
-        auto type = std::static_pointer_cast<BootstrapType> (bootstrapDefinedTypeTable[i*2]);
+        auto type = staticObjectCast<BootstrapType> (bootstrapDefinedTypeTable[i*2]);
         type->initializeWithMetadata(bootstrapMetadataList[i]);
     }
 

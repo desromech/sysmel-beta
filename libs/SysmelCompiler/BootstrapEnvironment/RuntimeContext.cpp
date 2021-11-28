@@ -15,7 +15,7 @@ static thread_local RuntimeContextPtr activeRuntimeContextInThisThread;
 
 RuntimeContextPtr RuntimeContext::create()
 {
-    auto result = std::make_shared<RuntimeContext> ();
+    auto result = basicMakeObject<RuntimeContext> ();
     result->activeDuring([&](){
         result->initialize();
     });
@@ -24,11 +24,11 @@ RuntimeContextPtr RuntimeContext::create()
 
 void RuntimeContext::initialize()
 {
-    bootstrapModule = std::make_shared<BootstrapModule> ();
+    bootstrapModule = basicMakeObject<BootstrapModule> ();
     bootstrapModule->activeDuring([&](){
         bootstrapModule->initialize();
 
-        sysmelLanguageSupport = std::make_shared<SysmelLanguageSupport> ();
+        sysmelLanguageSupport = basicMakeObject<SysmelLanguageSupport> ();
         sysmelLanguageSupport->initialize();
     });
 }

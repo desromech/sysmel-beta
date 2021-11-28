@@ -116,7 +116,7 @@ void AnyValue::__addTypeConversionRules__(const TypePtr &type)
 
 AnyValuePtr AnyValue::__basicNewValue__()
 {
-    return std::make_shared<AnyValue> ();
+    return basicMakeObject<AnyValue> ();
 }
 
 bool AnyValue::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
@@ -1021,9 +1021,9 @@ SExpression AnyValue::asFullDefinitionSExpression() const
 
 ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
-    auto result = std::make_shared<ASTLiteralValueNode> ();
+    auto result = basicMakeObject<ASTLiteralValueNode> ();
     result->sourcePosition = requiredSourcePosition;
-    result->value = shared_from_this();
+    result->value = selfFromThis();
     result->type = getType();
     return result;
 }
@@ -1169,25 +1169,25 @@ AnyValuePtr AnyValue::performWithArguments(const AnyValuePtr &selector, const st
     auto type = getType();
     if(!type)
         signalNewWithMessage<MessageNotUnderstood> ("Message " + selector->printString() + " is not understood by " + printString() + ".");
-    return type->runWithArgumentsIn(selector, arguments, shared_from_this());
+    return type->runWithArgumentsIn(selector, arguments, selfFromThis());
 }
 
 AnyValuePtr AnyValue::accessVariableAsReferenceWithType(const TypePtr &referenceType)
 {
     (void)referenceType;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 AnyValuePtr AnyValue::accessVariableAsValueWithType(const TypePtr &valueType)
 {
     (void)valueType;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 AnyValuePtr AnyValue::copyAssignValue(const AnyValuePtr &newValue)
 {
     (void)newValue;
-    return shared_from_this();
+    return selfFromThis();
 }
 
 AnyValuePtr AnyValue::moveAssignValue(const AnyValuePtr &newValue)
@@ -1198,8 +1198,8 @@ AnyValuePtr AnyValue::moveAssignValue(const AnyValuePtr &newValue)
 
 AnyValuePtr AnyValue::asMutableStoreValue()
 {
-    auto box = std::make_shared<ValueBox> ();
-    box->value = shared_from_this();
+    auto box = basicMakeObject<ValueBox> ();
+    box->value = selfFromThis();
     box->type = getType();
     return box;
 }

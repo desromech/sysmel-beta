@@ -19,7 +19,7 @@ bool ASTQuasiQuoteNode::isASTQuasiQuoteNode() const
 
 AnyValuePtr ASTQuasiQuoteNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitQuasiQuoteNode(shared_from_this());
+    return visitor->visitQuasiQuoteNode(selfFromThis());
 }
 
 SExpression ASTQuasiQuoteNode::asSExpression() const

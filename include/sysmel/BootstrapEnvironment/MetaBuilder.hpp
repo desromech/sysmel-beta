@@ -36,7 +36,7 @@ public:
     template<typename T>
     ASTNodePtr delegateToMetaBuilderAt(const ASTSourcePositionPtr &sourcePosition)
     {
-        return delegateToMetaBuilderAt(std::make_shared<T> (), sourcePosition);
+        return delegateToMetaBuilderAt(basicMakeObject<T> (), sourcePosition);
     }
 
 protected:

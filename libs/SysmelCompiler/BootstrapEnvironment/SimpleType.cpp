@@ -28,9 +28,9 @@ void SimpleType::setType(const TypePtr &theMetaType)
 void SimpleType::setSupertypeAndImplicitMetaType(const TypePtr &newSupertype)
 {
     assert(newSupertype);
-    auto newMeta = std::make_shared<MetaType> ();
+    auto newMeta = basicMakeObject<MetaType> ();
     metaType = newMeta;
-    newMeta->setThisType(shared_from_this());
+    newMeta->setThisType(selfFromThis());
 
     setSupertype(newSupertype);
     newMeta->setSupertype(newSupertype->getType());

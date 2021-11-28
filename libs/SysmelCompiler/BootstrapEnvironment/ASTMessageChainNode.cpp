@@ -19,7 +19,7 @@ bool ASTMessageChainNode::isASTMessageChainNode() const
 
 AnyValuePtr ASTMessageChainNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMessageChainNode(shared_from_this());
+    return visitor->visitMessageChainNode(selfFromThis());
 }
 
 SExpression ASTMessageChainNode::asSExpression() const

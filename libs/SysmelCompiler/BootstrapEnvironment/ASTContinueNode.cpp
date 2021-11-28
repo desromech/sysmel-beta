@@ -18,7 +18,7 @@ bool ASTContinueNode::isASTContinueNode() const
 
 AnyValuePtr ASTContinueNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitContinueNode(shared_from_this());
+    return visitor->visitContinueNode(selfFromThis());
 }
 
 SExpression ASTContinueNode::asSExpression() const

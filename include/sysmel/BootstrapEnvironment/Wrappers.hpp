@@ -112,7 +112,7 @@ struct WrapperTypeFor<AnyValuePtrList>
 };
 
 template<typename T>
-struct WrapperTypeFor<std::shared_ptr<T>> : std::enable_if<std::is_base_of<AnyValue, T>::value>
+struct WrapperTypeFor<ObjectPtr<T>> : std::enable_if<std::is_base_of<AnyValue, T>::value>
 {
     static TypePtr apply()
     {
@@ -295,7 +295,7 @@ struct WrapValue<std::vector<T>>
 
 
 template<typename T>
-struct WrapValue<std::shared_ptr<T>>
+struct WrapValue<ObjectPtr<T>>
     : std::enable_if<std::is_base_of<AnyValue, T>::value, WrapValue<AnyValuePtr>>::type {};
 
 template<typename T>
@@ -496,11 +496,11 @@ struct UnwrapValue<std::vector<T>>
 struct UnwrapValueDummyBase {};
 
 template<typename T>
-struct UnwrapValue<std::shared_ptr<T>> : std::enable_if<std::is_base_of<AnyValue, T>::value, UnwrapValueDummyBase>::type
+struct UnwrapValue<ObjectPtr<T>> : std::enable_if<std::is_base_of<AnyValue, T>::value, UnwrapValueDummyBase>::type
 {
-    static std::shared_ptr<T> apply(const AnyValuePtr &value)
+    static ObjectPtr<T> apply(const AnyValuePtr &value)
     {
-        auto castedValue = std::dynamic_pointer_cast<T> (value);
+        auto castedValue = dynamicObjectCast<T> (value);
         if(!castedValue)
             signalNew<CannotUnwrap> ();
         return castedValue;

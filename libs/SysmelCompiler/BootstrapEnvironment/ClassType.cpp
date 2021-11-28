@@ -55,7 +55,7 @@ void ClassType::evaluatePendingSuperclassDefinitions() const
                 // Raise an error
                 if(supertype != newSupertype)
                 {
-                    auto errorNode = std::make_shared<ASTSemanticErrorNode> ();
+                    auto errorNode = basicMakeObject<ASTSemanticErrorNode> ();
                     errorNode->sourcePosition = fragment->codeFragment->sourcePosition;
                     errorNode->errorMessage = formatString("Conflicting super classes ({2} vs {3}) given for {1}.", {{
                         supertype->printString(), newSupertype->printString(), printString()

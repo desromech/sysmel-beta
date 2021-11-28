@@ -21,7 +21,7 @@ ClosureTypePtr ClosureType::make(const TypePtr &resultType, const TypePtrList &a
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<ClosureType> ();
+    auto result = basicMakeObject<ClosureType> ();
     result->arguments = canonicalArgumentTypes;
     result->result = canonicalResultType;
     result->setSupertypeAndImplicitMetaType(ClosureTypeValue::__staticType__());
@@ -46,8 +46,8 @@ std::string ClosureType::printString() const
 
 FunctionalTypeValuePtr ClosureType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation)
 {
-    auto result = std::make_shared<ClosureTypeValue> ();
-    result->type = shared_from_this();
+    auto result = basicMakeObject<ClosureTypeValue> ();
+    result->type = selfFromThis();
     result->functionalImplementation = implementation;
     result->environment = environment;
     return result;

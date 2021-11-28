@@ -19,7 +19,7 @@ bool ASTMakeTupleNode::isASTMakeTupleNode() const
 
 AnyValuePtr ASTMakeTupleNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMakeTupleNode(shared_from_this());
+    return visitor->visitMakeTupleNode(selfFromThis());
 }
 
 SExpression ASTMakeTupleNode::asSExpression() const

@@ -30,7 +30,7 @@ bool ASTBuilder::isASTBuilder() const
 
 ASTIdentifierReferenceNodePtr ASTBuilder::identifier(const AnyValuePtr &identifier)
 {
-    auto node = std::make_shared<ASTIdentifierReferenceNode> ();
+    auto node = basicMakeObject<ASTIdentifierReferenceNode> ();
     node->sourcePosition = sourcePosition;
     node->identifier = identifier;
     return node;
@@ -38,7 +38,7 @@ ASTIdentifierReferenceNodePtr ASTBuilder::identifier(const AnyValuePtr &identifi
 
 ASTIdentifierReferenceNodePtr ASTBuilder::identifierWithBinding(const AnyValuePtr &identifier, const AnyValuePtr &binding)
 {
-    auto node = std::make_shared<ASTIdentifierReferenceNode> ();
+    auto node = basicMakeObject<ASTIdentifierReferenceNode> ();
     node->sourcePosition = sourcePosition;
     node->identifier = identifier;
     node->binding = binding;
@@ -47,7 +47,7 @@ ASTIdentifierReferenceNodePtr ASTBuilder::identifierWithBinding(const AnyValuePt
 
 ASTLiteralValueNodePtr ASTBuilder::literal(const AnyValuePtr &value)
 {
-    auto node = std::make_shared<ASTLiteralValueNode> ();
+    auto node = basicMakeObject<ASTLiteralValueNode> ();
     node->sourcePosition = sourcePosition;
     node->value = value;
     node->type = validAnyValue(value)->getType();
@@ -61,7 +61,7 @@ ASTLiteralValueNodePtr ASTBuilder::literalSymbol(const std::string &symbol)
 
 ASTMessageChainNodePtr ASTBuilder::messageChain(const ASTNodePtr &receiver, const ASTNodePtrList &messages)
 {
-    auto node = std::make_shared<ASTMessageChainNode> ();
+    auto node = basicMakeObject<ASTMessageChainNode> ();
     node->sourcePosition = sourcePosition;
     node->receiver = receiver;
     node->messages = messages;
@@ -70,7 +70,7 @@ ASTMessageChainNodePtr ASTBuilder::messageChain(const ASTNodePtr &receiver, cons
 
 ASTMessageChainMessageNodePtr ASTBuilder::messageChainMessage(const ASTNodePtr &selector, const ASTNodePtrList &arguments)
 {
-    auto node = std::make_shared<ASTMessageChainMessageNode> ();
+    auto node = basicMakeObject<ASTMessageChainMessageNode> ();
     node->sourcePosition = sourcePosition;
     node->selector = selector;
     node->arguments = arguments;
@@ -79,7 +79,7 @@ ASTMessageChainMessageNodePtr ASTBuilder::messageChainMessage(const ASTNodePtr &
 
 ASTMessageSendNodePtr ASTBuilder::sendToWithArguments(const ASTNodePtr &selector, const ASTNodePtr &receiver, const ASTNodePtrList &arguments)
 {
-    auto node = std::make_shared<ASTMessageSendNode> ();
+    auto node = basicMakeObject<ASTMessageSendNode> ();
     node->sourcePosition = sourcePosition;
     node->selector = selector;
     node->receiver = receiver;
@@ -89,7 +89,7 @@ ASTMessageSendNodePtr ASTBuilder::sendToWithArguments(const ASTNodePtr &selector
 
 ASTExplicitCastNodePtr ASTBuilder::explicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType)
 {
-    auto node = std::make_shared<ASTExplicitCastNode> ();
+    auto node = basicMakeObject<ASTExplicitCastNode> ();
     node->sourcePosition = sourcePosition;
     node->expression = expression;
     node->targetType = targetType;
@@ -98,7 +98,7 @@ ASTExplicitCastNodePtr ASTBuilder::explicitCastTo(const ASTNodePtr &expression, 
 
 ASTImplicitCastNodePtr ASTBuilder::implicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType)
 {
-    auto node = std::make_shared<ASTImplicitCastNode> ();
+    auto node = basicMakeObject<ASTImplicitCastNode> ();
     node->sourcePosition = sourcePosition;
     node->expression = expression;
     node->targetType = targetType;
@@ -107,7 +107,7 @@ ASTImplicitCastNodePtr ASTBuilder::implicitCastTo(const ASTNodePtr &expression, 
 
 ASTReinterpretCastNodePtr ASTBuilder::reinterpretCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType)
 {
-    auto node = std::make_shared<ASTReinterpretCastNode> ();
+    auto node = basicMakeObject<ASTReinterpretCastNode> ();
     node->sourcePosition = sourcePosition;
     node->expression = expression;
     node->targetType = targetType;
@@ -116,7 +116,7 @@ ASTReinterpretCastNodePtr ASTBuilder::reinterpretCastTo(const ASTNodePtr &expres
 
 ASTIfNodePtr ASTBuilder::ifThen(const ASTNodePtr &condition, const ASTNodePtr &trueExpression)
 {
-    auto node = std::make_shared<ASTIfNode> ();
+    auto node = basicMakeObject<ASTIfNode> ();
     node->sourcePosition = sourcePosition;
     node->condition = condition;
     node->trueExpression = trueExpression;
@@ -125,7 +125,7 @@ ASTIfNodePtr ASTBuilder::ifThen(const ASTNodePtr &condition, const ASTNodePtr &t
 
 ASTIfNodePtr ASTBuilder::ifThenElse(const ASTNodePtr &condition, const ASTNodePtr &trueExpression, const ASTNodePtr &falseExpression)
 {
-    auto node = std::make_shared<ASTIfNode> ();
+    auto node = basicMakeObject<ASTIfNode> ();
     node->sourcePosition = sourcePosition;
     node->condition = condition;
     node->trueExpression = trueExpression;
@@ -135,7 +135,7 @@ ASTIfNodePtr ASTBuilder::ifThenElse(const ASTNodePtr &condition, const ASTNodePt
 
 ASTWhileNodePtr ASTBuilder::whileDo(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression)
 {
-    auto node = std::make_shared<ASTWhileNode> ();
+    auto node = basicMakeObject<ASTWhileNode> ();
     node->sourcePosition = sourcePosition;
     node->condition = condition;
     node->bodyExpression = bodyExpression;
@@ -144,7 +144,7 @@ ASTWhileNodePtr ASTBuilder::whileDo(const ASTNodePtr &condition, const ASTNodePt
 
 ASTWhileNodePtr ASTBuilder::whileDoContinueWith(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression)
 {
-    auto node = std::make_shared<ASTWhileNode> ();
+    auto node = basicMakeObject<ASTWhileNode> ();
     node->sourcePosition = sourcePosition;
     node->condition = condition;
     node->bodyExpression = bodyExpression;
@@ -154,7 +154,7 @@ ASTWhileNodePtr ASTBuilder::whileDoContinueWith(const ASTNodePtr &condition, con
 
 ASTDoWhileNodePtr ASTBuilder::doWhile(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition)
 {
-    auto node = std::make_shared<ASTDoWhileNode> ();
+    auto node = basicMakeObject<ASTDoWhileNode> ();
     node->sourcePosition = sourcePosition;
     node->bodyExpression = bodyExpression;
     node->condition = condition;
@@ -163,7 +163,7 @@ ASTDoWhileNodePtr ASTBuilder::doWhile(const ASTNodePtr &bodyExpression, const AS
 
 ASTDoWhileNodePtr ASTBuilder::doWhileContinueWith(const ASTNodePtr &bodyExpression,  const ASTNodePtr &condition, const ASTNodePtr &continueExpression)
 {
-    auto node = std::make_shared<ASTDoWhileNode> ();
+    auto node = basicMakeObject<ASTDoWhileNode> ();
     node->sourcePosition = sourcePosition;
     node->bodyExpression = bodyExpression;
     node->condition = condition;
@@ -173,7 +173,7 @@ ASTDoWhileNodePtr ASTBuilder::doWhileContinueWith(const ASTNodePtr &bodyExpressi
 
 ASTReturnNodePtr ASTBuilder::returnValue(const ASTNodePtr &expression)
 {
-    auto node = std::make_shared<ASTReturnNode> ();
+    auto node = basicMakeObject<ASTReturnNode> ();
     node->sourcePosition = sourcePosition;
     node->expression = expression;
     return node;
@@ -181,21 +181,21 @@ ASTReturnNodePtr ASTBuilder::returnValue(const ASTNodePtr &expression)
 
 ASTReturnNodePtr ASTBuilder::returnVoid()
 {
-    auto node = std::make_shared<ASTReturnNode> ();
+    auto node = basicMakeObject<ASTReturnNode> ();
     node->sourcePosition = sourcePosition;
     return node;
 }
 
 ASTBreakNodePtr ASTBuilder::breakThisLoop()
 {
-    auto node = std::make_shared<ASTBreakNode> ();
+    auto node = basicMakeObject<ASTBreakNode> ();
     node->sourcePosition = sourcePosition;
     return node;
 }
 
 ASTContinueNodePtr ASTBuilder::continueThisLoop()
 {
-    auto node = std::make_shared<ASTContinueNode> ();
+    auto node = basicMakeObject<ASTContinueNode> ();
     node->sourcePosition = sourcePosition;
     return node;
 }

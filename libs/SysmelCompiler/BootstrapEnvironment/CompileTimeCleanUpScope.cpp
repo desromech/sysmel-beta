@@ -10,7 +10,7 @@ static BootstrapTypeRegistration<CompileTimeCleanUpScope> CompileTimeCleanUpScop
 
 CompileTimeCleanUpScopePtr CompileTimeCleanUpScope::makeEmpty()
 {
-    return std::make_shared<CompileTimeCleanUpScope> ();
+    return basicMakeObject<CompileTimeCleanUpScope> ();
 }
 
 CompileTimeCleanUpScopePtr CompileTimeCleanUpScope::makeWithParent(CompileTimeCleanUpScopePtr newParentScope)

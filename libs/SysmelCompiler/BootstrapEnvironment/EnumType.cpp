@@ -64,16 +64,16 @@ bool EnumType::hasTrivialMovingFrom()
 void EnumType::addSpecializedMethods()
 {
     assert(baseType);
-    addConstructor(makeIntrinsicConstructorWithSignature<EnumTypeValuePtr (TypePtr, AnyValuePtr)> ("enum.wrap", getType(), shared_from_this(), {baseType}, +[](const TypePtr &selfType, const AnyValuePtr &value) {
-        auto wrappedValue = std::make_shared<EnumTypeValue> ();
-        wrappedValue->type = std::static_pointer_cast<EnumType> (selfType);
+    addConstructor(makeIntrinsicConstructorWithSignature<EnumTypeValuePtr (TypePtr, AnyValuePtr)> ("enum.wrap", getType(), selfFromThis(), {baseType}, +[](const TypePtr &selfType, const AnyValuePtr &value) {
+        auto wrappedValue = basicMakeObject<EnumTypeValue> ();
+        wrappedValue->type = staticObjectCast<EnumType> (selfType);
         wrappedValue->baseValue = value;
         return wrappedValue;
     }, MethodFlags::Pure | MethodFlags::Explicit));
 
     addMethodCategories(MethodCategories{
             {"accessing", {
-                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr)> ("enum.unwrap", "value", shared_from_this(), baseType, {}, +[](const EnumTypeValuePtr &value) {
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr)> ("enum.unwrap", "value", selfFromThis(), baseType, {}, +[](const EnumTypeValuePtr &value) {
                     return value->baseValue;
                 }, MethodFlags::Pure | MethodFlags::Conversion | MethodFlags::Explicit),
             }
@@ -113,7 +113,7 @@ void EnumType::evaluatePendingValueTypeCodeFragments()
                 // Raise an error.
                 if(baseType != newBaseType)
                 {
-                    auto errorNode = std::make_shared<ASTSemanticErrorNode> ();
+                    auto errorNode = basicMakeObject<ASTSemanticErrorNode> ();
                     errorNode->sourcePosition = fragment->codeFragment->sourcePosition;
                     errorNode->errorMessage = formatString("Conflicting value type ({2} vs {3}) given for {1}.", {{
                         baseType->printString(), newBaseType->printString(), printString()
@@ -135,7 +135,7 @@ void EnumType::evaluatePendingValuesFragments()
         auto toEvaluate = pendingValuesCodeFragments;
         pendingValuesCodeFragments.clear();
         for(auto &fragment : toEvaluate)
-            fragment->analyzeAndEvaluateAsValuesForEnumType(shared_from_this());
+            fragment->analyzeAndEvaluateAsValuesForEnumType(selfFromThis());
     }
 }
 
@@ -156,12 +156,12 @@ void EnumType::addValue(const ASTNodePtr &position, const AnyValuePtr &key, cons
 {
     rawValues[key] = validAnyValue(value);
 
-    auto wrappedValue = std::make_shared<EnumTypeValue> ();
-    wrappedValue->type = shared_from_this();
+    auto wrappedValue = basicMakeObject<EnumTypeValue> ();
+    wrappedValue->type = selfFromThis();
     wrappedValue->baseValue = value;
     values[key] = wrappedValue;
 
-    auto constant = std::make_shared<EnumConstant> ();
+    auto constant = basicMakeObject<EnumConstant> ();
     constant->setName(key);
     constant->setValue(wrappedValue);
     constant->setDefinitionNode(position);

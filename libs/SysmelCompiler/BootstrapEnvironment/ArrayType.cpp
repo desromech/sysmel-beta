@@ -19,7 +19,7 @@ ArrayTypePtr ArrayType::make(const TypePtr &elementType, uint64_t size)
     if(it != cache.end())
         return it->second;
 
-    auto result = std::make_shared<ArrayType> ();
+    auto result = basicMakeObject<ArrayType> ();
     result->setSupertypeAndImplicitMetaType(ArrayTypeValue::__staticType__());
     result->elementType = undecoratedElementType;
     result->size = size;
@@ -91,8 +91,8 @@ SExpression ArrayType::asSExpression() const
 
 AnyValuePtr ArrayType::basicNewValue()
 {
-    auto tuple = std::make_shared<ArrayTypeValue> ();
-    tuple->type = shared_from_this();
+    auto tuple = basicMakeObject<ArrayTypeValue> ();
+    tuple->type = selfFromThis();
     tuple->elements.reserve(size);
     for(size_t i = 0; i < size; ++i)
         tuple->elements.push_back(elementType->basicNewValue());

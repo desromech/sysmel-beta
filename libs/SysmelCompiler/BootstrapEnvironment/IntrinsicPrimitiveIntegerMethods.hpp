@@ -79,7 +79,7 @@ template<typename T>
 struct IntrinsicPrimitiveIntegerMethods
 {
     typedef T PrimitiveInteger;
-    typedef std::shared_ptr<PrimitiveInteger> PrimitiveIntegerPtr;
+    typedef ObjectPtr<PrimitiveInteger> PrimitiveIntegerPtr;
     typedef typename PrimitiveInteger::ValueType ValueType;
 
     static constexpr bool IsUnsigned = IsUnsignedIntegerType<ValueType>::value;
@@ -89,14 +89,14 @@ struct IntrinsicPrimitiveIntegerMethods
 
     static PrimitiveIntegerPtr makeValue(const ValueType &value)
     {
-        auto box = std::make_shared<PrimitiveInteger> ();
+        auto box = basicMakeObject<PrimitiveInteger> ();
         box->value = value;
         return box;
     }
 
     static PrimitiveIntegerPtr makeBoolean(const ValueType &value)
     {
-        auto box = std::make_shared<PrimitiveInteger> ();
+        auto box = basicMakeObject<PrimitiveInteger> ();
         box->value = value;
         return box;
     }
@@ -133,7 +133,7 @@ struct IntrinsicPrimitiveIntegerMethods
     template<typename SourceType>
     static void addConstructorFor(AnyValuePtrList &ctors)
     {
-        typedef std::shared_ptr<SourceType> SourceTypePtr;
+        typedef ObjectPtr<SourceType> SourceTypePtr;
         typedef typename SourceType::ValueType SourceValueType;
 
         static constexpr bool IsSourceUnsigned = IsUnsignedIntegerType<SourceValueType>::value;
@@ -176,7 +176,7 @@ struct IntrinsicPrimitiveIntegerMethods
     template<typename SourceType>
     static void addConstructorForFloat(AnyValuePtrList &ctors)
     {
-        typedef std::shared_ptr<SourceType> SourceTypePtr;
+        typedef ObjectPtr<SourceType> SourceTypePtr;
 
         ctors.push_back(makeIntrinsicConstructor<PrimitiveIntegerPtr (TypePtr, SourceTypePtr)> ("float.conversion.to-integer", +[](const TypePtr &, const SourceTypePtr &value){
             return makeValue(ValueType(value->value));

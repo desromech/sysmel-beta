@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<UnionMetaBuilder> unionMetaBuilderTypeRegistrat
 
 ASTNodePtr UnionMetaBuilder::concretizeMetaBuilder()
 {
-    auto result = std::make_shared<ASTUnionNode> ();
+    auto result = basicMakeObject<ASTUnionNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
 
