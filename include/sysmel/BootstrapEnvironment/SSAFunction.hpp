@@ -27,10 +27,17 @@ public:
     const FunctionalTypePtr &getFunctionalType();
 
     void initializeWithNameAndType(const AnyValuePtr &newName, const FunctionalTypePtr &newFunctionalType);
+    void setDeclarationPosition(const ASTSourcePositionPtr &position);
+    void setDefinitionPosition(const ASTSourcePositionPtr &position);
+
+    SSACodeRegionPtr getMainCodeRegion() const;
 
 protected:
     AnyValuePtr name;
     FunctionalTypePtr functionalType;
+    ASTSourcePositionPtr sourcePosition;
+
+    SSACodeRegionPtr mainCodeRegion;
 };
 
 } // End of namespace BootstrapEnvironment

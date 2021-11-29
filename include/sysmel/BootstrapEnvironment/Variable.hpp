@@ -47,6 +47,9 @@ public:
         return isMutable_;
     }
 
+    const ASTSourcePositionPtr &getDeclarationPosition() const;
+    const ASTSourcePositionPtr &getDefinitionPosition() const;
+
 protected:
     ASTSourcePositionPtr declarationPosition;
     ASTNodePtr declarationNode;

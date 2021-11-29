@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAConstantLiteralValue.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
@@ -11,11 +12,12 @@ namespace BootstrapEnvironment
 
 static BootstrapTypeRegistration<SSAConstantLiteralValue> SSAConstantLiteralValueTypeRegistration;
 
-SSAConstantLiteralValuePtr SSAConstantLiteralValue::makeWith(const AnyValuePtr &value, const TypePtr &valueType)
+SSAConstantLiteralValuePtr SSAConstantLiteralValue::makeWith(const AnyValuePtr &value, const TypePtr &valueType, const ASTSourcePositionPtr &sourcePosition)
 {
     auto result = basicMakeObject<SSAConstantLiteralValue> ();
     result->value = value;
     result->valueType = valueType;
+    result->sourcePosition = sourcePosition;
     return result;
 }
 
@@ -33,7 +35,8 @@ SExpression SSAConstantLiteralValue::asFullSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"constantLiteralValue"}},
         validAnyValue(value)->asSExpression(),
-        valueType->asSExpression()
+        valueType->asSExpression(),
+        sourcePosition ? sourcePosition->asSExpression() : nullptr,
     }};
 }
 

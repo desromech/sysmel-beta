@@ -27,6 +27,7 @@ public:
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
     
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
 
 protected:
     TypePtr receiverType;

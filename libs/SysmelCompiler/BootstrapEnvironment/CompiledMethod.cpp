@@ -9,6 +9,8 @@
 #include "sysmel/BootstrapEnvironment/ASTSSACompiler.hpp"
 
 #include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
+#include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
+#include "sysmel/BootstrapEnvironment/SSACodeRegionArgument.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
@@ -155,9 +157,28 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     
     ssaCompiledFunction = basicMakeObject<SSAFunction> ();
     ssaCompiledFunction->initializeWithNameAndType(getName(), functionalType);
+    ssaCompiledFunction->setDeclarationPosition(declarationPosition);
+    auto mainCodeRegion = ssaCompiledFunction->getMainCodeRegion();
+
+    size_t argumentsOffset = 0;
+    auto receiverType = functionalType->getReceiverType();
+    if(!receiverType->isVoidType())
+    {
+        mainCodeRegion->getArgument(0)->setDeclarationPosition(declarationPosition);
+        ++argumentsOffset = 1;
+    }
+
+    for(size_t i = 0; i < arguments.size(); ++i)
+        mainCodeRegion->getArgument(i + argumentsOffset)->setDeclarationPosition(arguments[i]->getDeclarationPosition());
 
     if(analyzedBodyNode)
     {
+        ssaCompiledFunction->setDefinitionPosition(definitionPosition);
+        if(!receiverType->isVoidType())
+            mainCodeRegion->getArgument(0)->setDefinitionPosition(declarationPosition);
+        for(size_t i = 0; i < arguments.size(); ++i)
+            mainCodeRegion->getArgument(i + argumentsOffset)->setDefinitionPosition(arguments[i]->getDefinitionPosition());
+
         auto compiler = basicMakeObject<ASTSSACompiler> ();
     }
 

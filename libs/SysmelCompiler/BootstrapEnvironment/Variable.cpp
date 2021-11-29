@@ -57,10 +57,20 @@ void Variable::setDeclarationNode(const ASTNodePtr &node)
     declarationPosition = node->sourcePosition;
 }
 
+const ASTSourcePositionPtr &Variable::getDeclarationPosition() const
+{
+    return declarationPosition;
+}
+
 void Variable::setDefinitionNode(const ASTNodePtr &node)
 {
     definitionNode = node;
     definitionPosition = node->sourcePosition;
+}
+
+const ASTSourcePositionPtr &Variable::getDefinitionPosition() const
+{
+    return definitionPosition;
 }
 
 ASTNodePtr Variable::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

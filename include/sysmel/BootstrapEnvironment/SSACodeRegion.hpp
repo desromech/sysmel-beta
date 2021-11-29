@@ -8,6 +8,7 @@ namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -19,6 +20,27 @@ public:
     virtual bool isSSACodeRegion() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+    virtual SExpression asFullSExpression() const override;
+
+    void setFunctionalType(const FunctionalTypePtr &functionalType);
+    void setSourcePosition(const ASTSourcePositionPtr &newSourcePosition);
+
+    size_t getArgumentCount() const;
+    const SSACodeRegionArgumentPtr &getArgument(size_t index);
+    const SSACodeRegionArgumentPtrList &getArguments();
+
+    const SSABasicBlockPtrList &getBasicBlocks();
+
+    SSABasicBlockPtr newBasicBlock();
+    void addBasicBlock(const SSABasicBlockPtr &block);
+
+protected:
+    void addArgumentWithType(const TypePtr &argumentType);
+    
+    ASTSourcePositionPtr sourcePosition;
+    SSACodeRegionArgumentPtrList arguments;
+    TypePtr resultType;
+    SSABasicBlockPtrList basicBlocks;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -1035,6 +1035,16 @@ bool AnyValue::isSSABasicBlock() const
     return false;
 }
 
+bool AnyValue::isSSACodeRegionLocalValue() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACodeRegionArgument() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAInstruction() const
 {
     return false;
@@ -1131,8 +1141,7 @@ ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &req
 
 SSAValuePtr AnyValue::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
-    (void)requiredSourcePosition;
-    return SSAConstantLiteralValue::makeWith(selfFromThis(), getType());
+    return SSAConstantLiteralValue::makeWith(selfFromThis(), getType(), requiredSourcePosition);
 }
 
 AnyValuePtr AnyValue::asUnarySelectorConvertedToIdentifier() const

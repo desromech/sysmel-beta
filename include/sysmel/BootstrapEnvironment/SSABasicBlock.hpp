@@ -19,6 +19,14 @@ public:
     virtual bool isSSABasicBlock() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+    virtual SExpression asFullSExpression() const override;
+
+    const SSACodeRegionPtr &getParentCodeRegion() const;
+    void setParentCodeRegion(const SSACodeRegionPtr &newParent);
+
+protected:
+    SSAInstructionPtrList instructions;
+    SSACodeRegionPtr parentCodeRegion;
 };
 
 } // End of namespace BootstrapEnvironment

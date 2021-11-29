@@ -203,6 +203,8 @@ set(BootstrapEnvironment_Sources
     SSABasicBlock.cpp
     SSACallInstruction.cpp
     SSACodeRegion.cpp
+    SSACodeRegionArgument.cpp
+    SSACodeRegionLocalValue.cpp
     SSAConditionalJumpInstruction.cpp
     SSAConstantLiteralValue.cpp
     SSAConstantValue.cpp

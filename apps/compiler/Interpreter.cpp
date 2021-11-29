@@ -58,6 +58,7 @@ void ssaCompileString(const std::string &sourceString, const std::string &source
     }
 }
 
+
 void evalString(const std::string &sourceString, const std::string &sourceName)
 {
     auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
@@ -65,6 +66,20 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
         std::cout << result->printString() << std::endl;
+    }
+    catch(ExceptionWrapper &exception)
+    {
+        std::cerr << exception.what() << std::endl;
+    }
+}
+
+void ssaCompileEvalString(const std::string &sourceString, const std::string &sourceName)
+{
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    try
+    {
+        auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
+        std::cout << result->asSSAValueRequiredInPosition(ASTSourcePosition::empty())->fullPrintString() << std::endl;
     }
     catch(ExceptionWrapper &exception)
     {
@@ -121,6 +136,10 @@ int main(int argc, const char *argv[])
                 else if(arg == "-ssa-for-string")
                 {
                     ssaCompileString(argv[++i], "<command line arg>");
+                }
+                else if(arg == "-ssa-for-string-value")
+                {
+                    ssaCompileEvalString(argv[++i], "<command line arg>");
                 }
                 else if(arg == "-dump-bootstrap-env")
                 {

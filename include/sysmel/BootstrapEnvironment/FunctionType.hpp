@@ -26,6 +26,8 @@ public:
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
     virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType) override;
 
+    virtual SExpression asSExpression() const override;
+
     void addSpecializedMethods();
 };
 
@@ -40,6 +42,7 @@ public:
     virtual TypePtr getType() const override;
     
     virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 };
 
 } // End of namespace BootstrapEnvironment

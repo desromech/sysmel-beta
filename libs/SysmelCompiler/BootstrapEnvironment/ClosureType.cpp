@@ -44,6 +44,20 @@ std::string ClosureType::printString() const
     return "(" + SuperType::printString() + ") closure";
 }
 
+SExpression ClosureType::asSExpression() const
+{
+    SExpressionList argumentsSExpr;
+    argumentsSExpr.elements.reserve(arguments.size());
+    for(auto &arg : arguments)
+        argumentsSExpr.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"closureType"}},
+        argumentsSExpr,
+        result->asSExpression()
+    }};
+}
+
 FunctionalTypeValuePtr ClosureType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation)
 {
     auto result = basicMakeObject<ClosureTypeValue> ();

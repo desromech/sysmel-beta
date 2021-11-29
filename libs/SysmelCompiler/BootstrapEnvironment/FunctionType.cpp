@@ -56,6 +56,20 @@ FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValueP
     return result;
 }
 
+SExpression FunctionType::asSExpression() const
+{
+    SExpressionList argumentsSExpr;
+    argumentsSExpr.elements.reserve(arguments.size());
+    for(auto &arg : arguments)
+        argumentsSExpr.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"functionType"}},
+        argumentsSExpr,
+        result->asSExpression()
+    }};
+}
+
 void FunctionType::addSpecializedMethods()
 {
     getType()->addMethodCategories(MethodCategories{
@@ -85,6 +99,11 @@ TypePtr FunctionTypeValue::getType() const
 AnyValuePtr FunctionTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
 {
     return functionalImplementation->applyWithArguments(arguments);
+}
+
+SSAValuePtr FunctionTypeValue::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    return functionalImplementation->asSSAValueRequiredInPosition(requiredSourcePosition);
 }
 
 } // End of namespace BootstrapEnvironment

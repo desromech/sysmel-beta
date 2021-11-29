@@ -16,7 +16,7 @@ class SSAConstantLiteralValue : public SubtypeOf<SSAConstantValue, SSAConstantLi
 public:
     static constexpr char const __typeName__[] = "SSAConstantLiteralValue";
 
-    static SSAConstantLiteralValuePtr makeWith(const AnyValuePtr &value, const TypePtr &valueType);
+    static SSAConstantLiteralValuePtr makeWith(const AnyValuePtr &value, const TypePtr &valueType, const ASTSourcePositionPtr &sourcePosition);
 
     virtual bool isSSAConstantLiteralValue() const override;
 
@@ -29,6 +29,7 @@ public:
 protected:
     AnyValuePtr value;
     TypePtr valueType;
+    ASTSourcePositionPtr sourcePosition;
 };
 
 } // End of namespace BootstrapEnvironment

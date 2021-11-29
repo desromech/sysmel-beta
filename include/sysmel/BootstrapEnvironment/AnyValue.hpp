@@ -872,6 +872,12 @@ public:
     // Is this a SSA basic block?
     virtual bool isSSABasicBlock() const;
 
+    // Is this a SSA code region local value?
+    virtual bool isSSACodeRegionLocalValue() const;
+
+    // Is this a SSA code region argument?
+    virtual bool isSSACodeRegionArgument() const;
+
     // Is this a SSA instruction?
     virtual bool isSSAInstruction() const;
 

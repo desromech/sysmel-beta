@@ -59,6 +59,21 @@ std::string MethodType::printString() const
     return "((" + SuperType::printString() + ") methodWithReceiver: " + receiverType->printString() + ")";
 }
 
+SExpression MethodType::asSExpression() const
+{
+    SExpressionList argumentsSExpr;
+    argumentsSExpr.elements.reserve(arguments.size());
+    for(auto &arg : arguments)
+        argumentsSExpr.elements.push_back(arg->asSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"methodType"}},
+        receiverType->asSExpression(),
+        argumentsSExpr,
+        result->asSExpression()
+    }};
+}
+
 bool MethodTypeValue::isMethodTypeValue() const
 {
     return true;

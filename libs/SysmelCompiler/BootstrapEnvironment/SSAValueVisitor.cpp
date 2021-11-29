@@ -49,6 +49,15 @@ AnyValuePtr SSAValueVisitor::visitBasicBlock(const SSABasicBlockPtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitCodeRegionLocalValue(const SSACodeRegionLocalValuePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitCodeRegionArgument(const SSACodeRegionArgumentPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
 
 AnyValuePtr SSAValueVisitor::visitInstruction(const SSAInstructionPtr &)
 {
