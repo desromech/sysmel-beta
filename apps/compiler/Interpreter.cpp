@@ -1,6 +1,7 @@
 #include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
 #include "sysmel/BootstrapEnvironment/AnyValue.hpp"
 #include "sysmel/BootstrapEnvironment/ASTNode.hpp"
+#include "sysmel/BootstrapEnvironment/SSAValue.hpp"
 #include "sysmel/BootstrapEnvironment/Wrappers.hpp"
 #include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
@@ -8,6 +9,7 @@
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/Exception.hpp"
 #include <fstream>
 #include <iostream>
@@ -35,6 +37,20 @@ void semanticAnalyzeString(const std::string &sourceString, const std::string &s
     {
         auto analyzed = language->semanticAnalyzeStringNamed(sourceString, sourceName);
         std::cout << analyzed->fullPrintString() << std::endl;
+    }
+    catch(ExceptionWrapper &exception)
+    {
+        std::cerr << exception.what() << std::endl;
+    }
+}
+
+void ssaCompileString(const std::string &sourceString, const std::string &sourceName)
+{
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    try
+    {
+        auto analyzed = language->semanticAnalyzeStringNamed(sourceString, sourceName);
+        std::cout << analyzed->asSSAValueRequiredInPosition(ASTSourcePosition::empty())->fullPrintString() << std::endl;
     }
     catch(ExceptionWrapper &exception)
     {
@@ -101,6 +117,10 @@ int main(int argc, const char *argv[])
                 else if(arg == "-semantic-analyze-string")
                 {
                     semanticAnalyzeString(argv[++i], "<command line arg>");
+                }
+                else if(arg == "-ssa-for-string")
+                {
+                    ssaCompileString(argv[++i], "<command line arg>");
                 }
                 else if(arg == "-dump-bootstrap-env")
                 {

@@ -6,6 +6,9 @@
 #include "sysmel/BootstrapEnvironment/CompilationError.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeEvaluator.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSSACompiler.hpp"
+
+#include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
@@ -134,11 +137,31 @@ void CompiledMethod::ensureSemanticAnalysis()
     if(analyzedBodyNode || !isDefined())
         return;
 
-    auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
-    analyzeDefinitionWith(analyzer);
-    auto compilationError = analyzer->makeCompilationError();
-    if(compilationError)
-        compilationError->signal();
+    {
+        auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
+        analyzeDefinitionWith(analyzer);
+        auto compilationError = analyzer->makeCompilationError();
+        if(compilationError)
+            compilationError->signal();
+    }
+}
+
+SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    (void)requiredSourcePosition;
+    if(ssaCompiledFunction)
+        return ssaCompiledFunction;
+    ensureSemanticAnalysis();
+    
+    ssaCompiledFunction = basicMakeObject<SSAFunction> ();
+    ssaCompiledFunction->initializeWithNameAndType(getName(), functionalType);
+
+    if(analyzedBodyNode)
+    {
+        auto compiler = basicMakeObject<ASTSSACompiler> ();
+    }
+
+    return ssaCompiledFunction;
 }
 
 std::string CompiledMethod::fullPrintString() const

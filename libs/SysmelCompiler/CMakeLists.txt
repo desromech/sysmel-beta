@@ -64,6 +64,7 @@ set(BootstrapEnvironment_Sources
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
     ASTSpliceNode.cpp
+    ASTSSACompiler.cpp
     ASTStructNode.cpp
     ASTTemplateNode.cpp
     ASTTypeConversionNode.cpp
@@ -199,7 +200,27 @@ set(BootstrapEnvironment_Sources
     SExpression.cpp
     SimpleType.cpp
     SpecificMethod.cpp
+    SSABasicBlock.cpp
+    SSACallInstruction.cpp
+    SSACodeRegion.cpp
+    SSAConditionalJumpInstruction.cpp
+    SSAConstantLiteralValue.cpp
+    SSAConstantValue.cpp
+    SSADoWhileInstruction.cpp
+    SSADoWithCleanupInstruction.cpp
+    SSAFunction.cpp
+    SSAGlobalValue.cpp
+    SSAGlobalVariable.cpp
+    SSAIfInstruction.cpp
+    SSAInstruction.cpp
+    SSAJumpInstruction.cpp
+    SSAMakeClosureInstruction.cpp
+    SSAReturnFromFunctionInstruction.cpp
+    SSAReturnFromRegionInstruction.cpp
+    SSAUnreachableInstruction.cpp
     SSAValue.cpp
+    SSAValueVisitor.cpp
+    SSAWhileInstruction.cpp
     StringUtilities.cpp
     StructMetaBuilder.cpp
     StructureType.cpp

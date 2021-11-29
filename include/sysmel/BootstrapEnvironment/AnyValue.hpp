@@ -44,6 +44,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAValue);
+
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
 typedef std::vector<MethodBinding> MethodBindings;
 
@@ -852,6 +854,9 @@ public:
     // Is this a SSA constant value?
     virtual bool isSSAConstantValue() const;
 
+    // Is this a SSA constant literal value?
+    virtual bool isSSAConstantLiteralValue() const;
+
     // Is this a SSA global value?
     virtual bool isSSAGlobalValue() const;
 
@@ -880,16 +885,28 @@ public:
     virtual bool isSSAConditionalJumpInstruction() const;
 
     // Is this a SSA if statement?
-    virtual bool isSSAIfStatement() const;
+    virtual bool isSSAIfInstruction() const;
 
     // Is this a SSA while statement?
-    virtual bool isSSAWhileStatement() const;
+    virtual bool isSSAWhileInstruction() const;
 
     // Is this a SSA do while statement?
-    virtual bool isSSADoWhileStatement() const;
+    virtual bool isSSADoWhileInstruction() const;
 
-    // Is this a SSA do with cleanup?
-    virtual bool isSSADoWithCleanup() const;
+    // Is this a SSA do with cleanup statement instruction?
+    virtual bool isSSADoWithCleanupInstruction() const;
+
+    // Is this a SSA make closure instruction?
+    virtual bool isSSAMakeClosureInstruction() const;
+
+    // Is this a SSA return from region instruction?
+    virtual bool isSSAReturnFromRegionInstruction() const;
+
+    // Is this a SSA return from function instruction?
+    virtual bool isSSAReturnFromFunctionInstruction() const;
+
+    // Is this a SSA unreachable instruction?
+    virtual bool isSSAUnreachableInstruction() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;
@@ -908,6 +925,9 @@ public:
 
     /// Convert the object into an AST node which is required in the specified source position.
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition);
+
+    /// Convert the object into SSA value.
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition);
 
     /// Convert this value from unary selector into an identifier value. Null if the conversion is not valid.
     virtual AnyValuePtr asUnarySelectorConvertedToIdentifier() const;

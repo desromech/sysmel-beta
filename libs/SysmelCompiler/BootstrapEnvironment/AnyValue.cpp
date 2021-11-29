@@ -9,6 +9,7 @@
 #include "sysmel/BootstrapEnvironment/ASTExplicitCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTImplicitCastNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTReinterpretCastNode.hpp"
+#include "sysmel/BootstrapEnvironment/SSAConstantLiteralValue.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
@@ -1004,6 +1005,11 @@ bool AnyValue::isSSAConstantValue() const
     return false;
 }
 
+bool AnyValue::isSSAConstantLiteralValue() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAGlobalValue() const
 {
     return false;
@@ -1049,22 +1055,42 @@ bool AnyValue::isSSAConditionalJumpInstruction() const
     return false;
 }
 
-bool AnyValue::isSSAIfStatement() const
+bool AnyValue::isSSAIfInstruction() const
 {
     return false;
 }
 
-bool AnyValue::isSSAWhileStatement() const
+bool AnyValue::isSSAWhileInstruction() const
 {
     return false;
 }
 
-bool AnyValue::isSSADoWhileStatement() const
+bool AnyValue::isSSADoWhileInstruction() const
 {
     return false;
 }
 
-bool AnyValue::isSSADoWithCleanup() const
+bool AnyValue::isSSADoWithCleanupInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAMakeClosureInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAReturnFromRegionInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAReturnFromFunctionInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAUnreachableInstruction() const
 {
     return false;
 }
@@ -1101,6 +1127,12 @@ ASTNodePtr AnyValue::asASTNodeRequiredInPosition(const ASTSourcePositionPtr &req
     result->value = selfFromThis();
     result->type = getType();
     return result;
+}
+
+SSAValuePtr AnyValue::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    (void)requiredSourcePosition;
+    return SSAConstantLiteralValue::makeWith(selfFromThis(), getType());
 }
 
 AnyValuePtr AnyValue::asUnarySelectorConvertedToIdentifier() const

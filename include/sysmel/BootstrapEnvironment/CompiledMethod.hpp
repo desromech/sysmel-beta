@@ -14,8 +14,10 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompiledMethod);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeCleanUpScope);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ArgumentVariable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionalType);
+
 
 /**
  * I am the base interface for most of the methods that are defined in the system.
@@ -53,6 +55,8 @@ public:
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
    
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+    
 protected:
     void createArgumentVariablesWithTypes(const TypePtrList &argumentTypes);
     void validateBeforeCompileTimeEvaluation();
@@ -69,6 +73,7 @@ protected:
 
     ASTAnalysisEnvironmentPtr definitionEnvironment;
     ASTNodePtr analyzedBodyNode;
+    SSAFunctionPtr ssaCompiledFunction;
 
     ProgramEntityPtrList children;
 
