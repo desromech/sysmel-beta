@@ -994,6 +994,81 @@ bool AnyValue::isTemplateInstance() const
     return false;
 }
 
+bool AnyValue::isSSAValue() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAConstantValue() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAGlobalValue() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAGlobalVariable() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAFunction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACodeRegion() const
+{
+    return false;
+}
+
+bool AnyValue::isSSABasicBlock() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACallInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAJumpInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAConditionalJumpInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAIfStatement() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAWhileStatement() const
+{
+    return false;
+}
+
+bool AnyValue::isSSADoWhileStatement() const
+{
+    return false;
+}
+
+bool AnyValue::isSSADoWithCleanup() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();

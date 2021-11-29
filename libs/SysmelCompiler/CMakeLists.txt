@@ -199,6 +199,7 @@ set(BootstrapEnvironment_Sources
     SExpression.cpp
     SimpleType.cpp
     SpecificMethod.cpp
+    SSAValue.cpp
     StringUtilities.cpp
     StructMetaBuilder.cpp
     StructureType.cpp

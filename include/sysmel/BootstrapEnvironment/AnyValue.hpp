@@ -846,6 +846,51 @@ public:
     // Is this a template instance?
     virtual bool isTemplateInstance() const;
 
+    // Is this a SSA value?
+    virtual bool isSSAValue() const;
+
+    // Is this a SSA constant value?
+    virtual bool isSSAConstantValue() const;
+
+    // Is this a SSA global value?
+    virtual bool isSSAGlobalValue() const;
+
+    // Is this a SSA global value?
+    virtual bool isSSAGlobalVariable() const;
+
+    // Is this a SSA function?
+    virtual bool isSSAFunction() const;
+
+    // Is this a SSA code region?
+    virtual bool isSSACodeRegion() const;
+
+    // Is this a SSA basic block?
+    virtual bool isSSABasicBlock() const;
+
+    // Is this a SSA instruction?
+    virtual bool isSSAInstruction() const;
+
+    // Is this a SSA call instruction?
+    virtual bool isSSACallInstruction() const;
+
+    // Is this a SSA jump instruction?
+    virtual bool isSSAJumpInstruction() const;
+
+    // Is this a SSA conditional jump instruction?
+    virtual bool isSSAConditionalJumpInstruction() const;
+
+    // Is this a SSA if statement?
+    virtual bool isSSAIfStatement() const;
+
+    // Is this a SSA while statement?
+    virtual bool isSSAWhileStatement() const;
+
+    // Is this a SSA do while statement?
+    virtual bool isSSADoWhileStatement() const;
+
+    // Is this a SSA do with cleanup?
+    virtual bool isSSADoWithCleanup() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 
