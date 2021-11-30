@@ -17,6 +17,7 @@ public:
     static constexpr char const __typeName__[] = "SSAUnreachableInstruction";
 
     virtual bool isSSAUnreachableInstruction() const override;
+    virtual bool isTerminatorInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 };

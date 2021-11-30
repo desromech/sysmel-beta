@@ -8,6 +8,9 @@ namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
+
+typedef std::function<void (SSAInstructionPtr)> SSAInstructionIterationBlock;
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -24,8 +27,20 @@ public:
     const SSACodeRegionPtr &getParentCodeRegion() const;
     void setParentCodeRegion(const SSACodeRegionPtr &newParent);
 
+    const SSAInstructionPtr &getFirstInstruction() const;
+    const SSAInstructionPtr &getLastInstruction() const;
+
+    void instructionsDo(const SSAInstructionIterationBlock &aBlock) const;
+    void instructionsDo(const SSAInstructionIterationBlock &aBlock);
+
+    void addInstructionBefore(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position);
+    void addInstructionAfter(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position);
+    void prependInstruction(const SSAInstructionPtr &instruction);
+    void appendInstruction(const SSAInstructionPtr &instruction);
+
 protected:
-    SSAInstructionPtrList instructions;
+    SSAInstructionPtr firstInstruction;
+    SSAInstructionPtr lastInstruction;
     SSACodeRegionPtr parentCodeRegion;
 };
 

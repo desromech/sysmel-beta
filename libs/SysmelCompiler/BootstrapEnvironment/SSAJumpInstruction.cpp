@@ -14,6 +14,11 @@ bool SSAJumpInstruction::isSSAJumpInstruction() const
     return true;
 }
 
+bool SSAJumpInstruction::isTerminatorInstruction() const
+{
+    return true;
+}
+
 AnyValuePtr SSAJumpInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitJumpInstruction(selfFromThis());

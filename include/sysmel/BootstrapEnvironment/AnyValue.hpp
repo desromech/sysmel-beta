@@ -884,6 +884,9 @@ public:
     // Is this a SSA call instruction?
     virtual bool isSSACallInstruction() const;
 
+    // Is this a SSA send message instruction?
+    virtual bool isSSASendMessageInstruction() const;
+
     // Is this a SSA jump instruction?
     virtual bool isSSAJumpInstruction() const;
 

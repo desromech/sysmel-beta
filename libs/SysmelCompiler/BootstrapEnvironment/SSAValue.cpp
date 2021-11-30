@@ -15,6 +15,11 @@ bool SSAValue::isSSAValue() const
     return true;
 }
 
+bool SSAValue::isTerminatorInstruction() const
+{
+    return false;
+}
+
 AnyValuePtr SSAValue::accept(const SSAValueVisitorPtr &)
 {
     SysmelSelfSubclassResponsibility();

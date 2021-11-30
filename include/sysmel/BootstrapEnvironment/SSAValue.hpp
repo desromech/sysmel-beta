@@ -9,7 +9,7 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SSAValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAConstantValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAConstantLiteralValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAGlobalValue);
@@ -21,7 +21,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SSABasicBlock);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSACodeRegionLocalValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SSACodeRegionArgument);
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SSAInstruction);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSACallInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAConditionalJumpInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAIfInstruction);
@@ -31,6 +31,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSADoWithCleanupInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAMakeClosureInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAReturnFromFunctionInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAReturnFromRegionInstruction);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSASendMessageInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAUnreachableInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAWhileInstruction);
 
@@ -45,6 +46,7 @@ public:
     static constexpr char const __typeName__[] = "SSAValue";
 
     virtual bool isSSAValue() const override;
+    virtual bool isTerminatorInstruction() const;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor);
 

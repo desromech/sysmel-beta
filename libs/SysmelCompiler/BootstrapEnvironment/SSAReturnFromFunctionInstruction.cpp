@@ -14,9 +14,39 @@ bool SSAReturnFromFunctionInstruction::isSSAReturnFromFunctionInstruction() cons
     return true;
 }
 
+bool SSAReturnFromFunctionInstruction::isTerminatorInstruction() const
+{
+    return true;
+}
+
 AnyValuePtr SSAReturnFromFunctionInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitReturnFromFunctionInstruction(selfFromThis());
+}
+
+std::string SSAReturnFromFunctionInstruction::getMnemonic() const
+{
+    return "returnFromFunction";
+}
+
+void SSAReturnFromFunctionInstruction::parametersDo(const SSAInstructionParameterIterationBlock &aBlock)
+{
+    aBlock(value);
+}
+
+void SSAReturnFromFunctionInstruction::parametersDo(const SSAInstructionConstParameterIterationBlock &aBlock) const
+{
+    aBlock(value);
+}
+
+const SSAValuePtr &SSAReturnFromFunctionInstruction::getValue() const
+{
+    return value;
+}
+
+void SSAReturnFromFunctionInstruction::setValue(const SSAValuePtr &newValue)
+{
+    value = newValue;
 }
 
 } // End of namespace BootstrapEnvironment

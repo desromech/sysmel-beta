@@ -11,6 +11,7 @@
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/Exception.hpp"
+#include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -58,7 +59,6 @@ void ssaCompileString(const std::string &sourceString, const std::string &source
     }
 }
 
-
 void evalString(const std::string &sourceString, const std::string &sourceName)
 {
     auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
@@ -66,6 +66,24 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
         std::cout << result->printString() << std::endl;
+    }
+    catch(ExceptionWrapper &exception)
+    {
+        std::cerr << exception.what() << std::endl;
+    }
+}
+
+void semanticAnalyzeEvalString(const std::string &sourceString, const std::string &sourceName)
+{
+    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    try
+    {
+        auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
+        if(result->isFunctionalTypeValue())
+            result = staticObjectCast<FunctionalTypeValue> (result)->functionalImplementation;
+        
+        ScriptModule::getActive()->analyzeAllPendingProgramEntities();
+        std::cout << result->fullPrintString() << std::endl;
     }
     catch(ExceptionWrapper &exception)
     {
@@ -123,23 +141,28 @@ int main(int argc, const char *argv[])
                 std::string arg = argv[i];
                 if(arg == "-eval")
                 {
-                    evalString(argv[++i], "<command line arg>");
+                    evalString(argv[++i], "<cli>");
                 }
                 else if(arg == "-parse-string")
                 {
-                    parseString(argv[++i], "<command line arg>");
+                    parseString(argv[++i], "<cli>");
                 }
                 else if(arg == "-semantic-analyze-string")
                 {
-                    semanticAnalyzeString(argv[++i], "<command line arg>");
+                    semanticAnalyzeString(argv[++i], "<cli>");
+                }
+
+                else if(arg == "-semantic-analyze-string-value")
+                {
+                    semanticAnalyzeEvalString(argv[++i], "<cli>");
                 }
                 else if(arg == "-ssa-for-string")
                 {
-                    ssaCompileString(argv[++i], "<command line arg>");
+                    ssaCompileString(argv[++i], "<cli>");
                 }
                 else if(arg == "-ssa-for-string-value")
                 {
-                    ssaCompileEvalString(argv[++i], "<command line arg>");
+                    ssaCompileEvalString(argv[++i], "<cli>");
                 }
                 else if(arg == "-dump-bootstrap-env")
                 {

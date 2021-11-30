@@ -180,6 +180,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
             mainCodeRegion->getArgument(i + argumentsOffset)->setDefinitionPosition(arguments[i]->getDefinitionPosition());
 
         auto compiler = basicMakeObject<ASTSSACompiler> ();
+        compiler->compileMethodBody(selfFromThis(), ssaCompiledFunction, analyzedBodyNode);
     }
 
     return ssaCompiledFunction;

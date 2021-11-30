@@ -23,9 +23,9 @@ AnyValuePtr SSABasicBlock::accept(const SSAValueVisitorPtr &visitor)
 SExpression SSABasicBlock::asFullSExpression() const
 {
     SExpressionList instructionsSExpr;
-    instructionsSExpr.elements.reserve(instructions.size());
-    for(auto &instr : instructions)
+    instructionsDo([&](const SSAInstructionPtr &instr) {
         instructionsSExpr.elements.push_back(instr->asFullSExpression());
+    });
 
     return SExpressionList{{SExpressionIdentifier{{"basicBlock"}},
         instructionsSExpr
@@ -39,8 +39,111 @@ const SSACodeRegionPtr &SSABasicBlock::getParentCodeRegion() const
 
 void SSABasicBlock::setParentCodeRegion(const SSACodeRegionPtr &newParent)
 {
-    assert(!parentCodeRegion);
     parentCodeRegion = newParent;
+}
+
+const SSAInstructionPtr &SSABasicBlock::getFirstInstruction() const
+{
+    return firstInstruction;
+}
+
+const SSAInstructionPtr &SSABasicBlock::getLastInstruction() const
+{
+    return lastInstruction;
+}
+
+void SSABasicBlock::instructionsDo(const SSAInstructionIterationBlock &aBlock) const
+{
+    for(auto currentPosition = firstInstruction; currentPosition; )
+    {
+        auto oldPosition = currentPosition;
+        currentPosition = currentPosition->getNextInstruction();
+        aBlock(oldPosition);
+    }
+}
+
+void SSABasicBlock::instructionsDo(const SSAInstructionIterationBlock &aBlock)
+{
+    for(auto currentPosition = firstInstruction; currentPosition; )
+    {
+        auto oldPosition = currentPosition;
+        currentPosition = currentPosition->getNextInstruction();
+        aBlock(oldPosition);
+    }
+}
+
+void SSABasicBlock::addInstructionBefore(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position)
+{
+    assert(!instruction->getParentBasicBlock());
+    assert(!instruction->getPreviousInstruction());
+    assert(!instruction->getNextInstruction());
+
+    SSAInstructionPtr before = position ? position->getPreviousInstruction() : nullptr;
+    SSAInstructionPtr after = position;
+
+    if(before)
+    {
+        before->setNextInstruction(instruction);
+        instruction->setPreviousInstruction(before);
+    }
+    else
+    {
+        firstInstruction = instruction;
+    }
+
+    if(after)
+    {
+        after->setPreviousInstruction(instruction);
+        instruction->setNextInstruction(before);
+    }
+    else
+    {
+        lastInstruction = instruction;
+    }
+    
+    instruction->setParentBasicBlock(selfFromThis());
+}
+
+void SSABasicBlock::addInstructionAfter(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position)
+{
+    assert(!instruction->getParentBasicBlock());
+    assert(!instruction->getPreviousInstruction());
+    assert(!instruction->getNextInstruction());
+
+    SSAInstructionPtr before = position;
+    SSAInstructionPtr after = position ? position->getNextInstruction() : nullptr;
+
+    if(before)
+    {
+        before->setNextInstruction(instruction);
+        instruction->setPreviousInstruction(before);
+    }
+    else
+    {
+        firstInstruction = instruction;
+    }
+
+    if(after)
+    {
+        after->setPreviousInstruction(instruction);
+        instruction->setNextInstruction(before);
+    }
+    else
+    {
+        lastInstruction = instruction;
+    }
+    
+    instruction->setParentBasicBlock(selfFromThis());
+}
+
+void SSABasicBlock::prependInstruction(const SSAInstructionPtr &instruction)
+{
+    addInstructionAfter(instruction, nullptr);
+}
+
+void SSABasicBlock::appendInstruction(const SSAInstructionPtr &instruction)
+{
+    addInstructionBefore(instruction, nullptr);
 }
 
 } // End of namespace BootstrapEnvironment

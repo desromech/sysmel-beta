@@ -17,6 +17,7 @@ public:
     static constexpr char const __typeName__[] = "SSAConditionalJumpInstruction";
 
     virtual bool isSSAConditionalJumpInstruction() const override;
+    virtual bool isTerminatorInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 };

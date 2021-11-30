@@ -14,6 +14,11 @@ bool SSAUnreachableInstruction::isSSAUnreachableInstruction() const
     return true;
 }
 
+bool SSAUnreachableInstruction::isTerminatorInstruction() const
+{
+    return true;
+}
+
 AnyValuePtr SSAUnreachableInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitUnreachableInstruction(selfFromThis());

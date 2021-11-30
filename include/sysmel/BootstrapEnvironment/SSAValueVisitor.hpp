@@ -38,6 +38,7 @@ public:
     virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction);
+    virtual AnyValuePtr visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction);
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction);
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction);
 };

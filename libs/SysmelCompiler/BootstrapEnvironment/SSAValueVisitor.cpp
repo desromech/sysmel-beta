@@ -109,6 +109,11 @@ AnyValuePtr SSAValueVisitor::visitReturnFromFunctionInstruction(const SSAReturnF
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitSendMessageInstruction(const SSASendMessageInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitUnreachableInstruction(const SSAUnreachableInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

@@ -201,6 +201,7 @@ set(BootstrapEnvironment_Sources
     SimpleType.cpp
     SpecificMethod.cpp
     SSABasicBlock.cpp
+    SSABuilder.cpp
     SSACallInstruction.cpp
     SSACodeRegion.cpp
     SSACodeRegionArgument.cpp
@@ -219,6 +220,7 @@ set(BootstrapEnvironment_Sources
     SSAMakeClosureInstruction.cpp
     SSAReturnFromFunctionInstruction.cpp
     SSAReturnFromRegionInstruction.cpp
+    SSASendMessageInstruction.cpp
     SSAUnreachableInstruction.cpp
     SSAValue.cpp
     SSAValueVisitor.cpp

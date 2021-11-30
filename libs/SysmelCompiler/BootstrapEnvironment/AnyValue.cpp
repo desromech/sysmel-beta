@@ -1055,6 +1055,11 @@ bool AnyValue::isSSACallInstruction() const
     return false;
 }
 
+bool AnyValue::isSSASendMessageInstruction() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAJumpInstruction() const
 {
     return false;
