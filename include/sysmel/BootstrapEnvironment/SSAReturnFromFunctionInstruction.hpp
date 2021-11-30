@@ -21,6 +21,8 @@ public:
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
+    virtual TypePtr getValueType() const override;
+
     virtual std::string getMnemonic() const override;
     
     virtual void parametersDo(const SSAInstructionParameterIterationBlock &aBlock) override;

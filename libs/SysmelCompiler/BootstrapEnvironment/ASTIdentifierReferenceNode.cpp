@@ -27,10 +27,10 @@ AnyValuePtr ASTIdentifierReferenceNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTIdentifierReferenceNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"identifier"}},
-        sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         identifier->asSExpression(),
-        binding ? binding->asSExpression() : nullptr}};
+        binding ? binding->asSExpression() : nullptr,
+        sourcePosition->asSExpression(),}};
 }
 
 ASTNodePtr ASTIdentifierReferenceNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)

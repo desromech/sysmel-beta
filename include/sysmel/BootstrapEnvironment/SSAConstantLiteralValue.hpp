@@ -21,7 +21,7 @@ public:
     virtual bool isSSAConstantLiteralValue() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
-    virtual SExpression asFullSExpression() const override;
+    virtual SExpression asSExpression() const override;
 
     virtual TypePtr getValueType() const override;
     const AnyValuePtr &getValue() const;

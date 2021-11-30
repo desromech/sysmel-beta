@@ -27,15 +27,21 @@ public:
 
     void compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node);
 
+    virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
     
+    virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node);
+
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
 
     SpecificMethodPtr currentMethod;
     SSAFunctionPtr currentSSAFunction;
     SSACodeRegionPtr currentCodeRegion;
     SSABuilderPtr builder;
+
+    std::unordered_map<AnyValuePtr, SSAValuePtr> localVariableMap;
 };
 
 } // End of namespace BootstrapEnvironment

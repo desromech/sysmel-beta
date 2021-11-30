@@ -185,8 +185,8 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     if(errorNode)
         return errorNode;
 
-    // FIXME: Improve the criteria for direct message sends.
-    node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || functionalType->getReceiverType()->isVoidType();
+    auto receiverType = functionalType->getReceiverType();
+    node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || !receiverType->supportsDynamicCompileTimeMessageSend();
     node->analyzedBoundMessage = selfFromThis();
     node->analyzedType = functionalType->getResultType();
     node->isPureMessageSend = isPure();
@@ -230,6 +230,14 @@ FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
     if(!functionalValue)
         functionalValue = functionalType->makeValueWithImplementation(selfFromThis());
     return functionalValue;
+}
+
+SExpression SpecificMethod::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"specificMethod"}},
+        validAnyValue(name)->asSExpression(),
+        validAnyValue(intrinsicName)->asSExpression(),
+    }};
 }
 
 void SpecificMethod::setIntrinsicName(const AnyValuePtr &theIntrinsicName)

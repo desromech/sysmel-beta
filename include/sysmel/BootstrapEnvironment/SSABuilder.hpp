@@ -42,8 +42,10 @@ public:
     SSAConstantLiteralValuePtr literalWithType(const AnyValuePtr &value, const TypePtr &type);
     SSAConstantLiteralValuePtr literal(const AnyValuePtr &value);
 
+    SSACallInstructionPtr call(const TypePtr &resultType, const SSAValuePtr &function, const SSAValuePtrList &arguments);
     SSAReturnFromFunctionInstructionPtr returnFromFunction(const SSAValuePtr &value);
     SSAReturnFromRegionInstructionPtr returnFromRegion(const SSAValuePtr &value);
+    SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);
 
 protected:
     SSACodeRegionPtr currentRegion;

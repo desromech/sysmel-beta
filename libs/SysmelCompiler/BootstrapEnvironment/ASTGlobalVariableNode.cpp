@@ -25,10 +25,10 @@ AnyValuePtr ASTGlobalVariableNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTGlobalVariableNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"globalVariable"}},
-        sourcePosition->asSExpression(),
-        analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{isMutable ? "mutable" : "immutable"}},
         SExpressionIdentifier{{typeInferenceModeToString(typeInferenceMode)}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
+        sourcePosition->asSExpression(),
         name ? name->asSExpression() : nullptr,
         type ? type->asSExpression() : nullptr,
         alignment ? alignment->asSExpression() : nullptr,

@@ -56,9 +56,9 @@ bool ASTLiteralValueNode::isPureCompileTimeEvaluableNode() const
 SExpression ASTLiteralValueNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"literal"}},
-        sourcePosition->asSExpression(),
         value ? value->asSExpression() : nullptr,
-        type ? (type->isASTNode() ? type->asSExpression() : SExpressionSymbol{type->asString()}) : nullptr
+        type ? (type->isASTNode() ? type->asSExpression() : SExpressionSymbol{type->asString()}) : nullptr,
+        sourcePosition->asSExpression(),
     }};
 }
 

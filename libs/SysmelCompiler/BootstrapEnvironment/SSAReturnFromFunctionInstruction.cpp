@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAReturnFromFunctionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -22,6 +23,11 @@ bool SSAReturnFromFunctionInstruction::isTerminatorInstruction() const
 AnyValuePtr SSAReturnFromFunctionInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitReturnFromFunctionInstruction(selfFromThis());
+}
+
+TypePtr SSAReturnFromFunctionInstruction::getValueType() const
+{
+    return Type::getVoidType();
 }
 
 std::string SSAReturnFromFunctionInstruction::getMnemonic() const

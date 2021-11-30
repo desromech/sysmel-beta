@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAReturnFromRegionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -22,6 +23,11 @@ bool SSAReturnFromRegionInstruction::isTerminatorInstruction() const
 AnyValuePtr SSAReturnFromRegionInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitReturnFromRegionInstruction(selfFromThis());
+}
+
+TypePtr SSAReturnFromRegionInstruction::getValueType() const
+{
+    return Type::getVoidType();
 }
 
 std::string SSAReturnFromRegionInstruction::getMnemonic() const

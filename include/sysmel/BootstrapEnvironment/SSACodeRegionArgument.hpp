@@ -26,6 +26,8 @@ public:
     void setDeclarationPosition(const ASTSourcePositionPtr &position);
     void setDefinitionPosition(const ASTSourcePositionPtr &position);
     
+    virtual TypePtr getValueType() const override;
+
 protected:
     TypePtr valueType;
     ASTSourcePositionPtr declarationSourcePosition;

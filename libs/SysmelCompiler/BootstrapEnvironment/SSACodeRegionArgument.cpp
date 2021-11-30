@@ -48,5 +48,10 @@ void SSACodeRegionArgument::setDefinitionPosition(const ASTSourcePositionPtr &po
     definitionSourcePosition = position;
 }
 
+TypePtr SSACodeRegionArgument::getValueType() const
+{
+    return valueType;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

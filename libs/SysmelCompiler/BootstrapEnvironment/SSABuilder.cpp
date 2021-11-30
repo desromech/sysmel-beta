@@ -5,8 +5,10 @@
 #include "sysmel/BootstrapEnvironment/SSAInstruction.hpp"
 
 #include "sysmel/BootstrapEnvironment/SSAConstantLiteralValue.hpp"
+#include "sysmel/BootstrapEnvironment/SSACallInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAReturnFromFunctionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAReturnFromRegionInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSASendMessageInstruction.hpp"
 
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 
@@ -112,6 +114,17 @@ SSAConstantLiteralValuePtr SSABuilder::literal(const AnyValuePtr &value)
     return literalWithType(value, validAnyValue(value)->getType());
 }
 
+SSACallInstructionPtr SSABuilder::call(const TypePtr &resultType, const SSAValuePtr &function, const SSAValuePtrList &arguments)
+{
+    auto instruction = basicMakeObject<SSACallInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(resultType);
+    instruction->setFunction(function);
+    instruction->setArguments(arguments);
+    addInstruction(instruction);
+    return instruction;   
+}
+
 SSAReturnFromFunctionInstructionPtr SSABuilder::returnFromFunction(const SSAValuePtr &value)
 {
     auto instruction = basicMakeObject<SSAReturnFromFunctionInstruction> ();
@@ -126,6 +139,18 @@ SSAReturnFromRegionInstructionPtr SSABuilder::returnFromRegion(const SSAValuePtr
     auto instruction = basicMakeObject<SSAReturnFromRegionInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setValue(normalizeValue(value));
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSASendMessageInstructionPtr SSABuilder::sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments)
+{
+    auto instruction = basicMakeObject<SSASendMessageInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(resultType);
+    instruction->setSelector(selector);
+    instruction->setReceiver(receiver);
+    instruction->setArguments(arguments);
     addInstruction(instruction);
     return instruction;
 }

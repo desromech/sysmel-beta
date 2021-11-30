@@ -2,6 +2,7 @@
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -42,7 +43,7 @@ SExpression SSAInstruction::asFullSExpression() const
     SExpressionList parametersSExpr;
     SExpressionList nestedRegionsSExp;
     parametersDo([&](const SSAValuePtr &param) {
-        parametersSExpr.elements.push_back(param->asFullSExpression());
+        parametersSExpr.elements.push_back(param->asSExpression());
     });
 
     regionsDo([&](const SSACodeRegionPtr &region) {
@@ -50,6 +51,8 @@ SExpression SSAInstruction::asFullSExpression() const
     });
 
     return SExpressionList{{SExpressionIdentifier{{getMnemonic()}},
+        LargeInteger{localValueIndex},
+        getValueType()->asSExpression(),
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
         parametersSExpr,
         nestedRegionsSExp

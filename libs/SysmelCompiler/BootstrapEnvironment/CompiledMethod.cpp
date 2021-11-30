@@ -148,6 +148,11 @@ void CompiledMethod::ensureSemanticAnalysis()
     }
 }
 
+const ArgumentVariablePtrList &CompiledMethod::getArguments() const
+{
+    return arguments;
+}
+
 SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
     (void)requiredSourcePosition;

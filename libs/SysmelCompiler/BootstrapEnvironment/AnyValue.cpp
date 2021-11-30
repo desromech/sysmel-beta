@@ -21,6 +21,7 @@
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace SysmelMoebius
 {
@@ -1127,6 +1128,7 @@ std::string AnyValue::fullPrintString() const
 
 SExpression AnyValue::asSExpression() const
 {
+    std::cout << getType()->printString();
     SysmelSelfSubclassResponsibility();
 }
 

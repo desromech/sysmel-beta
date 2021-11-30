@@ -40,6 +40,16 @@ void SSASendMessageInstruction::parametersDo(const SSAInstructionConstParameterI
         aBlock(arg);
 }
 
+TypePtr SSASendMessageInstruction::getValueType() const
+{
+    return valueType;
+}
+
+void SSASendMessageInstruction::setValueType(const TypePtr &type)
+{
+    valueType = type;
+}
+
 const SSAValuePtr &SSASendMessageInstruction::getSelector() const
 {
     return selector;

@@ -18,6 +18,7 @@ public:
 
     virtual bool isSSAJumpInstruction() const override;
     virtual bool isTerminatorInstruction() const override;
+    virtual TypePtr getValueType() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 };

@@ -25,6 +25,9 @@ public:
     virtual void parametersDo(const SSAInstructionParameterIterationBlock &aBlock) override;
     virtual void parametersDo(const SSAInstructionConstParameterIterationBlock &aBlock) const override;
 
+    TypePtr getValueType() const override;
+    void setValueType(const TypePtr &type);
+
     const SSAValuePtr &getSelector() const;
     void setSelector(const SSAValuePtr &newValue);
 
@@ -35,6 +38,8 @@ public:
     void setArguments(const SSAValuePtrList &newArguments);
     
 protected:
+    TypePtr valueType;
+
     SSAValuePtr selector;
     SSAValuePtr receiver;
     SSAValuePtrList arguments;

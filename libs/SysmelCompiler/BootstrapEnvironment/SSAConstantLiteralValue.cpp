@@ -31,7 +31,7 @@ AnyValuePtr SSAConstantLiteralValue::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitConstantLiteralValue(selfFromThis());
 }
 
-SExpression SSAConstantLiteralValue::asFullSExpression() const
+SExpression SSAConstantLiteralValue::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"constantLiteralValue"}},
         validAnyValue(value)->asSExpression(),

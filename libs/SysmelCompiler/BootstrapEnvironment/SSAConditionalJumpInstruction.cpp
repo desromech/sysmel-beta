@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAConditionalJumpInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -22,6 +23,11 @@ bool SSAConditionalJumpInstruction::isTerminatorInstruction() const
 AnyValuePtr SSAConditionalJumpInstruction::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitConditionalJumpInstruction(selfFromThis());
+}
+
+TypePtr SSAConditionalJumpInstruction::getValueType() const
+{
+    return Type::getVoidType();
 }
 
 } // End of namespace BootstrapEnvironment

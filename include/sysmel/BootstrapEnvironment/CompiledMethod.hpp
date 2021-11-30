@@ -57,6 +57,7 @@ public:
    
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     
+    const ArgumentVariablePtrList &getArguments() const;
 protected:
     void createArgumentVariablesWithTypes(const TypePtrList &argumentTypes);
     void validateBeforeCompileTimeEvaluation();

@@ -25,10 +25,10 @@ AnyValuePtr ASTLocalVariableNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTLocalVariableNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"localVariable"}},
-        sourcePosition->asSExpression(),
-        analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{isMutable ? "mutable" : "immutable"}},
         SExpressionIdentifier{{typeInferenceModeToString(typeInferenceMode)}},
+        analyzedType ? analyzedType->asSExpression() : nullptr,
+        sourcePosition->asSExpression(),
         name ? name->asSExpression() : nullptr,
         type ? type->asSExpression() : nullptr,
         alignment ? alignment->asSExpression() : nullptr,

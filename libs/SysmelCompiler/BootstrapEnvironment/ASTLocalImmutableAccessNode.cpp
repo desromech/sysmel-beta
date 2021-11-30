@@ -25,8 +25,8 @@ SExpression ASTLocalImmutableAccessNode::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"localImmutableAccessNode"}},
         analyzedType ? analyzedType->asSExpression() : nullptr,
+        bindingName->asSExpression(),
         sourcePosition->asSExpression(),
-        bindingName->asSExpression()
     }};
 }
 

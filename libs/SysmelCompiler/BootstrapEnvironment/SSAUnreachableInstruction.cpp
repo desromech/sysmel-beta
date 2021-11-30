@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAUnreachableInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -24,5 +25,9 @@ AnyValuePtr SSAUnreachableInstruction::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitUnreachableInstruction(selfFromThis());
 }
 
+TypePtr SSAUnreachableInstruction::getValueType() const
+{
+    return Type::getVoidType();
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

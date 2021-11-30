@@ -64,21 +64,50 @@ struct SExpressionPrinterVisitor
     void operator()(const SExpressionList &value)
     {
         out << '(';
-        if(value.elements.size() >= 1)
-            std::visit(*this, value.elements[0]);
+        size_t listStartIndex = 0;
+        if(prettyPrint)
+        {
+            bool hasSeenSourcePosition = false;
+            for(; listStartIndex < value.elements.size();)
+            {
+                const auto &element = value.elements[listStartIndex];
+                if(shouldPrintInitialInline(element))
+                {
+                    if(hasSeenSourcePosition)
+                    {
+                        if(!isSourceCodePosition(element))
+                            break;
+                    }
+                    else
+                    {
+                        hasSeenSourcePosition = isSourceCodePosition(element);
+                    }
+
+                    if(listStartIndex > 0)
+                        out << ' ';
+                    std::visit(*this, element);
+                    ++listStartIndex;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
 
         if(shouldPrintInline(value))
         {
-            for(size_t i = 1; i < value.elements.size(); ++i)
+            for(size_t i = listStartIndex; i < value.elements.size(); ++i)
             {
-                out << ' ';
+                if(i > 0)
+                    out << ' ';
                 std::visit(*this, value.elements[i]);
             }
         }
         else
         {
             ++indentation;
-            for(size_t i = 1; i < value.elements.size(); ++i)
+            for(size_t i = listStartIndex; i < value.elements.size(); ++i)
             {
                 newIndentedLine();
                 std::visit(*this, value.elements[i]);
@@ -87,6 +116,28 @@ struct SExpressionPrinterVisitor
         }
 
         out << ')';
+    }
+
+    bool isSourceCodePosition(const SExpression &value)
+    {
+        if(!std::holds_alternative<SExpressionList> (value))
+            return false;
+        
+        const auto &list = std::get<SExpressionList> (value);
+        return list.elements.size() > 0
+            && std::holds_alternative<SExpressionIdentifier> (list.elements[0])
+            && std::get<SExpressionIdentifier> (list.elements[0]).value == "position";
+    }
+
+    bool shouldPrintInitialInline(const SExpression &value)
+    {
+        if(!prettyPrint)
+            return false;
+
+        if(std::holds_alternative<SExpressionList> (value))
+            return isSourceCodePosition(value);
+        
+        return true;
     }
 
     bool shouldPrintInline(const SExpressionList &list)

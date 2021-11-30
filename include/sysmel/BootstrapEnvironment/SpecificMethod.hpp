@@ -40,6 +40,8 @@ public:
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
+    virtual SExpression asSExpression() const override;
+
     virtual FunctionalTypeValuePtr asFunctionalValue();
 
     void setIntrinsicName(const AnyValuePtr &theIntrinsicName);

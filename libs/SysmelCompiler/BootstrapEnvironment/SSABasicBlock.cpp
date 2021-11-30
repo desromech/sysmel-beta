@@ -78,7 +78,7 @@ void SSABasicBlock::addInstructionBefore(const SSAInstructionPtr &instruction, c
     assert(!instruction->getPreviousInstruction());
     assert(!instruction->getNextInstruction());
 
-    SSAInstructionPtr before = position ? position->getPreviousInstruction() : nullptr;
+    SSAInstructionPtr before = position ? position->getPreviousInstruction() : lastInstruction;
     SSAInstructionPtr after = position;
 
     if(before)
@@ -94,7 +94,7 @@ void SSABasicBlock::addInstructionBefore(const SSAInstructionPtr &instruction, c
     if(after)
     {
         after->setPreviousInstruction(instruction);
-        instruction->setNextInstruction(before);
+        instruction->setNextInstruction(after);
     }
     else
     {
@@ -111,7 +111,7 @@ void SSABasicBlock::addInstructionAfter(const SSAInstructionPtr &instruction, co
     assert(!instruction->getNextInstruction());
 
     SSAInstructionPtr before = position;
-    SSAInstructionPtr after = position ? position->getNextInstruction() : nullptr;
+    SSAInstructionPtr after = position ? position->getNextInstruction() : firstInstruction;
 
     if(before)
     {
@@ -126,7 +126,7 @@ void SSABasicBlock::addInstructionAfter(const SSAInstructionPtr &instruction, co
     if(after)
     {
         after->setPreviousInstruction(instruction);
-        instruction->setNextInstruction(before);
+        instruction->setNextInstruction(after);
     }
     else
     {

@@ -29,10 +29,10 @@ SExpression ASTFunctionNode::asSExpression() const
         argumentsSExpr.elements.push_back(arg->asSExpression());
 
     return SExpressionList{{SExpressionIdentifier{{"function"}},
-        sourcePosition->asSExpression(),
-        analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
         SExpressionIdentifier{{methodDispatchModeToString(dispatchMode)}},
+        sourcePosition->asSExpression(),
+        analyzedType ? analyzedType->asSExpression() : nullptr,
         name ? name->asSExpression() : nullptr,
         argumentsSExpr,
         resultType ? resultType->asSExpression() : nullptr,
