@@ -5,11 +5,26 @@
 #include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCallNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTQuoteNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSequenceNode.hpp"
 
+
+#include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTFunctionalNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTTypeNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTProgramEntityExtensionNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTValueAsVoidTypeConversionNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTIfNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTDoWhileNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
 #include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
@@ -20,8 +35,18 @@
 
 #include "sysmel/BootstrapEnvironment/SSAConstantLiteralValue.hpp"
 
+#include "sysmel/BootstrapEnvironment/SSABreakInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSACallInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAContinueInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSADoWhileInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAIfInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSALoadInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSALocalVariableInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAReturnFromFunctionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSASendMessageInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAStoreInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAUnreachableInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAWhileInstruction.hpp"
 
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
@@ -138,6 +163,38 @@ AnyValuePtr ASTSSACompiler::visitSequenceNode(const ASTSequenceNodePtr &node)
     return result;
 }
 
+AnyValuePtr ASTSSACompiler::visitQuoteNode(const ASTQuoteNodePtr &node)
+{
+    return builder->literalWithType(node->expression, node->analyzedType);
+}
+
+AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
+{
+    auto variable = staticObjectCast<Variable> (node->analyzedProgramEntity);
+    SSAValuePtr initialValue;
+    if(node->initialValue)
+        initialValue = visitNodeForValue(node->initialValue);
+    else
+        initialValue = builder->literalWithType(variable->getValueType()->defaultValue(), variable->getValueType());
+
+    auto variableValue = initialValue;
+    if(node->isMutable)
+    {
+        auto referenceType = variable->getReferenceType();
+        assert(referenceType->isReferenceLikeType());
+        variableValue = builder->localVariable(referenceType, variable->getValueType());
+        builder->storeValueIn(initialValue, variableValue);
+    }
+
+    localVariableMap.insert({variable, variableValue});
+    return variableValue;
+}
+
+AnyValuePtr ASTSSACompiler::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
+{
+    return node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
+}
+
 AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto it = localVariableMap.find(node->variable);
@@ -145,10 +202,122 @@ AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodeP
     return variableValue;
 }
 
+AnyValuePtr ASTSSACompiler::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node)
+{
+    return localVariableMap.find(node->bindingName)->second;
+}
+
+AnyValuePtr ASTSSACompiler::visitProgramEntityNode(const ASTProgramEntityNodePtr &node)
+{
+    return builder->literal(node->analyzedProgramEntity);
+}
+
+AnyValuePtr ASTSSACompiler::visitFunctionalNode(const ASTFunctionalNodePtr &node)
+{
+    auto functionObject = node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
+    if(node->analyzedType->isClosureType())
+    {
+        // TODO: instantiate the closure by passing the captures.
+    }
+
+    return functionObject;
+}
+
+AnyValuePtr ASTSSACompiler::visitNamespaceNode(const ASTNamespaceNodePtr &node)
+{
+    return builder->literal(node->analyzedProgramEntity);
+}
+
+AnyValuePtr ASTSSACompiler::visitTypeNode(const ASTTypeNodePtr &node)
+{
+    return builder->literal(node->analyzedProgramEntity);
+}
+
+AnyValuePtr ASTSSACompiler::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
+{
+    return builder->literal(node->analyzedProgramEntity);
+}
+
 AnyValuePtr ASTSSACompiler::visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node)
 {
     visitNodeForValue(node->expression);
     return builder->literal(getVoidConstant());
+}
+
+SSACodeRegionPtr ASTSSACompiler::buildRegionForNode(const ASTNodePtr &node)
+{
+    if(!node)
+        return nullptr;
+
+    auto region = builder->makeCodeRegionWithSignature({}, node->analyzedType);
+    buildRegionForNodeWith(region, node, [&](){
+        auto value = visitNodeForValue(node);
+        if(!builder->isLastTerminator())
+            builder->returnFromRegion(value);
+    });
+    return region;
+}
+
+AnyValuePtr ASTSSACompiler::visitIfNode(const ASTIfNodePtr &node)
+{
+    auto condition = visitNodeForValue(node->condition);
+    auto trueRegion = buildRegionForNode(node->trueExpression);
+    auto falseRegion = buildRegionForNode(node->falseExpression);
+    return builder->ifTrueIfFalse(node->analyzedType, condition, trueRegion, falseRegion);
+}
+
+AnyValuePtr ASTSSACompiler::visitWhileNode(const ASTWhileNodePtr &node)
+{
+    auto conditionRegion = buildRegionForNode(node->condition);
+    auto bodyRegion = buildRegionForNode(node->bodyExpression);
+    auto continueRegion = buildRegionForNode(node->continueExpression);
+    return builder->whileDoContinueWith(conditionRegion, bodyRegion, conditionRegion);
+}
+
+AnyValuePtr ASTSSACompiler::visitDoWhileNode(const ASTDoWhileNodePtr &node)
+{
+    auto bodyRegion = buildRegionForNode(node->bodyExpression);
+    auto conditionRegion = buildRegionForNode(node->condition);
+    auto continueRegion = buildRegionForNode(node->continueExpression);
+    return builder->doWhileContinueWith(bodyRegion, conditionRegion, conditionRegion);
+}
+
+AnyValuePtr ASTSSACompiler::visitReturnNode(const ASTReturnNodePtr &node)
+{
+    SSAValuePtr resultValue;
+    if(node->expression)
+        resultValue = visitNodeForValue(node->expression);
+    else
+        resultValue = builder->literal(getVoidConstant());
+    return builder->returnFromFunction(resultValue);
+}
+
+AnyValuePtr ASTSSACompiler::visitContinueNode(const ASTContinueNodePtr &)
+{
+    return builder->continueInstruction();
+}
+
+AnyValuePtr ASTSSACompiler::visitBreakNode(const ASTBreakNodePtr &)
+{
+    return builder->breakInstruction();
+}
+
+void ASTSSACompiler::buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock)
+{
+    auto regionBuilder = basicMakeObject<SSABuilder> ();
+    regionBuilder->setSourcePosition(node->sourcePosition);
+    regionBuilder->setCodeRegion(region);
+    regionBuilder->makeBasicBlockHere();
+
+    auto oldBuilder = builder;
+    auto oldRegion = currentCodeRegion;
+    builder = regionBuilder;
+    currentCodeRegion = region;
+
+    doWithEnsure(aBlock, [&](){
+        builder = oldBuilder;
+        currentCodeRegion = oldRegion;
+    });
 }
 
 } // End of namespace BootstrapEnvironment

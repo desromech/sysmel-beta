@@ -23,7 +23,10 @@ public:
     virtual SExpression asFullSExpression() const override;
 
     void setFunctionalType(const FunctionalTypePtr &functionalType);
+    void setSignature(const TypePtrList &newArgumentTypes, const TypePtr &newResultType);
     void setSourcePosition(const ASTSourcePositionPtr &newSourcePosition);
+
+    const TypePtr &getResultType() const;
 
     size_t getArgumentCount() const;
     const SSACodeRegionArgumentPtr &getArgument(size_t index);
@@ -34,6 +37,7 @@ public:
     SSABasicBlockPtr newBasicBlock();
     void addBasicBlock(const SSABasicBlockPtr &block);
 
+    void enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state);
 protected:
     void addArgumentWithType(const TypePtr &argumentType);
     

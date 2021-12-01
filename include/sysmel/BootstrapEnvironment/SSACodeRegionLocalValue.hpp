@@ -8,6 +8,13 @@ namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
+
+struct SSACodeRegionLocalValueEnumerationState
+{
+    uint32_t localValueCount = 0;
+    uint32_t basicBlockCount = 0;
+};
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -20,8 +27,7 @@ public:
 
     virtual SExpression asSExpression() const override;
 
-    void setLocalValueIndex(uint32_t newLocalValueIndex);
-
+    virtual void enumerateLocalValues(SSACodeRegionLocalValueEnumerationState &state);
 protected:
     uint32_t localValueIndex;
 };

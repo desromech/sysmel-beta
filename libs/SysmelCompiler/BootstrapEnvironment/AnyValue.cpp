@@ -1051,7 +1051,17 @@ bool AnyValue::isSSAInstruction() const
     return false;
 }
 
+bool AnyValue::isSSABreakInstruction() const
+{
+    return false;
+}
+
 bool AnyValue::isSSACallInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAContinueInstruction() const
 {
     return false;
 }
@@ -1062,6 +1072,16 @@ bool AnyValue::isSSASendMessageInstruction() const
 }
 
 bool AnyValue::isSSAJumpInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSALoadInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSALocalVariableInstruction() const
 {
     return false;
 }
@@ -1102,6 +1122,11 @@ bool AnyValue::isSSAReturnFromRegionInstruction() const
 }
 
 bool AnyValue::isSSAReturnFromFunctionInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAStoreInstruction() const
 {
     return false;
 }

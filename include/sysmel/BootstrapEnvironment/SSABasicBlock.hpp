@@ -22,6 +22,7 @@ public:
     virtual bool isSSABasicBlock() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
     virtual SExpression asFullSExpression() const override;
 
     const SSACodeRegionPtr &getParentCodeRegion() const;
@@ -38,7 +39,11 @@ public:
     void prependInstruction(const SSAInstructionPtr &instruction);
     void appendInstruction(const SSAInstructionPtr &instruction);
 
+    void enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state);
+
 protected:
+    uint32_t basicBlockIndex = 0;
+
     SSAInstructionPtr firstInstruction;
     SSAInstructionPtr lastInstruction;
     SSACodeRegionPtr parentCodeRegion;

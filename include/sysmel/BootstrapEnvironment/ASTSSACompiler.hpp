@@ -15,6 +15,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSACodeRegion)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSABuilder)
 
+typedef std::function<void ()> ASTSSACodeRegionBuildingBlock;
+
 /**
  * I am a compile time evaluator of a previously analyzed AST.
  */
@@ -30,11 +32,31 @@ public:
     virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
+    virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
     
-    virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node);
+    virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node) override;
+    virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
+    virtual AnyValuePtr visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node) override;
+
+    virtual AnyValuePtr visitProgramEntityNode(const ASTProgramEntityNodePtr &node) override;
+    virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node) override;
+    virtual AnyValuePtr visitNamespaceNode(const ASTNamespaceNodePtr &node) override;
+    virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node) override;
+    virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
+
+    virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node) override;
+    virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node) override;
+    virtual AnyValuePtr visitDoWhileNode(const ASTDoWhileNodePtr &node) override;
+    virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node) override;
+    virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
+    virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
+
+    void buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock);
+    SSACodeRegionPtr buildRegionForNode(const ASTNodePtr &node);
 
     SpecificMethodPtr currentMethod;
     SSAFunctionPtr currentSSAFunction;

@@ -33,6 +33,16 @@ void SSACodeRegion::setFunctionalType(const FunctionalTypePtr &functionalType)
     resultType = functionalType->getResultType();
 }
 
+
+void SSACodeRegion::setSignature(const TypePtrList &newArgumentTypes, const TypePtr &newResultType)
+{
+    arguments.clear();
+    arguments.reserve(newArgumentTypes.size());
+    for(auto &argType : newArgumentTypes)
+        addArgumentWithType(argType);
+    resultType = newResultType;
+}
+
 void SSACodeRegion::addArgumentWithType(const TypePtr &argumentType)
 {
     if(argumentType->isVoidType())
@@ -44,6 +54,11 @@ void SSACodeRegion::addArgumentWithType(const TypePtr &argumentType)
 void SSACodeRegion::setSourcePosition(const ASTSourcePositionPtr &newSourcePosition)
 {
     sourcePosition = newSourcePosition;
+}
+
+const TypePtr &SSACodeRegion::getResultType() const
+{
+    return resultType;
 }
 
 size_t SSACodeRegion::getArgumentCount() const
@@ -97,6 +112,15 @@ void SSACodeRegion::addBasicBlock(const SSABasicBlockPtr &block)
 {
     block->setParentCodeRegion(selfFromThis());
     basicBlocks.push_back(block);
+}
+
+void SSACodeRegion::enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state)
+{
+    for(auto &arg : arguments)
+        arg->enumerateLocalValues(state);
+        
+    for(auto &bb : basicBlocks)
+        bb->enumerateLocalValues(state);
 }
 
 } // End of namespace BootstrapEnvironment

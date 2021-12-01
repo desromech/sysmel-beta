@@ -881,20 +881,32 @@ public:
     // Is this a SSA instruction?
     virtual bool isSSAInstruction() const;
 
+    // Is this a SSA break instruction?
+    virtual bool isSSABreakInstruction() const;
+
     // Is this a SSA call instruction?
     virtual bool isSSACallInstruction() const;
 
-    // Is this a SSA send message instruction?
-    virtual bool isSSASendMessageInstruction() const;
-
-    // Is this a SSA jump instruction?
-    virtual bool isSSAJumpInstruction() const;
+    // Is this a SSA continue instruction?
+    virtual bool isSSAContinueInstruction() const;
 
     // Is this a SSA conditional jump instruction?
     virtual bool isSSAConditionalJumpInstruction() const;
 
+    // Is this a SSA send message instruction?
+    virtual bool isSSASendMessageInstruction() const;
+
     // Is this a SSA if statement?
     virtual bool isSSAIfInstruction() const;
+
+    // Is this a SSA jump instruction?
+    virtual bool isSSAJumpInstruction() const;
+
+    // Is this a SSA load instruction?
+    virtual bool isSSALoadInstruction() const;
+
+    // Is this a SSA local variable instruction?
+    virtual bool isSSALocalVariableInstruction() const;
 
     // Is this a SSA while statement?
     virtual bool isSSAWhileInstruction() const;
@@ -913,6 +925,9 @@ public:
 
     // Is this a SSA return from function instruction?
     virtual bool isSSAReturnFromFunctionInstruction() const;
+
+    // Is this a SSA store instruction?
+    virtual bool isSSAStoreInstruction() const;
 
     // Is this a SSA unreachable instruction?
     virtual bool isSSAUnreachableInstruction() const;

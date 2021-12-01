@@ -29,16 +29,21 @@ public:
     virtual AnyValuePtr visitCodeRegionArgument(const SSACodeRegionArgumentPtr &value);
 
     virtual AnyValuePtr visitInstruction(const SSAInstructionPtr &instruction);
+    virtual AnyValuePtr visitBreakInstruction(const SSABreakInstructionPtr &instruction);
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction);
+    virtual AnyValuePtr visitContinueInstruction(const SSAContinueInstructionPtr &instruction);
     virtual AnyValuePtr visitConditionalJumpInstruction(const SSAConditionalJumpInstructionPtr &instruction);
     virtual AnyValuePtr visitIfInstruction(const SSAIfInstructionPtr &instruction);
     virtual AnyValuePtr visitJumpInstruction(const SSAJumpInstructionPtr &instruction);
+    virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction);
+    virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction);
     virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction);
     virtual AnyValuePtr visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction);
+    virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction);
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction);
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction);
 };

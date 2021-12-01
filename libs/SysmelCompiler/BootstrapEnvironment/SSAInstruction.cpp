@@ -18,6 +18,15 @@ bool SSAInstruction::isSSAInstruction() const
     return true;
 }
 
+void SSAInstruction::enumerateLocalValues(SSACodeRegionLocalValueEnumerationState &state)
+{
+    SuperType::enumerateLocalValues(state);
+    regionsDo([&](const SSACodeRegionPtr &region) {
+        if(region)
+            region->enumerateLocalValues(state);
+    });
+}
+
 std::string SSAInstruction::getMnemonic() const
 {
     SysmelSelfSubclassResponsibility();
@@ -40,23 +49,21 @@ void SSAInstruction::regionsDo(const SSAInstructionRegionIterationBlock &aBlock)
 
 SExpression SSAInstruction::asFullSExpression() const
 {
-    SExpressionList parametersSExpr;
-    SExpressionList nestedRegionsSExp;
-    parametersDo([&](const SSAValuePtr &param) {
-        parametersSExpr.elements.push_back(param->asSExpression());
-    });
-
-    regionsDo([&](const SSACodeRegionPtr &region) {
-        nestedRegionsSExp.elements.push_back(region->asFullSExpression());
-    });
-
-    return SExpressionList{{SExpressionIdentifier{{getMnemonic()}},
+    auto result = SExpressionList{{SExpressionIdentifier{{getMnemonic()}},
         LargeInteger{localValueIndex},
         getValueType()->asSExpression(),
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
-        parametersSExpr,
-        nestedRegionsSExp
     }};
+
+    parametersDo([&](const SSAValuePtr &param) {
+        result.elements.push_back(param ? param->asSExpression() : nullptr);
+    });
+
+    regionsDo([&](const SSACodeRegionPtr &region) {
+        result.elements.push_back(region ? region->asFullSExpression() : nullptr);
+    });
+
+    return result;
 }
 
 const SSABasicBlockPtr &SSAInstruction::getParentBasicBlock() const

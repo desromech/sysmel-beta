@@ -21,5 +21,10 @@ SExpression SSACodeRegionLocalValue::asSExpression() const
     }};
 }
 
+void SSACodeRegionLocalValue::enumerateLocalValues(SSACodeRegionLocalValueEnumerationState &state)
+{
+    localValueIndex = state.localValueCount++;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

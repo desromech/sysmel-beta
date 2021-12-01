@@ -64,7 +64,17 @@ AnyValuePtr SSAValueVisitor::visitInstruction(const SSAInstructionPtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitBreakInstruction(const SSABreakInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitCallInstruction(const SSACallInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitContinueInstruction(const SSAContinueInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
 }
@@ -80,6 +90,16 @@ AnyValuePtr SSAValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &)
 }
 
 AnyValuePtr SSAValueVisitor::visitJumpInstruction(const SSAJumpInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitLoadInstruction(const SSALoadInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
 }
@@ -110,6 +130,11 @@ AnyValuePtr SSAValueVisitor::visitReturnFromFunctionInstruction(const SSAReturnF
 }
 
 AnyValuePtr SSAValueVisitor::visitSendMessageInstruction(const SSASendMessageInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitStoreInstruction(const SSAStoreInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

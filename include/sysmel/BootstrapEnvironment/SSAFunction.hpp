@@ -9,6 +9,8 @@ namespace SysmelMoebius
 namespace BootstrapEnvironment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -20,6 +22,7 @@ public:
     virtual bool isSSAFunction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
     virtual SExpression asFullSExpression() const override;
 
     virtual AnyValuePtr getName() const override;
@@ -32,10 +35,20 @@ public:
 
     SSACodeRegionPtr getMainCodeRegion() const;
 
+    const AnyValuePtr &getIntrinsicName() const;
+    void setIntrinsicName(const AnyValuePtr &newIntrinsicName);
+
+    const ProgramEntityPtr &getSourceProgramEntity();
+    void setSourceProgramEntity(const ProgramEntityPtr &entity);
+
 protected:
+    void enumerateLocalValues() const;
+
     AnyValuePtr name;
+    AnyValuePtr intrinsicName;
     FunctionalTypePtr functionalType;
     ASTSourcePositionPtr sourcePosition;
+    ProgramEntityPtr sourceProgramEntity;
 
     SSACodeRegionPtr mainCodeRegion;
 };

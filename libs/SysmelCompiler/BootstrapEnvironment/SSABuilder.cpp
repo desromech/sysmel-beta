@@ -1,16 +1,27 @@
 #include "sysmel/BootstrapEnvironment/SSABuilder.hpp"
 #include "sysmel/BootstrapEnvironment/SSABasicBlock.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
+#include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
 
 #include "sysmel/BootstrapEnvironment/SSAInstruction.hpp"
 
 #include "sysmel/BootstrapEnvironment/SSAConstantLiteralValue.hpp"
+#include "sysmel/BootstrapEnvironment/SSABreakInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSACallInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAContinueInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSADoWhileInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAIfInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSALoadInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSALocalVariableInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAReturnFromFunctionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAReturnFromRegionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSASendMessageInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAStoreInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAUnreachableInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAWhileInstruction.hpp"
 
 #include "sysmel/BootstrapEnvironment/Type.hpp"
+#include "sysmel/BootstrapEnvironment/PointerLikeType.hpp"
 
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -70,6 +81,13 @@ SSACodeRegionPtr SSABuilder::makeCodeRegion()
     return basicMakeObject<SSACodeRegion> ();
 }
 
+SSACodeRegionPtr SSABuilder::makeCodeRegionWithSignature(const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    auto region = makeCodeRegion();
+    region->setSignature(argumentTypes, resultType);
+    return region;
+}
+
 SSABasicBlockPtr SSABuilder::makeBasicBlock()
 {
     return basicMakeObject<SSABasicBlock> ();
@@ -114,6 +132,14 @@ SSAConstantLiteralValuePtr SSABuilder::literal(const AnyValuePtr &value)
     return literalWithType(value, validAnyValue(value)->getType());
 }
 
+SSABreakInstructionPtr SSABuilder::breakInstruction()
+{
+    auto instruction = basicMakeObject<SSABreakInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    addInstruction(instruction);
+    return instruction;   
+}
+
 SSACallInstructionPtr SSABuilder::call(const TypePtr &resultType, const SSAValuePtr &function, const SSAValuePtrList &arguments)
 {
     auto instruction = basicMakeObject<SSACallInstruction> ();
@@ -123,6 +149,64 @@ SSACallInstructionPtr SSABuilder::call(const TypePtr &resultType, const SSAValue
     instruction->setArguments(arguments);
     addInstruction(instruction);
     return instruction;   
+}
+
+SSAContinueInstructionPtr SSABuilder::continueInstruction()
+{
+    auto instruction = basicMakeObject<SSAContinueInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    addInstruction(instruction);
+    return instruction;   
+}
+
+SSADoWhileInstructionPtr SSABuilder::doWhileContinueWith(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &continueRegion)
+{
+    auto instruction = basicMakeObject<SSADoWhileInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setConditionRegion(conditionRegion);
+    instruction->setBodyRegion(bodyRegion);
+    instruction->setContinueRegion(continueRegion);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAIfInstructionPtr SSABuilder::ifTrueIfFalse(const TypePtr &resultType, const SSAValuePtr &condition, const SSACodeRegionPtr &trueRegion, const SSACodeRegionPtr &falseRegion)
+{
+    auto instruction = basicMakeObject<SSAIfInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(resultType);
+    instruction->setCondition(condition);
+    instruction->setTrueRegion(trueRegion);
+    instruction->setFalseRegion(falseRegion);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
+{
+    auto referenceType = reference->getValueType();
+    assert(referenceType->isPointerLikeType());
+    auto resultType = staticObjectCast<PointerLikeType> (referenceType)->getBaseType();
+
+    auto instruction = basicMakeObject<SSALoadInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(resultType);
+    instruction->setReference(reference);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSALocalVariableInstructionPtr SSABuilder::localVariable(const TypePtr &referenceType, const TypePtr &valueType)
+{
+    assert(referenceType->isPointerLikeType());
+    assert(staticObjectCast<PointerLikeType> (referenceType)->getBaseType()->isSubtypeOf(valueType));
+
+    auto instruction = basicMakeObject<SSALocalVariableInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setVariableReferenceType(referenceType);
+    instruction->setVariableValueType(valueType);
+    addInstruction(instruction);
+    return instruction;
 }
 
 SSAReturnFromFunctionInstructionPtr SSABuilder::returnFromFunction(const SSAValuePtr &value)
@@ -155,5 +239,33 @@ SSASendMessageInstructionPtr SSABuilder::sendMessage(const TypePtr &resultType, 
     return instruction;
 }
 
+SSAStoreInstructionPtr SSABuilder::storeValueIn(const SSAValuePtr &value, const SSAValuePtr &reference)
+{
+    auto instruction = basicMakeObject<SSAStoreInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValue(value);
+    instruction->setReference(reference);
+    addInstruction(instruction);
+    return instruction;   
+}
+
+SSAUnreachableInstructionPtr SSABuilder::unreachableInstruction()
+{
+    auto instruction = basicMakeObject<SSAUnreachableInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    addInstruction(instruction);
+    return instruction;   
+}
+
+SSAWhileInstructionPtr SSABuilder::whileDoContinueWith(const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &continueRegion)
+{
+    auto instruction = basicMakeObject<SSAWhileInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setConditionRegion(conditionRegion);
+    instruction->setBodyRegion(bodyRegion);
+    instruction->setContinueRegion(continueRegion);
+    addInstruction(instruction);
+    return instruction;
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

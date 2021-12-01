@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
+#include "sysmel/BootstrapEnvironment/SSACodeRegionLocalValue.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
@@ -62,15 +63,50 @@ SSACodeRegionPtr SSAFunction::getMainCodeRegion() const
     return mainCodeRegion;
 }
 
-SExpression SSAFunction::asFullSExpression() const
+const AnyValuePtr &SSAFunction::getIntrinsicName() const
+{
+    return intrinsicName;
+}
+
+void SSAFunction::setIntrinsicName(const AnyValuePtr &newIntrinsicName)
+{
+    intrinsicName = newIntrinsicName;
+}
+
+const ProgramEntityPtr &SSAFunction::getSourceProgramEntity()
+{
+    return sourceProgramEntity;
+}
+
+void SSAFunction::setSourceProgramEntity(const ProgramEntityPtr &entity)
+{
+    sourceProgramEntity = entity;
+}
+
+SExpression SSAFunction::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"function"}},
         name ? name->asSExpression() : nullptr,
+        intrinsicName ? intrinsicName->asSExpression() : nullptr,
+    }};
+}
+
+SExpression SSAFunction::asFullSExpression() const
+{
+    enumerateLocalValues();
+    return SExpressionList{{SExpressionIdentifier{{"function"}},
+        name ? name->asSExpression() : nullptr,
+        intrinsicName ? intrinsicName->asSExpression() : nullptr,
         functionalType ? functionalType->asSExpression() : nullptr,
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
         mainCodeRegion ? mainCodeRegion->asFullSExpression() : nullptr,
     }};
 }
 
+void SSAFunction::enumerateLocalValues() const
+{
+    SSACodeRegionLocalValueEnumerationState state;
+    mainCodeRegion->enumerateLocalValues(state);
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

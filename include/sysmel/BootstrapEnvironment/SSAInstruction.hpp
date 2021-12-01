@@ -23,6 +23,8 @@ public:
 
     virtual bool isSSAInstruction() const override;
 
+    virtual void enumerateLocalValues(SSACodeRegionLocalValueEnumerationState &state) override;
+
     virtual std::string getMnemonic() const;
 
     virtual void parametersDo(const SSAInstructionParameterIterationBlock &aBlock);

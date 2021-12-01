@@ -25,6 +25,11 @@ AnyValuePtr SSAUnreachableInstruction::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitUnreachableInstruction(selfFromThis());
 }
 
+std::string SSAUnreachableInstruction::getMnemonic() const
+{
+    return "unreachable";
+}
+
 TypePtr SSAUnreachableInstruction::getValueType() const
 {
     return Type::getVoidType();

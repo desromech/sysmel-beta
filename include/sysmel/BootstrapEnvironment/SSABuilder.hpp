@@ -31,6 +31,7 @@ public:
     bool isLastTerminator() const;
 
     SSACodeRegionPtr makeCodeRegion();
+    SSACodeRegionPtr makeCodeRegionWithSignature(const TypePtrList &argumentTypes, const TypePtr &resultType);
 
     SSABasicBlockPtr makeBasicBlock();
     SSABasicBlockPtr makeBasicBlockHere();
@@ -42,10 +43,20 @@ public:
     SSAConstantLiteralValuePtr literalWithType(const AnyValuePtr &value, const TypePtr &type);
     SSAConstantLiteralValuePtr literal(const AnyValuePtr &value);
 
+    SSABreakInstructionPtr breakInstruction();
     SSACallInstructionPtr call(const TypePtr &resultType, const SSAValuePtr &function, const SSAValuePtrList &arguments);
+    SSAContinueInstructionPtr continueInstruction();
+    SSADoWithCleanupInstructionPtr doWithCleanUp(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &cleanUpRegion);
+    SSADoWhileInstructionPtr doWhileContinueWith(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &continueRegion);
+    SSAIfInstructionPtr ifTrueIfFalse(const TypePtr &resultType, const SSAValuePtr &condition, const SSACodeRegionPtr &trueRegion, const SSACodeRegionPtr &falseRegion);
+    SSALoadInstructionPtr load(const SSAValuePtr &reference);
+    SSALocalVariableInstructionPtr localVariable(const TypePtr &referenceType, const TypePtr &valueType);
     SSAReturnFromFunctionInstructionPtr returnFromFunction(const SSAValuePtr &value);
     SSAReturnFromRegionInstructionPtr returnFromRegion(const SSAValuePtr &value);
     SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);
+    SSAStoreInstructionPtr storeValueIn(const SSAValuePtr &value, const SSAValuePtr &reference);
+    SSAUnreachableInstructionPtr unreachableInstruction();
+    SSAWhileInstructionPtr whileDoContinueWith(const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &continueRegion);
 
 protected:
     SSACodeRegionPtr currentRegion;

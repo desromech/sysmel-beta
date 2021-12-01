@@ -19,6 +19,25 @@ public:
     virtual bool isSSADoWhileInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+
+    virtual TypePtr getValueType() const override;
+    virtual std::string getMnemonic() const override;
+    
+    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
+
+    const SSACodeRegionPtr &getConditionRegion() const;
+    void setConditionRegion(const SSACodeRegionPtr &newConditionRegion);
+
+    const SSACodeRegionPtr &getBodyRegion() const;
+    void setBodyRegion(const SSACodeRegionPtr &newBodyRegion);
+
+    const SSACodeRegionPtr &getContinueRegion() const;
+    void setContinueRegion(const SSACodeRegionPtr &newContinueRegion);
+
+protected:
+    SSACodeRegionPtr bodyRegion;
+    SSACodeRegionPtr conditionRegion;
+    SSACodeRegionPtr continueRegion;
 };
 
 } // End of namespace BootstrapEnvironment

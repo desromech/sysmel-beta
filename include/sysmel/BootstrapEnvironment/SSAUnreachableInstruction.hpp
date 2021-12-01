@@ -19,6 +19,8 @@ public:
     virtual bool isSSAUnreachableInstruction() const override;
     virtual bool isTerminatorInstruction() const override;
 
+    virtual std::string getMnemonic() const override;
+
     virtual TypePtr getValueType() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;

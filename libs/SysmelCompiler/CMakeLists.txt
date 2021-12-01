@@ -201,12 +201,14 @@ set(BootstrapEnvironment_Sources
     SimpleType.cpp
     SpecificMethod.cpp
     SSABasicBlock.cpp
+    SSABreakInstruction.cpp
     SSABuilder.cpp
     SSACallInstruction.cpp
     SSACodeRegion.cpp
     SSACodeRegionArgument.cpp
     SSACodeRegionLocalValue.cpp
     SSAConditionalJumpInstruction.cpp
+    SSAContinueInstruction.cpp
     SSAConstantLiteralValue.cpp
     SSAConstantValue.cpp
     SSADoWhileInstruction.cpp
@@ -217,10 +219,13 @@ set(BootstrapEnvironment_Sources
     SSAIfInstruction.cpp
     SSAInstruction.cpp
     SSAJumpInstruction.cpp
+    SSALoadInstruction.cpp
+    SSALocalVariableInstruction.cpp
     SSAMakeClosureInstruction.cpp
     SSAReturnFromFunctionInstruction.cpp
     SSAReturnFromRegionInstruction.cpp
     SSASendMessageInstruction.cpp
+    SSAStoreInstruction.cpp
     SSAUnreachableInstruction.cpp
     SSAValue.cpp
     SSAValueVisitor.cpp

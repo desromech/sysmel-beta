@@ -19,6 +19,22 @@ public:
     virtual bool isSSADoWithCleanupInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+
+    virtual TypePtr getValueType() const override;
+
+    virtual std::string getMnemonic() const override;
+    
+    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
+
+    const SSACodeRegionPtr &getBodyRegion() const;
+    void setBodyRegion(const SSACodeRegionPtr &newBodyRegion);
+
+    const SSACodeRegionPtr &getCleanUpRegion() const;
+    void setCleanUpRegion(const SSACodeRegionPtr &newCleanUpRegion);
+
+protected:
+    SSACodeRegionPtr bodyRegion;
+    SSACodeRegionPtr cleanUpRegion;
 };
 
 } // End of namespace BootstrapEnvironment

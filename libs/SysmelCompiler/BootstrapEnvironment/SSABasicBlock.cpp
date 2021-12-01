@@ -20,6 +20,13 @@ AnyValuePtr SSABasicBlock::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitBasicBlock(selfFromThis());
 }
 
+SExpression SSABasicBlock::asSExpression() const
+{
+    return SExpressionList{{SExpressionIdentifier{{"basicBlock"}},
+        LargeInteger{basicBlockIndex},
+    }};
+}
+
 SExpression SSABasicBlock::asFullSExpression() const
 {
     SExpressionList instructionsSExpr;
@@ -28,6 +35,7 @@ SExpression SSABasicBlock::asFullSExpression() const
     });
 
     return SExpressionList{{SExpressionIdentifier{{"basicBlock"}},
+        LargeInteger{basicBlockIndex},
         instructionsSExpr
     }};
 }
@@ -144,6 +152,15 @@ void SSABasicBlock::prependInstruction(const SSAInstructionPtr &instruction)
 void SSABasicBlock::appendInstruction(const SSAInstructionPtr &instruction)
 {
     addInstructionBefore(instruction, nullptr);
+}
+
+void SSABasicBlock::enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state)
+{
+    basicBlockIndex = state.basicBlockCount++;
+
+    instructionsDo([&](const SSAInstructionPtr &instruction) {
+        instruction->enumerateLocalValues(state);
+    });
 }
 
 } // End of namespace BootstrapEnvironment

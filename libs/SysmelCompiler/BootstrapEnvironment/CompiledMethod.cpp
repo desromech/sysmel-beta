@@ -146,6 +146,8 @@ void CompiledMethod::ensureSemanticAnalysis()
         if(compilationError)
             compilationError->signal();
     }
+
+    //asSSAValueRequiredInPosition(nullptr);
 }
 
 const ArgumentVariablePtrList &CompiledMethod::getArguments() const
@@ -162,7 +164,9 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     
     ssaCompiledFunction = basicMakeObject<SSAFunction> ();
     ssaCompiledFunction->initializeWithNameAndType(getName(), functionalType);
+    ssaCompiledFunction->setIntrinsicName(getIntrinsicName());
     ssaCompiledFunction->setDeclarationPosition(declarationPosition);
+    ssaCompiledFunction->setSourceProgramEntity(selfFromThis());
     auto mainCodeRegion = ssaCompiledFunction->getMainCodeRegion();
 
     size_t argumentsOffset = 0;

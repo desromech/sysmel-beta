@@ -14,6 +14,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapMethodBase);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction);
 
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
@@ -25,6 +26,11 @@ public:
     
     virtual bool isBootstrapMethod() const override;
     virtual bool isCompileTimeEvaluableMethod() const override;
+
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+    
+protected:
+    SSAFunctionPtr ssaCompiledFunction;
 };
 
 template<typename MethodSignature, typename FT = void>
