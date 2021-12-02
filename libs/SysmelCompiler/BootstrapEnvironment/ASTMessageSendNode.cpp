@@ -82,7 +82,7 @@ ASTNodePtr ASTMessageSendNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzer
 {
     if(!receiver && arguments.size() == 1 && selector->isASTLiteralSymbolValue())
     {
-        auto rawIdentifierValue = staticObjectCast<ASTLiteralValueNode> (selector)->value;
+        auto rawIdentifierValue = selector.staticAs<ASTLiteralValueNode> ()->value;
         auto identifier = rawIdentifierValue->asUnarySelectorConvertedToIdentifier();
         if(identifier && !identifier->isUndefined())
         {

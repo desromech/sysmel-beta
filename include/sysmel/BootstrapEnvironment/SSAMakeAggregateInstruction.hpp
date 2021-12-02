@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_CALL_INSTRUCTION_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_CALL_INSTRUCTION_HPP
+#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_MAKE_AGGREGATE_INSTRUCTION_HPP
+#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_MAKE_AGGREGATE_INSTRUCTION_HPP
 #pragma once
 
 #include "SSAInstruction.hpp"
@@ -11,12 +11,12 @@ namespace BootstrapEnvironment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSACallInstruction : public SubtypeOf<SSAInstruction, SSACallInstruction>
+class SSAMakeAggregateInstruction : public SubtypeOf<SSAInstruction, SSAMakeAggregateInstruction>
 {
 public:
-    static constexpr char const __typeName__[] = "SSACallInstruction";
+    static constexpr char const __typeName__[] = "SSAMakeAggregateInstruction";
 
-    virtual bool isSSACallInstruction() const override;
+    virtual bool isSSAMakeAggregateInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
@@ -28,20 +28,15 @@ public:
     TypePtr getValueType() const override;
     void setValueType(const TypePtr &type);
 
-    const SSAValuePtr &getFunction() const;
-    void setFunction(const SSAValuePtr &newFunction);
+    const SSAValuePtrList &getElements() const;
+    void setElements(const SSAValuePtrList &newElements);
 
-    const SSAValuePtrList &getArguments() const;
-    void setArguments(const SSAValuePtrList &newArguments);
-    
-protected:
+private:
     TypePtr valueType;
-
-    SSAValuePtr function;
-    SSAValuePtrList arguments;
+    SSAValuePtrList elements;
 };
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_INSTRUCTION_HPP
+#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_MAKE_AGGREGATE_INSTRUCTION_HPP

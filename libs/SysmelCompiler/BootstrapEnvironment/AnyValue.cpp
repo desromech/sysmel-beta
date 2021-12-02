@@ -1111,6 +1111,11 @@ bool AnyValue::isSSADoWithCleanupInstruction() const
     return false;
 }
 
+bool AnyValue::isSSAMakeAggregateInstruction() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAMakeClosureInstruction() const
 {
     return false;
@@ -1132,6 +1137,26 @@ bool AnyValue::isSSAStoreInstruction() const
 }
 
 bool AnyValue::isSSAUnreachableInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACastInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSABitcastInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAUpcastInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSADowncastInstruction() const
 {
     return false;
 }

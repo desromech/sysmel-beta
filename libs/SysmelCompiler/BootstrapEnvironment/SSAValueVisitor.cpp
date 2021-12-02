@@ -1,4 +1,7 @@
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
+#include "sysmel/BootstrapEnvironment/SSAUpcastInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSADowncastInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSABitcastInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
@@ -114,6 +117,11 @@ AnyValuePtr SSAValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCleanu
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitMakeAggregateInstruction(const SSAMakeAggregateInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
@@ -147,6 +155,26 @@ AnyValuePtr SSAValueVisitor::visitUnreachableInstruction(const SSAUnreachableIns
 AnyValuePtr SSAValueVisitor::visitWhileInstruction(const SSAWhileInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitCastInstruction(const SSACastInstructionPtr &instruction)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction)
+{
+    return visitCastInstruction(instruction);
+}
+
+AnyValuePtr SSAValueVisitor::visitDowncastInstruction(const SSADowncastInstructionPtr &instruction)
+{
+    return visitCastInstruction(instruction);
+}
+
+AnyValuePtr SSAValueVisitor::visitBitcastInstruction(const SSABitcastInstructionPtr &instruction)
+{
+    return visitCastInstruction(instruction);
 }
 
 } // End of namespace BootstrapEnvironment

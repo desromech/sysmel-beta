@@ -51,6 +51,7 @@ public:
     SSAIfInstructionPtr ifTrueIfFalse(const TypePtr &resultType, const SSAValuePtr &condition, const SSACodeRegionPtr &trueRegion, const SSACodeRegionPtr &falseRegion);
     SSALoadInstructionPtr load(const SSAValuePtr &reference);
     SSALocalVariableInstructionPtr localVariable(const TypePtr &referenceType, const TypePtr &valueType);
+    SSAMakeAggregateInstructionPtr makeAggregate(const TypePtr &aggregateType, const SSAValuePtrList &elements);
     SSAReturnFromFunctionInstructionPtr returnFromFunction(const SSAValuePtr &value);
     SSAReturnFromRegionInstructionPtr returnFromRegion(const SSAValuePtr &value);
     SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);
@@ -58,6 +59,9 @@ public:
     SSAUnreachableInstructionPtr unreachableInstruction();
     SSAWhileInstructionPtr whileDoContinueWith(const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &continueRegion);
 
+    SSABitcastInstructionPtr bitcast(const TypePtr &targetType, const SSAValuePtr &value);
+    SSAUpcastInstructionPtr upcast(const TypePtr &targetType, const SSAValuePtr &value);
+    SSADowncastInstructionPtr downcast(const TypePtr &targetType, const SSAValuePtr &value);
 protected:
     SSACodeRegionPtr currentRegion;
     SSABasicBlockPtr currentBasicBlock;

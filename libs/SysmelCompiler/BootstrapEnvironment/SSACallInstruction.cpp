@@ -19,7 +19,6 @@ AnyValuePtr SSACallInstruction::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitCallInstruction(selfFromThis());
 }
 
-
 std::string SSACallInstruction::getMnemonic() const
 {
     return "call";
@@ -59,7 +58,7 @@ void SSACallInstruction::setFunction(const SSAValuePtr &newFunction)
     function = newFunction;
 }
 
-const SSAValuePtrList &SSACallInstruction::getAguments() const
+const SSAValuePtrList &SSACallInstruction::getArguments() const
 {
     return arguments;
 }

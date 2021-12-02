@@ -34,7 +34,7 @@ public:
     const SSAValuePtr &getReceiver() const;
     void setReceiver(const SSAValuePtr &newReceiver);
 
-    const SSAValuePtrList &getAguments() const;
+    const SSAValuePtrList &getArguments() const;
     void setArguments(const SSAValuePtrList &newArguments);
     
 protected:

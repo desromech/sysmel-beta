@@ -70,7 +70,7 @@ void SSASendMessageInstruction::setReceiver(const SSAValuePtr &newReceiver)
     receiver = newReceiver;
 }
 
-const SSAValuePtrList &SSASendMessageInstruction::getAguments() const
+const SSAValuePtrList &SSASendMessageInstruction::getArguments() const
 {
     return arguments;
 }

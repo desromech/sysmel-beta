@@ -1040,7 +1040,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
                 CHECK(structDefinition->isStructureType());
                 CHECK_EQUAL(structDeclaration, structDefinition);
-                CHECK_EQUAL(Module::getActive(), staticObjectCast<StructureType> (structDefinition)->getDefinitionModule());
+                CHECK_EQUAL(Module::getActive(), structDefinition.staticAs<StructureType> ()->getDefinitionModule());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1074,7 +1074,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto classDefinition = evaluateString("public class TestClass definition: {}.");
                 CHECK(classDefinition->isClassType());
                 CHECK_EQUAL(classDeclaration, classDefinition);
-                CHECK_EQUAL(Module::getActive(), staticObjectCast<ClassType> (classDefinition)->getDefinitionModule());
+                CHECK_EQUAL(Module::getActive(), classDefinition.staticAs<ClassType> ()->getDefinitionModule());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
@@ -1107,8 +1107,8 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{First: 1. Second:. #Third : 3 . Fifth: Third + 2}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
-                CHECK_EQUAL(UInt32::__staticType__(), staticObjectCast<EnumType> (enumDefinition)->getBaseType());
-                CHECK_EQUAL(Module::getActive(), staticObjectCast<EnumType> (enumDefinition)->getDefinitionModule());
+                CHECK_EQUAL(UInt32::__staticType__(), enumDefinition.staticAs<EnumType> ()->getBaseType());
+                CHECK_EQUAL(Module::getActive(), enumDefinition.staticAs<EnumType> ()->getDefinitionModule());
 
                 CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("TestEnum First"));
                 CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("TestEnum Second"));

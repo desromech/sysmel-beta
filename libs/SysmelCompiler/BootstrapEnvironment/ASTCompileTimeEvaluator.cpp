@@ -206,7 +206,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
         return elements.back();
     default:
         assert(node->analyzedType->isTupleType());
-        return staticObjectCast<TupleType> (node->analyzedType)->makeWithElements(elements);
+        return node->analyzedType.staticAs<TupleType> ()->makeWithElements(elements);
     }
 }
 
@@ -268,7 +268,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
         assert(referenceType->isReferenceLikeType());
 
         auto mutableValue = storeValue->asMutableStoreValue();
-        storeValue = staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(mutableValue);
+        storeValue = referenceType.staticAs<PointerLikeType> ()->makeWithValue(mutableValue);
     }
 
     currentCleanUpScope->setStoreBinding(node->analyzedProgramEntity, storeValue);

@@ -78,7 +78,7 @@ TypePtr Type::extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode
 
     if(receiverNode->isASTLiteralTypeNode())
     {
-        auto typeValue = staticObjectCast<ASTLiteralValueNode> (receiverNode)->value;
+        auto typeValue = receiverNode.staticAs<ASTLiteralValueNode> ()->value;
         assert(typeValue && typeValue->isType());
         return staticObjectCast<Type> (typeValue);
     }
@@ -295,7 +295,7 @@ ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAn
     // Allow the actual function to analyze the call. This is typically used by metabuilders.
     if(supportsMessageAnalysisByLiteralValueReceivers() && node->function->isASTLiteralValueNode())
     {
-        auto literalValue = staticObjectCast<ASTLiteralValueNode> (node->function)->value;
+        auto literalValue = node->function.staticAs<ASTLiteralValueNode> ()->value;
         return literalValue->analyzeCallNode(node, semanticAnalyzer);
     }
 
@@ -335,7 +335,7 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
 
     AnyValuePtr directSelectorValue;
     if(node->selector->isASTLiteralValueNode())
-        directSelectorValue = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
+        directSelectorValue = node->selector.staticAs<ASTLiteralValueNode> ()->value;
 
     // Attempt going through the different expansion levels
     auto startExpansionLevel = node->expansionLevel;
@@ -919,7 +919,7 @@ TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
 
     if(nextType->isTupleType())
     {
-        auto &nextTypes = staticObjectCast<TupleType> (nextType)->elementTypes;
+        auto &nextTypes = nextType.staticAs<TupleType> ()->elementTypes;
         newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
     }
     else

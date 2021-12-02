@@ -39,6 +39,7 @@ public:
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction);
+    virtual AnyValuePtr visitMakeAggregateInstruction(const SSAMakeAggregateInstructionPtr &instruction);
     virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction);
@@ -46,6 +47,11 @@ public:
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction);
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction);
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction);
+
+    virtual AnyValuePtr visitCastInstruction(const SSACastInstructionPtr &instruction);
+    virtual AnyValuePtr visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction);
+    virtual AnyValuePtr visitDowncastInstruction(const SSADowncastInstructionPtr &instruction);
+    virtual AnyValuePtr visitBitcastInstruction(const SSABitcastInstructionPtr &instruction);
 };
 
 } // End of namespace BootstrapEnvironment

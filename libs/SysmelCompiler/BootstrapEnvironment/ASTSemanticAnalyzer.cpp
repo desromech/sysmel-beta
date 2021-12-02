@@ -116,7 +116,7 @@ static TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
 {
     assert(node->isASTLiteralTypeNode());
     return staticObjectCast<Type> (
-        staticObjectCast<ASTLiteralValueNode> (node)->value
+        node.staticAs<ASTLiteralValueNode> ()->value
     );
 }
 
@@ -382,7 +382,7 @@ AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
         return nullptr;
 
     assert(node->isASTLiteralValueNode());
-    auto result = staticObjectCast<ASTLiteralValueNode> (node)->value;
+    auto result = node.staticAs<ASTLiteralValueNode> ()->value;
     return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
 }
 
@@ -732,8 +732,8 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeAssociationNode(const ASTMak
         && node->key->isASTLiteralValueNode()
         && node->value->isASTLiteralValueNode())
     {
-        auto key = staticObjectCast<ASTLiteralValueNode> (node->key)->value;
-        auto value = staticObjectCast<ASTLiteralValueNode> (node->value)->value;
+        auto key = node->key.staticAs<ASTLiteralValueNode> ()->value;
+        auto value = node->value.staticAs<ASTLiteralValueNode> ()->value;
         return analyzeNodeIfNeededWithCurrentExpectedType(
             LiteralAssociation::makeWith(key, value)->asASTNodeRequiredInPosition(node->sourcePosition)
         );
@@ -818,7 +818,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
     AnyValuePtrList elements;
     elements.reserve(node->elements.size());
     for(auto &el : node->elements)
-        elements.push_back(staticObjectCast<ASTLiteralValueNode> (el)->value);
+        elements.push_back(el.staticAs<ASTLiteralValueNode> ()->value);
 
     // Make a new literal value node with the literal elements. 
     return analyzeNodeIfNeededWithCurrentExpectedType(
@@ -876,7 +876,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         result->expressions.reserve(node->messages.size());
         for(auto &message : node->messages)
         {
-            auto convertedMessage = staticObjectCast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(nullptr);
+            auto convertedMessage = message.staticAs<ASTMessageChainMessageNode> ()->asMessageSendNodeWithReceiver(nullptr);
             result->expressions.push_back(convertedMessage);
         }
         return analyzeNodeIfNeededWithCurrentExpectedType(result);
@@ -921,7 +921,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
     // Convert the chained messages.
     for(auto &message : analyzedNode->messages)
     {
-        auto convertedMessage = staticObjectCast<ASTMessageChainMessageNode> (message)->asMessageSendNodeWithReceiver(receiverIdentifier);
+        auto convertedMessage = message.staticAs<ASTMessageChainMessageNode> ()->asMessageSendNodeWithReceiver(receiverIdentifier);
         result->expressions.push_back(convertedMessage);
     }
 
@@ -2192,7 +2192,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNode
 
     auto sourceType = analyzedExpression->analyzedType;
     auto targetType = staticObjectCast<Type> (
-        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
+        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
     );
 
     auto typeConversionRule = sourceType->findExplicitTypeConversionRuleForInto(analyzedExpression, targetType);
@@ -2213,7 +2213,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
 
     auto sourceType = analyzedExpression->analyzedType;
     auto targetType = staticObjectCast<Type> (
-        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
+        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
     );
 
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedExpression, targetType);
@@ -2234,7 +2234,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCa
 
     auto sourceType = analyzedExpression->analyzedType;
     auto targetType = staticObjectCast<Type> (
-        staticObjectCast<ASTLiteralValueNode> (targetTypeNode)->value
+        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
     );
 
     auto typeConversionRule = sourceType->findReinterpretTypeConversionRuleForInto(analyzedExpression, targetType);

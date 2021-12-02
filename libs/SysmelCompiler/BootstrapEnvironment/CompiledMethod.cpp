@@ -147,7 +147,7 @@ void CompiledMethod::ensureSemanticAnalysis()
             compilationError->signal();
     }
 
-    //asSSAValueRequiredInPosition(nullptr);
+    asSSAValueRequiredInPosition(nullptr);
 }
 
 const ArgumentVariablePtrList &CompiledMethod::getArguments() const

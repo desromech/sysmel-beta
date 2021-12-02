@@ -917,6 +917,9 @@ public:
     // Is this a SSA do with cleanup statement instruction?
     virtual bool isSSADoWithCleanupInstruction() const;
 
+    // Is this a SSA make aggregate instruction?
+    virtual bool isSSAMakeAggregateInstruction() const;
+
     // Is this a SSA make closure instruction?
     virtual bool isSSAMakeClosureInstruction() const;
 
@@ -931,6 +934,18 @@ public:
 
     // Is this a SSA unreachable instruction?
     virtual bool isSSAUnreachableInstruction() const;
+
+    // Is this a SSA cast instruction?
+    virtual bool isSSACastInstruction() const;
+
+    // Is this a SSA bitcast instruction?
+    virtual bool isSSABitcastInstruction() const;
+
+    // Is this a SSA Upcast instruction?
+    virtual bool isSSAUpcastInstruction() const;
+
+    // Is this a SSA Downcast instruction?
+    virtual bool isSSADowncastInstruction() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;

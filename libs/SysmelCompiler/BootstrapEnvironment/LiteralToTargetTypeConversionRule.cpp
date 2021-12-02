@@ -23,7 +23,7 @@ bool LiteralToTargetTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNo
     if(!node->isASTLiteralValueNode())    
         return false;
 
-    auto literalValue = staticObjectCast<LiteralValue> (staticObjectCast<ASTLiteralValueNode> (node)->value);
+    auto literalValue = staticObjectCast<LiteralValue> (node.staticAs<ASTLiteralValueNode> ()->value);
     return literalValue->canBeConcretizedWithType(targetType);
 }
 
@@ -31,7 +31,7 @@ size_t LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &no
 {
     assert(node->isASTLiteralValueNode());
 
-    auto literalValue = staticObjectCast<LiteralValue> (staticObjectCast<ASTLiteralValueNode> (node)->value);
+    auto literalValue = staticObjectCast<LiteralValue> (node.staticAs<ASTLiteralValueNode> ()->value);
     if(literalValue->getBestConcreteType() == targetType)
         return 5;
     else if(literalValue->getStandardConcreteType() == targetType)
@@ -44,7 +44,7 @@ ASTNodePtr LiteralToTargetTypeConversionRule::convertNodeAtIntoWith(const ASTNod
 {
     assert(node->isASTLiteralValueNode());
 
-    auto literalValue = staticObjectCast<LiteralValue> (staticObjectCast<ASTLiteralValueNode> (node)->value);
+    auto literalValue = staticObjectCast<LiteralValue> (node.staticAs<ASTLiteralValueNode> ()->value);
     auto concreteValue = literalValue->concretizeWithType(targetType);
     if(!concreteValue)
         return semanticAnalyzer->recordSemanticErrorInNode(node, "Failed to concretize literal value.");

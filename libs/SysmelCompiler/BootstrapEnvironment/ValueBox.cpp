@@ -23,7 +23,7 @@ AnyValuePtr ValueBox::copyAssignValue(const AnyValuePtr &newValue)
 AnyValuePtr ValueBox::accessVariableAsReferenceWithType(const TypePtr &referenceType)
 {
     if(referenceType->isReferenceLikeType())
-        return staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(value);
+        return referenceType.staticAs<PointerLikeType> ()->makeWithValue(value);
     return value;
 }
 

@@ -53,7 +53,7 @@ ASTNodePtr Namespace::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, 
 {
     if(node->selector->isASTLiteralValueNode())
     {
-        auto directSelectorValue = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
+        auto directSelectorValue = node->selector.staticAs<ASTLiteralValueNode> ()->value;
 
         // Attempt going through the different expansion levels
         while(uint8_t(node->expansionLevel) < uint8_t(MessageSendExpansionLevel::Count))

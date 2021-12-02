@@ -30,7 +30,11 @@ public:
     void compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node);
 
     virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
+    virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;
+    virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;
+    virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
     virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
@@ -47,6 +51,8 @@ public:
     virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
+    virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;
+    virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node) override;
 
     virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node) override;
     virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node) override;
@@ -61,7 +67,9 @@ public:
     SpecificMethodPtr currentMethod;
     SSAFunctionPtr currentSSAFunction;
     SSACodeRegionPtr currentCodeRegion;
+    SSACodeRegionPtr currentCleanUpCodeRegion;
     SSABuilderPtr builder;
+    SSABuilderPtr cleanUpBuilder;
 
     std::unordered_map<AnyValuePtr, SSAValuePtr> localVariableMap;
 };

@@ -230,6 +230,18 @@ public:
         return *get();
     }
 
+    template<typename U>
+    U *staticAs() const
+    {
+        return static_cast<U*> (pointer_);
+    }
+
+    template<typename U>
+    U *dynamicAs() const
+    {
+        return dynamic_cast<U*> (pointer_);
+    }
+
     operator bool() const
     {
         return pointer_;

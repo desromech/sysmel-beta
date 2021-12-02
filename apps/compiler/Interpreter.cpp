@@ -80,7 +80,7 @@ void semanticAnalyzeEvalString(const std::string &sourceString, const std::strin
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
         if(result->isFunctionalTypeValue())
-            result = staticObjectCast<FunctionalTypeValue> (result)->functionalImplementation;
+            result = result.staticAs<FunctionalTypeValue> ()->functionalImplementation;
         
         ScriptModule::getActive()->analyzeAllPendingProgramEntities();
         std::cout << result->fullPrintString() << std::endl;

@@ -41,7 +41,7 @@ ASTNodePtr MetaBuilder::analyzeMessageSendNode(const ASTMessageSendNodePtr &node
 {
     if(node && node->selector->isASTLiteralSymbolValue())
     {
-        auto selector = staticObjectCast<ASTLiteralValueNode> (node->selector)->value->asString();
+        auto selector = node->selector.staticAs<ASTLiteralValueNode> ()->value->asString();
         return analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
     }
 
