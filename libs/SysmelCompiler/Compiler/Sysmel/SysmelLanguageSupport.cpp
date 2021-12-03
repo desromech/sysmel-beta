@@ -173,6 +173,7 @@ public:
         {
             auto signature = std::static_pointer_cast<ASTBlockClosureSignatureNode> (node.blockClosureSignature);
             auto blockClosureNode = BootstrapEnvironment::basicMakeObject<BootstrapEnvironment::ASTClosureNode> ();
+            blockClosureNode->sourcePosition = blockPosition;
             blockClosureNode->kind = BootstrapEnvironment::ASTClosureNodeKind::Block;
             blockClosureNode->arguments.reserve(signature->arguments.size());
             for(const auto &arg : signature->arguments)

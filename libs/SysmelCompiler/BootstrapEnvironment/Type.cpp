@@ -585,6 +585,7 @@ void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFrag
 void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
+    newChild->setParentProgramEntity(selfFromThis());
 }
 
 void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)

@@ -581,6 +581,11 @@ bool AnyValue::isVariable() const
     return false;
 }
 
+bool AnyValue::isFunctionVariable() const
+{
+    return false;
+}
+
 bool AnyValue::isArgumentVariable() const
 {
     return false;
@@ -1042,6 +1047,11 @@ bool AnyValue::isSSACodeRegionLocalValue() const
 }
 
 bool AnyValue::isSSACodeRegionArgument() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACodeRegionCapture() const
 {
     return false;
 }

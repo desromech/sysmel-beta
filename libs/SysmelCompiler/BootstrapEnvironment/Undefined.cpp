@@ -32,7 +32,7 @@ bool Undefined::isUndefined() const
 
 bool Undefined::isAnonymousNameSymbol() const
 {
-    return false;
+    return true;
 }
 
 std::string Undefined::printString() const

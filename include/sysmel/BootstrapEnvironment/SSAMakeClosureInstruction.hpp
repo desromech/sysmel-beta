@@ -19,6 +19,24 @@ public:
     virtual bool isSSAMakeClosureInstruction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+
+    virtual std::string getMnemonic() const override;
+
+    virtual void parametersDo(const SSAInstructionParameterIterationBlock &aBlock) override;
+    virtual void parametersDo(const SSAInstructionConstParameterIterationBlock &aBlock) const override;
+
+    TypePtr getValueType() const override;
+
+    const SSAValuePtr &getClosureImplementation() const;
+    void setClosureImplementation(const SSAValuePtr &newClosureImplementation);
+
+    const SSAValuePtrList &getCapturedValues() const;
+    void setCapturedValues(const SSAValuePtrList &newCapturedValues);
+
+private:
+    TypePtr valueType;
+    SSAValuePtr closureImplementation;
+    SSAValuePtrList capturedValues;
 };
 
 } // End of namespace BootstrapEnvironment

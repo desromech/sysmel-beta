@@ -62,6 +62,11 @@ AnyValuePtr SSAValueVisitor::visitCodeRegionArgument(const SSACodeRegionArgument
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitCodeRegionCapture(const SSACodeRegionCapturePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitInstruction(const SSAInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

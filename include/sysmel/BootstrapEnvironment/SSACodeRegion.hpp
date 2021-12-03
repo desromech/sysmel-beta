@@ -32,6 +32,11 @@ public:
     const SSACodeRegionArgumentPtr &getArgument(size_t index);
     const SSACodeRegionArgumentPtrList &getArguments();
 
+    size_t getCaptureCount() const;
+    const SSACodeRegionCapturePtr &getCapture(size_t index);
+    const SSACodeRegionCapturePtrList &getCaptures();
+    SSACodeRegionCapturePtr addCaptureWithType(const TypePtr &captureType);
+
     const SSABasicBlockPtrList &getBasicBlocks();
 
     SSABasicBlockPtr newBasicBlock();
@@ -43,6 +48,7 @@ protected:
     
     ASTSourcePositionPtr sourcePosition;
     SSACodeRegionArgumentPtrList arguments;
+    SSACodeRegionCapturePtrList captures;
     TypePtr resultType;
     SSABasicBlockPtrList basicBlocks;
 };

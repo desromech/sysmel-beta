@@ -27,6 +27,7 @@ public:
 
     virtual AnyValuePtr visitCodeRegionLocalValue(const SSACodeRegionLocalValuePtr &value);
     virtual AnyValuePtr visitCodeRegionArgument(const SSACodeRegionArgumentPtr &value);
+    virtual AnyValuePtr visitCodeRegionCapture(const SSACodeRegionCapturePtr &value);
 
     virtual AnyValuePtr visitInstruction(const SSAInstructionPtr &instruction);
     virtual AnyValuePtr visitBreakInstruction(const SSABreakInstructionPtr &instruction);

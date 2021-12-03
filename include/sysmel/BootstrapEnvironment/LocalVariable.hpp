@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_LOCAL_VARIABLE_HPP
 #pragma once
 
-#include "Variable.hpp"
+#include "FunctionVariable.hpp"
 
 namespace SysmelMoebius
 {
@@ -12,13 +12,12 @@ namespace BootstrapEnvironment
 /**
  * I am a variable program entity.
  */
-class LocalVariable : public SubtypeOf<Variable, LocalVariable>
+class LocalVariable : public SubtypeOf<FunctionVariable, LocalVariable>
 {
 public:
     static constexpr char const __typeName__[] = "LocalVariable";
 
     virtual bool isLocalVariable() const override;
-    virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope) override;
 };
 
 } // End of namespace BootstrapEnvironment

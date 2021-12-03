@@ -124,6 +124,7 @@ set(BootstrapEnvironment_Sources
     FieldVariable.cpp
     Fraction.cpp
     FunctionType.cpp
+    FunctionVariable.cpp
     FunctionalType.cpp
     FunctionMetaBuilder.cpp
     GlobalMetaBuilder.cpp
@@ -208,6 +209,7 @@ set(BootstrapEnvironment_Sources
     SSACastInstruction.cpp
     SSACodeRegion.cpp
     SSACodeRegionArgument.cpp
+    SSACodeRegionCapture.cpp
     SSACodeRegionLocalValue.cpp
     SSAConditionalJumpInstruction.cpp
     SSAContinueInstruction.cpp

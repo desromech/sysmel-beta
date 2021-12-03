@@ -627,6 +627,33 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(FunctionReturningClosure)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("public function makePlusN(N: Int32) => (Int32 => Int32) closure := function(x: Int32) => Int32 := x + N")->isFunctionTypeValue());
+                CHECK(evaluateString("makePlusN(2)")->isClosureTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("makePlusN(0)(0)."));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("makePlusN(0)(1)."));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("makePlusN(0)(2)."));
+
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("makePlusN(2)(0)."));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("makePlusN(2)(1)."));
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int32_t> ("makePlusN(2)(2)."));
+
+                CHECK(evaluateString("public function makePlusN2(N: Int32) => (Int32 => Int32) closure := {:(Int32)x :: Int32 | x + N}")->isFunctionTypeValue());
+                CHECK(evaluateString("makePlusN2(2)")->isClosureTypeValue());
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("makePlusN2(0)(0)."));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("makePlusN2(0)(1)."));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("makePlusN2(0)(2)."));
+
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("makePlusN2(2)(0)."));
+                CHECK_EQUAL(3, evaluateStringWithValueOfType<int32_t> ("makePlusN2(2)(1)."));
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int32_t> ("makePlusN2(2)(2)."));
+            });
+        });
+    }
+
     TEST(PrimitiveTypeConstruction)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){

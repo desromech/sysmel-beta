@@ -107,6 +107,15 @@ public:
 
     /// This makes instance accessor for the public program entity.
     virtual void addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &programEntity);
+
+    /// Retrieves the parent program entity.
+    ProgramEntityPtr getParentProgramEntity() const;
+
+    /// Sets the parent program entity.
+    void setParentProgramEntity(const ProgramEntityPtr &newParent);
+    
+private:
+    ProgramEntityWeakPtr parentProgramEntity;
 };
 
 } // End of namespace BootstrapEnvironment

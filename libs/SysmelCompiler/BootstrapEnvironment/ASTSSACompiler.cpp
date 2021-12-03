@@ -49,6 +49,7 @@
 #include "sysmel/BootstrapEnvironment/SSALoadInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSALocalVariableInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAMakeAggregateInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAMakeClosureInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAReturnFromFunctionInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSASendMessageInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAStoreInstruction.hpp"
@@ -192,10 +193,20 @@ AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &
 
 AnyValuePtr ASTSSACompiler::visitClosureNode(const ASTClosureNodePtr &node)
 {
+    assert(node->analyzedProgramEntity->isCompiledMethod());
+    auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
     auto functionObject = node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
     if(node->analyzedType->isClosureType())
     {
-        // TODO: instantiate the closure by passing the captures.
+        // Fetch the captured values.
+        SSAValuePtrList capturedValues;
+        auto capturedVariables = method->getCapturedVariables();
+        capturedValues.reserve(capturedVariables.size());
+        for(auto &variable : capturedVariables)
+            capturedValues.push_back(localVariableMap.find(variable)->second);
+
+        // Instantiate the closure.
+        functionObject = builder->makeClosure(functionObject, capturedValues);
     }
 
     return functionObject;
@@ -325,11 +336,22 @@ AnyValuePtr ASTSSACompiler::visitProgramEntityNode(const ASTProgramEntityNodePtr
 
 AnyValuePtr ASTSSACompiler::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
+    assert(node->analyzedProgramEntity->isCompiledMethod());
     auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
     auto functionObject = node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
     if(node->analyzedType->isClosureType())
     {
-        // TODO: instantiate the closure by passing the captures.
+        // Fetch the captured values.
+        SSAValuePtrList capturedValues;
+        auto capturedVariables = method->getCapturedVariables();
+        capturedValues.reserve(capturedVariables.size());
+        for(auto &variable : capturedVariables)
+            capturedValues.push_back(localVariableMap.find(variable)->second);
+
+        // Instantiate the closure.
+        functionObject = builder->makeClosure(functionObject, capturedValues);
+
+        // Bind the closure on the local variable map.
         if(!validAnyValue(method->getName())->isAnonymousNameSymbol())
             localVariableMap.insert({method, functionObject});
     }

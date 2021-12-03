@@ -620,7 +620,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
     // Create the compiled method if missing.
     compiledMethod = basicMakeObject<CompiledMethod> ();
     compiledMethod->setDeclaration(analyzedNode);
-    compiledMethod->registerInCurrentModule();
     compiledMethod->setClosureSignature(resultType, argumentTypes);
 
     // Set the arguments declaration and definition node.
@@ -629,6 +628,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
         compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
         compiledMethod->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
+
+    compiledMethod->registerInCurrentModule();
+    ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
 
     // Set the definition body.
     compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
@@ -1366,7 +1368,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto analyzedNode = basicMakeObject<ASTVariableAccessNode> (*node);
-    auto variable = analyzedNode->variable;
+    const auto &variable = analyzedNode->variable;
+    if(variable->isFunctionVariable())
+    {
+        auto variableOwner = variable->getParentProgramEntity();
+        assert(variableOwner && variableOwner->isCompiledMethod());
+        assert(environment->localDefinitionsOwner && environment->localDefinitionsOwner->isCompiledMethod());
+        if(variableOwner != environment->localDefinitionsOwner)
+            environment->localDefinitionsOwner.staticAs<CompiledMethod> ()->recordCapturedFunctionVariable(staticObjectCast<FunctionVariable> (variable));
+    }
+
     analyzedNode->analyzedType = analyzedNode->isAccessedByReference ? variable->getReferenceType() : variable->getValueType();
     return analyzedNode;
 }
@@ -1422,7 +1433,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
     CompiledMethodPtr compiledMethod;
-    bool alreadyRegistered = false;
     bool isLocalDefinition = analyzedNode->isRegisteredInLexicalScope();
     auto ownerEntity = isLocalDefinition ? environment->localDefinitionsOwner : environment->programEntityForPublicDefinitions;
 
@@ -1451,7 +1461,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
                         {{name->printString(), boundSymbol->printString()}}));
 
                 compiledMethod = staticObjectCast<CompiledMethod> (boundSymbol);
-                alreadyRegistered = true;
             }
         }
     }
@@ -1480,7 +1489,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         compiledMethod = basicMakeObject<CompiledMethod> ();
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
-        compiledMethod->registerInCurrentModule();
 
         // If this is a local definition, then define it as a closure.
         if(isLocalDefinition)
@@ -1491,6 +1499,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+
+        compiledMethod->registerInCurrentModule();
+        ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
+
+        if(isLocalDefinition)
+            environment->lexicalScope->setSymbolBinding(name, compiledMethod);
+        else
+            ownerEntity->bindProgramEntityWithVisibility(compiledMethod, analyzedNode->visibility);
     }
     else
     {
@@ -1507,21 +1523,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         // Set the definition body.
         compiledMethod->setDefinition(analyzedNode, analyzedNode->body, environment);
         compiledMethod->enqueuePendingSemanticAnalysis();
-    }
-
-    // Register the compiled method.
-    if(name)
-    {
-        if(isLocalDefinition)
-        {
-            ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
-            environment->lexicalScope->setSymbolBinding(name, compiledMethod);
-        }
-        else if(!alreadyRegistered)
-        {
-            ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
-            ownerEntity->bindProgramEntityWithVisibility(compiledMethod, analyzedNode->visibility);
-        }
     }
 
     // If this is a local definition, analyze in place.

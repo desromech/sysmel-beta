@@ -602,6 +602,9 @@ public:
     /// Is this object a variable?
     virtual bool isVariable() const;
 
+    /// Is this object a function variable?
+    virtual bool isFunctionVariable() const;
+
     /// Is this object an argument variable?
     virtual bool isArgumentVariable() const;
 
@@ -877,6 +880,9 @@ public:
 
     // Is this a SSA code region argument?
     virtual bool isSSACodeRegionArgument() const;
+
+    // Is this a SSA code region capture?
+    virtual bool isSSACodeRegionCapture() const;
 
     // Is this a SSA instruction?
     virtual bool isSSAInstruction() const;

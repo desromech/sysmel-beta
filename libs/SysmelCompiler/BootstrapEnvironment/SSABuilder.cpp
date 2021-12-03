@@ -228,6 +228,15 @@ SSALocalVariableInstructionPtr SSABuilder::localVariable(const TypePtr &referenc
     return instruction;
 }
 
+SSAMakeClosureInstructionPtr SSABuilder::makeClosure(const SSAValuePtr &closureImplementation, const SSAValuePtrList &capturedValues)
+{
+    auto instruction = basicMakeObject<SSAMakeClosureInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setClosureImplementation(closureImplementation);
+    instruction->setCapturedValues(capturedValues);
+    addInstruction(instruction);
+    return instruction;
+}
 
 SSAMakeAggregateInstructionPtr SSABuilder::makeAggregate(const TypePtr &aggregateType, const SSAValuePtrList &elements)
 {

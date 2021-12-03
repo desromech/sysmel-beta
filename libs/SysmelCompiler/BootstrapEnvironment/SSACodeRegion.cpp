@@ -1,5 +1,6 @@
 #include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegionArgument.hpp"
+#include "sysmel/BootstrapEnvironment/SSACodeRegionCapture.hpp"
 #include "sysmel/BootstrapEnvironment/SSABasicBlock.hpp"
 #include "sysmel/BootstrapEnvironment/SSAValueVisitor.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
@@ -81,12 +82,40 @@ const SSABasicBlockPtrList &SSACodeRegion::getBasicBlocks()
     return basicBlocks;
 }
 
+size_t SSACodeRegion::getCaptureCount() const
+{
+    return captures.size();
+}
+
+const SSACodeRegionCapturePtr &SSACodeRegion::getCapture(size_t index)
+{
+    return captures[index];
+}
+
+const SSACodeRegionCapturePtrList &SSACodeRegion::getCaptures()
+{
+    return captures;
+}
+
+SSACodeRegionCapturePtr SSACodeRegion::addCaptureWithType(const TypePtr &captureType)
+{
+    assert(!captureType->isVoidType());
+    auto result = SSACodeRegionCapture::make(captureType);
+    captures.push_back(result);
+    return result;
+}
+
 SExpression SSACodeRegion::asFullSExpression() const
 {
     SExpressionList argumentsSExpr;
     argumentsSExpr.elements.reserve(basicBlocks.size());
     for(auto &arg : arguments)
         argumentsSExpr.elements.push_back(arg->asFullSExpression());
+
+    SExpressionList capturesSExpr;
+    capturesSExpr.elements.reserve(basicBlocks.size());
+    for(auto &capture : captures)
+        capturesSExpr.elements.push_back(capture->asFullSExpression());
 
     SExpressionList basicBlocksSExpr;
     basicBlocksSExpr.elements.reserve(basicBlocks.size());
@@ -96,6 +125,7 @@ SExpression SSACodeRegion::asFullSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"region"}},
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
         argumentsSExpr,
+        capturesSExpr,
         resultType->asSExpression(),
         basicBlocksSExpr
     }};
@@ -118,7 +148,10 @@ void SSACodeRegion::enumerateLocalValues(struct SSACodeRegionLocalValueEnumerati
 {
     for(auto &arg : arguments)
         arg->enumerateLocalValues(state);
-        
+
+    for(auto &capture : captures)
+        capture->enumerateLocalValues(state);
+
     for(auto &bb : basicBlocks)
         bb->enumerateLocalValues(state);
 }

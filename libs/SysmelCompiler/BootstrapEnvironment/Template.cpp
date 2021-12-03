@@ -21,6 +21,7 @@ bool Template::isTemplate() const
 void Template::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
+    newChild->setParentProgramEntity(selfFromThis());
 }
 
 AnyValuePtr Template::getName() const

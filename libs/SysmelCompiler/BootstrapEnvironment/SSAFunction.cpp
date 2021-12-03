@@ -85,6 +85,9 @@ void SSAFunction::setSourceProgramEntity(const ProgramEntityPtr &entity)
 
 SExpression SSAFunction::asSExpression() const
 {
+    if(functionalType->isClosureType() && validAnyValue(name)->isAnonymousNameSymbol())
+        return asFullSExpression();
+    
     return SExpressionList{{SExpressionIdentifier{{"function"}},
         name ? name->asSExpression() : nullptr,
         intrinsicName ? intrinsicName->asSExpression() : nullptr,

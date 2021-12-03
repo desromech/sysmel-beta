@@ -198,5 +198,15 @@ void ProgramEntity::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyVal
     (void)type;
 }
 
+ProgramEntityPtr ProgramEntity::getParentProgramEntity() const
+{
+    return parentProgramEntity.lock();
+}
+
+void ProgramEntity::setParentProgramEntity(const ProgramEntityPtr &newParent)
+{
+    parentProgramEntity = newParent;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

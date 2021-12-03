@@ -17,6 +17,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeCleanUpScope);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ArgumentVariable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionalType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionVariable);
 
 
 /**
@@ -58,6 +59,10 @@ public:
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     
     const ArgumentVariablePtrList &getArguments() const;
+
+    void recordCapturedFunctionVariable(const FunctionVariablePtr &capturedVariable);
+    const FunctionVariablePtrList &getCapturedVariables() const;
+
 protected:
     void createArgumentVariablesWithTypes(const TypePtrList &argumentTypes);
     void validateBeforeCompileTimeEvaluation();
@@ -79,6 +84,9 @@ protected:
     ProgramEntityPtrList children;
 
     ArgumentVariablePtrList arguments;
+    FunctionVariablePtrList capturedVariables;
+    std::unordered_set<FunctionVariablePtr> capturedVariableSet;
+
 };
 
 } // End of namespace BootstrapEnvironment

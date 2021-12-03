@@ -11,6 +11,7 @@
 #include "sysmel/BootstrapEnvironment/SSAFunction.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegion.hpp"
 #include "sysmel/BootstrapEnvironment/SSACodeRegionArgument.hpp"
+#include "sysmel/BootstrapEnvironment/SSACodeRegionCapture.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
@@ -155,6 +156,28 @@ const ArgumentVariablePtrList &CompiledMethod::getArguments() const
     return arguments;
 }
 
+void CompiledMethod::recordCapturedFunctionVariable(const FunctionVariablePtr &capturedVariable)
+{
+    if(capturedVariableSet.find(capturedVariable) != capturedVariableSet.end())
+        return;
+
+    // Make sure that my parent also captures the variable.
+    auto parentEntity = getParentProgramEntity();
+    auto variableParentEntity = capturedVariable->getParentProgramEntity();
+    assert(variableParentEntity->isCompiledMethod());
+    if(parentEntity->isCompiledMethod() && parentEntity != variableParentEntity)
+        parentEntity.staticAs<CompiledMethod> ()->recordCapturedFunctionVariable(capturedVariable);
+
+    // Record the captured variable.
+    capturedVariables.push_back(capturedVariable);
+    capturedVariableSet.insert(capturedVariable);
+}
+
+const FunctionVariablePtrList &CompiledMethod::getCapturedVariables() const
+{
+    return capturedVariables;
+}
+
 SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
     (void)requiredSourcePosition;
@@ -169,6 +192,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     ssaCompiledFunction->setSourceProgramEntity(selfFromThis());
     auto mainCodeRegion = ssaCompiledFunction->getMainCodeRegion();
 
+    // Set the argument metadata.
     size_t argumentsOffset = 0;
     auto receiverType = functionalType->getReceiverType();
     if(!receiverType->isVoidType())
@@ -179,6 +203,14 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
 
     for(size_t i = 0; i < arguments.size(); ++i)
         mainCodeRegion->getArgument(i + argumentsOffset)->setDeclarationPosition(arguments[i]->getDeclarationPosition());
+
+    // Add the captured variables.
+    for(auto &capturedVariable : capturedVariables)
+    {
+        auto capture = mainCodeRegion->addCaptureWithType(capturedVariable->getReferenceType());
+        capture->setDeclarationPosition(capturedVariable->getDeclarationPosition());
+        capture->setDefinitionPosition(capturedVariable->getDefinitionPosition());
+    }
 
     if(analyzedBodyNode)
     {
@@ -275,6 +307,7 @@ AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &a
 void CompiledMethod::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
+    newChild->setParentProgramEntity(selfFromThis());
 }
 
 } // End of namespace BootstrapEnvironment

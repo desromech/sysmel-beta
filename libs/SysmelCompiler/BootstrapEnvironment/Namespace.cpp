@@ -38,6 +38,7 @@ AnyValuePtr Namespace::getName() const
 void Namespace::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);
+    newChild->setParentProgramEntity(selfFromThis());
 }
 
 void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)

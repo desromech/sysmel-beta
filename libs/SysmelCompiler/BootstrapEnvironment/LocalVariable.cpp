@@ -14,10 +14,5 @@ bool LocalVariable::isLocalVariable() const
     return true;
 }
 
-AnyValuePtr LocalVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
-{
-    return compileTimeCleanUpScope->lookupStoreBindingRecursively(selfFromThis());
-}
-
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius
