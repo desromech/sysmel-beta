@@ -38,10 +38,33 @@ ProgramEntityVisibility VisibilityMetaBuilder::getVisibility() const
     return ProgramEntityVisibility::Default;
 }
 
+static std::unordered_map<std::string, MethodFlags> methodFlagsMap = {
+    {"abstract", MethodFlags::Abstract},
+    {"const", MethodFlags::Const},
+    {"constructor", MethodFlags::Constructor},
+    {"conversion", MethodFlags::Conversion},
+    {"explicit", MethodFlags::Explicit},
+    {"final", MethodFlags::Final},
+    {"noThrow", MethodFlags::NoThrow},
+    {"override", MethodFlags::Override},
+    {"pure", MethodFlags::Pure},
+    {"returnsTwice", MethodFlags::ReturnsTwice},
+    {"static", MethodFlags::Static},
+    {"virtual", MethodFlags::Virtual},
+};
+
 ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &selector, const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(node->arguments.empty())
     {
+        {
+            auto it = methodFlagsMap.find(selector);
+            if(it != methodFlagsMap.end())
+            {
+                instanceContext->methodFlags = instanceContext->methodFlags | it->second;
+                return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
+            }
+        }
         // Functional
         if(selector == "function")
             return delegateToMetaBuilderAt<FunctionMetaBuilder> (node->sourcePosition);

@@ -1219,6 +1219,53 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(StructureGetSelf)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                CHECK(evaluateString("struct TestStruct definition: {public method getSelf => TestStruct := self}. TestStruct() getSelf")->isStructureTypeValue());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructureSelfFields)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString(
+"public struct TestStruct definition: {\n"
+"field x type: Int32.\n"
+"public method getX => Int32 := x.\n"
+"public method setX: (newX: Int32) ::=> Void := {x := newX} \n"
+"}.");
+                CHECK(structDefinition->isStructureType());
+
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("TestStruct() getX"));
+                CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestStruct() setX: 5; getX"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructurePublicFields)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {public field x type: Int32}.");
+                CHECK(structDefinition->isStructureType());
+
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("TestStruct() x"));
+                CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestStruct() x: 5"));
+                CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestStruct() x: 5; x"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
     TEST(EmptyStructNewValue2)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){

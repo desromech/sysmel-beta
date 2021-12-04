@@ -14,11 +14,13 @@
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/CannotUnwrap.hpp"
 #include "sysmel/BootstrapEnvironment/CannotEvaluateMessage.hpp"
+#include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/MessageNotUnderstood.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ValueBox.hpp"
+#include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include <algorithm>
 #include <iostream>
@@ -342,6 +344,11 @@ bool AnyValue::isASTCompileTimeConstantNode() const
 }
 
 bool AnyValue::isASTLocalImmutableAccessNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTFieldVariableAccessNode() const
 {
     return false;
 }
@@ -1121,6 +1128,16 @@ bool AnyValue::isSSADoWithCleanupInstruction() const
     return false;
 }
 
+bool AnyValue::isSSAGetAggregateFieldReferenceInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAGetAggregateSlotReferenceInstruction() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAMakeAggregateInstruction() const
 {
     return false;
@@ -1367,6 +1384,12 @@ AnyValuePtr AnyValue::accessVariableAsValueWithType(const TypePtr &valueType)
     return selfFromThis();
 }
 
+AnyValuePtr AnyValue::asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable)
+{
+    (void)receiverVariable;
+    return nullptr;
+}
+
 AnyValuePtr AnyValue::copyAssignValue(const AnyValuePtr &newValue)
 {
     (void)newValue;
@@ -1377,6 +1400,18 @@ AnyValuePtr AnyValue::moveAssignValue(const AnyValuePtr &newValue)
 {
     (void)newValue;
     return copyAssignValue(newValue);
+}
+
+AnyValuePtr AnyValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)
+{
+    (void)referenceType;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for field {0} from {1}.", {field->printString(), printString()}));
+}
+
+AnyValuePtr AnyValue::getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType)
+{
+    (void)referenceType;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for slot {0} from {1}.", {castToString(slotIndex), printString()}));
 }
 
 AnyValuePtr AnyValue::asMutableStoreValue()

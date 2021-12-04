@@ -24,7 +24,6 @@ public:
     virtual SExpression asSExpression() const override;
 
     VariablePtr variable;
-    bool isAccessedByReference = false;
 };
 
 } // End of namespace BootstrapEnvironment

@@ -30,6 +30,7 @@
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTCompileTimeConstantNode.hpp"
 
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 
 #include "sysmel/BootstrapEnvironment/ASTNamespaceNode.hpp"
@@ -1209,6 +1210,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
 {
     auto analyzedNode = basicMakeObject<ASTFieldVariableNode> (*node);
+    analyzedNode->isMutable = true;
     
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1231,13 +1233,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
 
         auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
         if(boundSymbol)
-        {
-            if(!boundSymbol->isFieldVariable())
-                return recordSemanticErrorInNode(analyzedNode, formatString("Field {0} overrides previous non-field variable definition in its parent program entity ({1}).",
+            return recordSemanticErrorInNode(analyzedNode, formatString("Field {0} overrides previous definition in its parent program entity ({1}).",
                     {{name->printString(), boundSymbol->printString()}}));
-
-            fieldVariable = staticObjectCast<FieldVariable> (boundSymbol);
-        }
     }
 
     if(analyzedNode->type)
@@ -1365,6 +1362,19 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
     return analyzedNode;
 }
 
+AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node)
+{
+    auto analyzedNode = basicMakeObject<ASTFieldVariableAccessNode> (*node);
+    analyzedNode->aggregate = analyzeNodeIfNeededWithAutoType(analyzedNode->aggregate);
+    if(analyzedNode->aggregate->isASTErrorNode())
+        return analyzedNode->aggregate;
+
+    analyzedNode->analyzedType = analyzedNode->fieldVariable->getReferenceType();
+    if(analyzedNode->aggregate->analyzedType->isConstOrConstReferenceType())
+        analyzedNode->analyzedType = analyzedNode->analyzedType->asConstOrConstReferenceType();
+    return analyzedNode;
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto analyzedNode = basicMakeObject<ASTVariableAccessNode> (*node);
@@ -1378,7 +1388,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
             environment->localDefinitionsOwner.staticAs<CompiledMethod> ()->recordCapturedFunctionVariable(staticObjectCast<FunctionVariable> (variable));
     }
 
-    analyzedNode->analyzedType = analyzedNode->isAccessedByReference ? variable->getReferenceType() : variable->getValueType();
+    analyzedNode->analyzedType = variable->getReferenceType();
     return analyzedNode;
 }
 
@@ -1653,8 +1663,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
         auto &arg = analyzedNode->arguments[i];
-        assert(arg->isASTArgumentDefinitionNode());
-        arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        if(arg->isASTArgumentDefinitionNode())
+        {
+            arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+        }
+        else
+        {
+            if(!arg->isASTErrorNode())
+                arg = recordSemanticErrorInNode(arg, "Expected an argument definition.");
+        }
+        
         hasError = hasError || arg->isASTErrorNode();
     }
 
@@ -1693,7 +1711,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     CompiledMethodPtr compiledMethod;
     bool alreadyRegistered = false;
     auto ownerEntity = environment->programEntityForPublicDefinitions;
-    auto receiverType = ownerEntity->asReceiverType();
+    TypePtr receiverType;
+    if((analyzedNode->methodFlags & MethodFlags::Static) != MethodFlags::None)
+        receiverType = Type::getVoidType();
+    else if((analyzedNode->methodFlags & MethodFlags::Const) != MethodFlags::None)
+        receiverType = ownerEntity->asConstReceiverType();
+    else
+        receiverType = ownerEntity->asReceiverType();
 
     // Forbid reserved names.
     if(isNameReserved(name))

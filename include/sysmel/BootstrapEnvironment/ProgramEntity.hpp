@@ -75,6 +75,9 @@ public:
     virtual AnyValuePtr lookupExportedSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope);
     virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope);
 
+    /// Converts this program entity into a const receiver type.
+    virtual TypePtr asConstReceiverType();
+
     /// Converts this program entity into a receiver type.
     virtual TypePtr asReceiverType();
 

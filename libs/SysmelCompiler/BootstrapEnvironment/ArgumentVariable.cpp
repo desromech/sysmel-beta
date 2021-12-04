@@ -22,6 +22,12 @@ void ArgumentVariable::setType(const TypePtr &type)
     referenceType = type;
 }
 
+
+void ArgumentVariable::setName(const AnyValuePtr &newName)
+{
+    name = newName;
+}
+
 void ArgumentVariable::setArgumentDeclarationNode(const ASTArgumentDefinitionNodePtr &node)
 {
     name = node->analyzedIdentifier;

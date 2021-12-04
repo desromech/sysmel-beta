@@ -22,8 +22,12 @@ public:
     virtual bool isArgumentVariable() const override;
 
     void setType(const TypePtr &type);
+    void setName(const AnyValuePtr &newName);
     void setArgumentDeclarationNode(const ASTArgumentDefinitionNodePtr &node);
     void setArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
+
+
+    bool isImplicit = false;
 };
 
 } // End of namespace BootstrapEnvironment

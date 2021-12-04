@@ -64,6 +64,7 @@ public:
     const FunctionVariablePtrList &getCapturedVariables() const;
 
 protected:
+    void createImplicitReceiverArgumentVariableWithType(const TypePtr &receiverType);
     void createArgumentVariablesWithTypes(const TypePtrList &argumentTypes);
     void validateBeforeCompileTimeEvaluation();
     void setArgumentsInEvaluationEnvironment(const AnyValuePtr &receiver, const AnyValuePtrList &arguments, const CompileTimeCleanUpScopePtr &environment);
@@ -82,6 +83,8 @@ protected:
     SSAFunctionPtr ssaCompiledFunction;
 
     ProgramEntityPtrList children;
+
+    ArgumentVariablePtr receiverArgument;
 
     ArgumentVariablePtrList arguments;
     FunctionVariablePtrList capturedVariables;

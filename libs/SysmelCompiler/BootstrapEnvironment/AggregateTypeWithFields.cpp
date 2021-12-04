@@ -33,5 +33,9 @@ bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const
     return true;
 }
 
+AnyValuePtr AggregateTypeWithFieldsValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)
+{
+    return getReferenceToSlotWithType(field->getSlotIndex(), referenceType);
+}
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -191,6 +191,11 @@ AnyValuePtr ASTVisitor::visitCompileTimeConstantNode(const ASTCompileTimeConstan
     return visitProgramEntityNode(node);
 }
 
+AnyValuePtr ASTVisitor::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitVariableAccessNode(const ASTVariableAccessNodePtr &)
 {
     SysmelSelfSubclassResponsibility();

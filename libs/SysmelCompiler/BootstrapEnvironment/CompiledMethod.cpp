@@ -16,6 +16,7 @@
 #include "sysmel/BootstrapEnvironment/ASTAnalysisEnvironment.hpp"
 #include "sysmel/BootstrapEnvironment/CleanUpScope.hpp"
 #include "sysmel/BootstrapEnvironment/LexicalScope.hpp"
+#include "sysmel/BootstrapEnvironment/ReceiverMemberLookupScope.hpp"
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
 
 #include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
@@ -65,10 +66,38 @@ void CompiledMethod::setDefinition(const ASTNodePtr &node, const ASTNodePtr &bod
 ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
 {
     auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
-    auto lexicalScope = LexicalScope::makeWithParent(definitionEnvironment->lexicalScope);
+    IdentifierLookupScopePtr parentScope = definitionEnvironment->lexicalScope;
+
+    if(receiverArgument)
+    {
+        auto receiverScope = basicMakeObject<ReceiverMemberLookupScope> ();
+        receiverScope->parent = parentScope;
+        receiverScope->receiverType = receiverArgument->getValueType();
+        receiverScope->receiverVariable = receiverArgument;
+        parentScope = receiverScope;
+    }
+
+    auto lexicalScope = LexicalScope::makeWithParent(parentScope);
     result->lexicalScope = lexicalScope;
     result->returnTargetMethod = selfFromThis();
     result->localDefinitionsOwner = selfFromThis();
+
+    // Add the receiver argument
+    if(receiverArgument)
+    {
+        if(isMacroMethod())
+        {
+            if(validAnyValue(receiverArgument->getName())->isAnonymousNameSymbol())
+                receiverArgument->setName(internSymbol("__macroContext"));
+        }
+        else
+        {
+            if(validAnyValue(receiverArgument->getName())->isAnonymousNameSymbol())
+                receiverArgument->setName(internSymbol("self"));
+        }
+
+        lexicalScope->setSymbolBinding(receiverArgument->getName(), receiverArgument);
+    }
 
     // Add the arguments to the lexical scope.
     for(auto &arg : arguments)
@@ -83,6 +112,7 @@ ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
 void CompiledMethod::setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes)
 {
     SuperType::setMethodSignature(receiverType, resultType, argumentTypes);
+    createImplicitReceiverArgumentVariableWithType(receiverType);
     createArgumentVariablesWithTypes(argumentTypes);
 }
 
@@ -96,6 +126,17 @@ void CompiledMethod::setClosureSignature(const TypePtr &resultType, const TypePt
 {
     SuperType::setClosureSignature(resultType, argumentTypes);
     createArgumentVariablesWithTypes(argumentTypes);
+}
+
+void CompiledMethod::createImplicitReceiverArgumentVariableWithType(const TypePtr &receiverType)
+{
+    if(receiverType->isVoidType())
+        return;
+
+    receiverArgument = basicMakeObject<ArgumentVariable> ();
+    receiverArgument->isImplicit = true;
+    recordChildProgramEntityDefinition(receiverArgument);
+    receiverArgument->setType(receiverType);
 }
 
 void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumentTypes)
@@ -277,8 +318,8 @@ void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &rece
     auto expectedReceiverType = functionalType->getReceiverType();
     if(!expectedReceiverType->isVoidType())
     {
-        (void)receiver;
-        assert("TODO: set compile time evaluation receiver" && false);
+        assert(receiverArgument);
+        environment->setStoreBinding(receiverArgument, receiver);
     }
 
     // Check the argument count.

@@ -14,6 +14,7 @@
 
 #include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
 
@@ -45,6 +46,7 @@
 #include "sysmel/BootstrapEnvironment/SSAContinueInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSADoWithCleanupInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSADoWhileInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAGetAggregateFieldReferenceInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAIfInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSALoadInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSALocalVariableInstruction.hpp"
@@ -315,6 +317,12 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
 AnyValuePtr ASTSSACompiler::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
 {
     return node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
+}
+
+AnyValuePtr ASTSSACompiler::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node)
+{
+    auto aggregate = visitNodeForValue(node->aggregate);
+    return builder->getAggregateFieldReference(node->analyzedType, aggregate, node->fieldVariable);
 }
 
 AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

@@ -39,6 +39,8 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isAggregateTypeWithFieldsValue() const override;
+
+    virtual AnyValuePtr getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType) override;
 };
 
 } // End of namespace BootstrapEnvironment

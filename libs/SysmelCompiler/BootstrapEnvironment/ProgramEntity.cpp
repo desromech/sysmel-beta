@@ -36,6 +36,11 @@ SExpression ProgramEntity::asSExpression() const
     return printString();
 }
 
+TypePtr ProgramEntity::asConstReceiverType()
+{
+    return Type::getVoidType();
+}
+
 TypePtr ProgramEntity::asReceiverType()
 {
     return Type::getVoidType();

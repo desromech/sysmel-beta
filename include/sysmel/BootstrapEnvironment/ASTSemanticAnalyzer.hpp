@@ -94,6 +94,7 @@ public:
     virtual AnyValuePtr visitFieldVariableNode(const ASTFieldVariableNodePtr &node) override;
     virtual AnyValuePtr visitCompileTimeConstantNode(const ASTCompileTimeConstantNodePtr &node) override;
 
+    virtual AnyValuePtr visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node) override;
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
 
     virtual AnyValuePtr visitFunctionNode(const ASTFunctionNodePtr &node) override;

@@ -32,5 +32,14 @@ AnyValuePtr ValueBox::accessVariableAsValueWithType(const TypePtr &valueType)
     (void)valueType;
     return value;
 }
+
+AnyValuePtr ValueBox::asMutableStoreValue()
+{
+    auto result = basicMakeObject<ValueBox> ();
+    result->value = value;
+    result->type = type;
+    return result;
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

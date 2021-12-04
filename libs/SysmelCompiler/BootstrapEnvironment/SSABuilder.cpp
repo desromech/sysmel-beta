@@ -11,6 +11,8 @@
 #include "sysmel/BootstrapEnvironment/SSAContinueInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSADoWithCleanupInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSADoWhileInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAGetAggregateFieldReferenceInstruction.hpp"
+#include "sysmel/BootstrapEnvironment/SSAGetAggregateSlotReferenceInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSAIfInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSALoadInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSALocalVariableInstruction.hpp"
@@ -185,6 +187,28 @@ SSADoWhileInstructionPtr SSABuilder::doWhileContinueWith(const SSACodeRegionPtr 
     instruction->setConditionRegion(conditionRegion);
     instruction->setBodyRegion(bodyRegion);
     instruction->setContinueRegion(continueRegion);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAGetAggregateFieldReferenceInstructionPtr SSABuilder::getAggregateFieldReference(const TypePtr &valueType, const SSAValuePtr &aggregate, const FieldVariablePtr &field)
+{
+    auto instruction = basicMakeObject<SSAGetAggregateFieldReferenceInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(valueType);
+    instruction->setAggregate(aggregate);
+    instruction->setFieldVariable(field);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAGetAggregateSlotReferenceInstructionPtr SSABuilder::getAggregateSlotReference(const TypePtr &valueType, const SSAValuePtr &aggregate, const SSAValuePtr &slotIndex)
+{
+    auto instruction = basicMakeObject<SSAGetAggregateSlotReferenceInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(valueType);
+    instruction->setAggregate(aggregate);
+    instruction->setSlotIndex(slotIndex);
     addInstruction(instruction);
     return instruction;
 }

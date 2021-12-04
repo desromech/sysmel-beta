@@ -32,7 +32,7 @@ SExpression ASTMethodNode::asSExpression() const
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
-        SExpressionIdentifier{{methodDispatchModeToString(dispatchMode)}},
+        methodFlagsToSExpression(methodFlags),
         name ? name->asSExpression() : nullptr,
         argumentsSExpr,
         resultType ? resultType->asSExpression() : nullptr,

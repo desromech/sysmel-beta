@@ -23,6 +23,8 @@ public:
     virtual AnyValuePtr accessVariableAsReferenceWithType(const TypePtr &referenceType) override;
     virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType) override;
 
+    virtual AnyValuePtr asMutableStoreValue() override;
+
     AnyValuePtr value;
     TypePtr type;
 };

@@ -81,6 +81,9 @@ public:
     virtual void registerSubtype(const TypePtr &subtype);
 
     /// Converts this type into a specific receiver type.
+    virtual TypePtr asConstReceiverType() override;
+
+    /// Converts this type into a specific receiver type.
     virtual TypePtr asReceiverType() override;
 
     /// This method performs the lookup for a macro message with the specified selector.
@@ -309,6 +312,13 @@ public:
 
     /// Removes the decorations of this type.
     virtual TypePtr asUndecoratedType();
+
+    // Is this T const or T const ref?
+    virtual bool isConstOrConstReferenceType() const;
+
+    // T => T const, T ref => T const ref
+    virtual TypePtr asConstOrConstReferenceType();
+
 
 protected:
     // Utility method for expanding type macros.

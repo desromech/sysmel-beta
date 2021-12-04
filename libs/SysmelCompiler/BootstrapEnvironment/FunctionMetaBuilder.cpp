@@ -48,7 +48,7 @@ ASTNodePtr FunctionMetaBuilder::concretizeMetaBuilder()
     auto result = basicMakeObject<ASTFunctionNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
-    result->dispatchMode = instanceContext->methodDispatchMode;
+    result->methodFlags = instanceContext->methodFlags;
 
     result->name = nameNode;
     result->arguments = argumentsNode;

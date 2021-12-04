@@ -200,6 +200,11 @@ void Type::registerSubtype(const TypePtr &subtype)
         subtypes.push_back(subtype);
 }
 
+TypePtr Type::asConstReceiverType()
+{
+    return selfFromThis();
+}
+
 TypePtr Type::asReceiverType()
 {
     return selfFromThis();
@@ -771,6 +776,7 @@ ASTNodePtr Type::expandMoveConstruction(const MacroInvocationContextPtr &context
 
 ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
+    ensureSemanticAnalysis();
     auto analyzedArguments = arguments;
 
     // Ensure the arguments are analyzed.
@@ -980,6 +986,16 @@ TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 TypePtr Type::asUndecoratedType()
 {
     return selfFromThis();
+}
+
+bool Type::isConstOrConstReferenceType() const
+{
+    return isConstDecoratedType();
+}
+
+TypePtr Type::asConstOrConstReferenceType()
+{
+    return withConst();
 }
 
 } // End of namespace BootstrapEnvironment

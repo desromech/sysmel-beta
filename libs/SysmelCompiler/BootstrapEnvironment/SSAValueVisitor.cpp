@@ -122,6 +122,16 @@ AnyValuePtr SSAValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCleanu
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitGetAggregateSlotReferenceInstruction(const SSAGetAggregateSlotReferenceInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitMakeAggregateInstruction(const SSAMakeAggregateInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
@@ -162,7 +172,7 @@ AnyValuePtr SSAValueVisitor::visitWhileInstruction(const SSAWhileInstructionPtr 
     SysmelSelfSubclassResponsibility();
 }
 
-AnyValuePtr SSAValueVisitor::visitCastInstruction(const SSACastInstructionPtr &instruction)
+AnyValuePtr SSAValueVisitor::visitCastInstruction(const SSACastInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

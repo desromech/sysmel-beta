@@ -4,7 +4,6 @@
 
 #include "ASTProgramEntityNode.hpp"
 #include "ProgramEntityVisibility.hpp"
-#include "MethodDispatchMode.hpp"
 
 namespace SysmelMoebius
 {

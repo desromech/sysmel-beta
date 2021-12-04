@@ -30,7 +30,7 @@ SExpression ASTFunctionNode::asSExpression() const
 
     return SExpressionList{{SExpressionIdentifier{{"function"}},
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
-        SExpressionIdentifier{{methodDispatchModeToString(dispatchMode)}},
+        methodFlagsToSExpression(methodFlags),
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         name ? name->asSExpression() : nullptr,

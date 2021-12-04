@@ -21,6 +21,7 @@ public:
     virtual bool isStructureType() const override;
     
     virtual AnyValuePtr basicNewValue() override;
+    
 };
 
 /**
@@ -36,6 +37,8 @@ public:
 
     virtual bool isStructureTypeValue() const override;
     virtual TypePtr getType() const override;
+    virtual AnyValuePtr asMutableStoreValue() override;
+    virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType) override;
 
     AnyValuePtrList slots;
 };

@@ -49,7 +49,7 @@ ASTNodePtr MethodMetaBuilder::concretizeMetaBuilder()
     auto result = basicMakeObject<ASTMethodNode> ();
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
-    result->dispatchMode = instanceContext->methodDispatchMode;
+    result->methodFlags = instanceContext->methodFlags;
 
     result->name = selectorNode;
     result->arguments = argumentsNode;

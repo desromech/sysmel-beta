@@ -28,6 +28,7 @@ bool SpecificMethod::isSpecificMethod() const
 void SpecificMethod::setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes)
 {
     functionalType = getOrCreateMethodType(receiverType, resultType, argumentTypes);
+    methodFlags = methodFlags | MethodFlags::MessageMethod;
 }
 
 void SpecificMethod::setFunctionSignature(const TypePtr &resultType, const TypePtrList &argumentTypes)
@@ -115,7 +116,9 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
 
 bool SpecificMethod::isMacroMethod() const
 {
-    return functionalType->getReceiverType() && functionalType->getReceiverType()->isSubtypeOf(MacroInvocationContext::__staticType__());
+    return functionalType->getReceiverType()
+        && functionalType->getReceiverType()->isSubtypeOf(MacroInvocationContext::__staticType__())
+        && ((methodFlags & MethodFlags::Macro) != MethodFlags::None);
 }
 
 ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

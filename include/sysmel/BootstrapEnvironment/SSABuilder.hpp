@@ -8,6 +8,9 @@ namespace SysmelMoebius
 {
 namespace BootstrapEnvironment
 {
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -48,6 +51,8 @@ public:
     SSAContinueInstructionPtr continueInstruction();
     SSADoWithCleanupInstructionPtr doWithCleanUp(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &cleanUpRegion);
     SSADoWhileInstructionPtr doWhileContinueWith(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &continueRegion);
+    SSAGetAggregateFieldReferenceInstructionPtr getAggregateFieldReference(const TypePtr &valueType, const SSAValuePtr &aggregate, const FieldVariablePtr &field);
+    SSAGetAggregateSlotReferenceInstructionPtr getAggregateSlotReference(const TypePtr &valueType, const SSAValuePtr &aggregate, const SSAValuePtr &slotIndex);
     SSAIfInstructionPtr ifTrueIfFalse(const TypePtr &resultType, const SSAValuePtr &condition, const SSACodeRegionPtr &trueRegion, const SSACodeRegionPtr &falseRegion);
     SSALoadInstructionPtr load(const SSAValuePtr &reference);
     SSALocalVariableInstructionPtr localVariable(const TypePtr &referenceType, const TypePtr &valueType);

@@ -78,7 +78,6 @@ ASTNodePtr Variable::analyzeIdentifierReferenceNode(const ASTIdentifierReference
     auto result = basicMakeObject<ASTVariableAccessNode> ();
     result->sourcePosition = node->sourcePosition;
     result->variable = selfFromThis();
-    result->isAccessedByReference = isMutable_;
     return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
 }
 

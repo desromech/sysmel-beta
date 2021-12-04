@@ -4,7 +4,7 @@
 
 #include "ASTProgramEntityNode.hpp"
 #include "ProgramEntityVisibility.hpp"
-#include "MethodDispatchMode.hpp"
+#include "MethodFlags.hpp"
 
 namespace SysmelMoebius
 {
@@ -31,7 +31,7 @@ public:
     ASTNodePtr body;
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
-    MethodDispatchMode dispatchMode = MethodDispatchMode::Default;
+    MethodFlags methodFlags = MethodFlags::None;
 };
 
 } // End of namespace BootstrapEnvironment

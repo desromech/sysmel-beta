@@ -26,6 +26,7 @@ set(BootstrapEnvironment_Sources
     ASTEnumNode.cpp
     ASTErrorNode.cpp
     ASTExplicitCastNode.cpp
+    ASTFieldVariableAccessNode.cpp
     ASTFieldVariableNode.cpp
     ASTFunctionalNode.cpp
     ASTFunctionNode.cpp
@@ -163,6 +164,7 @@ set(BootstrapEnvironment_Sources
     Method.cpp
     MethodType.cpp
     MethodDictionary.cpp
+    MethodFlags.cpp
     MethodMetaBuilder.cpp
     Module.cpp
     ModuleDefinedProgramEntity.cpp
@@ -190,6 +192,7 @@ set(BootstrapEnvironment_Sources
     ProgramModule.cpp
     ProtectedMetaBuilder.cpp
     PublicMetaBuilder.cpp
+    ReceiverMemberLookupScope.cpp
     RefCountedObject.cpp
     ReferenceType.cpp
     ResultTypeInferenceSlot.cpp
@@ -226,6 +229,8 @@ set(BootstrapEnvironment_Sources
     SSAJumpInstruction.cpp
     SSALoadInstruction.cpp
     SSALocalVariableInstruction.cpp
+    SSAGetAggregateFieldReferenceInstruction.cpp
+    SSAGetAggregateSlotReferenceInstruction.cpp
     SSAMakeAggregateInstruction.cpp
     SSAMakeClosureInstruction.cpp
     SSAReturnFromFunctionInstruction.cpp

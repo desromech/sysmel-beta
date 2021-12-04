@@ -4,7 +4,7 @@
 
 #include "CompilerObject.hpp"
 #include "ProgramEntityVisibility.hpp"
-#include "MethodDispatchMode.hpp"
+#include "MethodFlags.hpp"
 
 namespace SysmelMoebius
 {
@@ -26,7 +26,7 @@ public:
     ASTNodePtr instanceNode;
 
     ProgramEntityVisibility programEntityVisibility = ProgramEntityVisibility::Default;
-    MethodDispatchMode methodDispatchMode = MethodDispatchMode::Default;
+    MethodFlags methodFlags = MethodFlags::None;
     bool isCompileTime = false;
 };
 

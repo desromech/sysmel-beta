@@ -76,6 +76,19 @@ TypePtr ReferenceType::withDecorations(TypeDecorationFlags decorations)
     return selfFromThis();
 }
 
+
+bool ReferenceType::isConstOrConstReferenceType() const
+{
+    return baseType->isConstDecoratedType();
+}
+
+TypePtr ReferenceType::asConstOrConstReferenceType()
+{
+    if(baseType->isConstDecoratedType())
+        return selfFromThis();
+    return baseType->withConst()->refFor(addressSpace);
+}
+
 std::string ReferenceType::printString() const
 {
     if(hasGenericAddressSpace())

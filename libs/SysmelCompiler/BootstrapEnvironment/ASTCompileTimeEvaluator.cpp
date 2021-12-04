@@ -22,6 +22,7 @@
 
 #include "sysmel/BootstrapEnvironment/ASTGlobalVariableNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalVariableNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTLocalImmutableAccessNode.hpp"
 
@@ -282,14 +283,18 @@ AnyValuePtr ASTCompileTimeEvaluator::visitGlobalVariableNode(const ASTGlobalVari
         ->accessVariableAsReferenceWithType(node->analyzedType);
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node)
+{
+    auto aggregate = visitNode(node->aggregate);
+    return aggregate->getReferenceToFieldWithType(node->fieldVariable, node->analyzedType);
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto storeBinding = node->variable->findStoreBindingInCompileTime(currentCleanUpScope);
     assert(storeBinding);
     
-    return node->isAccessedByReference ?
-        storeBinding->accessVariableAsReferenceWithType(node->analyzedType)
-        : storeBinding->accessVariableAsValueWithType(node->analyzedType);
+    return storeBinding->accessVariableAsReferenceWithType(node->analyzedType);
 }
 
 

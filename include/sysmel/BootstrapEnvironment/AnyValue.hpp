@@ -35,6 +35,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCallNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
@@ -263,7 +265,6 @@ AnyValuePtr getFalseConstant();
  */
 AnyValuePtr getCompilationErrorValueConstant();
 
-
 /**
  * Retrieves or create a new function type.
  */
@@ -457,6 +458,9 @@ public:
 
     /// Is this object an AST local immutable access node?
     virtual bool isASTLocalImmutableAccessNode() const;
+
+    /// Is this object an AST field variable access node?
+    virtual bool isASTFieldVariableAccessNode() const;
 
     /// Is this object an AST variable access node?
     virtual bool isASTVariableAccessNode() const;
@@ -923,6 +927,12 @@ public:
     // Is this a SSA do with cleanup statement instruction?
     virtual bool isSSADoWithCleanupInstruction() const;
 
+    // Is this a SSA get aggregate field reference instruction?
+    virtual bool isSSAGetAggregateFieldReferenceInstruction() const;
+
+    // Is this a SSA get aggregate field reference instruction?
+    virtual bool isSSAGetAggregateSlotReferenceInstruction() const;
+
     // Is this a SSA make aggregate instruction?
     virtual bool isSSAMakeAggregateInstruction() const;
 
@@ -1061,6 +1071,9 @@ public:
     // Access the value box (e.g. variable binding slot) as a value with the specified type.
     virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType);
 
+    // Make a pair (ReceiverVariable, Member Program Entity) if this is an allowed operation. Otherwise, return null.
+    virtual AnyValuePtr asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable);
+
     // Wraps and/or copy the object to make a mutable version of it.
     virtual AnyValuePtr asMutableStoreValue();
 
@@ -1069,6 +1082,12 @@ public:
 
     // Assigns a new value onto myself.
     virtual AnyValuePtr moveAssignValue(const AnyValuePtr &newValue);
+
+    // Gets a references to an inner field with the specified type.
+    virtual AnyValuePtr getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType);
+
+    // Gets a references to an inner slot with the specified type.
+    virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType);
 
     template<typename ResultType, typename... Args>
     ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)
