@@ -1,9 +1,14 @@
 #include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
+#include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTSemanticAnalyzer.hpp"
+#include "sysmel/BootstrapEnvironment/ASTLiteralValueNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTMessageSendNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
+#include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
 
 namespace SysmelMoebius
@@ -25,6 +30,27 @@ AnyValuePtr FieldVariable::asMemberBoundWithReceiverVariable(const VariablePtr &
     result->receiverVariable = receiverVariable;
     result->fieldVariable = selfFromThis();
     return result;
+}
+
+void FieldVariable::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &type)
+{
+    auto self = selfFromThis();
+    auto getterSelector = symbol;
+    auto setterSelector = internSymbol(symbol->unwrapAsString() + ":");
+
+    type->addMacroMethodCategories({{"accessing", {
+        makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> (getterSelector, [=](const MacroInvocationContextPtr &macroContext) {
+            return macroContext->astBuilder->fieldVariableAccess(macroContext->receiverNode, self);
+        }, MethodFlags::Macro),
+
+        makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> (setterSelector, [=](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &value) {
+            auto &builder = macroContext->astBuilder;
+            return
+                builder->sendToWithArguments(builder->literalSymbol(":="),
+                    builder->fieldVariableAccess(macroContext->receiverNode, self),
+                    {value});
+        }, MethodFlags::Macro),
+    }}});
 }
 
 uint32_t FieldVariable::getSlotIndex() const

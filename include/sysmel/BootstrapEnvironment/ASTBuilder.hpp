@@ -24,6 +24,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReturnNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBreakNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableAccessNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+
 /**
  * I am an utility for building AST nodes.
  */
@@ -60,6 +63,8 @@ public:
     ASTReturnNodePtr returnVoid();
     ASTBreakNodePtr breakThisLoop();
     ASTContinueNodePtr continueThisLoop();
+
+    ASTFieldVariableAccessNodePtr fieldVariableAccess(const ASTNodePtr &aggregate, const FieldVariablePtr &fieldVariable);
 
     ASTSourcePositionPtr sourcePosition;
 };

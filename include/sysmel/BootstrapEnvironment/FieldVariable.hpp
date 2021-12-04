@@ -22,7 +22,8 @@ public:
     static constexpr char const __typeName__[] = "FieldVariable";
 
     virtual bool isFieldVariable() const override;
-    virtual AnyValuePtr asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable);
+    virtual AnyValuePtr asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable) override;
+    virtual void addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &type) override;
 
     DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
 

@@ -14,6 +14,9 @@
 #include "sysmel/BootstrapEnvironment/ASTReturnNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTContinueNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBreakNode.hpp"
+
+#include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
+
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -197,6 +200,15 @@ ASTContinueNodePtr ASTBuilder::continueThisLoop()
 {
     auto node = basicMakeObject<ASTContinueNode> ();
     node->sourcePosition = sourcePosition;
+    return node;
+}
+
+ASTFieldVariableAccessNodePtr ASTBuilder::fieldVariableAccess(const ASTNodePtr &aggregate, const FieldVariablePtr &fieldVariable)
+{
+    auto node = basicMakeObject<ASTFieldVariableAccessNode> ();
+    node->sourcePosition = sourcePosition;
+    node->aggregate = aggregate;
+    node->fieldVariable = fieldVariable;
     return node;
 }
 
