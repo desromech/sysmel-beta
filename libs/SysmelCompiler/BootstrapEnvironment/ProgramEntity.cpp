@@ -3,6 +3,7 @@
 #include "sysmel/BootstrapEnvironment/Module.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
@@ -134,6 +135,24 @@ AnyValuePtr ProgramEntity::lookupLocalMacroFallbackSelector(const AnyValuePtr &s
     return nullptr;
 }
 
+void ProgramEntity::addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility)
+{
+    (void)field;
+    (void)visibility;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot define field variable {0} in {1}.", {{field->printString(), printString()}}));
+}
+
+void ProgramEntity::addFieldVariable(const FieldVariablePtr &field)
+{
+    addFieldVariableWithVisibility(field, ProgramEntityVisibility::Protected);
+}
+
+void ProgramEntity::addFieldVariables(const FieldVariablePtrList &fields)
+{
+    for(auto &field : fields)
+        addFieldVariable(field);
+}
+
 void ProgramEntity::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
 {
     (void)selector;
@@ -182,7 +201,7 @@ void ProgramEntity::addMacroFallbackMethodCategories(const MethodCategories &cat
     }
 }
 
-bool ProgramEntity::canHaveFields() const
+bool ProgramEntity::canHaveUserDefinedFields() const
 {
     return false;
 }

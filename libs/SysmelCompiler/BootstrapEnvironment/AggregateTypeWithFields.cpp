@@ -15,17 +15,9 @@ bool AggregateTypeWithFields::isAggregateTypeWithFields() const
     return true;
 }
 
-bool AggregateTypeWithFields::canHaveFields() const
+bool AggregateTypeWithFields::canHaveUserDefinedFields() const
 {
     return true;
-}
-
-void AggregateTypeWithFields::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
-{
-    SuperType::recordChildProgramEntityDefinition(newChild);
-    
-    if(newChild->isFieldVariable())
-        fields.push_back(staticObjectCast<FieldVariable> (newChild));
 }
 
 bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const
@@ -35,6 +27,8 @@ bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const
 
 AnyValuePtr AggregateTypeWithFieldsValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)
 {
+    if(field->isBootstrapFieldVariable())
+        SuperType::getReferenceToFieldWithType(field, referenceType);
     return getReferenceToSlotWithType(field->getSlotIndex(), referenceType);
 }
 } // End of namespace BootstrapEnvironment

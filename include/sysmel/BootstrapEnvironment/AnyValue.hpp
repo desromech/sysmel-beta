@@ -36,7 +36,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodDictionary);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBuilder);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FieldVariable);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTCallNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageSendNode);
@@ -64,6 +64,7 @@ struct StaticBootstrapDefinedTypeMetadata
     const StaticBootstrapDefinedTypeMetadata *supertype;
     std::string typeName;
     MethodCategories (*instanceMethods)();
+    FieldVariablePtrList (*fieldVariables)();
     MethodCategories (*typeMethods)();
     AnyValuePtrList (*constructors)();
     AnyValuePtrList (*conversions)();
@@ -110,6 +111,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     StaticBootstrapDefinedTypeMetadataFor<typename T::SuperType>::get(),
     T::__typeName__,
     &T::__instanceMethods__,
+    &T::__fieldVariables__,
     &T::__typeMethods__,
     &T::__constructors__,
     &T::__conversions__,
@@ -164,6 +166,11 @@ public:
     static MethodCategories __instanceMethods__()
     {
         return MethodCategories{};
+    }
+
+    static FieldVariablePtrList __fieldVariables__()
+    {
+        return FieldVariablePtrList{};
     }
 
     static MethodCategories __typeMethods__()
@@ -302,6 +309,7 @@ public:
     static constexpr bool __hasTrivialMovingFrom__ = false;
 
     static MethodCategories __instanceMethods__();
+    static FieldVariablePtrList __fieldVariables__();
     static MethodCategories __typeMethods__();
     static AnyValuePtrList __constructors__();
     static AnyValuePtrList __conversions__();
@@ -617,6 +625,9 @@ public:
 
     /// Is this object a field variable?
     virtual bool isFieldVariable() const;
+
+    /// Is this object a bootstrap field variable?
+    virtual bool isBootstrapFieldVariable() const;
 
     /// Is this object a global variable?
     virtual bool isGlobalVariable() const;

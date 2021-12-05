@@ -21,10 +21,8 @@ class AggregateTypeWithFields : public SubMetaTypeOf<AggregateType, AggregateTyp
 public:
     virtual bool isAggregateTypeWithFields() const override;
 
-    virtual bool canHaveFields() const override;
-    virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
-
-    FieldVariablePtrList fields;
+    virtual bool canHaveUserDefinedFields() const override;
+    
 };
 
 /**

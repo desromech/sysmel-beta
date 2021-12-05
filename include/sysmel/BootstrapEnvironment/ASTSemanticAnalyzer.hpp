@@ -62,7 +62,7 @@ public:
 
     AnyValuePtr evaluateNameSymbolValue(const ASTNodePtr &node);
 
-    ASTNodePtr analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType);
+    ASTNodePtr analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType, bool isMacro = false);
     ASTNodePtr analyzeTemplateArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
     ASTNodePtr analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType);
     void analyzeAndEvaluateAsValuesForEnumType(const ASTNodePtr &node, const EnumTypePtr &enumType);

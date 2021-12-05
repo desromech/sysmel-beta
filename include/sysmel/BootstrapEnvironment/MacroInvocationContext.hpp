@@ -19,6 +19,8 @@ class MacroInvocationContext : public SubtypeOf<CompilerObject, MacroInvocationC
 public:
     static constexpr char const __typeName__[] = "MacroInvocationContext";
 
+    static FieldVariablePtrList __fieldVariables__();
+    
     virtual bool isMacroInvocationContext() const override;
 
     ASTNodePtr receiverNode;

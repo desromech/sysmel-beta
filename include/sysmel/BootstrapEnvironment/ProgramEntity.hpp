@@ -54,6 +54,15 @@ public:
     virtual void bindProgramEntityWithVisibility(const ProgramEntityPtr &programEntity, ProgramEntityVisibility visibility);
     virtual void enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
+    /// This method adds a field variable with the specified visibility.
+    virtual void addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility);
+
+    /// This method adds the specified field variable with default parameters.
+    virtual void addFieldVariable(const FieldVariablePtr &field);
+
+    /// This method adds the specified field variables with default parameters.
+    virtual void addFieldVariables(const FieldVariablePtrList &fields);
+
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector);
 
@@ -103,7 +112,7 @@ public:
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
     /// Does this program entity support the definition of fields?
-    virtual bool canHaveFields() const;
+    virtual bool canHaveUserDefinedFields() const;
 
     /// This makes accessor for public the program entity.
     virtual void addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity);

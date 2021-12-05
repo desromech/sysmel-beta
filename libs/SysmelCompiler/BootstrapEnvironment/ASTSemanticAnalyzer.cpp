@@ -462,7 +462,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDe
     return recordSemanticErrorInNode(node, "Unexpected location for argument node.");
 }
 
-ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType)
+ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType, bool isMacro)
 {
     auto analyzedNode = basicMakeObject<ASTArgumentDefinitionNode> (*node);
     auto name = evaluateNameSymbolValue(analyzedNode->identifier);
@@ -481,9 +481,10 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(co
         }
         else
         {
-            if(!environment->defaultArgumentType)
+            auto defaultArgumentType = isMacro ? ASTNode::__staticType__() : environment->defaultArgumentType;
+            if(!defaultArgumentType)
                 return recordSemanticErrorInNode(analyzedNode, formatString("Argument {0} requires a explicit type specification.", {{validAnyValue(name)->printString()}}));
-            analyzedNode->type = environment->defaultArgumentType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+            analyzedNode->type = defaultArgumentType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
         }
     }
 
@@ -1219,7 +1220,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
 
-    if(!ownerEntity->canHaveFields())
+    if(!ownerEntity->canHaveUserDefinedFields())
         return recordSemanticErrorInNode(analyzedNode, formatString("Fields cannot be defined inside of program entity {0}.", {{ownerEntity->printString()}}));
 
     FieldVariablePtr fieldVariable;
@@ -1277,8 +1278,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
         fieldVariable->registerInCurrentModule();
         fieldVariable->enqueuePendingSemanticAnalysis();
 
-        ownerEntity->recordChildProgramEntityDefinition(fieldVariable);
-        ownerEntity->bindProgramEntityWithVisibility(fieldVariable, analyzedNode->visibility);
+        ownerEntity->addFieldVariableWithVisibility(fieldVariable, analyzedNode->visibility);
     }
 
     if(analyzedNode->initialValue)
@@ -1467,10 +1467,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
             if(boundSymbol)
             {
                 if(!boundSymbol->isCompiledMethod())
-                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-namespace definition in its parent program entity ({2}).",
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-function definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
                 compiledMethod = staticObjectCast<CompiledMethod> (boundSymbol);
+                if((compiledMethod->getMethodFlags() & analyzedNode->methodFlags) != analyzedNode->methodFlags)
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} has conflicting method flags with previous definition ({2}).",
+                        {{name->printString(), compiledMethod->printString()}}));
             }
         }
     }
@@ -1509,6 +1512,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+        compiledMethod->addMethodFlags(analyzedNode->methodFlags);
 
         compiledMethod->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
@@ -1657,6 +1661,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
         analyzedNode->visibility = ProgramEntityVisibility::Public;
+    bool isMacro = (analyzedNode->methodFlags & MethodFlags::Macro) != MethodFlags::None;
+    bool isFallback = (analyzedNode->methodFlags & MethodFlags::Fallback) != MethodFlags::None;
 
     // Analyze the arguments node.
     bool hasError = false;
@@ -1665,7 +1671,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         auto &arg = analyzedNode->arguments[i];
         if(arg->isASTArgumentDefinitionNode())
         {
-            arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
+            arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i), isMacro);
         }
         else
         {
@@ -1684,9 +1690,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         {
             analyzedNode->resultType = expectedResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
         }
-        else if(environment->defaultResultType)
+        else if(isMacro || environment->defaultResultType)
         {
-            analyzedNode->resultType = environment->defaultResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
+            auto defaultResultType = isMacro ? ASTNode::__staticType__() : environment->defaultResultType;
+            analyzedNode->resultType = defaultResultType->asASTNodeRequiredInPosition(analyzedNode->sourcePosition);
         }
         else
         {
@@ -1708,16 +1715,27 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     if(!name)
         return recordSemanticErrorInNode(analyzedNode, "Anonymous methods are not supported.");
 
+    // Make sure that fallback is used in conjunction with the macro flag.
+    if(isFallback && !isMacro)
+        return recordSemanticErrorInNode(analyzedNode, "Non macro fallback methods are not supported.");
+
     CompiledMethodPtr compiledMethod;
     bool alreadyRegistered = false;
     auto ownerEntity = environment->programEntityForPublicDefinitions;
     TypePtr receiverType;
-    if((analyzedNode->methodFlags & MethodFlags::Static) != MethodFlags::None)
-        receiverType = Type::getVoidType();
-    else if((analyzedNode->methodFlags & MethodFlags::Const) != MethodFlags::None)
-        receiverType = ownerEntity->asConstReceiverType();
+    if(isMacro)
+    {
+        receiverType = MacroInvocationContext::__staticType__();
+    }
     else
-        receiverType = ownerEntity->asReceiverType();
+    {
+        if((analyzedNode->methodFlags & MethodFlags::Static) != MethodFlags::None)
+            receiverType = Type::getVoidType();
+        else if((analyzedNode->methodFlags & MethodFlags::Const) != MethodFlags::None)
+            receiverType = ownerEntity->asConstReceiverType();
+        else
+            receiverType = ownerEntity->asReceiverType();
+    }
 
     // Forbid reserved names.
     if(isNameReserved(name))
@@ -1732,6 +1750,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
                 {{name->printString(), previousMethod->printString()}}));
 
         compiledMethod = staticObjectCast<CompiledMethod> (previousMethod);
+        if((compiledMethod->getMethodFlags() & analyzedNode->methodFlags) != analyzedNode->methodFlags)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} has conflicting method flags with previous definition ({2}).",
+                {{name->printString(), previousMethod->printString()}}));
         alreadyRegistered = true;
     }
 
@@ -1760,6 +1781,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
+        compiledMethod->addMethodFlags(analyzedNode->methodFlags);
 
         compiledMethod->registerInCurrentModule();
     }
@@ -1784,7 +1806,17 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     if(!alreadyRegistered)
     {
         ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
-        ownerEntity->addMethodWithSelector(compiledMethod, name);
+        if(isMacro)
+        {
+            if(isFallback)
+                ownerEntity->addMacroFallbackMethodWithSelector(compiledMethod, name);
+            else
+                ownerEntity->addMacroMethodWithSelector(compiledMethod, name);
+        }
+        else
+        {
+            ownerEntity->addMethodWithSelector(compiledMethod, name);
+        }
     }
 
     analyzedNode->analyzedProgramEntity = compiledMethod;

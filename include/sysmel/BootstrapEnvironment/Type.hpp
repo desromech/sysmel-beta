@@ -166,6 +166,18 @@ public:
     /// This method adds a list of conversion method.
     virtual void addConversions(const AnyValuePtrList &conversionMethods);
 
+    /// This method adds a field variable with the specified visibility.
+    virtual void addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility) override;
+
+    /// Gets the number of fields defined in this type.
+    size_t getFieldCount();
+
+    /// Gets the field at the given index.
+    const FieldVariablePtr &getField(size_t index);
+
+    /// Gets the fields defined in this type.
+    const FieldVariablePtrList &getFields();
+
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
@@ -319,7 +331,6 @@ public:
     // T => T const, T ref => T const ref
     virtual TypePtr asConstOrConstReferenceType();
 
-
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);
@@ -337,6 +348,7 @@ protected:
     ProgramEntityPtrList children;
     std::unordered_map<AnyValuePtr, ProgramEntityVisibilityWithBinding> bindings;
     
+    FieldVariablePtrList fields;
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;

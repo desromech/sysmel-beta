@@ -71,6 +71,7 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
         metaType->setSupertype(supertype->getType());
     }
         
+    addFieldVariables(staticMetadata->fieldVariables());
     addMacroMethodCategories(staticMetadata->instanceMacroMethods());
     addMethodCategories(staticMetadata->instanceMethods());
     addConstructors(staticMetadata->constructors());

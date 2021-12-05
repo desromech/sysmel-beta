@@ -1154,10 +1154,10 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto structDefinition = evaluateString("public struct TestStruct definition: {public field int32Field type: Int32}.");
                 CHECK(structDefinition->isStructureType());
 
-                Module::getActive()->analyzeAllPendingProgramEntities();
+                auto structType = staticObjectCast<Type> (structDefinition);
+                CHECK_EQUAL(1u, structType->getFieldCount());
 
-                auto structType = staticObjectCast<StructureType> (structDefinition);
-                CHECK_EQUAL(1u, structType->fields.size());
+                Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
     }
@@ -1244,6 +1244,21 @@ SUITE(SysmelCompileTimeEvaluation)
 
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("TestStruct() getX"));
                 CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestStruct() setX: 5; getX"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructureMacroMethod)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {public macro method myYourself := self}.");
+                CHECK(structDefinition->isStructureType());
+
+                CHECK(evaluateString("TestStruct()")->isStructureTypeValue());
+                CHECK(evaluateString("TestStruct() myYourself")->isStructureTypeValue());
 
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });

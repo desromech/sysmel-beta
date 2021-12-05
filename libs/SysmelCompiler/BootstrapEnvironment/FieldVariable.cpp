@@ -7,6 +7,7 @@
 #include "sysmel/BootstrapEnvironment/ASTVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/ASTFieldVariableAccessNode.hpp"
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
+#include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
 
@@ -51,6 +52,11 @@ void FieldVariable::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyVal
                     {value});
         }, MethodFlags::Macro),
     }}});
+}
+
+AnyValuePtr FieldVariable::getBootstrapFieldReferenceForWithType(const AnyValuePtr &, const TypePtr &)
+{
+    SysmelSelfSubclassResponsibility();
 }
 
 uint32_t FieldVariable::getSlotIndex() const

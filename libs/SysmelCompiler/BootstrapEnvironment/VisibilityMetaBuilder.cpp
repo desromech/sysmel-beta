@@ -45,6 +45,7 @@ static std::unordered_map<std::string, MethodFlags> methodFlagsMap = {
     {"conversion", MethodFlags::Conversion},
     {"explicit", MethodFlags::Explicit},
     {"final", MethodFlags::Final},
+    {"macro", MethodFlags::Macro},
     {"noThrow", MethodFlags::NoThrow},
     {"override", MethodFlags::Override},
     {"pure", MethodFlags::Pure},
@@ -62,7 +63,7 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
             if(it != methodFlagsMap.end())
             {
                 instanceContext->methodFlags = instanceContext->methodFlags | it->second;
-                return SuperType::analyzeMessageSendNodeWithSelector(selector, node, semanticAnalyzer);
+                return node->receiver;
             }
         }
         // Functional

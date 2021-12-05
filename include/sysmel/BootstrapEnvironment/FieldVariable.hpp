@@ -25,6 +25,8 @@ public:
     virtual AnyValuePtr asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable) override;
     virtual void addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &type) override;
 
+    virtual AnyValuePtr getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &referenceType);
+
     DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
 
     uint32_t getSlotIndex() const;

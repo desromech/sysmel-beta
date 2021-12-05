@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/LiteralAssociation.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapMethod.hpp"
+#include "sysmel/BootstrapEnvironment/BootstrapFieldVariable.hpp"
 
 namespace SysmelMoebius
 {
@@ -14,6 +15,14 @@ LiteralAssociationPtr LiteralAssociation::makeWith(const AnyValuePtr &key, const
     result->key = key;
     result->value = value;
     return result;
+}
+
+FieldVariablePtrList LiteralAssociation::__fieldVariables__()
+{
+    return FieldVariablePtrList{
+        makeBootstrapFieldVariable("key", &SelfType::key),
+        makeBootstrapFieldVariable("value", &SelfType::value),
+    };
 }
 
 MethodCategories LiteralAssociation::__instanceMethods__()

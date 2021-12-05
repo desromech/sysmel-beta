@@ -80,6 +80,7 @@ set(BootstrapEnvironment_Sources
     Auto.cpp
     AutoTypeInferenceSlot.cpp
     BootstrapExtensionMethods.cpp
+    BootstrapFieldVariable.cpp
     BootstrapMethod.cpp
     BootstrapModule.cpp
     BootstrapType.cpp

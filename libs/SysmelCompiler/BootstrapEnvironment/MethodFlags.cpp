@@ -15,6 +15,7 @@ SExpression methodFlagsToSExpression(MethodFlags flags)
 
     // Kind
     AddFlag(Macro);
+    AddFlag(Fallback);
     AddFlag(MessageMethod);
 
     // Side effects

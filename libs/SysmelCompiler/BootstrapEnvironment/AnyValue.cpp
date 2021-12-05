@@ -67,6 +67,11 @@ MethodCategories AnyValue::__instanceMethods__()
     };
 }
 
+FieldVariablePtrList AnyValue::__fieldVariables__()
+{
+    return FieldVariablePtrList{};
+}
+
 MethodCategories AnyValue::__typeMethods__()
 {
     return MethodCategories{};
@@ -604,6 +609,11 @@ bool AnyValue::isLocalVariable() const
 }
 
 bool AnyValue::isFieldVariable() const
+{
+    return false;
+}
+
+bool AnyValue::isBootstrapFieldVariable() const
 {
     return false;
 }
@@ -1404,7 +1414,9 @@ AnyValuePtr AnyValue::moveAssignValue(const AnyValuePtr &newValue)
 
 AnyValuePtr AnyValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)
 {
-    (void)referenceType;
+    if(field->isBootstrapFieldVariable())
+        return field->getBootstrapFieldReferenceForWithType(selfFromThis(), referenceType);
+
     signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for field {0} from {1}.", {field->printString(), printString()}));
 }
 

@@ -23,6 +23,7 @@ public:
 
     static LiteralAssociationPtr makeWith(const AnyValuePtr &key, const AnyValuePtr &value);
 
+    static FieldVariablePtrList __fieldVariables__();
     static MethodCategories __instanceMethods__();
 
     virtual bool isLiteralAssociation() const override;

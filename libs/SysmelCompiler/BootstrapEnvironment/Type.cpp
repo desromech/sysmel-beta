@@ -24,6 +24,7 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/UnsupportedOperation.hpp"
 #include "sysmel/BootstrapEnvironment/SpecificMethod.hpp"
+#include "sysmel/BootstrapEnvironment/FieldVariable.hpp"
 
 #include "sysmel/BootstrapEnvironment/DecoratedType.hpp"
 #include "sysmel/BootstrapEnvironment/PointerType.hpp"
@@ -464,6 +465,38 @@ void Type::addConversions(const AnyValuePtrList &conversionMethods)
         addConversion(conversion);
 }
 
+void Type::addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility)
+{
+    assert(!field->getParentProgramEntity());
+    if(!canHaveUserDefinedFields() && !field->isBootstrapFieldVariable())
+        signalNewWithMessage<UnsupportedOperation> (formatString("Cannot add an user defined field to type {0}.", {printString()}));
+
+    recordChildProgramEntityDefinition(field);
+    bindProgramEntityWithVisibility(field, visibility);
+    fields.push_back(field);
+}
+
+size_t Type::getFieldCount()
+{
+    if(canHaveUserDefinedFields())
+        ensureSemanticAnalysis();
+    return fields.size();
+}
+
+const FieldVariablePtr &Type::getField(size_t index)
+{
+    if(canHaveUserDefinedFields())
+        ensureSemanticAnalysis();
+    return fields[index];
+}
+
+const FieldVariablePtrList &Type::getFields()
+{
+    if(canHaveUserDefinedFields())
+        ensureSemanticAnalysis();
+    return fields;
+}
+
 void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!macroMethodDictionary)
@@ -589,6 +622,11 @@ void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFrag
 
 void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
+    auto oldParent = newChild->getParentProgramEntity();
+    assert(!oldParent || oldParent == selfFromThis());
+    if(oldParent)
+        return;
+
     children.push_back(newChild);
     newChild->setParentProgramEntity(selfFromThis());
 }

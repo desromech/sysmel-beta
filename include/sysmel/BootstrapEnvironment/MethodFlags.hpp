@@ -20,27 +20,28 @@ enum class MethodFlags : uint32_t
 
     // Kind
     Macro = 1<<0,
-    MessageMethod =1<<1,
+    Fallback = 1<<1,
+    MessageMethod =1<<2,
 
     // Side effects
-    Const = 1<<2,
-    Pure = 1<<3,
+    Const = 1<<3,
+    Pure = 1<<4,
 
     // Unwinding semantics
-    NoThrow = 1<<4,
-    ReturnsTwice = 1<<5,
+    NoThrow = 1<<5,
+    ReturnsTwice = 1<<6,
 
     // Type conversions
-    Constructor = 1<<6,
-    Conversion = 1<<7,
-    Explicit = 1<<8,
+    Constructor = 1<<7,
+    Conversion = 1<<8,
+    Explicit = 1<<9,
 
     // Dispatch mode
-    Abstract = 1<<9,
-    Final = 1<<10,
-    Override = 1<<11,
-    Virtual = 1<<12,
-    Static = 1<<13,
+    Abstract = 1<<10,
+    Final = 1<<11,
+    Override = 1<<12,
+    Virtual = 1<<13,
+    Static = 1<<14,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)
