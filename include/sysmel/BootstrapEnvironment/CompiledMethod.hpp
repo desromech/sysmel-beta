@@ -48,6 +48,7 @@ public:
     virtual void ensureSemanticAnalysis() override;
 
     virtual std::string fullPrintString() const override;
+    virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
 
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;

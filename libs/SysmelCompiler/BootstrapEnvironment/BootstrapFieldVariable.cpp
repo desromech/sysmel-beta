@@ -59,6 +59,19 @@ bool BootstrapFieldVariableBase::isBootstrapFieldVariable() const
     return true;
 }
 
+SExpression BootstrapFieldVariableBase::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"bootstrapFieldVariable"},
+        validAnyValue(name)->asSExpression(),
+    }};
+}
+
+SExpression BootstrapFieldVariableBase::asFullDefinitionSExpression() const
+{
+    return asSExpression();
+}
+
 AnyValuePtr BootstrapFieldVariableBase::loadFieldFrom(const AnyValuePtr &)
 {
     SysmelSelfSubclassResponsibility();

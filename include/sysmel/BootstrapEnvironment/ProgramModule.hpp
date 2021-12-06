@@ -30,6 +30,9 @@ public:
     virtual void enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &programEntity) override;
     virtual void analyzeAllPendingProgramEntities() override;
 
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+
 protected:
     std::string name;
     NamespacePtr globalNamespace;

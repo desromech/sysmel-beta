@@ -30,13 +30,19 @@ include(${CMAKE_ROOT}/Modules/CheckIncludeFileCXX.cmake)
 include(${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
 include(${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 
-##find_package(LLVM REQUIRED CONFIG)
+# Find llvm. We require it for the native backends.
+find_package(LLVM CONFIG)
+
+## We require LLVM for the native CPU and webassembly targets.
+## We also require it for some future GPU backend (e.g. DXIL)
+if(LLVM_FOUND)
+	llvm_map_components_to_libnames(llvm_libs support core target native arm aarch64 x86 webassembly)
+	message(STATUS "LLVM Libs ${llvm_libs}")
+endif()
 
 # Set output dir.
 set(EXECUTABLE_OUTPUT_PATH "${Sysmel_BINARY_DIR}/dist")
 set(LIBRARY_OUTPUT_PATH "${Sysmel_BINARY_DIR}/dist")
-
-option(LIVE_CODING_SUPPORT True "Build with live coding support")
 
 # Add the current directory.
 include_directories(

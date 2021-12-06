@@ -23,7 +23,7 @@ public:
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
-    virtual SExpression asFullSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     virtual AnyValuePtr getName() const override;
     virtual TypePtr getValueType() const override;

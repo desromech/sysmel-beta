@@ -54,6 +54,24 @@ void FieldVariable::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyVal
     }}});
 }
 
+SExpression FieldVariable::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"fieldVariable"},
+        validAnyValue(name)->asSExpression(),
+    }};
+}
+
+SExpression FieldVariable::asFullDefinitionSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"fieldVariable"},
+        validAnyValue(name)->asSExpression(),
+        valueType->asSExpression(),
+        LargeInteger{slotIndex}
+    }};
+}
+
 AnyValuePtr FieldVariable::getBootstrapFieldReferenceForWithType(const AnyValuePtr &, const TypePtr &)
 {
     SysmelSelfSubclassResponsibility();

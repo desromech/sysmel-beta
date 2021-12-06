@@ -105,22 +105,22 @@ SSACodeRegionCapturePtr SSACodeRegion::addCaptureWithType(const TypePtr &capture
     return result;
 }
 
-SExpression SSACodeRegion::asFullSExpression() const
+SExpression SSACodeRegion::asFullDefinitionSExpression() const
 {
     SExpressionList argumentsSExpr;
     argumentsSExpr.elements.reserve(basicBlocks.size());
     for(auto &arg : arguments)
-        argumentsSExpr.elements.push_back(arg->asFullSExpression());
+        argumentsSExpr.elements.push_back(arg->asFullDefinitionSExpression());
 
     SExpressionList capturesSExpr;
     capturesSExpr.elements.reserve(basicBlocks.size());
     for(auto &capture : captures)
-        capturesSExpr.elements.push_back(capture->asFullSExpression());
+        capturesSExpr.elements.push_back(capture->asFullDefinitionSExpression());
 
     SExpressionList basicBlocksSExpr;
     basicBlocksSExpr.elements.reserve(basicBlocks.size());
     for(auto &bb : basicBlocks)
-        basicBlocksSExpr.elements.push_back(bb->asFullSExpression());
+        basicBlocksSExpr.elements.push_back(bb->asFullDefinitionSExpression());
 
     return SExpressionList{{SExpressionIdentifier{{"region"}},
         sourcePosition ? sourcePosition->asSExpression() : nullptr,

@@ -27,11 +27,11 @@ SExpression SSABasicBlock::asSExpression() const
     }};
 }
 
-SExpression SSABasicBlock::asFullSExpression() const
+SExpression SSABasicBlock::asFullDefinitionSExpression() const
 {
     SExpressionList instructionsSExpr;
     instructionsDo([&](const SSAInstructionPtr &instr) {
-        instructionsSExpr.elements.push_back(instr->asFullSExpression());
+        instructionsSExpr.elements.push_back(instr->asFullDefinitionSExpression());
     });
 
     return SExpressionList{{SExpressionIdentifier{{"basicBlock"}},

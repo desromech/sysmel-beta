@@ -44,6 +44,9 @@ public:
     virtual void addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
     virtual void addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+    
 protected:
     AnyValuePtr name;
 

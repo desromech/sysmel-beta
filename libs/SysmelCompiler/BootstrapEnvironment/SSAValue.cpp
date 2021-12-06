@@ -25,7 +25,7 @@ AnyValuePtr SSAValue::accept(const SSAValueVisitorPtr &)
     SysmelSelfSubclassResponsibility();
 }
 
-SExpression SSAValue::asFullSExpression() const
+SExpression SSAValue::asFullDefinitionSExpression() const
 {
     return asSExpression();
 }
@@ -37,7 +37,7 @@ std::string SSAValue::printString() const
 
 std::string SSAValue::fullPrintString() const
 {
-    return sexpressionToPrettyString(asFullSExpression());
+    return sexpressionToPrettyString(asFullDefinitionSExpression());
 }
 
 TypePtr SSAValue::getValueType() const

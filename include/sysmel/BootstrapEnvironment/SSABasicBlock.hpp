@@ -23,7 +23,7 @@ public:
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
-    virtual SExpression asFullSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     const SSACodeRegionPtr &getParentCodeRegion() const;
     void setParentCodeRegion(const SSACodeRegionPtr &newParent);

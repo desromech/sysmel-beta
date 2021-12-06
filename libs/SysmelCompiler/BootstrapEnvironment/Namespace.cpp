@@ -129,5 +129,27 @@ void Namespace::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, co
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
+SExpression Namespace::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"namespace"}},
+        validAnyValue(name)->asSExpression()
+    }};
+}
+
+SExpression Namespace::asFullDefinitionSExpression() const
+{
+    SExpressionList childrenSExpr;
+    childrenSExpr.elements.reserve(children.size());
+    for(auto &child : children)
+        childrenSExpr.elements.push_back(child->asFullDefinitionSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"namespace"}},
+        validAnyValue(name)->asSExpression(),
+        childrenSExpr
+    }};
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

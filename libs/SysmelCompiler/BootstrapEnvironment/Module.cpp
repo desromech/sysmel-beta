@@ -48,10 +48,14 @@ void Module::lockForNewDefinitions()
 
 void Module::registerProgramEntity(const ProgramEntityPtr &programEntity)
 {
+    if(registeredProgramEntitiesSet.find(programEntity) != registeredProgramEntitiesSet.end())
+        return;
+        
     if(isLockedForNewDefinitions())
         signalNewWithMessage<UnsupportedOperation> ("Module is locked for new definitions.");
 
-    registeredProgramEntities.insert(programEntity);
+    registeredProgramEntitiesSet.insert(programEntity);
+    registeredProgramEntities.push_back(programEntity);
 }
 
 void Module::enqueueProgramEntitySemanticAnalysis(const ModuleDefinedProgramEntityPtr &)

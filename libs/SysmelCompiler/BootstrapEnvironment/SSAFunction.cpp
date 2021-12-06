@@ -86,7 +86,7 @@ void SSAFunction::setSourceProgramEntity(const ProgramEntityPtr &entity)
 SExpression SSAFunction::asSExpression() const
 {
     if(functionalType->isClosureType() && validAnyValue(name)->isAnonymousNameSymbol())
-        return asFullSExpression();
+        return asFullDefinitionSExpression();
     
     return SExpressionList{{SExpressionIdentifier{{"function"}},
         name ? name->asSExpression() : nullptr,
@@ -94,7 +94,7 @@ SExpression SSAFunction::asSExpression() const
     }};
 }
 
-SExpression SSAFunction::asFullSExpression() const
+SExpression SSAFunction::asFullDefinitionSExpression() const
 {
     enumerateLocalValues();
     return SExpressionList{{SExpressionIdentifier{{"function"}},
@@ -102,7 +102,7 @@ SExpression SSAFunction::asFullSExpression() const
         intrinsicName ? intrinsicName->asSExpression() : nullptr,
         functionalType ? functionalType->asSExpression() : nullptr,
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
-        mainCodeRegion ? mainCodeRegion->asFullSExpression() : nullptr,
+        mainCodeRegion ? mainCodeRegion->asFullDefinitionSExpression() : nullptr,
     }};
 }
 

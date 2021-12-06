@@ -21,7 +21,7 @@ public:
     virtual bool isSSACodeRegionArgument() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
-    virtual SExpression asFullSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     void setDeclarationPosition(const ASTSourcePositionPtr &position);
     void setDefinitionPosition(const ASTSourcePositionPtr &position);

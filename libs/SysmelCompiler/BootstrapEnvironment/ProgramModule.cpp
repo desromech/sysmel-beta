@@ -63,5 +63,28 @@ void ProgramModule::analyzeAllPendingProgramEntities()
 
 }
 
+SExpression ProgramModule::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"module"}},
+        name
+    }};
+}
+
+SExpression ProgramModule::asFullDefinitionSExpression() const
+{
+    SExpressionList programEntitities;
+    programEntitities.elements.reserve(registeredProgramEntities.size());
+    for(auto &entity : registeredProgramEntities)
+        programEntitities.elements.push_back(entity->asFullDefinitionSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"module"}},
+        name,
+        globalNamespace->asFullDefinitionSExpression(),
+    }};
+}
+
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

@@ -273,12 +273,33 @@ std::string CompiledMethod::fullPrintString() const
     return sexpressionToPrettyString(asFullDefinitionSExpression());
 }
 
+SExpression CompiledMethod::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"compiledMethod"},
+        validAnyValue(name)->asSExpression(),
+        functionalType->asSExpression()
+    }};
+}
+
 SExpression CompiledMethod::asFullDefinitionSExpression() const
 {
-    if(analyzedBodyNode)
-        return analyzedBodyNode->asSExpression();
+    SExpressionList childrenSExpr;
+    childrenSExpr.elements.reserve(children.size());
+    for(auto &child : children)
+        childrenSExpr.elements.push_back(child->asFullDefinitionSExpression());
 
-    return SExpressionVoid{};
+    SExpression bodySExpr = SExpressionVoid{};
+    if(analyzedBodyNode)
+        bodySExpr = analyzedBodyNode->asSExpression();
+
+    return SExpressionList{{
+        SExpressionIdentifier{"compiledMethod"},
+        validAnyValue(name)->asSExpression(),
+        functionalType->asSExpression(),
+        childrenSExpr,
+        bodySExpr
+    }};
 }
 
 void CompiledMethod::validateBeforeCompileTimeEvaluation()

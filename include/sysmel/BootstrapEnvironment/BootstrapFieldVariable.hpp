@@ -26,6 +26,9 @@ public:
     
     virtual bool isBootstrapFieldVariable() const override;
 
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+    
     virtual AnyValuePtr getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &referenceType) override;
 
     virtual AnyValuePtr loadFieldFrom(const AnyValuePtr &receiver);

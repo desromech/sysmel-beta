@@ -20,7 +20,7 @@ public:
     virtual bool isSSACodeRegion() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
-    virtual SExpression asFullSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     void setFunctionalType(const FunctionalTypePtr &functionalType);
     void setSignature(const TypePtrList &newArgumentTypes, const TypePtr &newResultType);

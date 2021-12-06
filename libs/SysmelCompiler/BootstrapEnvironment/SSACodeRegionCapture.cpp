@@ -28,7 +28,7 @@ AnyValuePtr SSACodeRegionCapture::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitCodeRegionCapture(selfFromThis());
 }
 
-SExpression SSACodeRegionCapture::asFullSExpression() const
+SExpression SSACodeRegionCapture::asFullDefinitionSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"capture"}},
         LargeInteger{localValueIndex},

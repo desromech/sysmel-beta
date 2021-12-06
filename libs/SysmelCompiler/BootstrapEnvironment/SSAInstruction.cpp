@@ -47,7 +47,7 @@ void SSAInstruction::regionsDo(const SSAInstructionRegionIterationBlock &aBlock)
     (void)aBlock;
 }
 
-SExpression SSAInstruction::asFullSExpression() const
+SExpression SSAInstruction::asFullDefinitionSExpression() const
 {
     auto result = SExpressionList{{SExpressionIdentifier{{getMnemonic()}},
         LargeInteger{localValueIndex},
@@ -60,7 +60,7 @@ SExpression SSAInstruction::asFullSExpression() const
     });
 
     regionsDo([&](const SSACodeRegionPtr &region) {
-        result.elements.push_back(region ? region->asFullSExpression() : nullptr);
+        result.elements.push_back(region ? region->asFullDefinitionSExpression() : nullptr);
     });
 
     return result;

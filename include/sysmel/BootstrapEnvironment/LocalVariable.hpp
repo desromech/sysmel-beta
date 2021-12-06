@@ -18,6 +18,9 @@ public:
     static constexpr char const __typeName__[] = "LocalVariable";
 
     virtual bool isLocalVariable() const override;
+
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 };
 
 } // End of namespace BootstrapEnvironment

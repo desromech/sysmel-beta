@@ -28,7 +28,7 @@ AnyValuePtr SSACodeRegionArgument::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitCodeRegionArgument(selfFromThis());
 }
 
-SExpression SSACodeRegionArgument::asFullSExpression() const
+SExpression SSACodeRegionArgument::asFullDefinitionSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"argument"}},
         LargeInteger{localValueIndex},

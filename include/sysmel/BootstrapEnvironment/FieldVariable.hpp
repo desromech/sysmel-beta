@@ -25,13 +25,16 @@ public:
     virtual AnyValuePtr asMemberBoundWithReceiverVariable(const VariablePtr &receiverVariable) override;
     virtual void addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const TypePtr &type) override;
 
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+    
     virtual AnyValuePtr getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &referenceType);
 
     DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
 
     uint32_t getSlotIndex() const;
     void setSlotIndex(uint32_t newSlotIndex);
-    
+   
 protected:
     uint32_t slotIndex = 0;
 };

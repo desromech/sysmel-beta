@@ -32,7 +32,7 @@ public:
 
     virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
 
-    virtual SExpression asFullSExpression() const;
+    virtual SExpression asFullDefinitionSExpression() const;
 
     const SSABasicBlockPtr &getParentBasicBlock() const;
     void setParentBasicBlock(const SSABasicBlockPtr &newParent);

@@ -1,6 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ArgumentVariable.hpp"
 #include "sysmel/BootstrapEnvironment/ASTArgumentDefinitionNode.hpp"
 #include "sysmel/BootstrapEnvironment/CompileTimeCleanUpScope.hpp"
+#include "sysmel/BootstrapEnvironment/Type.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 
@@ -40,6 +41,22 @@ void ArgumentVariable::setArgumentDefinitionNode(const ASTArgumentDefinitionNode
     setDefinitionNode(node);
 }
 
+SExpression ArgumentVariable::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"argumentVariable"},
+        validAnyValue(name)->asSExpression(),
+    }};
+}
+
+SExpression ArgumentVariable::asFullDefinitionSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{"argumentVariable"},
+        validAnyValue(name)->asSExpression(),
+        valueType->asSExpression(),
+    }};
+}
 
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

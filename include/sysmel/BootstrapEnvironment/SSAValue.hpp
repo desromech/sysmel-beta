@@ -64,7 +64,7 @@ public:
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor);
 
-    virtual SExpression asFullSExpression() const;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     virtual std::string printString() const override;
     virtual std::string fullPrintString() const override;

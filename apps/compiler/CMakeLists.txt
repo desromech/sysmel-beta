@@ -1,6 +1,6 @@
-set(SysmelI_Sources
-    Interpreter.cpp
+set(SysmelC_Sources
+    Compiler.cpp
 )
 
-add_executable(sysmeli ${SysmelI_Sources})
-target_link_libraries(sysmeli SysmelCompiler)
+add_executable(sysmelc ${SysmelC_Sources})
+target_link_libraries(sysmelc SysmelCompiler)

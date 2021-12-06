@@ -26,7 +26,9 @@ public:
     void setArgumentDeclarationNode(const ASTArgumentDefinitionNodePtr &node);
     void setArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node);
 
-
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+    
     bool isImplicit = false;
 };
 

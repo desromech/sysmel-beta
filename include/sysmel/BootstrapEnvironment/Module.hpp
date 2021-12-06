@@ -61,7 +61,8 @@ public:
 
 protected:
     bool lockedForNewDefinitions = false;
-    std::unordered_set<ProgramEntityPtr> registeredProgramEntities;
+    std::vector<ProgramEntityPtr> registeredProgramEntities;
+    std::unordered_set<ProgramEntityPtr> registeredProgramEntitiesSet;
 };
 
 } // End of namespace BootstrapEnvironment
