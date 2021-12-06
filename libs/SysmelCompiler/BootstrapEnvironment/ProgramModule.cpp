@@ -24,7 +24,7 @@ void ProgramModule::initialize()
     SuperType::initialize();
     
     globalNamespace = Namespace::makeWithName(nullptr);
-    globalNamespace->registerInCurrentModule();
+    globalNamespace->setParentProgramEntity(selfFromThis());
 }
 
 NamespacePtr ProgramModule::getGlobalNamespace() const

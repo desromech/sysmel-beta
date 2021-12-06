@@ -45,7 +45,7 @@ public:
 
     virtual bool isProgramEntity() const override;
 
-    virtual ModulePtr getDefinitionModule() const;
+    virtual ModulePtr getDefinitionModule();
     virtual AnyValuePtr getName() const;
     virtual SExpression asSExpression() const override;
 

@@ -23,8 +23,6 @@ void BootstrapModule::initialize()
     {
         auto type = basicMakeObject<BootstrapType> ();
         auto metaType = basicMakeObject<MetaType> ();
-        type->registerInCurrentModule();
-        metaType->registerInCurrentModule();
         type->setType(metaType);
         metaType->setThisType(type);
 
@@ -61,17 +59,15 @@ void BootstrapModule::initialize()
 
     // Create namespaces.
     globalNamespace = Namespace::makeWithName(nullptr);
-    globalNamespace->registerInCurrentModule();
+    globalNamespace->setParentProgramEntity(selfFromThis());
 
     // Create the bootstrap environemnt namespace.
     bootstrapEnvironmentNamespace = Namespace::makeWithName(internSymbol("__BootstrapEnvironment__"));
-    bootstrapEnvironmentNamespace->registerInCurrentModule();
     globalNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentNamespace);
     globalNamespace->bindProgramEntityWithVisibility(bootstrapEnvironmentNamespace, ProgramEntityVisibility::Public);
 
     // Create the bootstrap environment sysmel language namespace.
     bootstrapEnvironmentSysmelLanguageNamespace = Namespace::makeWithName(internSymbol("SysmelLanguage"));
-    bootstrapEnvironmentSysmelLanguageNamespace->registerInCurrentModule();
     bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapEnvironmentSysmelLanguageNamespace);
     bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(bootstrapEnvironmentSysmelLanguageNamespace, ProgramEntityVisibility::Public);
 

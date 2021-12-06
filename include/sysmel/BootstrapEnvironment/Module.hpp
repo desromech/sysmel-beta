@@ -58,6 +58,7 @@ public:
     virtual void analyzeAllPendingProgramEntities();
 
     virtual NamespacePtr getGlobalNamespace() const;
+    virtual ModulePtr getDefinitionModule() override;
 
 protected:
     bool lockedForNewDefinitions = false;

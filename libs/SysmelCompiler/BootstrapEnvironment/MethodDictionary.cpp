@@ -45,7 +45,6 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &method, const An
             auto newPatternMatchingMethod = basicMakeObject<PatternMatchingMethod> (selector);
             newPatternMatchingMethod->addPattern(staticObjectCast<Method> (existent));
             newPatternMatchingMethod->addPattern(staticObjectCast<Method> (method));
-            newPatternMatchingMethod->registerInCurrentModule();
             dictionary[selector] = newPatternMatchingMethod;
         }
         else

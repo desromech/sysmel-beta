@@ -21,13 +21,10 @@ public:
 
     virtual bool isSemanticAnalyzed() const;
 
-    virtual void registerInCurrentModule();
     virtual void ensureSemanticAnalysis();
     virtual void enqueuePendingSemanticAnalysis();
 
-    virtual ModulePtr getDefinitionModule() const override;
-protected:
-    ModuleWeakPtr definitionModule;
+    virtual ModulePtr getDefinitionModule() override;
 };
 
 } // End of namespace BootstrapEnvironment

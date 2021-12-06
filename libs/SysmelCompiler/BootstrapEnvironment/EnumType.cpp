@@ -165,7 +165,6 @@ void EnumType::addValue(const ASTNodePtr &position, const AnyValuePtr &key, cons
     constant->setName(key);
     constant->setValue(wrappedValue);
     constant->setDefinitionNode(position);
-    constant->registerInCurrentModule();
     recordChildProgramEntityDefinition(constant);
     bindProgramEntityWithVisibility(constant, ProgramEntityVisibility::Public);
 }

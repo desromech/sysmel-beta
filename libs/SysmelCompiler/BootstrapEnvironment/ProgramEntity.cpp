@@ -22,7 +22,7 @@ bool ProgramEntity::isProgramEntity() const
     return true;
 }
 
-ModulePtr ProgramEntity::getDefinitionModule() const
+ModulePtr ProgramEntity::getDefinitionModule()
 {
     return ModulePtr();
 }

@@ -631,7 +631,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
         compiledMethod->setArgumentDefinitionNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
     }
 
-    compiledMethod->registerInCurrentModule();
     ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
 
     // Set the definition body.
@@ -1186,7 +1185,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
         globalVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         globalVariable->setDeclarationNode(analyzedNode);
         globalVariable->setDefinitionNode(analyzedNode);
-        globalVariable->registerInCurrentModule();
         globalVariable->enqueuePendingSemanticAnalysis();
 
         ownerEntity->recordChildProgramEntityDefinition(globalVariable);
@@ -1275,7 +1273,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
         fieldVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         fieldVariable->setDeclarationNode(analyzedNode);
         fieldVariable->setDefinitionNode(analyzedNode);
-        fieldVariable->registerInCurrentModule();
         fieldVariable->enqueuePendingSemanticAnalysis();
 
         ownerEntity->addFieldVariableWithVisibility(fieldVariable, analyzedNode->visibility);
@@ -1339,7 +1336,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
     {
         compileTimeConstant = basicMakeObject<CompileTimeConstant> ();
         compileTimeConstant->name = name;
-        compileTimeConstant->registerInCurrentModule();
         compileTimeConstant->enqueuePendingSemanticAnalysis();
 
         ownerEntity->recordChildProgramEntityDefinition(compileTimeConstant);
@@ -1513,8 +1509,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
         compiledMethod->addMethodFlags(analyzedNode->methodFlags);
-
-        compiledMethod->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
 
         if(isLocalDefinition)
@@ -1616,7 +1610,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
         templateEntity->setName(name);
         templateEntity->setDeclarationNode(analyzedNode);
         templateEntity->setArgumentTypes(argumentTypes);
-        templateEntity->registerInCurrentModule();
         templateEntity->enqueuePendingSemanticAnalysis();
 
         // Set the arguments declaration node.
@@ -1782,8 +1775,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
             compiledMethod->setArgumentDeclarationNode(i, staticObjectCast<ASTArgumentDefinitionNode> (analyzedNode->arguments[i]));
         compiledMethod->addMethodFlags(analyzedNode->methodFlags);
-
-        compiledMethod->registerInCurrentModule();
     }
     else
     {
@@ -1934,7 +1925,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
         enumType->setName(name);
         enumType->setBaseType(AnyValue::__staticType__());
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
-        enumType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(enumType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(enumType, analyzedNode->visibility);
@@ -2068,7 +2058,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
         classType = basicMakeObject<ClassType> ();
         classType->setName(name);
         classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
-        classType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(classType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(classType, analyzedNode->visibility);
@@ -2136,7 +2125,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
         structureType = basicMakeObject<StructureType> ();
         structureType->setName(name);
         structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
-        structureType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(structureType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(structureType, analyzedNode->visibility);
@@ -2197,7 +2185,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
         unionType = basicMakeObject<UnionType> ();
         unionType->setName(name);
         unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
-        unionType->registerInCurrentModule();
         ownerEntity->recordChildProgramEntityDefinition(unionType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(unionType, analyzedNode->visibility);

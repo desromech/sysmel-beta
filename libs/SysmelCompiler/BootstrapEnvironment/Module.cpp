@@ -73,5 +73,10 @@ NamespacePtr Module::getGlobalNamespace() const
     return nullptr;
 }
 
+ModulePtr Module::getDefinitionModule()
+{
+    return selfFromThis();
+}
+
 } // End of namespace BootstrapEnvironment
 } // End of namespace SysmelMoebius

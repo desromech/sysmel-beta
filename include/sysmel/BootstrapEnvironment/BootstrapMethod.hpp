@@ -191,7 +191,6 @@ BootstrapMethodBasePtr makeBootstrapMethod(const std::string &selector, FT &&fun
     auto selectorSymbol = internSymbol(selector);
     auto method = basicMakeObject<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
     method->addMethodFlags(flags);
-    method->registerInCurrentModule();
     return method;
 }
 
@@ -200,7 +199,6 @@ MethodBinding makeMethodBinding(const AnyValuePtr &selector, FT &&functor, Metho
 {
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<MethodSignature, FT> > (selector, std::forward<FT> (functor));
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selector, bootstrapMethod};
 }
 
@@ -215,7 +213,6 @@ MethodBinding makeMethodBinding(const AnyValuePtr &selector, FT &&functor, Metho
 {
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<FT> > (selector, std::forward<FT> (functor));
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selector, bootstrapMethod};
 }
 
@@ -233,7 +230,6 @@ MethodBinding makeIntrinsicMethodBinding(const std::string &intrinsicName, const
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->setIntrinsicName(intrinsicSymbol);
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
@@ -245,7 +241,6 @@ MethodBinding makeIntrinsicMethodBinding(const std::string &intrinsicName, const
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->setIntrinsicName(intrinsicSymbol);
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
@@ -258,7 +253,6 @@ MethodBinding makeIntrinsicMethodBindingWithSignature(const std::string &intrins
     bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
     bootstrapMethod->setIntrinsicName(intrinsicSymbol);
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
@@ -271,7 +265,6 @@ MethodBinding makeIntrinsicMethodBindingWithSignature(const std::string &intrins
     bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
     bootstrapMethod->setIntrinsicName(intrinsicSymbol);
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return MethodBinding{selectorSymbol, bootstrapMethod};
 }
 
@@ -282,7 +275,6 @@ SpecificMethodPtr makeConstructor(FT &&functor, MethodFlags flags = MethodFlags:
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->makeConstructor();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 template<typename MethodSignature, typename FT>
@@ -300,7 +292,6 @@ SpecificMethodPtr makeConstructor(FT &&functor, MethodFlags flags = MethodFlags:
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->makeConstructor();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 
@@ -320,7 +311,6 @@ SpecificMethodPtr makeConstructorWithSignature(const TypePtr &receiverType, cons
     bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
     bootstrapMethod->makeConstructor();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 template<typename MethodSignature, typename FT>
@@ -338,7 +328,6 @@ SpecificMethodPtr makeConversion(FT &&functor, MethodFlags flags = MethodFlags::
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<MethodSignature, FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->makeConversion();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 template<typename MethodSignature, typename FT>
@@ -356,7 +345,6 @@ SpecificMethodPtr makeConversion(FT &&functor, MethodFlags flags = MethodFlags::
     auto bootstrapMethod = basicMakeObject<BootstrapMethod<FT> > (selectorSymbol, std::forward<FT> (functor));
     bootstrapMethod->makeConversion();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 
@@ -376,7 +364,6 @@ SpecificMethodPtr makeConversionWithSignature(const TypePtr &receiverType, const
     bootstrapMethod->setMethodSignature(receiverType, resultType, argumentTypes);
     bootstrapMethod->makeConversion();
     bootstrapMethod->addMethodFlags(flags);
-    bootstrapMethod->registerInCurrentModule();
     return bootstrapMethod;
 }
 template<typename MethodSignature, typename FT>
