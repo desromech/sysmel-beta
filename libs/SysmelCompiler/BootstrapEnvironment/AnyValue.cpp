@@ -1023,6 +1023,36 @@ bool AnyValue::isSSAValue() const
     return false;
 }
 
+bool AnyValue::isSSAModule() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAProgramEntity() const
+{
+    return false;
+}
+
+bool AnyValue::isSSANamespace() const
+{
+    return false;
+}
+
+bool AnyValue::isSSATypeProgramEntity() const
+{
+    return false;
+}
+
+bool AnyValue::isSSATemplate() const
+{
+    return false;
+}
+
+bool AnyValue::isSSATemplateInstance() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAConstantValue() const
 {
     return false;

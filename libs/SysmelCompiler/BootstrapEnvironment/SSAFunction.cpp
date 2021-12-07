@@ -23,11 +23,6 @@ AnyValuePtr SSAFunction::accept(const SSAValueVisitorPtr &visitor)
     return visitor->visitFunction(selfFromThis());
 }
 
-AnyValuePtr SSAFunction::getName() const
-{
-    return name;
-}
-
 TypePtr SSAFunction::getValueType() const
 {
     return functionalType;

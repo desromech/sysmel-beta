@@ -869,6 +869,24 @@ public:
     // Is this a SSA value?
     virtual bool isSSAValue() const;
 
+    // Is this a SSA program entity?
+    virtual bool isSSAProgramEntity() const;
+
+    // Is this a SSA namespace?
+    virtual bool isSSANamespace() const;
+
+    // Is this a SSA type?
+    virtual bool isSSATypeProgramEntity() const;
+
+    // Is this a SSA template?
+    virtual bool isSSATemplate() const;
+
+    // Is this a SSA template instance?
+    virtual bool isSSATemplateInstance() const;
+
+    // Is this a SSA module?
+    virtual bool isSSAModule() const;
+
     // Is this a SSA constant value?
     virtual bool isSSAConstantValue() const;
 

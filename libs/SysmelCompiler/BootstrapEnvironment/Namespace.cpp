@@ -5,6 +5,7 @@
 #include "sysmel/BootstrapEnvironment/MethodDictionary.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 #include "sysmel/BootstrapEnvironment/Error.hpp"
+#include "sysmel/BootstrapEnvironment/SSANamespace.hpp"
 
 namespace SysmelMoebius
 {
@@ -149,6 +150,22 @@ SExpression Namespace::asFullDefinitionSExpression() const
         validAnyValue(name)->asSExpression(),
         childrenSExpr
     }};
+}
+
+SSAValuePtr Namespace::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+{
+    if(!ssaNamespace)
+    {
+        ssaNamespace = basicMakeObject<SSANamespace> ();
+        auto parentSSAValue = getParentProgramEntity()->asProgramEntitySSAValue();
+        if(!parentSSAValue->isSSAModule())
+        {
+            assert(parentSSAValue->isSSAProgramEntity());
+            parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaNamespace);
+        }
+    }
+
+    return ssaNamespace;
 }
 
 } // End of namespace BootstrapEnvironment

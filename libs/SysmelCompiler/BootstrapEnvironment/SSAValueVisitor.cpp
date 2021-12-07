@@ -2,8 +2,11 @@
 #include "sysmel/BootstrapEnvironment/SSAUpcastInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSADowncastInstruction.hpp"
 #include "sysmel/BootstrapEnvironment/SSABitcastInstruction.hpp"
+
 #include "sysmel/BootstrapEnvironment/SubclassResponsibility.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
+
+#include "sysmel/BootstrapEnvironment/SSANamespace.hpp"
 
 namespace SysmelMoebius
 {
@@ -32,12 +35,47 @@ AnyValuePtr SSAValueVisitor::visitGlobalValue(const SSAGlobalValuePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitProgramEntity(const SSAProgramEntityPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitProgramEntityWithChildren(const SSAProgramEntityWithChildrenPtr &value)
+{
+    return visitProgramEntity(value);
+}
+
+AnyValuePtr SSAValueVisitor::visitModule(const SSAModulePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }
 
 AnyValuePtr SSAValueVisitor::visitFunction(const SSAFunctionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitNamespace(const SSANamespacePtr &value)
+{
+    return visitProgramEntityWithChildren(value);
+}
+
+AnyValuePtr SSAValueVisitor::visitTypeProgramEntity(const SSATypeProgramEntityPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitTemplate(const SSATemplatePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitTemplateInstance(const SSATemplateInstancePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

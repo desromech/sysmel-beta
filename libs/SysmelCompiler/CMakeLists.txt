@@ -234,10 +234,17 @@ set(BootstrapEnvironment_Sources
     SSAGetAggregateSlotReferenceInstruction.cpp
     SSAMakeAggregateInstruction.cpp
     SSAMakeClosureInstruction.cpp
+    SSAModule.cpp
+    SSANamespace.cpp
+    SSAProgramEntity.cpp
+    SSAProgramEntityWithChildren.cpp
     SSAReturnFromFunctionInstruction.cpp
     SSAReturnFromRegionInstruction.cpp
     SSASendMessageInstruction.cpp
     SSAStoreInstruction.cpp
+    SSATemplate.cpp
+    SSATemplateInstance.cpp
+    SSATypeProgramEntity.cpp
     SSAUnreachableInstruction.cpp
     SSAUpcastInstruction.cpp
     SSAValue.cpp

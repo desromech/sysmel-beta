@@ -224,13 +224,26 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     (void)requiredSourcePosition;
     if(ssaCompiledFunction)
         return ssaCompiledFunction;
-    ensureSemanticAnalysis();
-    
+
+    // Make the function.    
     ssaCompiledFunction = basicMakeObject<SSAFunction> ();
     ssaCompiledFunction->initializeWithNameAndType(getName(), functionalType);
     ssaCompiledFunction->setIntrinsicName(getIntrinsicName());
     ssaCompiledFunction->setDeclarationPosition(declarationPosition);
     ssaCompiledFunction->setSourceProgramEntity(selfFromThis());
+
+    ensureSemanticAnalysis();
+
+    // Add the function onto its ssa parent.
+    auto parentEntity = getParentProgramEntity();
+    // FIXME: Add the top-level script methods some-where.
+    if(parentEntity)
+    {
+        auto parentSSAValue = parentEntity->asProgramEntitySSAValue();
+        assert(parentSSAValue->isSSAProgramEntity());
+        parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaCompiledFunction);
+    }
+
     auto mainCodeRegion = ssaCompiledFunction->getMainCodeRegion();
 
     // Set the argument metadata.

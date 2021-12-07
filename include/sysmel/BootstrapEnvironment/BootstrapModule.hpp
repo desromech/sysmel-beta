@@ -12,6 +12,7 @@ namespace BootstrapEnvironment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(BootstrapModule);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Namespace);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAModule);
 
 /**
  * I am the bootstrap module of the system. I am a
@@ -40,6 +41,8 @@ public:
         return bootstrapEnvironmentSysmelLanguageNamespace;
     }
 
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+
 private:
     std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
@@ -47,6 +50,7 @@ private:
     NamespacePtr globalNamespace;
     NamespacePtr bootstrapEnvironmentNamespace;
     NamespacePtr bootstrapEnvironmentSysmelLanguageNamespace;
+    SSAModulePtr ssaModule;
 };
 
 

@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramModule);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAModule);
 
 /**
  * I am a particular module in the system.
@@ -32,10 +33,12 @@ public:
 
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
 protected:
     std::string name;
     NamespacePtr globalNamespace;
+    SSAModulePtr ssaModule;
 
     std::vector<ModuleReferencePtr> importedModules;
     std::vector<ModuleReferencePtr> indirectlyImportedModules;

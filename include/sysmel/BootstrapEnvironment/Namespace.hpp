@@ -11,6 +11,7 @@ namespace BootstrapEnvironment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Namespace);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSANamespace);
 
 /**
  * I am a namespace.
@@ -46,6 +47,8 @@ public:
 
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
+
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     
 protected:
     AnyValuePtr name;
@@ -56,6 +59,8 @@ protected:
     MethodDictionaryPtr macroMethodDictionary;
     MethodDictionaryPtr methodDictionary;
     MethodDictionaryPtr macroFallbackMethodDictionary;
+
+    SSANamespacePtr ssaNamespace;
 };
 
 } // End of namespace BootstrapEnvironment

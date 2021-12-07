@@ -35,6 +35,8 @@
 #include "sysmel/BootstrapEnvironment/VariantType.hpp"
 #include "sysmel/BootstrapEnvironment/FunctionType.hpp"
 
+#include "sysmel/BootstrapEnvironment/SSATypeProgramEntity.hpp"
+
 #include <algorithm>
 
 namespace SysmelMoebius
@@ -1034,6 +1036,31 @@ bool Type::isConstOrConstReferenceType() const
 TypePtr Type::asConstOrConstReferenceType()
 {
     return withConst();
+}
+
+SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
+{
+    if(!ssaTypeProgramEntity)
+    {
+        ssaTypeProgramEntity = basicMakeObject<SSATypeProgramEntity> ();
+        ssaTypeProgramEntity->setValue(selfFromThis());
+        auto parentProgramEntity = getParentProgramEntity();
+        if(parentProgramEntity)
+        {
+            auto parentSSAValue = parentProgramEntity->asProgramEntitySSAValue();
+            if(parentSSAValue->isSSAProgramEntity())
+            {
+                assert(parentSSAValue->isSSAProgramEntity());
+                parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaTypeProgramEntity);
+            }
+        }
+        else
+        {
+            // TODO: Handle the bootstrap environment defined types.
+        }
+    }
+
+    return ssaTypeProgramEntity;
 }
 
 } // End of namespace BootstrapEnvironment

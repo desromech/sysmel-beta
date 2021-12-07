@@ -20,8 +20,16 @@ public:
     virtual AnyValuePtr visitConstantValue(const SSAConstantValuePtr &value);
     virtual AnyValuePtr visitConstantLiteralValue(const SSAConstantLiteralValuePtr &value);
     virtual AnyValuePtr visitGlobalValue(const SSAGlobalValuePtr &value);
+    virtual AnyValuePtr visitProgramEntity(const SSAProgramEntityPtr &value);
+    virtual AnyValuePtr visitModule(const SSAModulePtr &value);
     virtual AnyValuePtr visitGlobalVariable(const SSAGlobalVariablePtr &value);
+    virtual AnyValuePtr visitProgramEntityWithChildren(const SSAProgramEntityWithChildrenPtr &value);
     virtual AnyValuePtr visitFunction(const SSAFunctionPtr &value);
+    virtual AnyValuePtr visitNamespace(const SSANamespacePtr &value);
+    virtual AnyValuePtr visitTypeProgramEntity(const SSATypeProgramEntityPtr &value);
+    virtual AnyValuePtr visitTemplate(const SSATemplatePtr &value);
+    virtual AnyValuePtr visitTemplateInstance(const SSATemplateInstancePtr &value);
+
     virtual AnyValuePtr visitCodeRegion(const SSACodeRegionPtr &value);
     virtual AnyValuePtr visitBasicBlock(const SSABasicBlockPtr &value);
 

@@ -2,7 +2,7 @@
 #define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SSA_FUNCTION_HPP
 #pragma once
 
-#include "SSAGlobalValue.hpp"
+#include "SSAProgramEntityWithChildren.hpp"
 
 namespace SysmelMoebius
 {
@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAFunction : public SubtypeOf<SSAGlobalValue, SSAFunction>
+class SSAFunction : public SubtypeOf<SSAProgramEntityWithChildren, SSAFunction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAFunction";
@@ -25,7 +25,6 @@ public:
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
 
-    virtual AnyValuePtr getName() const override;
     virtual TypePtr getValueType() const override;
     const FunctionalTypePtr &getFunctionalType();
 
@@ -44,7 +43,6 @@ public:
 protected:
     void enumerateLocalValues() const;
 
-    AnyValuePtr name;
     AnyValuePtr intrinsicName;
     FunctionalTypePtr functionalType;
     ASTSourcePositionPtr sourcePosition;

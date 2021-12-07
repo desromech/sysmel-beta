@@ -1,5 +1,7 @@
 #include "sysmel/BootstrapEnvironment/ProgramModule.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
+#include "sysmel/BootstrapEnvironment/SSAModule.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
 
 namespace SysmelMoebius
@@ -61,6 +63,18 @@ void ProgramModule::analyzeAllPendingProgramEntities()
         programEntitiesWithPendingAnalysisSet.clear();
     }
 
+    asSSAValueRequiredInPosition(ASTSourcePosition::empty());
+}
+
+SSAValuePtr ProgramModule::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &position)
+{
+    if(!ssaModule)
+    {
+        ssaModule = basicMakeObject<SSAModule> ();
+        ssaModule->setName(internSymbol(name));
+        ssaModule->setGlobalNamespace(globalNamespace->asSSAValueRequiredInPosition(position));
+    }
+    return ssaModule;
 }
 
 SExpression ProgramModule::asSExpression() const

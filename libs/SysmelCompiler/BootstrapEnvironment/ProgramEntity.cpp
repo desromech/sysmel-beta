@@ -7,6 +7,7 @@
 #include "sysmel/BootstrapEnvironment/MacroInvocationContext.hpp"
 #include "sysmel/BootstrapEnvironment/ASTBuilder.hpp"
 #include "sysmel/BootstrapEnvironment/ASTIdentifierReferenceNode.hpp"
+#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
 #include "sysmel/BootstrapEnvironment/StringUtilities.hpp"
 #include "sysmel/BootstrapEnvironment/Type.hpp"
 
@@ -35,6 +36,11 @@ AnyValuePtr ProgramEntity::getName() const
 SExpression ProgramEntity::asSExpression() const
 {
     return printString();
+}
+
+SSAValuePtr ProgramEntity::asProgramEntitySSAValue()
+{
+    return asSSAValueRequiredInPosition(ASTSourcePosition::empty());
 }
 
 TypePtr ProgramEntity::asConstReceiverType()

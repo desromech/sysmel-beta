@@ -5,6 +5,7 @@
 #include "sysmel/BootstrapEnvironment/BootstrapType.hpp"
 #include "sysmel/BootstrapEnvironment/BootstrapExtensionMethods.hpp"
 #include "sysmel/BootstrapEnvironment/Namespace.hpp"
+#include "sysmel/BootstrapEnvironment/SSAModule.hpp"
 
 namespace SysmelMoebius
 {
@@ -120,6 +121,16 @@ TypePtr BootstrapModule::getBootstrapDefinedType(size_t bootstrapTypeID)
 TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID)
 {
     return RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(bootstrapTypeID);
+}
+
+SSAValuePtr BootstrapModule::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &position)
+{
+    if(!ssaModule)
+    {
+        ssaModule = basicMakeObject<SSAModule> ();
+        ssaModule->setGlobalNamespace(globalNamespace->asSSAValueRequiredInPosition(position));
+    }
+    return ssaModule;
 }
 
 } // End of namespace BootstrapEnvironment

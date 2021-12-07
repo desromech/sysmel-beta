@@ -20,6 +20,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSATypeProgramEntity);
 
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
@@ -331,6 +332,9 @@ public:
     // T => T const, T ref => T const ref
     virtual TypePtr asConstOrConstReferenceType();
 
+    // The type SSA value.
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);
@@ -360,6 +364,8 @@ protected:
     TypeConversionRulePtrList reinterpretTypeConversionRules;
 
     DeferredCompileTimeCodeFragmentPtrList pendingBodyBlockCodeFragments;
+
+    SSATypeProgramEntityPtr ssaTypeProgramEntity;
 };
 
 } // End of namespace BootstrapEnvironment

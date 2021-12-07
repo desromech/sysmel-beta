@@ -49,6 +49,8 @@ public:
     virtual AnyValuePtr getName() const;
     virtual SExpression asSExpression() const override;
 
+    virtual SSAValuePtr asProgramEntitySSAValue();
+
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild);
     virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding);
     virtual void bindProgramEntityWithVisibility(const ProgramEntityPtr &programEntity, ProgramEntityVisibility visibility);
