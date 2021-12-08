@@ -211,6 +211,7 @@ set(Environment_Sources
     SSABuilder.cpp
     SSACallInstruction.cpp
     SSACastInstruction.cpp
+    SSACodeGenerationBackend.cpp
     SSACodeRegion.cpp
     SSACodeRegionArgument.cpp
     SSACodeRegionCapture.cpp

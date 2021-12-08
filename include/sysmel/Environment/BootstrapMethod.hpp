@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_BOOTSTRAP_METHOD_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_BOOTSTRAP_METHOD_HPP
+#ifndef SYSMEL_ENVIRONMENT_BOOTSTRAP_METHOD_HPP
+#define SYSMEL_ENVIRONMENT_BOOTSTRAP_METHOD_HPP
 #pragma once
 
 #include "SpecificMethod.hpp"
@@ -377,4 +377,4 @@ SpecificMethodPtr makeIntrinsicConversionWithSignature(const std::string &intrin
 } // End of namespace Environment
 } // End of namespace Sysmel
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_BOOTSTRAP_TYPE_HPP
+#endif //SYSMEL_ENVIRONMENT_BOOTSTRAP_TYPE_HPP

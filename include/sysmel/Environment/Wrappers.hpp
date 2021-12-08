@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_WRAPPERS_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_WRAPPERS_HPP
+#ifndef SYSMEL_ENVIRONMENT_WRAPPERS_HPP
+#define SYSMEL_ENVIRONMENT_WRAPPERS_HPP
 #pragma once
 
 #include "AnyValue.hpp"
@@ -542,4 +542,4 @@ auto unwrapValue(const AnyValuePtr &value)
 
 } // End of namespace Environment
 } // End of namespace Sysmel
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_WRAPPERS_HPP
+#endif //SYSMEL_ENVIRONMENT_WRAPPERS_HPP

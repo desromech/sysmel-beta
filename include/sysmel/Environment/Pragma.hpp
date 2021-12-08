@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_PRAGMA_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_PRAGMA_HPP
+#ifndef SYSMEL_ENVIRONMENT_PRAGMA_HPP
+#define SYSMEL_ENVIRONMENT_PRAGMA_HPP
 #pragma once
 
 #include "CompilerObject.hpp"
@@ -28,4 +28,4 @@ public:
 } // End of namespace Environment
 } // End of namespace Sysmel
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_PRAGMA_HPP
+#endif //SYSMEL_ENVIRONMENT_PRAGMA_HPP

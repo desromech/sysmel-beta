@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_TEMPLATE_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_TEMPLATE_HPP
+#ifndef SYSMEL_ENVIRONMENT_TEMPLATE_HPP
+#define SYSMEL_ENVIRONMENT_TEMPLATE_HPP
 #pragma once
 
 #include "ModuleDefinedProgramEntity.hpp"
@@ -68,4 +68,4 @@ protected:
 } // End of namespace Environment
 } // End of namespace Sysmel
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_TEMPLATE_HPP
+#endif //SYSMEL_ENVIRONMENT_TEMPLATE_HPP

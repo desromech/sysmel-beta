@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AUTO_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AUTO_HPP
+#ifndef SYSMEL_ENVIRONMENT_AUTO_HPP
+#define SYSMEL_ENVIRONMENT_AUTO_HPP
 #pragma once
 
 #include "AnyValue.hpp"
@@ -24,4 +24,4 @@ public:
 } // End of namespace Environment
 } // End of namespace Sysmel
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_AUTO_HPP
+#endif //SYSMEL_ENVIRONMENT_AUTO_HPP

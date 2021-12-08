@@ -1,5 +1,5 @@
-#ifndef SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SEXPRESSION_HPP
-#define SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SEXPRESSION_HPP
+#ifndef SYSMEL_ENVIRONMENT_SEXPRESSION_HPP
+#define SYSMEL_ENVIRONMENT_SEXPRESSION_HPP
 #pragma once
 
 #include "LargeInteger.hpp"
@@ -40,4 +40,4 @@ std::string sexpressionToPrettyString(const SExpression &sexpr);
 } // End of namespace Environment
 } // End of namespace Sysmel
 
-#endif //SYSMEL_COMPILER_BOOTSTRAP_ENVIRONMENT_SEXPRESSION_HPP
+#endif //SYSMEL_ENVIRONMENT_SEXPRESSION_HPP
