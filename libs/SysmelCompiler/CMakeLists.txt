@@ -1,4 +1,4 @@
-set(BootstrapEnvironment_Sources
+set(Environment_Sources
     AggregateType.cpp
     AggregateTypeWithFields.cpp
     AmbiguousMatchingPatternsFound.cpp
@@ -277,14 +277,14 @@ set(BootstrapEnvironment_Sources
     Wrappers.cpp
 )
 
-list(TRANSFORM BootstrapEnvironment_Sources PREPEND "BootstrapEnvironment/")
+list(TRANSFORM Environment_Sources PREPEND "Environment/")
 
-set(Parser_Sources
+set(SysmelSyntax_Sources
     Scanner.cpp
     Parser.cpp
     SysmelLanguageSupport.cpp
 )
 
-list(TRANSFORM Parser_Sources PREPEND "Compiler/Sysmel/")
+list(TRANSFORM SysmelSyntax_Sources PREPEND "Frontend/SysmelSyntax/")
 
-add_library(SysmelCompiler SHARED ${Parser_Sources} ${BootstrapEnvironment_Sources})
+add_library(SysmelCompiler SHARED ${SysmelSyntax_Sources} ${Environment_Sources})

@@ -48,6 +48,7 @@ set(LIBRARY_OUTPUT_PATH "${Sysmel_BINARY_DIR}/dist")
 include_directories(
 .
 "${PROJECT_SOURCE_DIR}/include"
+"${PROJECT_SOURCE_DIR}/include/sysmel"
 "${PROJECT_SOURCE_DIR}/third-party/unittestpp"
 "${PROJECT_BINARY_DIR}/include"
 )

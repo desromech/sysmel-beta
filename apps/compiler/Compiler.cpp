@@ -1,15 +1,15 @@
-#include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
-#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
-#include "sysmel/BootstrapEnvironment/ProgramModule.hpp"
-#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
-#include "sysmel/BootstrapEnvironment/SSAValue.hpp"
+#include "Frontend/SysmelSyntax/SysmelLanguageSupport.hpp"
+#include "Environment/RuntimeContext.hpp"
+#include "Environment/ProgramModule.hpp"
+#include "Environment/ASTSourcePosition.hpp"
+#include "Environment/SSAValue.hpp"
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 
-using namespace SysmelMoebius::BootstrapEnvironment;
+using namespace Sysmel::Environment;
 
 enum class OutputMode : uint8_t
 {
@@ -34,7 +34,7 @@ struct CompilerParameters
 bool processInputFileNamed(const std::string &fileName)
 {
     bool success = true;
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         language->evaluateFileNamed(fileName);

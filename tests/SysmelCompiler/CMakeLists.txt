@@ -1,4 +1,4 @@
-set(BootstrapEnvironmentTests_Sources
+set(EnvironmentTests_Sources
     LargeInteger.cpp
     LiteralNumber.cpp
     
@@ -8,17 +8,17 @@ set(BootstrapEnvironmentTests_Sources
     StringUtilities.cpp
 )
 
-list(TRANSFORM BootstrapEnvironmentTests_Sources PREPEND "BootstrapEnvironment/")
+list(TRANSFORM EnvironmentTests_Sources PREPEND "Environment/")
 
-set(CompilerTests_Sources
+set(FrontendTests_Sources
     ScannerTests.cpp
     ParserTests.cpp
     EvaluationTests.cpp
 )
 
-list(TRANSFORM CompilerTests_Sources PREPEND "Compiler/")
+list(TRANSFORM FrontendTests_Sources PREPEND "Frontend/")
 
-add_executable(SysmelCompilerTests Main.cpp ${BootstrapEnvironmentTests_Sources} ${CompilerTests_Sources})
+add_executable(SysmelCompilerTests Main.cpp ${EnvironmentTests_Sources} ${FrontendTests_Sources})
 target_link_libraries(SysmelCompilerTests UnitTest++ SysmelCompiler)
 
 add_test(NAME RunSysmelCompilerTests COMMAND SysmelCompilerTests)

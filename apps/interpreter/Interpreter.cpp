@@ -1,25 +1,25 @@
-#include "sysmel/Compiler/Sysmel/SysmelLanguageSupport.hpp"
-#include "sysmel/BootstrapEnvironment/AnyValue.hpp"
-#include "sysmel/BootstrapEnvironment/ASTNode.hpp"
-#include "sysmel/BootstrapEnvironment/SSAValue.hpp"
-#include "sysmel/BootstrapEnvironment/Wrappers.hpp"
-#include "sysmel/BootstrapEnvironment/RuntimeContext.hpp"
-#include "sysmel/BootstrapEnvironment/BootstrapModule.hpp"
-#include "sysmel/BootstrapEnvironment/ScriptModule.hpp"
-#include "sysmel/BootstrapEnvironment/CompiledMethod.hpp"
-#include "sysmel/BootstrapEnvironment/BootstrapTypeRegistration.hpp"
-#include "sysmel/BootstrapEnvironment/Type.hpp"
-#include "sysmel/BootstrapEnvironment/ASTSourcePosition.hpp"
-#include "sysmel/BootstrapEnvironment/Exception.hpp"
-#include "sysmel/BootstrapEnvironment/FunctionalType.hpp"
+#include "Frontend/SysmelSyntax/SysmelLanguageSupport.hpp"
+#include "Environment/AnyValue.hpp"
+#include "Environment/ASTNode.hpp"
+#include "Environment/SSAValue.hpp"
+#include "Environment/Wrappers.hpp"
+#include "Environment/RuntimeContext.hpp"
+#include "Environment/BootstrapModule.hpp"
+#include "Environment/ScriptModule.hpp"
+#include "Environment/CompiledMethod.hpp"
+#include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/Type.hpp"
+#include "Environment/ASTSourcePosition.hpp"
+#include "Environment/Exception.hpp"
+#include "Environment/FunctionalType.hpp"
 #include <fstream>
 #include <iostream>
 
-using namespace SysmelMoebius::BootstrapEnvironment;
+using namespace Sysmel::Environment;
 
 void parseString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto ast = language->parseSourceStringNamed(sourceString, sourceName);
@@ -33,7 +33,7 @@ void parseString(const std::string &sourceString, const std::string &sourceName)
 
 void semanticAnalyzeString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto analyzed = language->semanticAnalyzeStringNamed(sourceString, sourceName);
@@ -47,7 +47,7 @@ void semanticAnalyzeString(const std::string &sourceString, const std::string &s
 
 void ssaCompileString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto analyzed = language->semanticAnalyzeStringNamed(sourceString, sourceName);
@@ -61,7 +61,7 @@ void ssaCompileString(const std::string &sourceString, const std::string &source
 
 void evalString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
@@ -75,7 +75,7 @@ void evalString(const std::string &sourceString, const std::string &sourceName)
 
 void semanticAnalyzeEvalString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
@@ -93,7 +93,7 @@ void semanticAnalyzeEvalString(const std::string &sourceString, const std::strin
 
 void ssaCompileEvalString(const std::string &sourceString, const std::string &sourceName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto result = language->evaluateSourceStringNamed(sourceString, sourceName);
@@ -107,7 +107,7 @@ void ssaCompileEvalString(const std::string &sourceString, const std::string &so
 
 void evalFileNamed(const std::string &fileName)
 {
-    auto language = SysmelMoebius::BootstrapEnvironment::SysmelLanguageSupport::uniqueInstance();
+    auto language = Sysmel::Environment::SysmelLanguageSupport::uniqueInstance();
     try
     {
         auto result = language->evaluateFileNamed(fileName);
@@ -119,7 +119,7 @@ void evalFileNamed(const std::string &fileName)
     }
 }
 
-void dumpBootstrapEnvironment()
+void dumpEnvironment()
 {
     auto bootstrapModule = RuntimeContext::getActive()->getBootstrapModule();
     AnyValue::__staticType__()->withAllSubtypesDo([&](const TypePtr &type) {
@@ -166,7 +166,7 @@ int main(int argc, const char *argv[])
                 }
                 else if(arg == "-dump-bootstrap-env")
                 {
-                    dumpBootstrapEnvironment();
+                    dumpEnvironment();
                     return;
                 }
                 else if(!arg.empty() && arg[0] != '-')
