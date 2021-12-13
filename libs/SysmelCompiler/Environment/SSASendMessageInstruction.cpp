@@ -58,6 +58,8 @@ const SSAValuePtr &SSASendMessageInstruction::getSelector() const
 void SSASendMessageInstruction::setSelector(const SSAValuePtr &newSelector)
 {
     selector = newSelector;
+    if(selector)
+        selector->addUse(selfFromThis());
 }
 
 const SSAValuePtr &SSASendMessageInstruction::getReceiver() const
@@ -68,6 +70,8 @@ const SSAValuePtr &SSASendMessageInstruction::getReceiver() const
 void SSASendMessageInstruction::setReceiver(const SSAValuePtr &newReceiver)
 {
     receiver = newReceiver;
+    if(receiver)
+        receiver->addUse(selfFromThis());
 }
 
 const SSAValuePtrList &SSASendMessageInstruction::getArguments() const
@@ -78,6 +82,8 @@ const SSAValuePtrList &SSASendMessageInstruction::getArguments() const
 void SSASendMessageInstruction::setArguments(const SSAValuePtrList &newArguments)
 {
     arguments = newArguments;
+    for(auto &arg : arguments)
+        arg->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

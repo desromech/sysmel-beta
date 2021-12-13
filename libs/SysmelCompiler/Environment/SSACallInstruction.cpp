@@ -56,6 +56,8 @@ const SSAValuePtr &SSACallInstruction::getFunction() const
 void SSACallInstruction::setFunction(const SSAValuePtr &newFunction)
 {
     function = newFunction;
+    if(function)
+        function->addUse(selfFromThis());
 }
 
 const SSAValuePtrList &SSACallInstruction::getArguments() const
@@ -66,6 +68,8 @@ const SSAValuePtrList &SSACallInstruction::getArguments() const
 void SSACallInstruction::setArguments(const SSAValuePtrList &newArguments)
 {
     arguments = newArguments;
+    for(auto &arg : arguments)  
+        arg->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

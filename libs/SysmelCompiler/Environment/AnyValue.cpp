@@ -128,6 +128,11 @@ AnyValuePtr AnyValue::__basicNewValue__()
     return basicMakeObject<AnyValue> ();
 }
 
+AnyValuePtr AnyValue::__shallowClone__(const AnyValuePtr &self)
+{
+    return basicMakeObject<AnyValue> (*self);
+}
+
 bool AnyValue::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 {
     (void)value;
@@ -156,6 +161,11 @@ AnyValue::~AnyValue()
 
 void AnyValue::initialize()
 {
+}
+
+AnyValuePtr AnyValue::shallowClone()
+{
+    return getType()->shallowCloneInstance(selfFromThis());
 }
 
 bool AnyValue::isKindOf(const TypePtr &type) const

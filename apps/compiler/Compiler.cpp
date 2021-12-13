@@ -15,13 +15,14 @@ enum class OutputMode : uint8_t
 {
     Executable = 0,
     SharedLibrary,
+    Plugin,
     ObjectFile,
     Assembly,
 };
 
 struct CompilerParameters
 {
-    bool emitLLVM = false;
+    bool emitTargetIR = false;
     bool emitSExpression = false;
     bool emitSSASExpression = false;
     OutputMode outputMode = OutputMode::Executable;
@@ -78,8 +79,8 @@ int main(int argc, const char *argv[])
                 parameters.outputMode = OutputMode::Assembly;
             else if(arg == "-shared")
                 parameters.outputMode = OutputMode::SharedLibrary;
-            else if(arg == "-emit-llvm")
-                parameters.emitLLVM = true;
+            else if(arg == "-emit-target-ir")
+                parameters.emitTargetIR = true;
             else if(arg == "-emit-sexpr")
                 parameters.emitSExpression = true;
             else if(arg == "-emit-ssa-sexpr")

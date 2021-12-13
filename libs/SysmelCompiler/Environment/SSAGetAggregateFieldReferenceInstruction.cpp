@@ -52,6 +52,8 @@ const SSAValuePtr &SSAGetAggregateFieldReferenceInstruction::getAggregate() cons
 void SSAGetAggregateFieldReferenceInstruction::setAggregate(const SSAValuePtr &newAggregate)
 {
     aggregate = newAggregate;
+    if(aggregate)
+        aggregate->addUse(selfFromThis());
 }
 
 const FieldVariablePtr &SSAGetAggregateFieldReferenceInstruction::getFieldVariable() const

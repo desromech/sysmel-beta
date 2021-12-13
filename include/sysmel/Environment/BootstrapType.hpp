@@ -34,6 +34,7 @@ public:
     virtual std::string printString() const override;
     
     virtual AnyValuePtr basicNewValue() override;
+    virtual AnyValuePtr shallowCloneInstance(const AnyValuePtr &cloned) override;
     virtual bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value) override;
     virtual AnyValuePtr instantiatedWithLiteralValue(const AnyValuePtr &value) override;
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;

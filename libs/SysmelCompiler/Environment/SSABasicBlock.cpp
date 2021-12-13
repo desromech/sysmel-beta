@@ -154,6 +154,27 @@ void SSABasicBlock::appendInstruction(const SSAInstructionPtr &instruction)
     addInstructionBefore(instruction, nullptr);
 }
 
+void SSABasicBlock::removeInstruction(const SSAInstructionPtr &instruction)
+{
+    assert(instruction && instruction->getParentBasicBlock() == selfFromThis());
+    SSAInstructionPtr before = instruction->getPreviousInstruction();
+    SSAInstructionPtr after = instruction->getNextInstruction();
+
+    if(before)
+        before->setNextInstruction(after);
+    else
+        firstInstruction = after;
+
+    if(after)
+        after->setPreviousInstruction(before);
+    else
+        lastInstruction = before;
+    
+    instruction->setParentBasicBlock(nullptr);
+    instruction->setPreviousInstruction(nullptr);
+    instruction->setNextInstruction(nullptr);
+}
+
 void SSABasicBlock::enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state)
 {
     basicBlockIndex = state.basicBlockCount++;

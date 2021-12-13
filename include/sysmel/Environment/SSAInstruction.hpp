@@ -32,6 +32,9 @@ public:
 
     virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
 
+    virtual void replaceUsesOfWith(const SSAValuePtr &useToReplace, const SSAValuePtr &replacement) override;
+    virtual void replaceWith(const SSAValuePtr &replacement) override;
+
     virtual SExpression asFullDefinitionSExpression() const;
 
     const SSABasicBlockPtr &getParentBasicBlock() const;

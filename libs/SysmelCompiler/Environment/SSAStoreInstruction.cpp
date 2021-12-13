@@ -50,6 +50,8 @@ const SSAValuePtr &SSAStoreInstruction::getValue() const
 void SSAStoreInstruction::setValue(const SSAValuePtr &newValue)
 {
     value = newValue;
+    if(value)
+        value->addUse(selfFromThis());
 }
 
 const SSAValuePtr &SSAStoreInstruction::getReference() const
@@ -60,6 +62,8 @@ const SSAValuePtr &SSAStoreInstruction::getReference() const
 void SSAStoreInstruction::setReference(const SSAValuePtr &newReference)
 {
     reference = newReference;
+    if(reference)
+        reference->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

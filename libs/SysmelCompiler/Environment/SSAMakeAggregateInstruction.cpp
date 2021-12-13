@@ -54,6 +54,8 @@ const SSAValuePtrList &SSAMakeAggregateInstruction::getElements() const
 void SSAMakeAggregateInstruction::setElements(const SSAValuePtrList &newElements)
 {
     elements = newElements;
+    for(auto &el : elements)
+        el->addUse(selfFromThis());
 }
 } // End of namespace Environment
 } // End of namespace Sysmel

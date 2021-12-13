@@ -48,6 +48,8 @@ const SSAValuePtr &SSACastInstruction::getValue() const
 void SSACastInstruction::setValue(const SSAValuePtr &newValue)
 {
     value = newValue;
+    if(value)
+        value->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

@@ -53,6 +53,8 @@ const SSAValuePtr &SSAReturnFromFunctionInstruction::getValue() const
 void SSAReturnFromFunctionInstruction::setValue(const SSAValuePtr &newValue)
 {
     value = newValue;
+    if(value)
+        value->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

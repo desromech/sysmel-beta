@@ -71,6 +71,7 @@ struct StaticBootstrapDefinedTypeMetadata
     MethodCategories (*instanceMacroMethods)();
     MethodCategories (*typeMacroMethods)();
     AnyValuePtr (*basicNewValue)();
+    AnyValuePtr (*shallowClone)(const AnyValuePtr &original);
     void (*addTypeConversionRules)(const TypePtr &type);
     bool (*canBeInstantiatedWithLiteralValue)(const AnyValuePtr &value);
     AnyValuePtr (*instantiateWithLiteralValue)(const AnyValuePtr &value);
@@ -118,6 +119,7 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     &T::__instanceMacroMethods__,
     &T::__typeMacroMethods__,
     &T::__basicNewValue__,
+    &T::__shallowClone__,
     &T::__addTypeConversionRules__,
     &T::__canBeInstantiatedWithLiteralValue__,
     &T::__instantiateWithLiteralValue__,
@@ -207,6 +209,14 @@ public:
     {
         if constexpr(std::is_constructible<SelfType>::value)
             return basicMakeObject<SelfType> ();
+        else
+            return getNilConstant();
+    }
+
+    static AnyValuePtr __shallowClone__(const AnyValuePtr &self)
+    {
+        if constexpr(std::is_copy_constructible<SelfType>::value)
+            return basicMakeObject<SelfType> (*self.staticAs<SelfType>());
         else
             return getNilConstant();
     }
@@ -324,6 +334,7 @@ public:
     }
 
     static AnyValuePtr __basicNewValue__();
+    static AnyValuePtr __shallowClone__(const AnyValuePtr &self);
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
     static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
@@ -352,6 +363,9 @@ public:
 
     /// Generic method for initializing the object.
     virtual void initialize();
+
+    /// Performs a shallow clone of the object.
+    virtual AnyValuePtr shallowClone();
 
     /// Is this object a program entity?
     virtual bool isCompilerObject() const;
@@ -1137,6 +1151,15 @@ public:
 inline AnyValuePtr validAnyValue(const AnyValuePtr &value)
 {
     return value ? value : getNilConstant();
+}
+
+template<typename T>
+ObjectPtr<T> shallowCloneObject(const ObjectPtr<T> &ref)
+{
+    if(!ref)
+        return ref;
+
+    return staticObjectCast<T> (ref->shallowClone());
 }
 
 } // End of namespace Environment

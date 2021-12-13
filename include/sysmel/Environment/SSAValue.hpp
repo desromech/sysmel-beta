@@ -78,6 +78,14 @@ public:
     virtual std::string fullPrintString() const override;
 
     virtual TypePtr getValueType() const;
+
+    virtual void replaceUsesOfWith(const SSAValuePtr &useToReplace, const SSAValuePtr &replacement);
+
+    virtual void addUse(const SSAValuePtr &useLocation);
+    virtual void replaceWith(const SSAValuePtr &replacement);
+
+protected:
+    std::unordered_set<SSAValueWeakPtr> useList;
 };
 
 } // End of namespace Environment

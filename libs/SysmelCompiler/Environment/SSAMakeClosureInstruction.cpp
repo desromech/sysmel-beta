@@ -51,6 +51,8 @@ const SSAValuePtr &SSAMakeClosureInstruction::getClosureImplementation() const
 void SSAMakeClosureInstruction::setClosureImplementation(const SSAValuePtr &newClosureImplementation)
 {
     closureImplementation = newClosureImplementation;
+    if(closureImplementation)
+        closureImplementation->addUse(selfFromThis());
 }
 
 const SSAValuePtrList &SSAMakeClosureInstruction::getCapturedValues() const
@@ -61,6 +63,8 @@ const SSAValuePtrList &SSAMakeClosureInstruction::getCapturedValues() const
 void SSAMakeClosureInstruction::setCapturedValues(const SSAValuePtrList &newCapturedValues)
 {
     capturedValues = newCapturedValues;
+    for(auto &capture : capturedValues)
+        capture->addUse(selfFromThis());
 }
 
 } // End of namespace Environment

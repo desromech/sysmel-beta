@@ -54,6 +54,8 @@ const SSAValuePtr &SSAGetAggregateSlotReferenceInstruction::getAggregate() const
 void SSAGetAggregateSlotReferenceInstruction::setAggregate(const SSAValuePtr &newAggregate)
 {
     aggregate = newAggregate;
+    if(aggregate)
+        aggregate->addUse(selfFromThis());
 }
 
 const SSAValuePtr &SSAGetAggregateSlotReferenceInstruction::getSlotIndex() const

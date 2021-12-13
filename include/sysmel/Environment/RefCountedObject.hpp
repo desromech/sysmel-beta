@@ -423,6 +423,11 @@ public:
         return ObjectPtr<T> ();
     }
 
+    T *getCounter() const
+    {
+        return pointer_;
+    }
+
     bool operator==(const SelfType &o) const
     {
         return pointer_ == o.pointer_;
@@ -518,6 +523,15 @@ struct hash<Sysmel::Environment::ObjectPtr<T>>
     size_t operator()(const Sysmel::Environment::ObjectPtr<T> &ptr) const
     {
         return std::hash<T*> ()(ptr.get());
+    }
+};
+
+template<typename T>
+struct hash<Sysmel::Environment::ObjectWeakPtr<T>>
+{
+    size_t operator()(const Sysmel::Environment::ObjectWeakPtr<T> &ptr) const
+    {
+        return std::hash<T*> ()(ptr.getCounter());
     }
 };
 } // End of namespace std

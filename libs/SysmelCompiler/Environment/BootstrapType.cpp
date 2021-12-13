@@ -99,6 +99,11 @@ AnyValuePtr BootstrapType::basicNewValue()
     return staticMetadata->basicNewValue();
 }
 
+AnyValuePtr BootstrapType::shallowCloneInstance(const AnyValuePtr &cloned)
+{
+    return staticMetadata->shallowClone(cloned);
+}
+
 bool BootstrapType::canBeInstantiatedWithLiteralValue(const AnyValuePtr &value)
 {
     return staticMetadata->canBeInstantiatedWithLiteralValue(value);

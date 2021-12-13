@@ -2,6 +2,7 @@
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/SSACodeRegion.hpp"
 #include "Environment/SSAValueVisitor.hpp"
+#include "Environment/SSABasicBlock.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -45,6 +46,25 @@ void SSAInstruction::parametersDo(const SSAInstructionConstParameterIterationBlo
 void SSAInstruction::regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const
 {
     (void)aBlock;
+}
+
+void SSAInstruction::replaceUsesOfWith(const SSAValuePtr &useToReplace, const SSAValuePtr &replacement)
+{
+    SuperType::replaceUsesOfWith(useToReplace, replacement);
+    parametersDo([&](SSAValuePtr &parameter) {
+        if(parameter == useToReplace)
+        {
+            parameter = replacement;
+            replacement->addUse(selfFromThis());
+        }
+    });
+}
+
+void SSAInstruction::replaceWith(const SSAValuePtr &replacement)
+{
+    SuperType::replaceWith(replacement);
+    if(parent)
+        parent->removeInstruction(selfFromThis());
 }
 
 SExpression SSAInstruction::asFullDefinitionSExpression() const

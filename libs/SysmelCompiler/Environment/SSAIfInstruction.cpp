@@ -58,6 +58,8 @@ const SSAValuePtr &SSAIfInstruction::getCondition() const
 void SSAIfInstruction::setCondition(const SSAValuePtr &newCondition)
 {
     condition = newCondition;
+    if(condition)
+        condition->addUse(selfFromThis());
 }
 
 const SSACodeRegionPtr &SSAIfInstruction::getTrueRegion() const

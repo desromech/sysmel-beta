@@ -773,6 +773,11 @@ AnyValuePtr Type::basicNewValue()
     return nullptr;
 }
 
+AnyValuePtr Type::shallowCloneInstance(const AnyValuePtr &cloned)
+{
+    return nullptr;
+}
+
 AnyValuePtr Type::defaultValue()
 {
     return isNullableType() ? nullptr : basicNewValue();

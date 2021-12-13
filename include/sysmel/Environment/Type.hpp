@@ -260,6 +260,9 @@ public:
     /// Constructs a value of this type.
     virtual AnyValuePtr basicNewValue();
 
+    /// Constructs a value of this type by cloning an existent value.
+    virtual AnyValuePtr shallowCloneInstance(const AnyValuePtr &cloned);
+
     /// Get the default value of this type.
     virtual AnyValuePtr defaultValue();
     

@@ -38,6 +38,7 @@ public:
     void addInstructionAfter(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position);
     void prependInstruction(const SSAInstructionPtr &instruction);
     void appendInstruction(const SSAInstructionPtr &instruction);
+    void removeInstruction(const SSAInstructionPtr &instruction);
 
     void enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state);
 
