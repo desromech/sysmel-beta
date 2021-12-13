@@ -15,5 +15,10 @@ void SSAProgramEntityWithChildren::addChild(const SSAProgramEntityPtr &child)
     children.push_back(child);
 }
 
+const SSAProgramEntityPtrList &SSAProgramEntityWithChildren::getChildren() const
+{
+    return children;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

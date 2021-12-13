@@ -37,6 +37,7 @@ public:
     const SSACodeRegionCapturePtrList &getCaptures();
     SSACodeRegionCapturePtr addCaptureWithType(const TypePtr &captureType);
 
+    bool isEmpty() const;
     const SSABasicBlockPtrList &getBasicBlocks();
 
     SSABasicBlockPtr newBasicBlock();

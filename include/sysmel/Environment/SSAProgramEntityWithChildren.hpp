@@ -17,6 +17,7 @@ public:
     static constexpr char const __typeName__[] = "SSAProgramEntityWithChildren";
 
     virtual void addChild(const SSAProgramEntityPtr &child) override;
+    const SSAProgramEntityPtrList &getChildren() const;
 
 protected:
     SSAProgramEntityPtrList children;

@@ -775,6 +775,7 @@ AnyValuePtr Type::basicNewValue()
 
 AnyValuePtr Type::shallowCloneInstance(const AnyValuePtr &cloned)
 {
+    (void)cloned;
     return nullptr;
 }
 

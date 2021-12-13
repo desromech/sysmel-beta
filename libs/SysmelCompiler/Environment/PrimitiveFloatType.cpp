@@ -97,7 +97,7 @@ struct IntrinsicPrimitiveFloatMethods
                 makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.greater-than", ">", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value > b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("integer.greater-equals", ">=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.greater-equals", ">=", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return Boolean8::make(a->value >= b->value);
                 }, MethodFlags::Pure),
             }},

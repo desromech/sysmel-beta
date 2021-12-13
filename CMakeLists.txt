@@ -35,9 +35,19 @@ find_package(LLVM CONFIG)
 
 ## We require LLVM for the native CPU and webassembly targets.
 ## We also require it for some future GPU backend (e.g. DXIL)
+set(HAVE_LLVM_BACKEND FALSE)
+set(USED_LLVM_LIBS)
 if(LLVM_FOUND)
-	llvm_map_components_to_libnames(llvm_libs support core target native arm aarch64 x86 webassembly)
-	message(STATUS "LLVM Libs ${llvm_libs}")
+	if(LLVM IN_LIST LLVM_AVAILABLE_LIBS)
+		add_definitions(
+			-DBUILD_WITH_LLVM_BACKEND=1
+		)
+		include_directories(
+			${LLVM_INCLUDE_DIRS}
+		)
+		set(USED_LLVM_LIBS LLVM)
+		set(HAVE_LLVM_BACKEND TRUE)
+	endif()
 endif()
 
 # Set output dir.

@@ -77,6 +77,11 @@ const SSACodeRegionArgumentPtrList &SSACodeRegion::getArguments()
     return arguments;
 }
 
+bool SSACodeRegion::isEmpty() const
+{
+    return basicBlocks.empty();
+}
+
 const SSABasicBlockPtrList &SSACodeRegion::getBasicBlocks()
 {
     return basicBlocks;

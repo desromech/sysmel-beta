@@ -41,6 +41,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual uint8_t unwrapAsUInt8() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -67,6 +68,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual uint16_t unwrapAsUInt16() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -93,6 +95,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual uint32_t unwrapAsUInt32() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -119,6 +122,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual uint64_t unwrapAsUInt64() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -145,6 +149,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual int8_t unwrapAsInt8() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -171,6 +176,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual int16_t unwrapAsInt16() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -197,6 +203,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual int32_t unwrapAsInt32() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -223,6 +230,7 @@ public:
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
 
     virtual int64_t unwrapAsInt64() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;

@@ -288,4 +288,17 @@ set(SysmelSyntax_Sources
 
 list(TRANSFORM SysmelSyntax_Sources PREPEND "Frontend/SysmelSyntax/")
 
-add_library(SysmelCompiler SHARED ${SysmelSyntax_Sources} ${Environment_Sources})
+set(LLVMBackend_Sources
+    SSALLVMCodeGenerationBackend.cpp
+    SSALLVMModuleVisitor.cpp
+    SSALLVMValueVisitor.cpp
+)
+
+list(TRANSFORM LLVMBackend_Sources PREPEND "Backend/LLVM/")
+
+if(NOT HAVE_LLVM_BACKEND)
+    set(LLVMBackend_Sources)
+endif()
+
+add_library(SysmelCompiler SHARED ${SysmelSyntax_Sources} ${Environment_Sources} ${LLVMBackend_Sources})
+target_link_libraries(SysmelCompiler ${USED_LLVM_LIBS})

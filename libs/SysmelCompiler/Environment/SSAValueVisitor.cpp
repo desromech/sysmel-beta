@@ -15,9 +15,9 @@ namespace Environment
 
 static BootstrapTypeRegistration<SSAValueVisitor> SSAValueVisitorTypeRegistration;
 
-AnyValuePtr SSAValueVisitor::visitValue(const SSAValuePtr &)
+AnyValuePtr SSAValueVisitor::visitValue(const SSAValuePtr &value)
 {
-    SysmelSelfSubclassResponsibility();
+    return value->accept(selfFromThis());
 }
 
 AnyValuePtr SSAValueVisitor::visitConstantValue(const SSAConstantValuePtr &)

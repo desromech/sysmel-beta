@@ -27,7 +27,7 @@ TypePtr SSALocalVariableInstruction::getValueType() const
 
 std::string SSALocalVariableInstruction::getMnemonic() const
 {
-    return "load";
+    return "localVariable";
 }
 
 const TypePtr &SSALocalVariableInstruction::getVariableValueType() const

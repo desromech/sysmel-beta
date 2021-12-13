@@ -3,6 +3,7 @@
 #include "Environment/ProgramModule.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/SSAValue.hpp"
+#include "Environment/SSACodeGenerationBackend.hpp"
 
 #include <string>
 #include <vector>
@@ -11,21 +12,12 @@
 
 using namespace Sysmel::Environment;
 
-enum class OutputMode : uint8_t
-{
-    Executable = 0,
-    SharedLibrary,
-    Plugin,
-    ObjectFile,
-    Assembly,
-};
-
 struct CompilerParameters
 {
     bool emitTargetIR = false;
     bool emitSExpression = false;
     bool emitSSASExpression = false;
-    OutputMode outputMode = OutputMode::Executable;
+    SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
     std::string outputFileName;
     std::vector<std::string> modulePaths;
     std::vector<std::string> importedModules;
@@ -74,11 +66,11 @@ int main(int argc, const char *argv[])
         if(arg.size() > 1 && arg[0] == '-')
         {
             if(arg == "-c")
-                parameters.outputMode = OutputMode::ObjectFile;
+                parameters.outputMode = SSACodeGenerationOutputMode::ObjectFile;
             else if(arg == "-S")
-                parameters.outputMode = OutputMode::Assembly;
+                parameters.outputMode = SSACodeGenerationOutputMode::Assembly;
             else if(arg == "-shared")
-                parameters.outputMode = OutputMode::SharedLibrary;
+                parameters.outputMode = SSACodeGenerationOutputMode::SharedLibrary;
             else if(arg == "-emit-target-ir")
                 parameters.emitTargetIR = true;
             else if(arg == "-emit-sexpr")
@@ -130,7 +122,19 @@ int main(int argc, const char *argv[])
             writeStringToOutputFileNamed(sexpressionToPrettyString(programModule->asSSAValueRequiredInPosition(ASTSourcePosition::empty())->asFullDefinitionSExpression()) + "\n", parameters.outputFileName);
         else
         {
-            std::cerr << "TODO: implement the support for generating backend specific output." << std::endl;
+            auto backend = SSACodeGenerationBackend::makeNativeBackend();
+            if(!backend)
+            {
+                std::cerr << "Failed to make the native code generation backend." << std::endl;
+                exitCode = 1;
+                return;
+            }
+ 
+            backend->setOutputMode(parameters.outputMode);
+            backend->setOutputFileName(parameters.outputFileName);
+            backend->setEmitTargetIR(parameters.emitTargetIR);
+            auto success = backend->processAndWriteProgramModule(programModule);
+            exitCode = success ? 0 : 1;
         }
     });
 

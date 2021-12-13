@@ -66,6 +66,11 @@ uint8_t UInt8::unwrapAsUInt8() const
     return value;
 }
 
+LargeInteger UInt8::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string UInt8::asString() const
 {
     return castToString(int(value));
@@ -112,6 +117,11 @@ AnyValuePtr UInt16::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 uint16_t UInt16::unwrapAsUInt16() const
 {
     return value;
+}
+
+LargeInteger UInt16::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
 }
 
 std::string UInt16::asString() const
@@ -162,6 +172,11 @@ uint32_t UInt32::unwrapAsUInt32() const
     return value;
 }
 
+LargeInteger UInt32::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string UInt32::asString() const
 {
     return castToString(value);
@@ -210,6 +225,11 @@ uint64_t UInt64::unwrapAsUInt64() const
     return value;
 }
 
+LargeInteger UInt64::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string UInt64::asString() const
 {
     return castToString(value);
@@ -256,6 +276,11 @@ AnyValuePtr Int8::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 int8_t Int8::unwrapAsInt8() const
 {
     return value;
+}
+
+LargeInteger Int8::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
 }
 
 std::string Int8::asString() const
@@ -307,6 +332,11 @@ int16_t Int16::unwrapAsInt16() const
     return value;
 }
 
+LargeInteger Int16::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string Int16::asString() const
 {
     return castToString(value);
@@ -355,6 +385,11 @@ int32_t Int32::unwrapAsInt32() const
     return value;
 }
 
+LargeInteger Int32::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string Int32::asString() const
 {
     return castToString(value);
@@ -401,6 +436,11 @@ AnyValuePtr Int64::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 int64_t Int64::unwrapAsInt64() const
 {
     return value;
+}
+
+LargeInteger Int64::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
 }
 
 std::string Int64::asString() const
