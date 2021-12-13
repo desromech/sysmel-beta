@@ -16,10 +16,15 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
 
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
+#include "llvm/Transforms/Utils.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -61,6 +66,11 @@ public:
         return targetModule.get();
     }
 
+    llvm::legacy::FunctionPassManager *getFunctionPassManager()
+    {
+        return functionPassManager.get(); 
+    }
+
 protected:
     void initializePrimitiveTypeMap();
     bool writeOutputOnto(llvm::raw_ostream &out);
@@ -69,6 +79,7 @@ protected:
     ProgramModulePtr sourceModule;
     std::unique_ptr<llvm::LLVMContext> context;
     std::unique_ptr<llvm::Module> targetModule;
+    std::unique_ptr<llvm::legacy::FunctionPassManager> functionPassManager;
     std::unordered_map<TypePtr, llvm::Type*> typeMap;
     std::unordered_set<TypePtr> signedIntegerTypeSet;
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;

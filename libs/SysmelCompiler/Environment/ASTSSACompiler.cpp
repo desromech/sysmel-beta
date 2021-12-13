@@ -432,7 +432,7 @@ AnyValuePtr ASTSSACompiler::visitWhileNode(const ASTWhileNodePtr &node)
     auto conditionRegion = buildRegionForNode(node->condition);
     auto bodyRegion = buildRegionForNode(node->bodyExpression);
     auto continueRegion = buildRegionForNode(node->continueExpression);
-    return builder->whileDoContinueWith(conditionRegion, bodyRegion, conditionRegion);
+    return builder->whileDoContinueWith(conditionRegion, bodyRegion, continueRegion);
 }
 
 AnyValuePtr ASTSSACompiler::visitDoWhileNode(const ASTDoWhileNodePtr &node)
@@ -440,7 +440,7 @@ AnyValuePtr ASTSSACompiler::visitDoWhileNode(const ASTDoWhileNodePtr &node)
     auto bodyRegion = buildRegionForNode(node->bodyExpression);
     auto conditionRegion = buildRegionForNode(node->condition);
     auto continueRegion = buildRegionForNode(node->continueExpression);
-    return builder->doWhileContinueWith(bodyRegion, conditionRegion, conditionRegion);
+    return builder->doWhileContinueWith(bodyRegion, conditionRegion, continueRegion);
 }
 
 AnyValuePtr ASTSSACompiler::visitReturnNode(const ASTReturnNodePtr &node)

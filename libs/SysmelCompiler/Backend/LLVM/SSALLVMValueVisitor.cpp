@@ -107,6 +107,8 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 
     // Verify the function.
     llvm::verifyFunction(*currentFunction);
+
+    backend->getFunctionPassManager()->run(*currentFunction);
     
     return wrapLLVMValue(currentFunction);
 }
@@ -320,16 +322,16 @@ std::unordered_map<std::string, std::function<llvm::Value* (SSALLVMValueVisitor*
 
     {"integer.add", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
         assert(arguments.size() == 2);
-        return builder->CreateAdd(arguments[0], arguments[0]);
+        return builder->CreateAdd(arguments[0], arguments[1]);
     }},
 
     {"float.add", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
         assert(arguments.size() == 2);
-        return builder->CreateFAdd(arguments[0], arguments[0]);
+        return builder->CreateFAdd(arguments[0], arguments[1]);
     }},
     {"float.mul", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
         assert(arguments.size() == 2);
-        return builder->CreateFMul(arguments[0], arguments[0]);
+        return builder->CreateFMul(arguments[0], arguments[1]);
     }},
 
 

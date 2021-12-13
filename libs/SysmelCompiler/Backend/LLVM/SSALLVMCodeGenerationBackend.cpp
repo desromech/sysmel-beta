@@ -142,6 +142,14 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     // Initialize the type map.
     initializePrimitiveTypeMap();
 
+    functionPassManager = std::make_unique<llvm::legacy::FunctionPassManager> (targetModule.get());
+    /*functionPassManager->add(llvm::createPromoteMemoryToRegisterPass());
+    functionPassManager->add(llvm::createInstructionCombiningPass());
+    functionPassManager->add(llvm::createReassociatePass());
+    functionPassManager->add(llvm::createGVNPass());*/
+    functionPassManager->add(llvm::createCFGSimplificationPass());
+    functionPassManager->doInitialization();
+
     // Process the module components.
     {
         auto visitor = basicMakeObject<SSALLVMModuleVisitor> ();
