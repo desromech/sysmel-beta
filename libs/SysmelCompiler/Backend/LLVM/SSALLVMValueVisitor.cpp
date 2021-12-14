@@ -10,13 +10,21 @@
 #include "Environment/SSAGlobalVariable.hpp"
 
 #include "Environment/SSACallInstruction.hpp"
+#include "Environment/SSAConditionalJumpInstruction.hpp"
+#include "Environment/SSAIfInstruction.hpp"
+#include "Environment/SSAJumpInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
 #include "Environment/SSADoWithCleanupInstruction.hpp"
+#include "Environment/SSADoWhileInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
 #include "Environment/SSAUnreachableInstruction.hpp"
 #include "Environment/SSAWhileInstruction.hpp"
+
+#include "Environment/SSAUpcastInstruction.hpp"
+#include "Environment/SSADowncastInstruction.hpp"
+#include "Environment/SSABitcastInstruction.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -382,6 +390,123 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCl
     return wrapLLVMValue(result);
 }
 
+AnyValuePtr SSALLVMValueVisitor::visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction)
+{
+    auto body = llvm::BasicBlock::Create(*backend->getContext(), "doWhileBody");
+    auto conditionBlock = llvm::BasicBlock::Create(*backend->getContext(), "doWhileCondition");
+    auto continueBlock = llvm::BasicBlock::Create(*backend->getContext(), "doWhileContinue");
+    auto merge = llvm::BasicBlock::Create(*backend->getContext(), "doWhileMerge");
+
+    // Emit the body.
+    builder->CreateBr(body);
+    builder->SetInsertPoint(body);
+    body->insertInto(currentFunction);
+
+    auto bodyRegion = instruction->getBodyRegion();
+    if(bodyRegion)
+    {
+        // TODO: Store the state required for continue/break.
+        translateCodeRegionWithArguments(bodyRegion, {});
+    }
+
+    if(!isLastTerminator())
+        builder->CreateBr(conditionBlock);
+    
+    // Emit the condition.
+    builder->SetInsertPoint(conditionBlock);
+    conditionBlock->insertInto(currentFunction);
+
+    auto conditionRegion = instruction->getConditionRegion();
+    if(conditionRegion)
+    {
+        auto condition = translateCodeRegionWithArguments(conditionRegion, {});
+        builder->CreateCondBr(coerceBooleanIntoI1(condition), continueBlock, merge);
+    }
+    else
+    {
+        builder->CreateBr(continueBlock);
+    }
+
+    // Emit the continue block.
+    builder->SetInsertPoint(continueBlock);
+    continueBlock->insertInto(currentFunction);
+
+    auto continueRegion = instruction->getContinueRegion();
+    if(continueRegion)
+    {
+        // TODO: Store the state required for continue/break.
+        translateCodeRegionWithArguments(continueRegion, {});
+    }
+
+    if(!isLastTerminator())
+        builder->CreateBr(body);
+
+    // Merge the control flow.
+    builder->SetInsertPoint(merge);
+    merge->insertInto(currentFunction);
+
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &instruction)
+{
+    auto condition = translateValue(instruction->getCondition());
+    auto thenRegion = instruction->getTrueRegion();
+    auto elseRegion = instruction->getFalseRegion();
+    auto resultType = instruction->getValueType();
+
+    auto thenBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifThen");
+    auto elseBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifElse");
+    auto mergeBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifMerge");
+
+    llvm::PHINode *phiNode = nullptr;
+    if(!resultType->isVoidType())
+        phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "ifResult", mergeBlock);
+
+    // Condition.
+    builder->CreateCondBr(coerceBooleanIntoI1(condition), thenBlock, elseBlock);
+    builder->SetInsertPoint(thenBlock);
+
+    // Then block
+    thenBlock->insertInto(currentFunction);
+    
+    llvm::Value *thenResult = nullptr;
+    if(thenRegion)
+        thenResult = translateCodeRegionWithArguments(thenRegion, {});
+
+    if(!isLastTerminator())
+    {
+        builder->CreateBr(mergeBlock);
+        if(phiNode && thenResult)
+            phiNode->addIncoming(thenResult, builder->GetInsertBlock());
+    }
+
+    // Else block
+    builder->SetInsertPoint(elseBlock);
+    elseBlock->insertInto(currentFunction);
+
+    llvm::Value *elseResult = nullptr;
+    if(elseRegion)
+        elseResult = translateCodeRegionWithArguments(elseRegion, {});
+
+    if(!isLastTerminator())
+    {
+        builder->CreateBr(mergeBlock);
+        if(phiNode && elseResult)
+            phiNode->addIncoming(elseResult, builder->GetInsertBlock());
+    }
+
+    // Merge block.
+    builder->SetInsertPoint(mergeBlock);
+    mergeBlock->insertInto(currentFunction);
+
+    if(phiNode)
+        return wrapLLVMValue(phiNode);
+    else
+        return wrapLLVMValue(makeVoidValue());
+}
+
+
 AnyValuePtr SSALLVMValueVisitor::visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction)
 {
     auto valueType = backend->translateType(instruction->getVariableValueType());
@@ -508,6 +633,21 @@ AnyValuePtr SSALLVMValueVisitor::visitWhileInstruction(const SSAWhileInstruction
     merge->insertInto(currentFunction);
 
     return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction)
+{
+    return wrapLLVMValue(builder->CreateBitCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitDowncastInstruction(const SSADowncastInstructionPtr &instruction)
+{
+    return wrapLLVMValue(builder->CreateBitCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitBitcastInstruction(const SSABitcastInstructionPtr &instruction)
+{
+    return wrapLLVMValue(builder->CreateBitCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
 }
 
 llvm::Value *SSALLVMValueVisitor::makeVoidValue()

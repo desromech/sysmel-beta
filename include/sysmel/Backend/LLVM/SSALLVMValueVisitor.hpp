@@ -33,12 +33,18 @@ public:
 
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitIfInstruction(const SSAIfInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction) override;
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction) override;
+
+    virtual AnyValuePtr visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitDowncastInstruction(const SSADowncastInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitBitcastInstruction(const SSABitcastInstructionPtr &instruction) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;
 

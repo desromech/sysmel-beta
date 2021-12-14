@@ -21,6 +21,8 @@ public:
     virtual TypePtr getValueType() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+
+protected:
 };
 
 } // End of namespace Environment
