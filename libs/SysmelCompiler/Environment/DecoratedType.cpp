@@ -1,6 +1,7 @@
 #include "Environment/DecoratedType.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -33,6 +34,11 @@ TypePtr DecoratedType::make(const TypePtr &baseType, TypeDecorationFlags decorat
 bool DecoratedType::isDecoratedType() const
 {
     return true;
+}
+
+AnyValuePtr DecoratedType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitDecoratedType(selfFromThis());
 }
 
 bool DecoratedType::isConstDecoratedType() const
@@ -70,6 +76,16 @@ bool DecoratedType::hasTrivialInitialization()
     return baseType->hasTrivialInitialization();
 }
 
+bool DecoratedType::hasTrivialInitializationCopyingFrom()
+{
+    return baseType->hasTrivialInitializationCopyingFrom();
+}
+
+bool DecoratedType::hasTrivialInitializationMovingFrom()
+{
+    return baseType->hasTrivialInitializationMovingFrom();
+}
+
 bool DecoratedType::hasTrivialFinalization()
 {
     return baseType->hasTrivialFinalization();
@@ -83,6 +99,16 @@ bool DecoratedType::hasTrivialCopyingFrom()
 bool DecoratedType::hasTrivialMovingFrom()
 {
     return baseType->hasTrivialMovingFrom();
+}
+
+uint64_t DecoratedType::getMemorySize()
+{
+    return baseType->getMemorySize();
+}
+
+uint64_t DecoratedType::getMemoryAlignment()
+{
+    return baseType->getMemorySize();
 }
 
 TypePtr DecoratedType::withDecorations(TypeDecorationFlags newDecorations)

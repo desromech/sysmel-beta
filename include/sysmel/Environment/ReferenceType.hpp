@@ -23,6 +23,7 @@ public:
 
     virtual bool isReferenceType() const override;
     virtual bool isReferenceLikeType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     // Is this a pointer like type value?
     virtual ReferenceTypePtr ref() override;

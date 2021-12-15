@@ -3,6 +3,7 @@
 #include "Environment/PointerType.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -42,6 +43,11 @@ bool ReferenceType::isReferenceType() const
 bool ReferenceType::isReferenceLikeType() const
 {
     return true;
+}
+
+AnyValuePtr ReferenceType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitReferenceType(selfFromThis());
 }
 
 ReferenceTypePtr ReferenceType::ref()

@@ -23,6 +23,7 @@ public:
 
     /// Is this type a meta type?.
     virtual bool isMetaType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     /// This method returns the instance type.
     virtual TypePtr getInstanceType() override;

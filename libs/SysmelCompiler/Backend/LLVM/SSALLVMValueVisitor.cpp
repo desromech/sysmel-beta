@@ -35,19 +35,84 @@ namespace Sysmel
 namespace LLVM
 {
 
-/**
- * I am the base interface for a SSA based code generation backend
- */
-class SSALLVMValue : public SubtypeOf<CompilerObject, SSALLVMValue>
-{
-public:
-    static constexpr char const __typeName__[] = "SSALLVMValue";
-
-    llvm::Value *value = nullptr;
-};
-
 static BootstrapTypeRegistration<SSALLVMValueVisitor> SSALLVMValueVisitorTypeRegistration;
 static BootstrapTypeRegistration<SSALLVMValue> SSALLVMValueTypeRegistration;
+
+std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext &)>> SSALLVMValueVisitor::intrinsicGenerators = {
+
+    {"integer.conversion.sign-extend", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() <= 2);
+        return context.builder->CreateSExt(context.arguments.back(), context.resultType);
+    }},
+    {"integer.conversion.zero-extend", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() <= 2);
+        return context.builder->CreateZExt(context.arguments.back(), context.resultType);
+    }},
+    {"integer.conversion.bitcast", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() <= 2);
+        return context.builder->CreateBitCast(context.arguments.back(), context.resultType);
+    }},
+    {"integer.conversion.truncate", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() <= 2);
+        return context.builder->CreateTrunc(context.arguments.back(), context.resultType);
+    }},
+
+    {"integer.less-than.signed", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpSLT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.less-than.unsigned", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.add", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.builder->CreateAdd(context.arguments[0], context.arguments[1]);
+    }},
+
+    {"float.add", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.builder->CreateFAdd(context.arguments[0], context.arguments[1]);
+    }},
+    {"float.mul", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.builder->CreateFMul(context.arguments[0], context.arguments[1]);
+    }},
+
+
+    {"pointer.to.reference", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 1);
+        return context.arguments[0];
+    }},
+
+    {"pointer.element", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.builder->CreateGEP(context.arguments[0], context.arguments[1]);
+    }},
+
+    {"reference.load", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 1);
+        return context.builder->CreateLoad(context.arguments[0]);
+    }},
+    {"reference.to.pointer", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 1);
+        return context.arguments[0];
+    }},
+    {"reference.copy.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() == 2);
+        return context.builder->CreateStore(context.arguments[1], context.arguments[0]);
+    }},
+};
+
+AnyValuePtr wrapLLVMValue(llvm::Value *value)
+{
+    auto wrapper = basicMakeObject<SSALLVMValue> ();
+    wrapper->value = value;
+    return wrapper;
+}
+
 
 llvm::Value *SSALLVMValueVisitor::visitValueForLLVM(const SSAValuePtr &value)
 {
@@ -65,13 +130,6 @@ llvm::Value *SSALLVMValueVisitor::translateValue(const SSAValuePtr &value)
     if(value->isSSACodeRegionLocalValue())
         localTranslatedValueMap.insert({value, result});
     return result;
-}
-
-AnyValuePtr SSALLVMValueVisitor::wrapLLVMValue(llvm::Value *value)
-{
-    auto wrapper = basicMakeObject<SSALLVMValue> ();
-    wrapper->value = value;
-    return wrapper;
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
@@ -185,6 +243,12 @@ AnyValuePtr SSALLVMValueVisitor::visitConstantLiteralValue(const SSAConstantLite
     assert("TODO: visitConstantLiteralValue " && false);
 }
 
+AnyValuePtr SSALLVMValueVisitor::visitTypeProgramEntity(const SSATypeProgramEntityPtr &value)
+{
+    (void)value;
+    return wrapLLVMValue(llvm::Constant::getNullValue(llvm::Type::getInt8PtrTy(*backend->getContext())));
+}
+
 void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRegion)
 {
     if(codeRegion->isEmpty())
@@ -282,6 +346,8 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
     llvm::Value *result = resultPhi;
     if(!result)
         result = llvm::UndefValue::get(resultTranslatedType);
+    else
+        result = simplifyDegeneratePhi(resultPhi);
     return result;
 }
 
@@ -317,52 +383,21 @@ AnyValuePtr SSALLVMValueVisitor::visitCallInstruction(const SSACallInstructionPt
     return wrapLLVMValue(translateCall(instruction));
 }
 
-std::unordered_map<std::string, std::function<llvm::Value* (SSALLVMValueVisitor*, llvm::IRBuilder<>*, const std::vector<llvm::Value*> &, const SSAValuePtrList&, const std::string&)>> SSALLVMValueVisitor::intrinsicGenerators = {
-    {"integer.less-than", +[](SSALLVMValueVisitor* self, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList &rawArguments, const std::string&) {
-        assert(arguments.size() == 2);
-        auto isSigned = self->backend->isSignedIntegerType(rawArguments[0]->getValueType());
-        return self->coerceI1IntoBoolean8(
-            isSigned
-                ? builder->CreateICmpSLT(arguments[0], arguments[1])
-                : builder->CreateICmpULT(arguments[0], arguments[1])
-        );
-    }},
-
-    {"integer.add", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
-        assert(arguments.size() == 2);
-        return builder->CreateAdd(arguments[0], arguments[1]);
-    }},
-
-    {"float.add", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
-        assert(arguments.size() == 2);
-        return builder->CreateFAdd(arguments[0], arguments[1]);
-    }},
-    {"float.mul", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
-        assert(arguments.size() == 2);
-        return builder->CreateFMul(arguments[0], arguments[1]);
-    }},
-
-
-    {"reference.load", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
-        assert(arguments.size() == 1);
-        return builder->CreateLoad(arguments[0]);
-    }},
-    {"reference.copy.assignment.trivial", +[](SSALLVMValueVisitor*, llvm::IRBuilder<> *builder, const std::vector<llvm::Value*> &arguments, const SSAValuePtrList&, const std::string&) {
-        assert(arguments.size() == 2);
-        return builder->CreateStore(arguments[1], arguments[0]);
-    }},
-};
-
 llvm::Value *SSALLVMValueVisitor::translateIntrinsicCall(const std::string &intrinsicName, const SSACallInstructionPtr &instruction)
 {
     auto it = intrinsicGenerators.find(intrinsicName);
     if(it != intrinsicGenerators.end())
     {
-        std::vector<llvm::Value*> arguments;
-        arguments.reserve(instruction->getArguments().size());
+        IntrinsicGenerationContext context;
+        context.self = this;
+        context.builder = builder.get();
+        context.intrinsicName = intrinsicName;
+        context.resultType = backend->translateType(instruction->getValueType());
+        context.originalArguments = instruction->getArguments();
+        context.arguments.reserve(instruction->getArguments().size());
         for(auto &arg : instruction->getArguments())
-            arguments.push_back(translateValue(arg));
-        return it->second(this, builder.get(), arguments, instruction->getArguments(), intrinsicName);
+            context.arguments.push_back(translateValue(arg));
+        return it->second(context);
     }
 
     return translateCall(instruction);
@@ -420,7 +455,8 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWhileInstruction(const SSADoWhileInstruc
     if(conditionRegion)
     {
         auto condition = translateCodeRegionWithArguments(conditionRegion, {});
-        builder->CreateCondBr(coerceBooleanIntoI1(condition), continueBlock, merge);
+        if(!isLastTerminator())
+            builder->CreateCondBr(coerceBooleanIntoI1(condition), continueBlock, merge);
     }
     else
     {
@@ -501,7 +537,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     mergeBlock->insertInto(currentFunction);
 
     if(phiNode)
-        return wrapLLVMValue(phiNode);
+        return wrapLLVMValue(simplifyDegeneratePhi(phiNode));
     else
         return wrapLLVMValue(makeVoidValue());
 }
@@ -663,6 +699,27 @@ llvm::Value *SSALLVMValueVisitor::coerceBooleanIntoI1(llvm::Value *value)
 llvm::Value *SSALLVMValueVisitor::coerceI1IntoBoolean8(llvm::Value *value)
 {
     return builder->CreateZExtOrBitCast(value, llvm::Type::getInt8Ty(*backend->getContext()));
+}
+
+llvm::Value *SSALLVMValueVisitor::simplifyDegeneratePhi(llvm::PHINode *phi)
+{
+    auto incomingCount = phi->getNumIncomingValues();
+    if(incomingCount == 0)
+    {
+        auto replacement = llvm::UndefValue::get(phi->getType());
+        phi->replaceAllUsesWith(replacement);
+        phi->eraseFromParent();
+        return replacement;
+    }
+    else if(incomingCount == 1)
+    {
+        auto replacement = phi->getIncomingValue(0);
+        phi->replaceAllUsesWith(replacement);
+        phi->eraseFromParent();
+        return replacement;
+    }
+
+    return phi;
 }
 
 bool SSALLVMValueVisitor::isLastTerminator() const

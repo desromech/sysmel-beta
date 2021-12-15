@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "SimpleType";
 
     virtual bool isSimpleType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual TypePtr getType() const override;
     void setType(const TypePtr &theMetaType);

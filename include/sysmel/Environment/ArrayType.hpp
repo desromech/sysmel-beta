@@ -21,16 +21,22 @@ public:
     static ArrayTypePtr make(const TypePtr &elementType, uint64_t size);
     
     virtual bool isArrayType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
     
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
     
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
     virtual bool hasTrivialCopyingFrom() override;
     virtual bool hasTrivialMovingFrom() override;
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+    
     virtual AnyValuePtr basicNewValue() override;
 
     virtual std::string printString() const override;

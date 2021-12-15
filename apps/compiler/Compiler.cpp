@@ -18,6 +18,7 @@ struct CompilerParameters
     bool emitSExpression = false;
     bool emitSSASExpression = false;
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
+    std::string moduleName;
     std::string outputFileName;
     std::vector<std::string> modulePaths;
     std::vector<std::string> importedModules;
@@ -91,9 +92,15 @@ int main(int argc, const char *argv[])
         }
     }
 
+
+    if(parameters.moduleName.empty())
+    {
+        parameters.moduleName = parameters.inputFileNames.front();
+    }
+
     int exitCode = 0;
     RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForHost())->activeDuring([&]{
-        auto programModule = ProgramModule::create(parameters.outputFileName);
+        auto programModule = ProgramModule::create(parameters.moduleName);
         programModule->activeDuring([&]{
 
             for(auto &inputFileName : parameters.inputFileNames)

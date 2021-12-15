@@ -2,6 +2,7 @@
 #include "Environment/ClosureType.hpp"
 #include "Environment/MethodType.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -46,6 +47,11 @@ FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtr
 bool FunctionType::isFunctionType() const
 {
     return true;
+}
+
+AnyValuePtr FunctionType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitFunctionType(selfFromThis());
 }
 
 FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValuePtr &implementation)

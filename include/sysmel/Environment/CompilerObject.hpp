@@ -8,6 +8,9 @@ namespace Sysmel
 {
 namespace Environment
 {
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilerObject);
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */

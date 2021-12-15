@@ -1,5 +1,6 @@
 #include "Environment/ArrayType.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/StringUtilities.hpp"
@@ -33,6 +34,11 @@ bool ArrayType::isArrayType() const
     return true;
 }
 
+AnyValuePtr ArrayType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitArrayType(selfFromThis());
+}
+
 bool ArrayType::supportsDynamicCompileTimeMessageSend() const
 {
     return false;
@@ -53,6 +59,16 @@ bool ArrayType::hasTrivialInitialization()
     return elementType->hasTrivialInitialization();
 }
 
+bool ArrayType::hasTrivialInitializationCopyingFrom()
+{
+    return elementType->hasTrivialInitializationCopyingFrom();
+}
+
+bool ArrayType::hasTrivialInitializationMovingFrom()
+{
+    return elementType->hasTrivialInitializationMovingFrom();
+}
+
 bool ArrayType::hasTrivialFinalization()
 {
     return elementType->hasTrivialFinalization();
@@ -66,6 +82,19 @@ bool ArrayType::hasTrivialCopyingFrom()
 bool ArrayType::hasTrivialMovingFrom()
 {
     return elementType->hasTrivialMovingFrom();
+}
+
+uint64_t ArrayType::getMemorySize()
+{
+    if(size == 0)
+        return size;
+    
+    return elementType->getAlignedMemorySize() * size;
+}
+
+uint64_t ArrayType::getMemoryAlignment()
+{
+    return elementType->getMemoryAlignment();
 }
 
 std::string ArrayType::printString() const

@@ -21,6 +21,7 @@ public:
     static TypePtr make(const TypePtr &baseType, TypeDecorationFlags decorations);
 
     virtual bool isDecoratedType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual bool isConstDecoratedType() const override;
     virtual bool isVolatileDecoratedType() const override;
@@ -31,10 +32,15 @@ public:
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
     virtual bool hasTrivialCopyingFrom() override;
     virtual bool hasTrivialMovingFrom() override;
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+    
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
     virtual TypePtr asUndecoratedType() override;

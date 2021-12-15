@@ -1,5 +1,6 @@
 #include "Environment/ClosureType.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -37,6 +38,11 @@ ClosureTypePtr getOrCreateClosureType(const TypePtr &resultType, const TypePtrLi
 bool ClosureType::isClosureType() const
 {
     return true;
+}
+
+AnyValuePtr ClosureType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitClosureType(selfFromThis());
 }
 
 std::string ClosureType::printString() const

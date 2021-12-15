@@ -1,6 +1,7 @@
 #include "Environment/SimpleType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/MetaType.hpp"
+#include "Environment/TypeVisitor.hpp"
 
 
 namespace Sysmel
@@ -13,6 +14,11 @@ static BootstrapTypeRegistration<SimpleType> bootstrapTypeTypeRegistration;
 bool SimpleType::isSimpleType() const
 {
     return true;
+}
+
+AnyValuePtr SimpleType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitSimpleType(selfFromThis());
 }
 
 TypePtr SimpleType::getType() const

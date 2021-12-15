@@ -1,6 +1,7 @@
 #include "Environment/PointerType.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -67,15 +68,30 @@ void PointerType::addSpecializedInstanceMethods()
 
     addMethodCategories(MethodCategories{
             {"accessing", {
+                // value/_
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "value", selfFromThis(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
                     return referenceType->makeWithValue(value->baseValue);
                 }, MethodFlags::Pure),
+
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "_", selfFromThis(), referenceType, {}, [=](const PointerTypeValuePtr &value) {
                     return referenceType->makeWithValue(value->baseValue);
+                }, MethodFlags::Pure),
+
+                // []
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr, AnyValuePtr)> ("pointer.element", "[]", selfFromThis(), referenceType, {Type::getIntPointerType()}, [=](const PointerTypeValuePtr &value, const AnyValuePtr &index) {
+                    return value->baseValue->getReferenceToSlotWithType(index->unwrapAsInt64(), referenceType);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr, AnyValuePtr)> ("pointer.element", "[]", selfFromThis(), referenceType, {Type::getUIntPointerType()}, [=](const PointerTypeValuePtr &value, const AnyValuePtr &index) {
+                    return value->baseValue->getReferenceToSlotWithType(index->unwrapAsUInt64(), referenceType);
                 }, MethodFlags::Pure),
             }
         }
     });
+}
+
+AnyValuePtr PointerType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitPointerType(selfFromThis());
 }
 
 bool PointerTypeValue::isPointerTypeValue() const

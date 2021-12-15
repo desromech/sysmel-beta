@@ -13,6 +13,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/Utilities.hpp"
 #include "Environment/TypeConversionRule.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/UpcastTypeConversionRule.hpp"
@@ -36,6 +37,9 @@
 #include "Environment/FunctionType.hpp"
 
 #include "Environment/SSATypeProgramEntity.hpp"
+
+#include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 
 #include <algorithm>
 
@@ -180,6 +184,16 @@ std::string Type::printString() const
     if(name)
         return name->asString();
     return SuperType::printString();
+}
+
+AnyValuePtr Type::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitType(selfFromThis());
+}
+
+AnyValuePtr Type::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitAnyType(selfFromThis());
 }
 
 TypePtr Type::getSupertype() const
@@ -388,7 +402,37 @@ bool Type::isImmutableType()
     return false;
 }
 
+bool Type::isGCType()
+{
+    return true;
+}
+
+bool Type::isSeparateValueInstanceType()
+{
+    return isGCType();
+}
+
+bool Type::isPassedByReference()
+{
+    return false;
+}
+
+bool Type::isReturnedByReference()
+{
+    return false;
+}
+
 bool Type::hasTrivialInitialization()
+{
+    return false;
+}
+
+bool Type::hasTrivialInitializationCopyingFrom()
+{
+    return false;
+}
+
+bool Type::hasTrivialInitializationMovingFrom()
 {
     return false;
 }
@@ -406,6 +450,21 @@ bool Type::hasTrivialCopyingFrom()
 bool Type::hasTrivialMovingFrom()
 {
     return false;
+}
+
+uint64_t Type::getMemorySize()
+{
+    return 0;
+}
+
+uint64_t Type::getMemoryAlignment()
+{
+    return 0;
+}
+
+uint64_t Type::getAlignedMemorySize()
+{
+    return alignedTo(getMemorySize(), getMemoryAlignment());
 }
 
 ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

@@ -4,6 +4,7 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -43,6 +44,11 @@ bool TemporaryReferenceType::isReferenceLikeType() const
 bool TemporaryReferenceType::isTemporaryReferenceType() const
 {
     return true;
+}
+
+AnyValuePtr TemporaryReferenceType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitTemporaryReferenceType(selfFromThis());
 }
 
 ReferenceTypePtr TemporaryReferenceType::ref()

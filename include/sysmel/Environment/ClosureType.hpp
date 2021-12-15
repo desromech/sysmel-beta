@@ -19,6 +19,7 @@ class ClosureType : public SubMetaTypeOf<FunctionalType, ClosureType>
 {
 public:
     virtual bool isClosureType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

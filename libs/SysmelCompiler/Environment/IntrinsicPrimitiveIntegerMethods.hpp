@@ -214,6 +214,8 @@ struct IntrinsicPrimitiveIntegerMethods
 
     static MethodCategories instanceMethods()
     {
+        std::string signSuffix = IsSigned ? ".signed" : ".unsigned";
+
         return MethodCategories{
             {"comparisons", {
                 makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.equals", "=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
@@ -228,16 +230,16 @@ struct IntrinsicPrimitiveIntegerMethods
                 makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.not-equals", "~~", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value != b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-than", "<", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-than" + signSuffix, "<", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value < b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-equals", "<=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.less-equals" + signSuffix, "<=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value <= b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-than", ">", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-than" + signSuffix, ">", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value > b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-equals", ">=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<Boolean8Ptr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.greater-equals" + signSuffix, ">=", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return Boolean8::make(a->value >= b->value);
                 }, MethodFlags::Pure),
             }},
@@ -254,13 +256,13 @@ struct IntrinsicPrimitiveIntegerMethods
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.sub", "-", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value - b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mul", "*", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mul" + signSuffix, "*", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value * b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.div", "/", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.div" + signSuffix, "/", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value / b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod", "%", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod" + signSuffix, "%", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value % b->value);
                 }, MethodFlags::Pure),
             }},

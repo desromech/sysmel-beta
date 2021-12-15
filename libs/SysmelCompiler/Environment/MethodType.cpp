@@ -1,6 +1,8 @@
 #include "Environment/MethodType.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+
 
 namespace Sysmel
 {
@@ -52,6 +54,11 @@ MethodTypePtr getOrCreateMethodType(const TypePtr &receiverType, const TypePtr &
 bool MethodType::isMethodType() const
 {
     return true;
+}
+
+AnyValuePtr MethodType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitMethodType(selfFromThis());
 }
 
 std::string MethodType::printString() const

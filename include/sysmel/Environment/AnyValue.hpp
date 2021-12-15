@@ -46,6 +46,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticAnalyzer);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourcePosition);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnalysisEnvironment);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralValueVisitor);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAValue);
 
 typedef std::pair<AnyValuePtr, AnyValuePtr> MethodBinding;
@@ -82,9 +84,13 @@ struct StaticBootstrapDefinedTypeMetadata
     bool isNullableType;
     bool isImmutableType;
     bool hasTrivialInitialization;
+    bool hasTrivialInitializationCopyingFrom;
+    bool hasTrivialInitializationMovingFrom;
     bool hasTrivialFinalization;
     bool hasTrivialCopyingFrom;
     bool hasTrivialMovingFrom;
+    uint64_t memorySize;
+    uint64_t (*memoryAlignment)();
     std::string sysmelLanguageTopLevelName;
     size_t bootstrapTypeID;
 };
@@ -130,9 +136,13 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     T::__isNullableType__,
     T::__isImmutableType__,
     T::__hasTrivialInitialization__,
+    T::__hasTrivialInitializationCopyingFrom__,
+    T::__hasTrivialInitializationMovingFrom__,
     T::__hasTrivialFinalization__,
     T::__hasTrivialCopyingFrom__,
     T::__hasTrivialMovingFrom__,
+    T::__memorySize__,
+    &T::__memoryAlignment__,
     T::__sysmelTypeName__,
     0
 };
@@ -314,9 +324,16 @@ public:
     static constexpr bool __isNullableType__ = true;
     static constexpr bool __isImmutableType__ = false;
     static constexpr bool __hasTrivialInitialization__ = false;
+    static constexpr bool __hasTrivialInitializationCopyingFrom__ = false;
+    static constexpr bool __hasTrivialInitializationMovingFrom__ = false;
     static constexpr bool __hasTrivialFinalization__ = false;
     static constexpr bool __hasTrivialCopyingFrom__ = false;
     static constexpr bool __hasTrivialMovingFrom__ = false;
+    static constexpr uint64_t __memorySize__ = 0;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 0;
+    }
 
     static MethodCategories __instanceMethods__();
     static FieldVariablePtrList __fieldVariables__();
@@ -366,6 +383,9 @@ public:
 
     /// Performs a shallow clone of the object.
     virtual AnyValuePtr shallowClone();
+
+    /// Accept a literal value visitor.
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor);
 
     /// Is this object a program entity?
     virtual bool isCompilerObject() const;

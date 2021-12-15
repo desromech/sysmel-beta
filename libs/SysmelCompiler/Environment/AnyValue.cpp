@@ -22,6 +22,7 @@
 #include "Environment/ValueBox.hpp"
 #include "Environment/FieldVariable.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <algorithm>
 #include <iostream>
 
@@ -166,6 +167,11 @@ void AnyValue::initialize()
 AnyValuePtr AnyValue::shallowClone()
 {
     return getType()->shallowCloneInstance(selfFromThis());
+}
+
+AnyValuePtr AnyValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitAnyValue(selfFromThis());
 }
 
 bool AnyValue::isKindOf(const TypePtr &type) const

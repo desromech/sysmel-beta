@@ -13,7 +13,7 @@ static BootstrapTypeRegistration<ProgramModule> programModuleTypeRegistration;
 ProgramModulePtr ProgramModule::create(const std::string &name)
 {
     auto result = basicMakeObject<ProgramModule> ();
-    result->name = name;
+    result->name = internSymbol(name);
     result->activeDuring([&](){
         result->initialize();
     });
@@ -32,6 +32,11 @@ void ProgramModule::initialize()
 NamespacePtr ProgramModule::getGlobalNamespace() const
 {
     return globalNamespace;
+}
+
+AnyValuePtr ProgramModule::getName() const
+{
+    return name;
 }
 
 bool ProgramModule::isProgramModule() const
@@ -71,7 +76,7 @@ SSAValuePtr ProgramModule::asSSAValueRequiredInPosition(const ASTSourcePositionP
     if(!ssaModule)
     {
         ssaModule = basicMakeObject<SSAModule> ();
-        ssaModule->setName(internSymbol(name));
+        ssaModule->setName(name);
         ssaModule->setGlobalNamespace(globalNamespace->asSSAValueRequiredInPosition(position));
     }
     return ssaModule;

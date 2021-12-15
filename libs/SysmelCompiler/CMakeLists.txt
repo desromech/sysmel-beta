@@ -155,6 +155,7 @@ set(Environment_Sources
     LiteralSymbol.cpp
     LiteralToTargetTypeConversionRule.cpp
     LiteralValue.cpp
+    LiteralValueVisitor.cpp
     LocalVariable.cpp
     MacroInvocationContext.cpp
     MessageChainReceiverName.cpp
@@ -261,6 +262,7 @@ set(Environment_Sources
     TemporaryReferenceType
     TupleType.cpp
     Type.cpp
+    TypeVisitor.cpp
     TypeConversionRule.cpp
     TypeMetaBuilder.cpp
     Undefined.cpp
@@ -289,6 +291,8 @@ set(SysmelSyntax_Sources
 list(TRANSFORM SysmelSyntax_Sources PREPEND "Frontend/SysmelSyntax/")
 
 set(LLVMBackend_Sources
+    LLVMLiteralValueVisitor.cpp
+    LLVMTypeVisitor.cpp
     SSALLVMCodeGenerationBackend.cpp
     SSALLVMModuleVisitor.cpp
     SSALLVMValueVisitor.cpp

@@ -1,5 +1,6 @@
 #include "Environment/MetaType.hpp"
 #include "Environment/ASTCallNode.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <algorithm>
 
@@ -22,6 +23,11 @@ void MetaType::setThisType(const TypePtr &instanceType)
 bool MetaType::isMetaType() const
 {
     return true;
+}
+
+AnyValuePtr MetaType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitMetaType(selfFromThis());
 }
 
 TypePtr MetaType::getInstanceType()

@@ -19,6 +19,7 @@ class EnumType : public SubMetaTypeOf<DerivedType, EnumType>
 {
 public:
     virtual bool isEnumType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual const TypePtr &getBaseType() override;
 
@@ -27,10 +28,15 @@ public:
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
     virtual bool hasTrivialCopyingFrom() override;
     virtual bool hasTrivialMovingFrom() override;
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+    
     virtual void enqueuePendingValueTypeCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
     virtual void enqueuePendingValuesCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 

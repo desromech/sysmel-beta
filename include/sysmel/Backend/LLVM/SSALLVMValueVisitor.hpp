@@ -16,7 +16,30 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMValueVisitor)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMCodeGenerationBackend)
 
 /**
- * I am the base interface for a SSA based code generation backend
+ * I wrap a llvm type in an AnyValue
+ */
+class SSALLVMValue : public SubtypeOf<CompilerObject, SSALLVMValue>
+{
+public:
+    static constexpr char const __typeName__[] = "SSALLVMValue";
+
+    llvm::Value *value = nullptr;
+};
+
+AnyValuePtr wrapLLVMValue(llvm::Value *value);
+
+struct IntrinsicGenerationContext
+{
+    SSALLVMValueVisitor *self = nullptr;
+    llvm::IRBuilder<> *builder = nullptr;
+    llvm::Type *resultType = nullptr;
+    std::vector<llvm::Value*> arguments;
+    SSAValuePtrList originalArguments;
+    std::string intrinsicName;
+};
+
+/**
+ * I visit SSA values for converting them into llvm SSA values.
  */
 class SSALLVMValueVisitor : public SubtypeOf<SSAValueVisitor, SSALLVMValueVisitor>
 {
@@ -24,12 +47,12 @@ public:
     static constexpr char const __typeName__[] = "SSALLVMValueVisitor";
 
     llvm::Value *visitValueForLLVM(const SSAValuePtr &value);
-    AnyValuePtr wrapLLVMValue(llvm::Value *value);
 
     llvm::Value *translateValue(const SSAValuePtr &value);
     virtual AnyValuePtr visitFunction(const SSAFunctionPtr &value) override;
     virtual AnyValuePtr visitGlobalVariable(const SSAGlobalVariablePtr &value) override;
     virtual AnyValuePtr visitConstantLiteralValue(const SSAConstantLiteralValuePtr &value) override;
+    virtual AnyValuePtr visitTypeProgramEntity(const SSATypeProgramEntityPtr &value) override;
 
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction) override;
@@ -49,7 +72,7 @@ public:
     SSALLVMCodeGenerationBackend *backend = nullptr;
 
 protected:
-    static std::unordered_map<std::string, std::function<llvm::Value* (SSALLVMValueVisitor*, llvm::IRBuilder<>*, const std::vector<llvm::Value*> &, const SSAValuePtrList&, const std::string&)>> intrinsicGenerators;
+    static std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext&)>> intrinsicGenerators;
 
     void translateMainCodeRegion(const SSACodeRegionPtr &codeRegion);
     llvm::Value *translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments);
@@ -63,6 +86,7 @@ protected:
     llvm::Value *makeVoidValue();
     llvm::Value *coerceBooleanIntoI1(llvm::Value *value);
     llvm::Value *coerceI1IntoBoolean8(llvm::Value *value);
+    llvm::Value *simplifyDegeneratePhi(llvm::PHINode *phi);
     bool isLastTerminator() const;
 
     llvm::Function *currentFunction = nullptr;

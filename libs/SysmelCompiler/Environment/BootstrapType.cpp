@@ -1,5 +1,6 @@
 #include "Environment/BootstrapType.hpp"
 #include "Environment/BootstrapModule.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -12,6 +13,11 @@ namespace Environment
 bool BootstrapType::isBootstrapType() const
 {
     return true;
+}
+
+AnyValuePtr BootstrapType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitBootstrapType(selfFromThis());
 }
 
 bool BootstrapType::supportsDynamicCompileTimeMessageSend() const
@@ -44,6 +50,16 @@ bool BootstrapType::hasTrivialInitialization()
     return staticMetadata->hasTrivialInitialization;
 }
 
+bool BootstrapType::hasTrivialInitializationCopyingFrom()
+{
+    return staticMetadata->hasTrivialInitializationCopyingFrom;
+}
+
+bool BootstrapType::hasTrivialInitializationMovingFrom()
+{
+    return staticMetadata->hasTrivialInitializationMovingFrom;
+}
+
 bool BootstrapType::hasTrivialFinalization()
 {
     return staticMetadata->hasTrivialFinalization;
@@ -57,6 +73,16 @@ bool BootstrapType::hasTrivialCopyingFrom()
 bool BootstrapType::hasTrivialMovingFrom()
 {
     return staticMetadata->hasTrivialMovingFrom;
+}
+
+uint64_t BootstrapType::getMemorySize()
+{
+    return staticMetadata->memorySize;
+}
+
+uint64_t BootstrapType::getMemoryAlignment()
+{
+    return staticMetadata->memoryAlignment();
 }
 
 void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata)

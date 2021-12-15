@@ -20,6 +20,7 @@ class MethodType : public SubMetaTypeOf<FunctionalType, MethodType>
 {
 public:
     virtual bool isMethodType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     static MethodTypePtr make(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &arguments);
 

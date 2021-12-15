@@ -7,6 +7,7 @@
 #include "Environment/CompilationError.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/Wrappers.hpp"
+#include "Environment/TypeVisitor.hpp"
 
 namespace Sysmel
 {
@@ -18,6 +19,11 @@ static BootstrapTypeRegistration<EnumTypeValue> EnumTypeValueTypeRegistration;
 bool EnumType::isEnumType() const
 {
     return true;
+}
+
+AnyValuePtr EnumType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitEnumType(selfFromThis());
 }
 
 const TypePtr &EnumType::getBaseType()
@@ -46,6 +52,16 @@ bool EnumType::hasTrivialInitialization()
     return getBaseType()->hasTrivialInitialization();
 }
 
+bool EnumType::hasTrivialInitializationCopyingFrom()
+{
+    return getBaseType()->hasTrivialInitializationCopyingFrom();
+}
+
+bool EnumType::hasTrivialInitializationMovingFrom()
+{
+    return getBaseType()->hasTrivialInitializationMovingFrom();
+}
+
 bool EnumType::hasTrivialFinalization()
 {
     return getBaseType()->hasTrivialFinalization();
@@ -59,6 +75,16 @@ bool EnumType::hasTrivialCopyingFrom()
 bool EnumType::hasTrivialMovingFrom()
 {
     return getBaseType()->hasTrivialMovingFrom();
+}
+
+uint64_t EnumType::getMemorySize()
+{
+    return getBaseType()->getMemorySize();
+}
+
+uint64_t EnumType::getMemoryAlignment()
+{
+    return getBaseType()->getMemorySize();
 }
 
 void EnumType::addSpecializedMethods()

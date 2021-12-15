@@ -22,6 +22,7 @@ public:
     static PointerTypePtr makeWithAddressSpace(const TypePtr &baseType, const AnyValuePtr &addressSpace);
 
     virtual bool isPointerType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

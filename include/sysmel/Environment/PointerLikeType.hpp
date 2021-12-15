@@ -25,10 +25,15 @@ public:
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
     virtual bool hasTrivialCopyingFrom() override;
     virtual bool hasTrivialMovingFrom() override;
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+    
     bool hasGenericAddressSpace() const;
 
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value);
@@ -47,8 +52,10 @@ public:
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
     static constexpr bool __isNullableType__ = true;
-    static constexpr bool __isImmutableType__ = false;
+    static constexpr bool __isImmutableType__ = true;
     static constexpr bool __hasTrivialInitialization__ = true;
+    static constexpr bool __hasTrivialInitializationCopyingFrom__ = true;
+    static constexpr bool __hasTrivialInitializationMovingFrom__ = true;
     static constexpr bool __hasTrivialFinalization__ = true;
     static constexpr bool __hasTrivialCopyingFrom__ = true;
     static constexpr bool __hasTrivialMovingFrom__ = true;

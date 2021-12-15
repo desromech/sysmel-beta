@@ -25,6 +25,7 @@ public:
     virtual void initialize() override;
 
     virtual NamespacePtr getGlobalNamespace() const override;
+    virtual AnyValuePtr getName() const override;
 
     virtual bool isProgramModule() const override;
 
@@ -36,7 +37,7 @@ public:
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
 protected:
-    std::string name;
+    AnyValuePtr name;
     NamespacePtr globalNamespace;
     SSAModulePtr ssaModule;
 

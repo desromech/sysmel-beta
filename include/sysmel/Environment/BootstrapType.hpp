@@ -18,15 +18,22 @@ public:
     static constexpr char const __typeName__[] = "BootstrapType";
 
     virtual bool isBootstrapType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
+    
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
     virtual bool supportsMessageAnalysisByLiteralValueReceivers() const override;
     virtual bool isEphemeralCompileTimeObject() const override;
     virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
     virtual bool hasTrivialCopyingFrom() override;
     virtual bool hasTrivialMovingFrom() override;
+
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
 
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
     void addDefaultTypeConversionRules() override;

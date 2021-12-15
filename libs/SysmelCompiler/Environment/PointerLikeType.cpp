@@ -1,4 +1,5 @@
 #include "Environment/PointerLikeType.hpp"
+#include "Environment/RuntimeContext.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -32,6 +33,26 @@ bool PointerLikeType::isImmutableType()
 bool PointerLikeType::hasTrivialInitialization()
 {
     return true;
+}
+
+bool PointerLikeType::hasTrivialInitializationCopyingFrom()
+{
+    return true;
+}
+
+bool PointerLikeType::hasTrivialInitializationMovingFrom()
+{
+    return true;
+}
+
+uint64_t PointerLikeType::getMemorySize()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerSize;
+}
+
+uint64_t PointerLikeType::getMemoryAlignment()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerAlignment;
 }
 
 bool PointerLikeType::hasTrivialFinalization()

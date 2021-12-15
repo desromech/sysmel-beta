@@ -23,6 +23,7 @@ public:
 
     virtual bool isTemporaryReferenceType() const override;
     virtual bool isReferenceLikeType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual ReferenceTypePtr ref() override;
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace) override;

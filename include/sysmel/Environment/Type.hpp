@@ -22,6 +22,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSATypeProgramEntity);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TypeVisitor);
+
 typedef std::function<void (TypePtr)> TypeIterationBlock;
 
 /**
@@ -68,6 +70,11 @@ public:
     bool isBreakType() const;
     bool isLiteralValueType() const;
     bool isCompilationErrorValueType() const;
+
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
+
+    /// Accept a type visitor.
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor);
 
     /// This method evaluates a specific message in the receiver with the specific arguments.
     virtual TypePtr getSupertype() const;
@@ -125,8 +132,26 @@ public:
     /// Is this a value that cannot be modified?
     virtual bool isImmutableType();
 
+    /// Is this a gc type?
+    virtual bool isGCType();
+
+    /// Is this a type with a separate reference vs stack value?
+    virtual bool isSeparateValueInstanceType();
+
+    /// Is this a value that is passed by reference?
+    virtual bool isPassedByReference();
+
+    /// Is this a value that is returned by reference?
+    virtual bool isReturnedByReference();
+
     /// Is this a type with a trivial initialization?
     virtual bool hasTrivialInitialization();
+
+    /// Is this a type with a trivial initialization copying from?
+    virtual bool hasTrivialInitializationCopyingFrom();
+
+    /// Is this a type with a trivial initialization moving from?
+    virtual bool hasTrivialInitializationMovingFrom();
 
     /// Is this a type with a trivial finalization?
     virtual bool hasTrivialFinalization();
@@ -136,6 +161,15 @@ public:
 
     /// Is this a type with a trivial movement process?
     virtual bool hasTrivialMovingFrom();
+
+    /// Gets the type in memory size.
+    virtual uint64_t getMemorySize();
+
+    /// Gets the type in memory alignment.
+    virtual uint64_t getMemoryAlignment();
+
+    /// Gets the type in aligned memory size.
+    virtual uint64_t getAlignedMemorySize();
 
     /// This method performs the semantic analysis of a call node with the specified semantic analyzer.
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
