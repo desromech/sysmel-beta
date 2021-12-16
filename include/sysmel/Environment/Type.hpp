@@ -162,6 +162,15 @@ public:
     /// Is this a type with a trivial movement process?
     virtual bool hasTrivialMovingFrom();
 
+    /// Gets the type value size.
+    virtual uint64_t getValueSize();
+
+    /// Gets the type value alignment.
+    virtual uint64_t getValueAlignment();
+
+    /// Gets the type aligned value size.
+    virtual uint64_t getAlignedValueSize();
+
     /// Gets the type in memory size.
     virtual uint64_t getMemorySize();
 

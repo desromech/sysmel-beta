@@ -14,6 +14,15 @@ bool ValueBox::isValueBox() const
     return true;
 }
 
+SExpression ValueBox::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"valueBox"}},
+        type->asSExpression(),
+        value ? value->asSExpression() : nullptr
+    }};
+}
+
 AnyValuePtr ValueBox::copyAssignValue(const AnyValuePtr &newValue)
 {
     value = newValue;

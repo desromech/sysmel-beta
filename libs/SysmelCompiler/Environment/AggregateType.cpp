@@ -1,4 +1,5 @@
 #include "Environment/AggregateType.hpp"
+#include "Environment/AggregateTypeLayout.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <sstream>
@@ -13,6 +14,18 @@ static BootstrapTypeRegistration<AggregateTypeValue> AggregateTypeValueTypeRegis
 bool AggregateType::isAggregateType() const
 {
     return true;
+}
+
+uint64_t AggregateType::getMemorySize()
+{
+    getLayout();
+    return layout ? layout->getMemorySize() : 0;
+}
+
+uint64_t AggregateType::getMemoryAlignment()
+{
+    getLayout();
+    return layout ? layout->getMemoryAlignment() : 0;
 }
 
 const AggregateTypeLayoutPtr &AggregateType::getLayout()

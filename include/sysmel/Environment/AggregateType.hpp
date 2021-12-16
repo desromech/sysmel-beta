@@ -21,6 +21,9 @@ class AggregateType : public SubMetaTypeOf<SimpleType, AggregateType>
 public:
     virtual bool isAggregateType() const override;
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
     const AggregateTypeLayoutPtr &getLayout();
 
 protected:

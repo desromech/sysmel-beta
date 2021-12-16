@@ -5,6 +5,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/AggregateTypeSequentialLayout.hpp"
 #include <iostream>
 
 namespace Sysmel
@@ -21,15 +22,24 @@ bool StructureType::isStructureType() const
 
 AnyValuePtr StructureType::basicNewValue()
 {
+    auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    assert(sequentialLayout);
+
+    const auto &slotTypes = sequentialLayout->getSlotTypes();
+
     auto result = basicMakeObject<StructureTypeValue> ();
     result->type = selfFromThis();
-    result->slots.reserve(fields.size());
+    result->slots.reserve(slotTypes.size());
 
-    // TODO: Use a proper structure layout here!!!.
-    for(auto &field : fields)
-        result->slots.push_back(validAnyValue(field->getValueType()->basicNewValue())->asMutableStoreValue());
-    // TODO: Initialize the slots.
+    for(const auto &slotType : slotTypes)
+        result->slots.push_back(validAnyValue(slotType->basicNewValue())->asMutableStoreValue());
+
     return result;
+}
+
+AggregateTypeLayoutPtr StructureType::makeLayoutInstance()
+{
+    return basicMakeObject<AggregateTypeSequentialLayout> ();
 }
 
 bool StructureTypeValue::isStructureTypeValue() const
@@ -40,6 +50,20 @@ bool StructureTypeValue::isStructureTypeValue() const
 AnyValuePtr StructureTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
 {
     return visitor->visitStructureTypeValue(selfFromThis());
+}
+
+SExpression StructureTypeValue::asSExpression() const
+{
+    SExpressionList elementsSExpr;
+    elementsSExpr.elements.reserve(slots.size());
+    for(auto &el : slots)
+        elementsSExpr.elements.push_back(el->asSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"struct"}},
+        type->asSExpression(),
+        elementsSExpr
+    }};
 }
 
 TypePtr StructureTypeValue::getType() const

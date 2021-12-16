@@ -65,6 +65,16 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding<UIntPointerValue (const TypePtr &)> ("memoryAlignment", +[](const TypePtr &self){
                 return UIntPointerValue{self->getMemoryAlignment()};
             }, MethodFlags::Pure),
+
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("alignedValueSize", +[](const TypePtr &self){
+                return UIntPointerValue{self->getAlignedValueSize()};
+            }, MethodFlags::Pure),
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("valueSize", +[](const TypePtr &self){
+                return UIntPointerValue{self->getValueSize()};
+            }, MethodFlags::Pure),
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("valueAlignment", +[](const TypePtr &self){
+                return UIntPointerValue{self->getValueAlignment()};
+            }, MethodFlags::Pure),
         }},
 
         {"type composition", {
@@ -460,6 +470,20 @@ bool Type::hasTrivialCopyingFrom()
 bool Type::hasTrivialMovingFrom()
 {
     return false;
+}
+uint64_t Type::getValueSize()
+{
+    return getMemorySize();
+}
+
+uint64_t Type::getValueAlignment()
+{
+    return getMemoryAlignment();
+}
+
+uint64_t Type::getAlignedValueSize()
+{
+    return getAlignedMemorySize();
 }
 
 uint64_t Type::getMemorySize()

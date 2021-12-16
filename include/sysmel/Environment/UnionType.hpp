@@ -19,6 +19,9 @@ class UnionType : public SubMetaTypeOf<AggregateTypeWithFields, UnionType>
 {
 public:
     virtual bool isUnionType() const override;
+
+protected:
+    virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
 };
 
 /**
@@ -34,6 +37,7 @@ public:
 
     virtual bool isUnionTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
 
     std::vector<uint8_t> data;
 };

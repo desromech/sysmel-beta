@@ -20,9 +20,12 @@ class AggregateTypeWithFields : public SubMetaTypeOf<AggregateType, AggregateTyp
 {
 public:
     virtual bool isAggregateTypeWithFields() const override;
-
     virtual bool canHaveUserDefinedFields() const override;
     
+protected:
+    virtual void buildLayout() override;
+    virtual AggregateTypeLayoutPtr makeLayoutInstance();
+
 };
 
 /**

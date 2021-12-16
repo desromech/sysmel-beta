@@ -1,5 +1,7 @@
 #include "Environment/AggregateTypeWithFields.hpp"
+#include "Environment/AggregateTypeLayout.hpp"
 #include "Environment/FieldVariable.hpp"
+#include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <sstream>
 
@@ -18,6 +20,22 @@ bool AggregateTypeWithFields::isAggregateTypeWithFields() const
 bool AggregateTypeWithFields::canHaveUserDefinedFields() const
 {
     return true;
+}
+
+void AggregateTypeWithFields::buildLayout()
+{
+    evaluateAllPendingBodyBlockCodeFragments();
+
+    layout = makeLayoutInstance();
+    layout->beginGroup();
+    for(auto &field : fields)
+        layout->addFieldVariable(field);
+    layout->finishGroup();
+}
+
+AggregateTypeLayoutPtr AggregateTypeWithFields::makeLayoutInstance()
+{
+    SysmelSelfSubclassResponsibility();
 }
 
 bool AggregateTypeWithFieldsValue::isAggregateTypeWithFieldsValue() const

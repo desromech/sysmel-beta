@@ -1282,6 +1282,20 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(EmptyStructNewValue2)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structValue = evaluateString("TestStruct()");
+                CHECK(structValue->isStructureTypeValue());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
     TEST(StructureGetSelf)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){
@@ -1347,21 +1361,6 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
-    TEST(EmptyStructNewValue2)
-    {
-        RuntimeContext::createForScripting()->activeDuring([&](){
-            ScriptModule::create()->activeDuring([&](){
-                auto structDefinition = evaluateString("public struct TestStruct definition: {}.");
-                CHECK(structDefinition->isStructureType());
-
-                auto structValue = evaluateString("TestStruct()");
-                CHECK(structValue->isStructureTypeValue());
-
-                Module::getActive()->analyzeAllPendingProgramEntities();
-            });
-        });
-    }
-
     TEST(CompileTimeConstant)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){
@@ -1373,6 +1372,24 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(ClassPublicFields)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto classDefinition = evaluateString("public class TestClass definition: {public field x type: Int32}.");
+                CHECK(classDefinition->isClassType());
+
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("TestClass memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("TestClass memoryAlignment"));
+
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("TestClass() x"));
+                CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestClass() x: 5"));
+                CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestClass() x: 5; x"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
     TEST(TemplateStructure)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){

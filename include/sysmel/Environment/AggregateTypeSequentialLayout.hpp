@@ -20,6 +20,21 @@ class AggregateTypeSequentialLayout : public SubtypeOf<AggregateTypeLayout, Aggr
 public:
     static constexpr char const __typeName__[] = "AggregateTypeSequentialLayout";
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
+    virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
+    virtual void finishGroup() override;
+
+    const TypePtrList &getSlotTypes() const
+    {
+        return slotTypes;
+    }
+    
+protected:
+    uint64_t memorySize = 0;
+    uint64_t memoryAlignment = 1;
+    TypePtrList slotTypes;
 };
 
 } // End of namespace Environment

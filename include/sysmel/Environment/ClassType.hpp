@@ -25,6 +25,8 @@ public:
     /// This method enqueue the analysis of a body block.
     virtual void enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
+    virtual AnyValuePtr basicNewValue() override;
+
 protected:
     /// This method evaluates all of the pending code fragments.
     virtual void evaluateAllPendingCodeFragments() override;
@@ -34,6 +36,8 @@ protected:
 
     /// This method evaluates all of the pending super class definition code fragments.
     virtual void evaluatePendingSuperclassDefinitions() const;
+
+    virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
 
     mutable DeferredCompileTimeCodeFragmentPtrList pendingSuperclassCodeFragments;
     mutable bool hasEvaluatedSuperclassCodeFragment = false;
@@ -52,6 +56,10 @@ public:
 
     virtual bool isClassTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
+    virtual SExpression asSExpression() const override;
+    virtual TypePtr getType() const override;
+    virtual AnyValuePtr asMutableStoreValue() override;
+    virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType) override;
 
     AnyValuePtrList slots;
 };

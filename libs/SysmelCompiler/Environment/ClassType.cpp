@@ -1,10 +1,13 @@
 #include "Environment/ClassType.hpp"
 #include "Environment/DeferredCompileTimeCodeFragment.hpp"
+#include "Environment/Error.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/CompilationError.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/AggregateTypeSequentialLayout.hpp"
 
 namespace Sysmel
 {
@@ -77,6 +80,30 @@ void ClassType::enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCo
     enqueuePendingSemanticAnalysis();
 }
 
+AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
+{
+    return basicMakeObject<AggregateTypeSequentialLayout> ();
+}
+
+AnyValuePtr ClassType::basicNewValue()
+{
+    auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    assert(sequentialLayout);
+
+    const auto &slotTypes = sequentialLayout->getSlotTypes();
+
+    auto result = basicMakeObject<ClassTypeValue> ();
+    result->type = selfFromThis();
+    result->slots.reserve(slotTypes.size());
+
+    for(const auto &slotType : slotTypes)
+        result->slots.push_back(validAnyValue(slotType->basicNewValue())->asMutableStoreValue());
+
+    // TODO: Set the vtable/typeinfo values.
+
+    return result;
+}
+
 bool ClassTypeValue::isClassTypeValue() const
 {
     return true;
@@ -85,6 +112,45 @@ bool ClassTypeValue::isClassTypeValue() const
 AnyValuePtr ClassTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
 {
     return visitor->visitClassTypeValue(selfFromThis());
+}
+
+SExpression ClassTypeValue::asSExpression() const
+{
+    SExpressionList elementsSExpr;
+    elementsSExpr.elements.reserve(slots.size());
+    for(auto &el : slots)
+        elementsSExpr.elements.push_back(el->asSExpression());
+
+    return SExpressionList{{
+        SExpressionIdentifier{{"struct"}},
+        type->asSExpression(),
+        elementsSExpr
+    }};
+}
+
+
+TypePtr ClassTypeValue::getType() const
+{
+    return type;
+}
+
+AnyValuePtr ClassTypeValue::asMutableStoreValue()
+{
+    auto result = basicMakeObject<ClassTypeValue> ();
+    result->type = type;
+    result->slots.reserve(slots.size());
+    for(auto &slot : slots)
+        result->slots.push_back(slot->asMutableStoreValue());
+    return result;
+}
+
+AnyValuePtr ClassTypeValue::getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType)
+{
+    assert(referenceType->isPointerLikeType());
+    if(slotIndex < 0 || uint64_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> (formatString("Invalid slot index {0} for accessing class of type {1}.", {castToString(slotIndex), type->printString()}));
+
+    return referenceType.staticAs<PointerLikeType>()->makeWithValue(slots[slotIndex]);
 }
 
 } // End of namespace Environment
