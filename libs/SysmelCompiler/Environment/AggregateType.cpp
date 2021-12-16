@@ -1,4 +1,5 @@
 #include "Environment/AggregateType.hpp"
+#include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <sstream>
 
@@ -12,6 +13,19 @@ static BootstrapTypeRegistration<AggregateTypeValue> AggregateTypeValueTypeRegis
 bool AggregateType::isAggregateType() const
 {
     return true;
+}
+
+const AggregateTypeLayoutPtr &AggregateType::getLayout()
+{
+    if(!layout)
+        buildLayout();
+
+    return layout;
+}
+
+void AggregateType::buildLayout()
+{
+    SysmelSelfSubclassResponsibility();
 }
 
 bool AggregateTypeValue::isAggregateTypeValue() const

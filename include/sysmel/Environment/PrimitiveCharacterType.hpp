@@ -40,6 +40,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 1;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 1;
+    }
 
     virtual char unwrapAsChar8() const override;
 
@@ -66,6 +71,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 2;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 2;
+    }
 
     virtual char16_t unwrapAsChar16() const override;
 
@@ -92,6 +102,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 4;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 4;
+    }
 
     virtual char32_t unwrapAsChar32() const override;
 

@@ -10,6 +10,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/RuntimeContext.hpp"
 #include <string.h>
 #include <algorithm>
 
@@ -275,6 +276,11 @@ bool Float64::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 AnyValuePtr Float64::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 {
     return IntrinsicPrimitiveFloatMethods<Float64>::instantiateWithLiteralValue(value);
+}
+
+uint64_t Float64::__memoryAlignment__()
+{
+    return RuntimeContext::getActive()->getTargetDescription().doubleAlignment;
 }
 
 double Float64::unwrapAsFloat64() const

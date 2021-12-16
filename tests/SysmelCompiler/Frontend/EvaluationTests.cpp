@@ -107,28 +107,70 @@ SUITE(SysmelCompileTimeEvaluation)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){
             ScriptModule::create()->activeDuring([&](){
+                const auto &targetDescription = RuntimeContext::getActive()->getTargetDescription();
                 CHECK(evaluateString("Boolean8")->isType());
 
                 CHECK(evaluateString("UInt8")->isType());
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("UInt8 memorySize"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("UInt8 memoryAlignment"));
+
                 CHECK(evaluateString("UInt16")->isType());
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("UInt16 memorySize"));
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("UInt16 memoryAlignment"));
+
                 CHECK(evaluateString("UInt32")->isType());
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("UInt32 memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("UInt32 memoryAlignment"));
+
                 CHECK(evaluateString("UInt64")->isType());
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("UInt64 memorySize"));
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("UInt64 memoryAlignment"));
 
                 CHECK(evaluateString("Int8")->isType());
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("Int8 memorySize"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("Int8 memoryAlignment"));
+
                 CHECK(evaluateString("Int16")->isType());
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Int16 memorySize"));
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Int16 memoryAlignment"));
+
                 CHECK(evaluateString("Int32")->isType());
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Int32 memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Int32 memoryAlignment"));
+
                 CHECK(evaluateString("Int64")->isType());
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("Int64 memorySize"));
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("Int64 memoryAlignment"));
 
                 CHECK(evaluateString("Char8")->isType());
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("Char8 memorySize"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("Char8 memoryAlignment"));
+
                 CHECK(evaluateString("Char16")->isType());
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Char16 memorySize"));
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Char16 memoryAlignment"));
+
                 CHECK(evaluateString("Char32")->isType());
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Char32 memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Char32 memoryAlignment"));
 
                 CHECK(evaluateString("Float16")->isType());
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Float16 memorySize"));
+                CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint64_t> ("Float16 memoryAlignment"));
+
                 CHECK(evaluateString("Float32")->isType());
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Float32 memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("Float32 memoryAlignment"));
+
                 CHECK(evaluateString("Float64")->isType());
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("Float64 memorySize"));
+                CHECK_EQUAL(targetDescription.doubleAlignment, evaluateStringWithValueOfType<uint64_t> ("Float64 memoryAlignment"));
 
                 CHECK(evaluateString("UIntPointer")->isType());
+                CHECK_EQUAL(targetDescription.pointerSize, evaluateStringWithValueOfType<uint64_t> ("UIntPointer memorySize"));
+
                 CHECK(evaluateString("IntPointer")->isType());
+                CHECK_EQUAL(targetDescription.pointerSize, evaluateStringWithValueOfType<uint64_t> ("IntPointer memorySize"));
             });
         });
     }
@@ -1157,6 +1199,27 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto structType = staticObjectCast<Type> (structDefinition);
                 CHECK_EQUAL(1u, structType->getFieldCount());
 
+                CHECK_EQUAL(4u, structType->getMemorySize());
+                CHECK_EQUAL(4u, structType->getMemoryAlignment());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(StructPadding)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct definition: {public field first type: Int8. public field second type: Int32}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structType = staticObjectCast<Type> (structDefinition);
+                CHECK_EQUAL(2u, structType->getFieldCount());
+
+                CHECK_EQUAL(8u, structType->getMemorySize());
+                CHECK_EQUAL(4u, structType->getMemoryAlignment());
+
                 Module::getActive()->analyzeAllPendingProgramEntities();
             });
         });
@@ -1271,6 +1334,9 @@ SUITE(SysmelCompileTimeEvaluation)
             ScriptModule::create()->activeDuring([&](){
                 auto structDefinition = evaluateString("public struct TestStruct definition: {public field x type: Int32}.");
                 CHECK(structDefinition->isStructureType());
+
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("TestStruct memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("TestStruct memoryAlignment"));
 
                 CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("TestStruct() x"));
                 CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("TestStruct() x: 5"));

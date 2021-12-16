@@ -43,6 +43,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 1;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 1;
+    }
     
     virtual bool unwrapAsBoolean() const override;
 

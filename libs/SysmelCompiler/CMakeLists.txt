@@ -1,5 +1,10 @@
 set(Environment_Sources
     AggregateType.cpp
+    AggregateTypeArrayLayout.cpp
+    AggregateTypeLayout.cpp
+    AggregateTypeSequentialLayout.cpp
+    AggregateTypeUnionLayout.cpp
+    AggregateTypeVariantLayout.cpp
     AggregateTypeWithFields.cpp
     AmbiguousMatchingPatternsFound.cpp
     AnyValue.cpp

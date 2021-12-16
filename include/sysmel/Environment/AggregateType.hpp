@@ -10,6 +10,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeLayout);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeValue);
 
 /**
@@ -19,6 +20,13 @@ class AggregateType : public SubMetaTypeOf<SimpleType, AggregateType>
 {
 public:
     virtual bool isAggregateType() const override;
+
+    const AggregateTypeLayoutPtr &getLayout();
+
+protected:
+    virtual void buildLayout();
+
+    AggregateTypeLayoutPtr layout;
 };
 
 /**

@@ -15,6 +15,28 @@ namespace Environment
 // Wrapper type for
 //=============================================================================
 
+struct UIntPointerValue
+{
+    uint64_t value;
+};
+
+struct IntPointerValue
+{
+    int64_t value;
+};
+
+template<>
+struct WrapperTypeFor<UIntPointerValue> 
+{
+    static TypePtr apply();
+};
+
+template<>
+struct WrapperTypeFor<IntPointerValue> 
+{
+    static TypePtr apply();
+};
+
 template<>
 struct WrapperTypeFor<bool>
 {
@@ -306,6 +328,18 @@ struct WrapValue<const T&> : WrapValue<T> {};
 
 template<typename T>
 struct WrapValue<T&&> : WrapValue<T> {};
+
+template<>
+struct WrapValue<UIntPointerValue>
+{
+    static AnyValuePtr apply(UIntPointerValue value);
+};
+
+template<>
+struct WrapValue<IntPointerValue>
+{
+    static AnyValuePtr apply(IntPointerValue value);
+};
 
 template<typename T>
 AnyValuePtr wrapValue(T &&value)

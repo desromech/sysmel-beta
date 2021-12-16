@@ -40,6 +40,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 1;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 1;
+    }
 
     virtual uint8_t unwrapAsUInt8() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -67,6 +72,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 2;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 2;
+    }
 
     virtual uint16_t unwrapAsUInt16() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -94,6 +104,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 4;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 4;
+    }
 
     virtual uint32_t unwrapAsUInt32() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -121,6 +136,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 8;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 8;
+    }
 
     virtual uint64_t unwrapAsUInt64() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -148,6 +168,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 1;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 1;
+    }
 
     virtual int8_t unwrapAsInt8() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -175,6 +200,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 2;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 2;
+    }
 
     virtual int16_t unwrapAsInt16() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -202,6 +232,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 4;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 4;
+    }
 
     virtual int32_t unwrapAsInt32() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
@@ -229,6 +264,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 8;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 8;
+    }
 
     virtual int64_t unwrapAsInt64() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;

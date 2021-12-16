@@ -32,6 +32,11 @@ class Float16 : public SubtypeOf<PrimitiveFloatType, Float16>
 public:
     static constexpr char const __typeName__[] = "Float16";
     static constexpr char const __sysmelTypeName__[] = "Float16";
+    static constexpr uint64_t __memorySize__ = 2;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 2;
+    }
 
     uint16_t value = 0;
 };
@@ -52,6 +57,11 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 4;
+    static constexpr uint64_t __memoryAlignment__()
+    {
+        return 4;
+    }
 
     virtual float unwrapAsFloat32() const override;
 
@@ -78,6 +88,8 @@ public:
     static AnyValuePtrList __constructors__();
     static bool __canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value);
     static AnyValuePtr __instantiateWithLiteralValue__(const AnyValuePtr &value);
+    static constexpr uint64_t __memorySize__ = 8;
+    static uint64_t __memoryAlignment__();
 
     virtual double unwrapAsFloat64() const override;
 

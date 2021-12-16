@@ -21,6 +21,48 @@ static BootstrapTypeRegistration<Int16> Int16TypeRegistration;
 static BootstrapTypeRegistration<Int32> Int32TypeRegistration;
 static BootstrapTypeRegistration<Int64> Int64TypeRegistration;
 
+TypePtr WrapperTypeFor<UIntPointerValue>::apply()
+{
+    return Type::getUIntPointerType();
+}
+
+TypePtr WrapperTypeFor<IntPointerValue>::apply()
+{
+    return Type::getIntPointerType();
+}
+
+AnyValuePtr WrapValue<UIntPointerValue>::apply(UIntPointerValue value)
+{
+    if(RuntimeContext::getActive()->getTargetDescription().pointerSize == 4)
+    {
+        auto result = basicMakeObject<UInt32> ();
+        result->value = value.value;
+        return result;
+    }
+    else
+    {
+        auto result = basicMakeObject<UInt64> ();
+        result->value = value.value;
+        return result;
+    }
+}
+
+AnyValuePtr WrapValue<IntPointerValue>::apply(IntPointerValue value)
+{
+    if(RuntimeContext::getActive()->getTargetDescription().pointerSize == 4)
+    {
+        auto result = basicMakeObject<Int32> ();
+        result->value = value.value;
+        return result;
+    }
+    else
+    {
+        auto result = basicMakeObject<Int64> ();
+        result->value = value.value;
+        return result;
+    }
+}
+
 bool PrimitiveIntegerType::isPrimitiveIntegerTypeValue() const
 {
     return true;

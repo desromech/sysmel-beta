@@ -55,6 +55,16 @@ MethodCategories Type::__instanceMethods__()
         {"accessing", {
             makeMethodBinding("supertype", &Type::getSupertype, MethodFlags::Pure),
             makeMethodBinding("subtypes", &Type::getSubtypes, MethodFlags::Pure),
+
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("alignedMemorySize", +[](const TypePtr &self){
+                return UIntPointerValue{self->getAlignedMemorySize()};
+            }, MethodFlags::Pure),
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("memorySize", +[](const TypePtr &self){
+                return UIntPointerValue{self->getMemorySize()};
+            }, MethodFlags::Pure),
+            makeMethodBinding<UIntPointerValue (const TypePtr &)> ("memoryAlignment", +[](const TypePtr &self){
+                return UIntPointerValue{self->getMemoryAlignment()};
+            }, MethodFlags::Pure),
         }},
 
         {"type composition", {
