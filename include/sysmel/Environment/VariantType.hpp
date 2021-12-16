@@ -52,6 +52,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isVariantTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual TypePtr getType() const override;
 
     virtual std::string printString() const override;

@@ -26,6 +26,7 @@ public:
 
     virtual bool isUndefined() const override;
     virtual bool isAnonymousNameSymbol() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

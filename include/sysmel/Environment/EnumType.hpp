@@ -74,6 +74,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isEnumTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual TypePtr getType() const override;
 
     virtual bool unwrapAsBoolean() const override;

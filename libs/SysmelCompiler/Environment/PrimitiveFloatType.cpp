@@ -9,6 +9,7 @@
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <string.h>
 #include <algorithm>
 
@@ -196,6 +197,11 @@ struct IntrinsicPrimitiveFloatMethods
 bool PrimitiveFloatType::isPrimitiveFloatTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr PrimitiveFloatType::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitPrimitiveFloatType(selfFromThis());
 }
 
 MethodCategories Float32::__instanceMethods__()

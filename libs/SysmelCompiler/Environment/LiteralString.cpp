@@ -2,6 +2,7 @@
 #include "Environment/StringUtilities.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 
 namespace Sysmel
 {
@@ -24,6 +25,11 @@ LiteralStringPtr LiteralString::makeFor(const std::string &value)
 bool LiteralString::isLiteralString() const
 {
     return true;
+}
+
+AnyValuePtr LiteralString::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralString(selfFromThis());
 }
 
 std::string LiteralString::asString() const

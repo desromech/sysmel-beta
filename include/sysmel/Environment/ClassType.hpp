@@ -51,6 +51,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isClassTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     AnyValuePtrList slots;
 };

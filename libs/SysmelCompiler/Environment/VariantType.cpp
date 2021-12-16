@@ -2,6 +2,7 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <unordered_set>
 #include <sstream>
 
@@ -151,6 +152,11 @@ void VariantType::addSpecializedInstanceMethods()
 bool VariantTypeValue::isVariantTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr VariantTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitVariantTypeValue(selfFromThis());
 }
 
 TypePtr VariantTypeValue::getType() const

@@ -3,6 +3,7 @@
 #include "Environment/StringUtilities.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <unordered_map>
 
 namespace Sysmel
@@ -54,6 +55,11 @@ bool LiteralSymbol::isLiteralIdentifierSymbol() const
 bool LiteralSymbol::isAnonymousNameSymbol() const
 {
     return value.empty() || value == "_";
+}
+
+AnyValuePtr LiteralSymbol::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralSymbol(selfFromThis());
 }
 
 std::string LiteralSymbol::printString() const

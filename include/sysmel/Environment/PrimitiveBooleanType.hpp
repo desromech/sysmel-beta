@@ -22,6 +22,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_PrimitiveBooleanType";
 
     virtual bool isPrimitiveBooleanTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 /**

@@ -1,4 +1,5 @@
 #include "Backend/LLVM/SSALLVMValueVisitor.hpp"
+#include "Backend/LLVM/LLVMLiteralValueVisitor.hpp"
 
 #include "Environment/Type.hpp"
 
@@ -211,36 +212,9 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
 
 AnyValuePtr SSALLVMValueVisitor::visitConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue)
 {
-    auto value = validAnyValue(constantValue->getValue());
-    auto valueType = constantValue->getValueType();
-    auto translatedValueType = backend->translateType(valueType);
-    // FIXME: Use here a proper visitor pattern.
-    if(valueType->isVoidType())
-    {
-        return wrapLLVMValue(llvm::UndefValue::get(translatedValueType));
-    }
-    else if(value->isPrimitiveIntegerTypeValue())
-    {
-        auto largeInteger = value->unwrapAsLargeInteger();
-        return wrapLLVMValue(llvm::ConstantInt::get(static_cast<llvm::IntegerType*> (translatedValueType), largeInteger.asString(), 10));
-    }
-    else if(value->isPrimitiveCharacterTypeValue())
-    {
-        auto data = value->unwrapAsChar32();
-        return wrapLLVMValue(llvm::ConstantInt::get(static_cast<llvm::IntegerType*> (translatedValueType), data, false));
-    }
-    else if(value->isPrimitiveFloatTypeValue())
-    {
-        auto data = value->unwrapAsFloat64();
-        return wrapLLVMValue(llvm::ConstantFP::get(translatedValueType, data));
-    }
-    else if(value->isPrimitiveBooleanTypeValue())
-    {
-        auto data = value->unwrapAsBoolean();
-        return wrapLLVMValue(llvm::ConstantInt::get(static_cast<llvm::IntegerType*> (translatedValueType), data ? 1 : 0, false));
-    }
-
-    assert("TODO: visitConstantLiteralValue " && false);
+    auto visitor = basicMakeObject<LLVMLiteralValueVisitor> ();
+    visitor->backend = backend;
+    return wrapLLVMValue(visitor->translateConstantLiteralValue(constantValue));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitTypeProgramEntity(const SSATypeProgramEntityPtr &value)

@@ -3,6 +3,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "IntrinsicPrimitiveIntegerMethods.hpp"
 
 namespace Sysmel
@@ -25,6 +26,10 @@ bool PrimitiveIntegerType::isPrimitiveIntegerTypeValue() const
     return true;
 }
 
+AnyValuePtr PrimitiveIntegerType::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitPrimitiveIntegerType(selfFromThis());
+}
 
 TypePtr Type::getIntPointerType()
 {

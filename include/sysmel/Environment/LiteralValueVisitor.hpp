@@ -9,9 +9,13 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Undefined);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Void);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralValueVisitor);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralBoolean);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralCharacter);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralNumber);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralFloat);
@@ -35,6 +39,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemporaryReferenceTypeValue);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VariantTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeWithFieldsValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(StructureTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClassTypeValue);
@@ -51,13 +58,18 @@ public:
     virtual AnyValuePtr visitAnyValue(const AnyValuePtr &value);
     virtual AnyValuePtr visitCompilerObject(const CompilerObjectPtr &value);
     virtual AnyValuePtr visitType(const TypePtr &value);
+    virtual AnyValuePtr visitUndefined(const UndefinedPtr &value);
+    virtual AnyValuePtr visitVoid(const VoidPtr &value);
 
     virtual AnyValuePtr visitLiteralValue(const LiteralValuePtr &value);
+    virtual AnyValuePtr visitLiteralBoolean(const LiteralBooleanPtr &value);
     virtual AnyValuePtr visitLiteralCharacter(const LiteralCharacterPtr &value);
     virtual AnyValuePtr visitLiteralNumber(const LiteralNumberPtr &value);
     virtual AnyValuePtr visitLiteralInteger(const LiteralIntegerPtr &value);
     virtual AnyValuePtr visitLiteralFraction(const LiteralFractionPtr &value);
     virtual AnyValuePtr visitLiteralFloat(const LiteralFloatPtr &value);
+    virtual AnyValuePtr visitLiteralString(const LiteralStringPtr &value);
+    virtual AnyValuePtr visitLiteralSymbol(const LiteralSymbolPtr &value);
 
     virtual AnyValuePtr visitPrimitiveTensorType(const PrimitiveTensorTypePtr &value);
     virtual AnyValuePtr visitPrimitiveScalarType(const PrimitiveScalarTypePtr &value);
@@ -73,6 +85,9 @@ public:
     virtual AnyValuePtr visitReferenceTypeValue(const ReferenceTypeValuePtr &value);
     virtual AnyValuePtr visitTemporaryReferenceTypeValue(const TemporaryReferenceTypeValuePtr &value);
     virtual AnyValuePtr visitAggregateTypeValue(const AggregateTypeValuePtr &value);
+    virtual AnyValuePtr visitArrayTypeValue(const ArrayTypeValuePtr &value);
+    virtual AnyValuePtr visitTupleTypeValue(const TupleTypeValuePtr &value);
+    virtual AnyValuePtr visitVariantTypeValue(const VariantTypeValuePtr &value);
     virtual AnyValuePtr visitAggregateTypeWithFieldsValue(const AggregateTypeWithFieldsValuePtr &value);
     virtual AnyValuePtr visitStructureTypeValue(const StructureTypeValuePtr &value);
     virtual AnyValuePtr visitClassTypeValue(const ClassTypeValuePtr &value);

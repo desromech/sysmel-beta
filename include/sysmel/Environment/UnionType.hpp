@@ -33,6 +33,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isUnionTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     std::vector<uint8_t> data;
 };

@@ -4,6 +4,8 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
+
 namespace Sysmel
 {
 namespace Environment
@@ -135,6 +137,11 @@ void ArrayType::addSpecializedInstanceMethods()
 bool ArrayTypeValue::isArrayTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr ArrayTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitArrayTypeValue(selfFromThis());
 }
 
 TypePtr ArrayTypeValue::getType() const

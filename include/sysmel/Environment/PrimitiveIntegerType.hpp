@@ -21,6 +21,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_PrimitiveIntegerType";
 
     virtual bool isPrimitiveIntegerTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 /**

@@ -31,6 +31,7 @@ public:
     static VoidPtr uniqueInstance();
 
     virtual bool isVoid() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

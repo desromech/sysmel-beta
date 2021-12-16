@@ -21,6 +21,8 @@ public:
     static MethodCategories __instanceMethods__();
     
     virtual bool isLiteralCharacter() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
+    
     virtual std::string asString() const override;
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

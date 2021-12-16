@@ -1,6 +1,7 @@
 #include "Environment/Undefined.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -33,6 +34,11 @@ bool Undefined::isUndefined() const
 bool Undefined::isAnonymousNameSymbol() const
 {
     return true;
+}
+
+AnyValuePtr Undefined::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitUndefined(selfFromThis());
 }
 
 std::string Undefined::printString() const

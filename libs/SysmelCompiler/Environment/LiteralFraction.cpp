@@ -3,6 +3,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/DivisionByZeroError.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -192,6 +193,11 @@ LiteralNumberPtr LiteralFraction::makeFor(const Fraction &value)
 bool LiteralFraction::isLiteralFraction() const
 {
     return true;
+}
+
+AnyValuePtr LiteralFraction::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralFraction(selfFromThis());
 }
 
 std::string LiteralFraction::printString() const

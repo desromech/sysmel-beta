@@ -4,6 +4,7 @@
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/CompilationError.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 
 namespace Sysmel
 {
@@ -79,6 +80,11 @@ void ClassType::enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCo
 bool ClassTypeValue::isClassTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr ClassTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitClassTypeValue(selfFromThis());
 }
 
 } // End of namespace Environment

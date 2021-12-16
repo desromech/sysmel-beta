@@ -3,6 +3,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/FunctionType.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -165,6 +166,11 @@ void TupleType::addSpecializedInstanceMethods()
 bool TupleTypeValue::isTupleTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr TupleTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitTupleTypeValue(selfFromThis());
 }
 
 TypePtr TupleTypeValue::getType() const

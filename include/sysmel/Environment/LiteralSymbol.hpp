@@ -26,6 +26,7 @@ public:
     virtual bool isLiteralSymbol() const override;
     virtual bool isLiteralIdentifierSymbol() const override;
     virtual bool isAnonymousNameSymbol() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     
     virtual AnyValuePtr asUnarySelectorConvertedToIdentifier() const override;
 

@@ -2,6 +2,7 @@
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -34,6 +35,11 @@ VoidPtr Void::uniqueInstance()
 bool Void::isVoid() const
 {
     return true;
+}
+
+AnyValuePtr Void::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitVoid(selfFromThis());
 }
 
 std::string Void::printString() const

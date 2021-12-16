@@ -23,6 +23,7 @@ public:
     static LiteralStringPtr makeFor(const std::string &value);
         
     virtual bool isLiteralString() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;

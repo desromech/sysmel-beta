@@ -2,6 +2,7 @@
 #include "Environment/StringUtilities.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -20,6 +21,11 @@ TypePtr WrapperTypeFor<char32_t>::apply()
 bool LiteralCharacter::isLiteralCharacter() const
 {
     return true;
+}
+
+AnyValuePtr LiteralCharacter::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralCharacter(selfFromThis());
 }
 
 MethodCategories LiteralCharacter::__instanceMethods__()

@@ -2,6 +2,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/CannotUnwrap.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <algorithm>
 #include <cmath>
 #include <sstream>
@@ -176,6 +177,11 @@ MethodCategories LiteralFloat::__instanceMethods__()
 bool LiteralFloat::isLiteralFloat() const
 {
     return true;
+}
+
+AnyValuePtr LiteralFloat::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralFloat(selfFromThis());
 }
 
 std::string LiteralFloat::printString() const

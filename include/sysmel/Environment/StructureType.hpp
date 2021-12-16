@@ -36,6 +36,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool isStructureTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual TypePtr getType() const override;
     virtual AnyValuePtr asMutableStoreValue() override;
     virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType) override;

@@ -1,5 +1,6 @@
 #include "Environment/UnionType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -17,6 +18,11 @@ bool UnionType::isUnionType() const
 bool UnionTypeValue::isUnionTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr UnionTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitUnionTypeValue(selfFromThis());
 }
 
 } // End of namespace Environment

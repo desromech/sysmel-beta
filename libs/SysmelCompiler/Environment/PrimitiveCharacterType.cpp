@@ -1,6 +1,7 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "IntrinsicPrimitiveIntegerMethods.hpp"
 
 namespace Sysmel
@@ -16,6 +17,11 @@ static BootstrapTypeRegistration<Char32> Char32TypeRegistration;
 bool PrimitiveCharacterType::isPrimitiveCharacterTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr PrimitiveCharacterType::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitPrimitiveCharacterType(selfFromThis());
 }
 
 MethodCategories Char8::__instanceMethods__()

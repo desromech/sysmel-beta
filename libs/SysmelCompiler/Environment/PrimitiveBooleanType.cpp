@@ -1,5 +1,6 @@
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/LiteralBoolean.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <algorithm>
@@ -14,6 +15,11 @@ static BootstrapTypeRegistration<Boolean8> Boolean8TypeRegistration;
 bool PrimitiveBooleanType::isPrimitiveBooleanTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr PrimitiveBooleanType::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitPrimitiveBooleanType(selfFromThis());
 }
 
 Boolean8Ptr Boolean8::make(bool value)

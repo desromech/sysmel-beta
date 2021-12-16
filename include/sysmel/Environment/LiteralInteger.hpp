@@ -29,6 +29,7 @@ public:
     static LiteralCharacterPtr makeForCharacter(char32_t value);
 
     virtual bool isLiteralInteger() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual std::string printString() const override;
 
     virtual uint8_t unwrapAsUInt8() const override;

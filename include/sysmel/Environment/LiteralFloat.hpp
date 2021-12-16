@@ -26,6 +26,7 @@ public:
         : value(ctorValue) {}
 
     virtual bool isLiteralFloat() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual std::string printString() const override;
 

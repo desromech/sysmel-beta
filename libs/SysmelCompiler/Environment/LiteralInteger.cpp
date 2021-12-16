@@ -8,6 +8,7 @@
 #include "Environment/DivisionByZeroError.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <algorithm>
 #include <limits>
 
@@ -255,6 +256,11 @@ LiteralCharacterPtr LiteralInteger::makeForCharacter(char32_t value)
 bool LiteralInteger::isLiteralInteger() const
 {
     return true;
+}
+
+AnyValuePtr LiteralInteger::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralInteger(selfFromThis());
 }
 
 std::string LiteralInteger::printString() const

@@ -65,6 +65,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_DecoratedType";
 
     virtual bool isDecoratedTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 } // End of namespace Environment

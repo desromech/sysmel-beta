@@ -25,6 +25,7 @@ public:
     static LiteralNumberPtr makeFor(const Fraction &value);
 
     virtual bool isLiteralFraction() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual std::string printString() const override;
 
     virtual Fraction unwrapAsFraction() const override;

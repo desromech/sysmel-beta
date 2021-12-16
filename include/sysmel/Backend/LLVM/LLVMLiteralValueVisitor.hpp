@@ -3,6 +3,7 @@
 #pragma once
 
 #include "../../Environment/LiteralValueVisitor.hpp"
+#include "../../Environment/SSAConstantLiteralValue.hpp"
 #include "SSALLVMCodeGenerationBackend.hpp"
 
 namespace Sysmel
@@ -23,8 +24,17 @@ public:
     static constexpr char const __typeName__[] = "LLVMLiteralValueVisitor";
 
     llvm::Value *visitValue(const AnyValuePtr &value);
+    llvm::Value *translateValueWithExpectedType(const AnyValuePtr &value, const TypePtr &valueExpectedType);
+    llvm::Value *translateConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue);
+
+    virtual AnyValuePtr visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value) override;
+    virtual AnyValuePtr visitPrimitiveCharacterType(const PrimitiveCharacterTypePtr &value) override;
+    virtual AnyValuePtr visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value) override;
+    virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;
+    llvm::Type *translatedExpectedType = nullptr;
+    TypePtr expectedType;
 };
 
 } // End of namespace LLVM

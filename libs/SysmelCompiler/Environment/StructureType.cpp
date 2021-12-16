@@ -4,6 +4,7 @@
 #include "Environment/FieldVariable.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <iostream>
 
 namespace Sysmel
@@ -34,6 +35,11 @@ AnyValuePtr StructureType::basicNewValue()
 bool StructureTypeValue::isStructureTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr StructureTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitStructureTypeValue(selfFromThis());
 }
 
 TypePtr StructureTypeValue::getType() const

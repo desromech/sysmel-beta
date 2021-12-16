@@ -21,6 +21,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_PrimitiveFloatType";
 
     virtual bool isPrimitiveFloatTypeValue() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 /**

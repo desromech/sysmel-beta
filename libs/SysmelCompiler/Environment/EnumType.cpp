@@ -8,6 +8,7 @@
 #include "Environment/StringUtilities.hpp"
 #include "Environment/Wrappers.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 
 namespace Sysmel
 {
@@ -215,6 +216,11 @@ void EnumType::addValues(const ASTNodePtr &position, const AnyValuePtr &newValue
 bool EnumTypeValue::isEnumTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr EnumTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitEnumTypeValue(selfFromThis());
 }
 
 TypePtr EnumTypeValue::getType() const

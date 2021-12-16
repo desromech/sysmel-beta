@@ -2,6 +2,7 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -179,6 +180,11 @@ DecoratedTypeValuePtr DecoratedType::makeWithValue(const AnyValuePtr &value)
 bool DecoratedTypeValue::isDecoratedTypeValue() const
 {
     return true;
+}
+
+AnyValuePtr DecoratedTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitDecoratedTypeValue(selfFromThis());
 }
 
 } // End of namespace Environment
