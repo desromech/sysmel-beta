@@ -77,6 +77,7 @@ set(Environment_Sources
     ASTTypeNode.cpp
     ASTUnionNode.cpp
     ASTUpcastTypeConversionNode.cpp
+    ASTValueAsReferenceReinterpretConversionNode.cpp
     ASTValueAsVoidTypeConversionNode.cpp
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
@@ -276,6 +277,7 @@ set(Environment_Sources
     UnionMetaBuilder.cpp
     UnionType.cpp
     ValueBox.cpp
+    ValueAsReceiverReferenceTypeConversionRule.cpp
     ValueAsVoidTypeConversionRule.cpp
     Variable.cpp
     VariantType.cpp

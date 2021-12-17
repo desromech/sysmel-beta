@@ -34,6 +34,7 @@
 #include "Environment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "Environment/ASTUpcastTypeConversionNode.hpp"
 #include "Environment/ASTDowncastTypeConversionNode.hpp"
+#include "Environment/ASTValueAsReferenceReinterpretConversionNode.hpp"
 
 #include "Environment/ASTIfNode.hpp"
 #include "Environment/ASTWhileNode.hpp"
@@ -361,6 +362,14 @@ AnyValuePtr ASTCompileTimeEvaluator::visitDowncastTypeConversionNode(const ASTDo
         signalNewWithMessage<Error> (formatString("Cannot peform down-cast of value of type {0} into value of type {1}.", {valueType->printString(), expectedType->printString()}));
 
     return value;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitValueAsReferenceReinterpretConversionNode(const ASTValueAsReferenceReinterpretConversionNodePtr &node)
+{
+    auto value = visitNode(node->expression);
+    auto resultType = node->analyzedType;
+    assert(resultType->isPointerLikeType());
+    return resultType.staticAs<PointerLikeType> ()->makeWithValue(value);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitIfNode(const ASTIfNodePtr &node)

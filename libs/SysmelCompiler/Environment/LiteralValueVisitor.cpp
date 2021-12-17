@@ -9,6 +9,7 @@
 #include "Environment/LiteralFloat.hpp"
 #include "Environment/LiteralString.hpp"
 #include "Environment/LiteralSymbol.hpp"
+#include "Environment/ValueBox.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
@@ -103,6 +104,11 @@ AnyValuePtr LiteralValueVisitor::visitLiteralString(const LiteralStringPtr &valu
 AnyValuePtr LiteralValueVisitor::visitLiteralSymbol(const LiteralSymbolPtr &value)
 {
     return visitLiteralValue(value);
+}
+
+AnyValuePtr LiteralValueVisitor::visitValueBox(const ValueBoxPtr &value)
+{
+    return visitAnyValue(value);
 }
 
 AnyValuePtr LiteralValueVisitor::visitPrimitiveTensorType(const PrimitiveTensorTypePtr &value)

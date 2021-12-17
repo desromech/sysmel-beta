@@ -24,6 +24,7 @@ public:
     virtual bool isTemporaryReferenceType() const override;
     virtual bool isReferenceLikeType() const override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
+    virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
 
     virtual ReferenceTypePtr ref() override;
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace) override;

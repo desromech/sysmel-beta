@@ -33,6 +33,7 @@ public:
 
     ASTNodePtr analyzeNodeIfNeededWithTypeInference(const ASTNodePtr &node, const ResultTypeInferenceSlotPtr &typeInferenceSlot, bool concretizeEphemeralObjects = false);
     ASTNodePtr analyzeNodeIfNeededWithExpectedType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects = false);
+    ASTNodePtr analyzeNodeIfNeededWithExpectedReceiverType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects = false);
     ASTNodePtr analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
     ASTNodePtr analyzeNodeIfNeededWithAutoType(const ASTNodePtr &node);
     ASTNodePtr analyzeNodeIfNeededWithTemporaryAutoType(const ASTNodePtr &node);
@@ -122,8 +123,8 @@ public:
     virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
     virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
 
-    ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType);
-    ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet);
+    ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType=false);
+    ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet, bool isReceiverType=false);
 
     AnyValuePtr evaluateInCompileTime(const ASTNodePtr &node);
     ASTNodePtr evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node);

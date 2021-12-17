@@ -42,6 +42,11 @@ AnyValuePtr DecoratedType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitDecoratedType(selfFromThis());
 }
 
+AnyValuePtr DecoratedType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
+}
+
 bool DecoratedType::isConstDecoratedType() const
 {
     return (decorations & TypeDecorationFlags::Const) != TypeDecorationFlags::None;

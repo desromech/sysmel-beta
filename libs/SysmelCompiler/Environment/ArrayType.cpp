@@ -51,11 +51,6 @@ bool ArrayType::isNullableType() const
     return false;
 }
 
-bool ArrayType::isImmutableType()
-{
-    return elementType->isImmutableType();
-}
-
 bool ArrayType::hasTrivialInitialization()
 {
     return elementType->hasTrivialInitialization();

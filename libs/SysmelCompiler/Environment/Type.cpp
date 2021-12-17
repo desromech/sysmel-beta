@@ -18,6 +18,7 @@
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/UpcastTypeConversionRule.hpp"
 #include "Environment/DowncastTypeConversionRule.hpp"
+#include "Environment/ValueAsReceiverReferenceTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
 #include "Environment/ConstructorMethodTypeConversionRule.hpp"
 #include "Environment/ConversionMethodTypeConversionRule.hpp"
@@ -314,10 +315,14 @@ AnyValuePtr Type::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const Id
 {
     (void)accessingScope;
     auto it = bindings.find(symbol);
-    if(it == bindings.end())
-        return nullptr;
+    if(it != bindings.end())
+    {
+        return it->second.second;
+    }
 
-    return it->second.second;
+    if(supertype)
+        return supertype->lookupLocalSymbolFromScope(symbol, accessingScope);
+    return nullptr;
 }
 
 ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
@@ -444,33 +449,34 @@ bool Type::isReturnedByReference()
 
 bool Type::hasTrivialInitialization()
 {
-    return false;
+    return true;
 }
 
 bool Type::hasTrivialInitializationCopyingFrom()
 {
-    return false;
+    return true;
 }
 
 bool Type::hasTrivialInitializationMovingFrom()
 {
-    return false;
+    return true;
 }
 
 bool Type::hasTrivialFinalization()
 {
-    return false;
+    return true;
 }
 
 bool Type::hasTrivialCopyingFrom()
 {
-    return false;
+    return true;
 }
 
 bool Type::hasTrivialMovingFrom()
 {
-    return false;
+    return true;
 }
+
 uint64_t Type::getValueSize()
 {
     return getMemorySize();
@@ -779,8 +785,14 @@ void Type::addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule)
     reinterpretTypeConversionRules.push_back(rule);
 }
 
-TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType)
 {
+    if(isReceiverType &&
+        ValueAsReceiverReferenceTypeConversionRule::uniqueInstance()->canBeUsedToConvertNodeFromTo(node, selfFromThis(), targetType) )
+    {
+        return ValueAsReceiverReferenceTypeConversionRule::uniqueInstance();
+    }
+
     auto sourceType = selfFromThis();
     for(auto & rule : implicitTypeConversionRules)
     {

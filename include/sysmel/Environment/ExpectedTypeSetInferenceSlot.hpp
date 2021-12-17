@@ -22,6 +22,7 @@ public:
     virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     TypePtrList expectedTypeSet;
+    bool isReceiverType = false;
 };
 
 } // End of namespace Environment

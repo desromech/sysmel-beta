@@ -1,5 +1,6 @@
 #include "Environment/AggregateType.hpp"
 #include "Environment/AggregateTypeLayout.hpp"
+#include "Environment/ReferenceType.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <sstream>
@@ -26,6 +27,61 @@ uint64_t AggregateType::getMemoryAlignment()
 {
     getLayout();
     return layout ? layout->getMemoryAlignment() : 0;
+}
+
+bool AggregateType::isImmutableType()
+{
+    return false;
+}
+
+bool AggregateType::isPassedByReference()
+{
+    return true;
+}
+
+bool AggregateType::isReturnedByReference()
+{
+    return true;
+}
+
+TypePtr AggregateType::asConstReceiverType()
+{
+    return selfFromThis()->withConst()->ref();
+}
+
+TypePtr AggregateType::asReceiverType()
+{
+    return selfFromThis()->ref();
+}
+
+bool AggregateType::hasTrivialInitialization()
+{
+    return SuperType::hasTrivialInitialization() && getLayout() && layout->hasTrivialInitialization();
+}
+
+bool AggregateType::hasTrivialInitializationCopyingFrom()
+{
+    return SuperType::hasTrivialInitializationCopyingFrom() && getLayout() && layout->hasTrivialInitializationCopyingFrom();
+}
+
+bool AggregateType::hasTrivialInitializationMovingFrom()
+{
+    return SuperType::hasTrivialInitializationMovingFrom() && getLayout() && layout->hasTrivialInitializationMovingFrom();
+}
+
+bool AggregateType::hasTrivialFinalization()
+{
+    return SuperType::hasTrivialFinalization() && getLayout() && layout->hasTrivialFinalization();
+}
+
+bool AggregateType::hasTrivialCopyingFrom()
+{
+    return SuperType::hasTrivialCopyingFrom() && getLayout() && layout->hasTrivialCopyingFrom();
+}
+
+bool AggregateType::hasTrivialMovingFrom()
+{
+    return SuperType::hasTrivialMovingFrom() && getLayout() && layout->hasTrivialMovingFrom();
 }
 
 const AggregateTypeLayoutPtr &AggregateType::getLayout()

@@ -23,14 +23,17 @@ class LLVMLiteralValueVisitor : public SubtypeOf<LiteralValueVisitor, LLVMLitera
 public:
     static constexpr char const __typeName__[] = "LLVMLiteralValueVisitor";
 
-    llvm::Value *visitValue(const AnyValuePtr &value);
-    llvm::Value *translateValueWithExpectedType(const AnyValuePtr &value, const TypePtr &valueExpectedType);
-    llvm::Value *translateConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue);
+    llvm::Constant *translateValueWithExpectedType(const AnyValuePtr &value, const TypePtr &valueExpectedType);
+    llvm::Constant *translateConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue);
 
+    virtual AnyValuePtr visitValueBox(const ValueBoxPtr &value);
+    
     virtual AnyValuePtr visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveCharacterType(const PrimitiveCharacterTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value) override;
+
+    virtual AnyValuePtr visitStructureTypeValue(const StructureTypeValuePtr &value) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;
     llvm::Type *translatedExpectedType = nullptr;

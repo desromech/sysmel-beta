@@ -265,7 +265,7 @@ public:
     virtual void bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding) override;
 
     /// This method finds an implicit type conversion rule.
-    virtual TypeConversionRulePtr findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
+    virtual TypeConversionRulePtr findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType = false);
 
     /// This method finds an explicit type conversion rule.
     virtual TypeConversionRulePtr findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);

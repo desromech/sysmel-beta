@@ -51,6 +51,7 @@ public:
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node) override;
+    virtual AnyValuePtr visitValueAsReferenceReinterpretConversionNode(const ASTValueAsReferenceReinterpretConversionNodePtr &node) override;
 
     virtual AnyValuePtr visitIfNode(const ASTIfNodePtr &node) override;
     virtual AnyValuePtr visitWhileNode(const ASTWhileNodePtr &node) override;

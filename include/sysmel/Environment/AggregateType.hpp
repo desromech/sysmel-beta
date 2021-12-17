@@ -24,6 +24,19 @@ public:
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
 
+    virtual bool isImmutableType() override;
+    virtual bool isPassedByReference() override;
+    virtual bool isReturnedByReference() override;
+    virtual TypePtr asConstReceiverType() override;
+    virtual TypePtr asReceiverType() override;
+
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialCopyingFrom() override;
+    virtual bool hasTrivialMovingFrom() override;
+
     const AggregateTypeLayoutPtr &getLayout();
 
 protected:

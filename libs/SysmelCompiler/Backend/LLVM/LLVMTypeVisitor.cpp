@@ -5,6 +5,12 @@
 #include "Environment/FunctionalType.hpp"
 #include "Environment/PointerLikeType.hpp"
 
+#include "Environment/AggregateTypeSequentialLayout.hpp"
+
+#include "Environment/StructureType.hpp"
+#include "Environment/ClassType.hpp"
+#include "Environment/UnionType.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -78,5 +84,21 @@ AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type
     return wrapLLVMType(llvm::PointerType::getUnqual(translatedBaseType));
 }
 
+AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
+{
+    auto translatedType = llvm::StructType::create(*backend->getContext(), validAnyValue(type->getName())->asString());
+    backend->setTypeTranslation(type, translatedType);
+
+    auto layout = type->getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    const auto &slotTypes = layout->getSlotTypes();
+    std::vector<llvm::Type*> translatedSlotTypes;
+    translatedSlotTypes.reserve(slotTypes.size());
+    for(auto &slotType : slotTypes)
+        translatedSlotTypes.push_back(backend->translateType(slotType));
+
+    translatedType->setBody(translatedSlotTypes);
+    return wrapLLVMType(translatedType);
+
+}
 } // End of namespace Environment
 } // End of namespace Sysmel

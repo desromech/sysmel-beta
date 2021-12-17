@@ -31,6 +31,7 @@ public:
     size_t getArgumentCount() const;
     const SSACodeRegionArgumentPtr &getArgument(size_t index);
     const SSACodeRegionArgumentPtrList &getArguments();
+    bool isReturningByReference() const;
 
     size_t getCaptureCount() const;
     const SSACodeRegionCapturePtr &getCapture(size_t index);
@@ -46,6 +47,7 @@ public:
     void enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state);
 protected:
     void addArgumentWithType(const TypePtr &argumentType);
+    void addResultArgumentWithType(const TypePtr &argumentType);
     
     ASTSourcePositionPtr sourcePosition;
     SSACodeRegionArgumentPtrList arguments;

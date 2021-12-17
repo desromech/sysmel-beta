@@ -3,6 +3,10 @@
 #include "Environment/SSADowncastInstruction.hpp"
 #include "Environment/SSABitcastInstruction.hpp"
 
+#include "Environment/SSATypeProgramEntity.hpp"
+#include "Environment/SSATemplate.hpp"
+#include "Environment/SSATemplateInstance.hpp"
+
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -65,19 +69,19 @@ AnyValuePtr SSAValueVisitor::visitNamespace(const SSANamespacePtr &value)
     return visitProgramEntityWithChildren(value);
 }
 
-AnyValuePtr SSAValueVisitor::visitTypeProgramEntity(const SSATypeProgramEntityPtr &)
+AnyValuePtr SSAValueVisitor::visitTypeProgramEntity(const SSATypeProgramEntityPtr &value)
 {
-    SysmelSelfSubclassResponsibility();
+    return visitProgramEntityWithChildren(value);
 }
 
-AnyValuePtr SSAValueVisitor::visitTemplate(const SSATemplatePtr &)
+AnyValuePtr SSAValueVisitor::visitTemplate(const SSATemplatePtr &value)
 {
-    SysmelSelfSubclassResponsibility();
+    return visitProgramEntityWithChildren(value);
 }
 
-AnyValuePtr SSAValueVisitor::visitTemplateInstance(const SSATemplateInstancePtr &)
+AnyValuePtr SSAValueVisitor::visitTemplateInstance(const SSATemplateInstancePtr &value)
 {
-    SysmelSelfSubclassResponsibility();
+    return visitProgramEntityWithChildren(value);
 }
 
 AnyValuePtr SSAValueVisitor::visitCodeRegion(const SSACodeRegionPtr &)

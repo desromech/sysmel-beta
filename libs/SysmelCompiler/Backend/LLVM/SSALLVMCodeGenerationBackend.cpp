@@ -1,6 +1,7 @@
 #include "Backend/LLVM/SSALLVMCodeGenerationBackend.hpp"
 #include "Backend/LLVM/SSALLVMModuleVisitor.hpp"
 #include "Backend/LLVM/SSALLVMValueVisitor.hpp"
+#include "Backend/LLVM/LLVMLiteralValueVisitor.hpp"
 #include "Backend/LLVM/LLVMTypeVisitor.hpp"
 #include "Environment/ProgramModule.hpp"
 #include "Environment/ASTSourcePosition.hpp"
@@ -104,6 +105,18 @@ llvm::Type *SSALLVMCodeGenerationBackend::translateType(const TypePtr &type)
     assert(result);
     typeMap.insert({type, result});
     return result;
+}
+
+void SSALLVMCodeGenerationBackend::setTypeTranslation(const TypePtr &type, llvm::Type *translatedType)
+{
+    typeMap.insert({type, translatedType});
+}
+
+llvm::Constant *SSALLVMCodeGenerationBackend::translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType)
+{
+    auto visitor = basicMakeObject<LLVMLiteralValueVisitor> ();
+    visitor->backend = this;
+    return visitor->translateValueWithExpectedType(literal, expectedType);
 }
 
 bool SSALLVMCodeGenerationBackend::isSignedIntegerType(const TypePtr &type)

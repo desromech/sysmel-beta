@@ -210,6 +210,11 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedType(const ASTNod
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForType(expectedType), concretizeEphemeralObjects);
 }
 
+ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedReceiverType(const ASTNodePtr &node, const TypePtr &expectedType, bool concretizeEphemeralObjects)
+{
+    return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForReceiverType(expectedType), concretizeEphemeralObjects);
+}
+
 ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithExpectedTypeSet(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
 {
     return analyzeNodeIfNeededWithTypeInference(node, ResultTypeInferenceSlot::makeForTypeSet(expectedTypeSet), true);
@@ -392,11 +397,16 @@ bool ASTSemanticAnalyzer::isNameReserved(const AnyValuePtr &name)
     return environment->lexicalScope->isNameReserved(name);
 }
 
-ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType)
+ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType)
 {
     auto analyzedNode = node;
     if(!analyzedNode->analyzedType)
-        analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
+    {
+        if(isReceiverType)
+            analyzedNode = analyzeNodeIfNeededWithExpectedReceiverType(node, targetType);
+        else
+            analyzedNode = analyzeNodeIfNeededWithExpectedType(node, targetType);
+    }
     if(analyzedNode->isASTErrorNode())
         return analyzedNode;
 
@@ -405,14 +415,14 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastTo(const ASTNodePtr &node, const 
         return analyzedNode;
 
     auto sourceType = analyzedNode->analyzedType;
-    auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType);
+    auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedNode, targetType, isReceiverType);
     if(!typeConversionRule)
         return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
     return typeConversionRule->convertNodeAtIntoWith(analyzedNode, node->sourcePosition, targetType, selfFromThis());
 }
 
-ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet)
+ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet, bool isReceiverType)
 {
     auto analyzedNode = node;
     if(!analyzedNode->analyzedType)
@@ -424,7 +434,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
 
     assert(!expectedTypeSet.empty());
     if(expectedTypeSet.size() == 1)
-        return addImplicitCastTo(node, expectedTypeSet[0]);
+        return addImplicitCastTo(node, expectedTypeSet[0], isReceiverType);
 
     // Is there a single matching type?
     size_t bestConversionRuleCost = std::numeric_limits<std::size_t>::max();
@@ -1361,7 +1371,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node)
 {
     auto analyzedNode = basicMakeObject<ASTFieldVariableAccessNode> (*node);
-    analyzedNode->aggregate = analyzeNodeIfNeededWithAutoType(analyzedNode->aggregate);
+    analyzedNode->aggregate = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->aggregate);
     if(analyzedNode->aggregate->isASTErrorNode())
         return analyzedNode->aggregate;
 

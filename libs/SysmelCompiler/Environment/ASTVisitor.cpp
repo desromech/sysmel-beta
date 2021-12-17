@@ -24,6 +24,7 @@
 #include "Environment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "Environment/ASTUpcastTypeConversionNode.hpp"
 #include "Environment/ASTDowncastTypeConversionNode.hpp"
+#include "Environment/ASTValueAsReferenceReinterpretConversionNode.hpp"
 
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapMethod.hpp"
@@ -296,6 +297,11 @@ AnyValuePtr ASTVisitor::visitUpcastTypeConversionNode(const ASTUpcastTypeConvers
 }
 
 AnyValuePtr ASTVisitor::visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node)
+{
+    return visitTypeConversionNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitValueAsReferenceReinterpretConversionNode(const ASTValueAsReferenceReinterpretConversionNodePtr &node)
 {
     return visitTypeConversionNode(node);
 }

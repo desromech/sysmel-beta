@@ -26,7 +26,6 @@ public:
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
     
     virtual bool isNullableType() const override;
-    virtual bool isImmutableType() override;
     virtual bool hasTrivialInitialization() override;
     virtual bool hasTrivialInitializationCopyingFrom() override;
     virtual bool hasTrivialInitializationMovingFrom() override;

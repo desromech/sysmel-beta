@@ -21,6 +21,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "LiteralBoolean";
 
     virtual bool isLiteralBoolean() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 } // End of namespace Environment

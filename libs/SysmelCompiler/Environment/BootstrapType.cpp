@@ -42,7 +42,7 @@ bool BootstrapType::isNullableType() const
 
 bool BootstrapType::isImmutableType()
 {
-    return staticMetadata->isImmutableType;
+    return staticMetadata && staticMetadata->isImmutableType;
 }
 
 bool BootstrapType::hasTrivialInitialization()

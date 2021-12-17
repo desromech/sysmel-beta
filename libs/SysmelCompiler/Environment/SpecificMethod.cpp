@@ -127,6 +127,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         return semanticAnalyzer->recordSemanticErrorInNode(node, "Message argument count mismatch.");
 
     ASTNodePtr errorNode;
+    node->selector = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(node->selector);
 
     // Is this a macro method?
     if(isMacroMethod())
@@ -169,7 +170,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     // Analyze the receiver.
     if(node->receiver)
     {
-        node->receiver = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(node->receiver, functionalType->getReceiverType());
+        node->receiver = semanticAnalyzer->analyzeNodeIfNeededWithExpectedReceiverType(node->receiver, functionalType->getReceiverType());
         if(node->receiver->isASTErrorNode())
             errorNode = node->receiver;
     }

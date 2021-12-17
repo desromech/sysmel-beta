@@ -474,6 +474,11 @@ bool AnyValue::isASTDowncastTypeConversionNode() const
     return false;
 }
 
+bool AnyValue::isASTValueAsReferenceReinterpretConversionNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTIfNode() const
 {
     return false;

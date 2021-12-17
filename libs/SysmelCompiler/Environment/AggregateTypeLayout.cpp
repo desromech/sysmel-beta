@@ -21,6 +21,36 @@ uint64_t AggregateTypeLayout::getMemoryAlignment()
     SysmelSelfSubclassResponsibility();
 }
 
+bool AggregateTypeLayout::hasTrivialInitialization()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+bool AggregateTypeLayout::hasTrivialInitializationCopyingFrom()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+bool AggregateTypeLayout::hasTrivialInitializationMovingFrom()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+bool AggregateTypeLayout::hasTrivialFinalization()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+bool AggregateTypeLayout::hasTrivialCopyingFrom()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+bool AggregateTypeLayout::hasTrivialMovingFrom()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 void AggregateTypeLayout::beginGroup()
 {
 }

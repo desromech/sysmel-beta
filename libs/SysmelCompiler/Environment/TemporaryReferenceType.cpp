@@ -51,6 +51,11 @@ AnyValuePtr TemporaryReferenceType::acceptTypeVisitor(const TypeVisitorPtr &visi
     return visitor->visitTemporaryReferenceType(selfFromThis());
 }
 
+AnyValuePtr TemporaryReferenceType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
+}
+
 ReferenceTypePtr TemporaryReferenceType::ref()
 {
     return baseType->ref();
@@ -108,6 +113,7 @@ void TemporaryReferenceType::addDefaultTypeConversionRules()
 {
     addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
     addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
+
 }
 
 void TemporaryReferenceType::addSpecializedInstanceMethods()

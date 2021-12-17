@@ -32,6 +32,8 @@ public:
     virtual AnyValuePtr visitFunctionalType(const FunctionalTypePtr &type) override;
     virtual AnyValuePtr visitPointerLikeType(const PointerLikeTypePtr &type) override;
 
+    virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
+
     SSALLVMCodeGenerationBackend *backend = nullptr;
 };
 

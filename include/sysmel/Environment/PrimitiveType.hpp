@@ -23,12 +23,6 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
     static constexpr bool __isNullableType__ = false;
     static constexpr bool __isImmutableType__ = true;
-    static constexpr bool __hasTrivialInitialization__ = true;
-    static constexpr bool __hasTrivialInitializationCopyingFrom__ = true;
-    static constexpr bool __hasTrivialInitializationMovingFrom__ = true;
-    static constexpr bool __hasTrivialFinalization__ = true;
-    static constexpr bool __hasTrivialCopyingFrom__ = true;
-    static constexpr bool __hasTrivialMovingFrom__ = true;
 
     virtual bool isPrimitiveTypeValue() const override;
     virtual bool isPureCompileTimeLiteralValue() const override;

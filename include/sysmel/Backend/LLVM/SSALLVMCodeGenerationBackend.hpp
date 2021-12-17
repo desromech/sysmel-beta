@@ -54,7 +54,10 @@ public:
 
     llvm::Value *translateGlobalValue(const SSAValuePtr &value);
     llvm::Type *translateType(const TypePtr &type);
+    void setTypeTranslation(const TypePtr &type, llvm::Type *translatedType);
     bool isSignedIntegerType(const TypePtr &type);
+
+    llvm::Constant *translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType);
 
     llvm::LLVMContext *getContext() const
     {

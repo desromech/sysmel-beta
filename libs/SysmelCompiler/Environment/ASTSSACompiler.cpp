@@ -26,6 +26,7 @@
 #include "Environment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "Environment/ASTUpcastTypeConversionNode.hpp"
 #include "Environment/ASTDowncastTypeConversionNode.hpp"
+#include "Environment/ASTValueAsReferenceReinterpretConversionNode.hpp"
 
 #include "Environment/ASTIfNode.hpp"
 #include "Environment/ASTWhileNode.hpp"
@@ -62,6 +63,7 @@
 #include "Environment/SSAUpcastInstruction.hpp"
 
 #include "Environment/FunctionalType.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/ArgumentVariable.hpp"
 #include "Environment/LocalVariable.hpp"
 
@@ -86,6 +88,49 @@ SSAValuePtr ASTSSACompiler::visitNodeForValue(const ASTNodePtr &node)
 
     assert(value->isSSAValue());
     return staticObjectCast<SSAValue> (value);
+}
+
+void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue)
+{
+    auto initialValueType = initialValue->getValueType()->asUndecoratedType();
+    auto undecoratedDestinationValueType = destinationValueType->asUndecoratedType();
+    if(undecoratedDestinationValueType == initialValueType)
+    {
+        builder->storeValueIn(initialValue, destination);
+    }
+    else
+    {
+        assert(initialValueType->isReferenceLikeType());
+        if(initialValueType->isTemporaryReferenceType())
+        {
+            if(!undecoratedDestinationValueType->hasTrivialInitializationMovingFrom())
+            {
+                assert("TODO: Basic initialize, then initializeMovingFrom:" && false);
+            }
+            else
+            {
+                // Direct copy.
+                builder->storeValueIn(builder->load(initialValue), destination);
+            }
+        }
+        else //if(initialValueType->isReferenceType())
+        {
+            if(!undecoratedDestinationValueType->hasTrivialInitializationCopyingFrom())
+            {
+                assert("TODO: Basic initialize, then initializeCopyingFrom:" && false);
+            }
+            else
+            {
+                // Direct copy.
+                builder->storeValueIn(builder->load(initialValue), destination);
+            }
+        }
+    }
+
+    if(!destinationValueType->hasTrivialFinalization())
+    {
+        assert("TODO: register finalization:" && false);
+    }
 }
 
 void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node)
@@ -114,22 +159,26 @@ void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SS
     cleanUpBuilder->setCodeRegion(currentCleanUpCodeRegion);
     cleanUpBuilder->makeBasicBlockHere();
 
-    size_t argumentsOffset = 0;
     auto functionalType = method->getFunctionalType();
     auto receiverType = functionalType->getReceiverType();
+    const auto &methodCodeRegionArguments = methodCodeRegion->getArguments();
+
+    size_t receiverOffset = functionalType->getResultType()->isReturnedByReference() ? 1 : 0;
+    size_t argumentsOffset = receiverOffset;
+
     if(!receiverType->isVoidType())
     {
-        argumentsOffset = 1;
+        mapLocalVariableToValue(method->getReceiverArgument(), methodCodeRegionArguments[receiverOffset]);
+        ++argumentsOffset;
     }
 
     const auto &methodArguments = method->getArguments();
-    const auto &methodCodeRegionArguments = methodCodeRegion->getArguments();
     for(size_t i = 0; i < methodArguments.size(); ++i)
-        localVariableMap.insert({methodArguments[i], methodCodeRegionArguments[argumentsOffset + i]});
+        mapLocalVariableToValue(methodArguments[i], methodCodeRegionArguments[argumentsOffset + i]);
     
     auto resultValue = visitNodeForValue(node);
     if(!builder->isLastTerminator())
-        builder->returnFromFunction(resultValue);
+        returnValueFromFunction(resultValue);
 
     if(!cleanUpBuilder->isLastTerminator())
         cleanUpBuilder->returnFromRegion(cleanUpBuilder->literal(getVoidConstant()));
@@ -138,6 +187,17 @@ void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SS
     builder->makeBasicBlockHere();
     builder->doWithCleanUp(mainCodeRegion, mainCleanUpCodeRegion);
     builder->unreachableInstruction();
+}
+
+void ASTSSACompiler::mapLocalVariableToValue(const AnyValuePtr &binding, const SSAValuePtr &value)
+{
+    localVariableMap.insert({binding, value});
+}
+
+SSAValuePtr ASTSSACompiler::findLocalVariableMapping(const AnyValuePtr &binding)
+{
+    auto it = localVariableMap.find(binding);
+    return it != localVariableMap.end() ? it->second : nullptr;
 }
 
 AnyValuePtr ASTSSACompiler::visitCallNode(const ASTCallNodePtr &node)
@@ -179,7 +239,7 @@ AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &
 
         auto value = visitNodeForValue(node->body);
         if(!builder->isLastTerminator())
-            builder->returnFromRegion(value);
+            returnValueFromRegion(value);
 
         if(!cleanUpBuilder->isLastTerminator())
             cleanUpBuilder->returnFromRegion(cleanUpBuilder->literal(getVoidConstant()));
@@ -205,7 +265,7 @@ AnyValuePtr ASTSSACompiler::visitClosureNode(const ASTClosureNodePtr &node)
         auto capturedVariables = method->getCapturedVariables();
         capturedValues.reserve(capturedVariables.size());
         for(auto &variable : capturedVariables)
-            capturedValues.push_back(localVariableMap.find(variable)->second);
+            capturedValues.push_back(findLocalVariableMapping(variable));
 
         // Instantiate the closure.
         functionObject = builder->makeClosure(functionObject, capturedValues);
@@ -221,7 +281,16 @@ AnyValuePtr ASTSSACompiler::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &
 
 AnyValuePtr ASTSSACompiler::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)
 {
-    return node->value->asSSAValueRequiredInPosition(builder->getSourcePosition());
+    auto constantValue = node->value->asSSAValueRequiredInPosition(builder->getSourcePosition());
+    auto valueType = node->analyzedType;
+    if(valueType->isReturnedByReference())
+    {
+        auto resultLocal = builder->localVariable(valueType->tempRef(), valueType);
+        assignInitialValueFrom(resultLocal, valueType, constantValue);
+        return resultLocal;
+    }
+
+    return constantValue;
 }
 
 AnyValuePtr ASTSSACompiler::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
@@ -306,11 +375,12 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
     {
         auto referenceType = variable->getReferenceType();
         assert(referenceType->isReferenceLikeType());
-        variableValue = builder->localVariable(referenceType, variable->getValueType());
-        builder->storeValueIn(initialValue, variableValue);
+        auto valueType = variable->getValueType();
+        variableValue = builder->localVariable(referenceType, valueType);
+        assignInitialValueFrom(variableValue, valueType, initialValue);
     }
 
-    localVariableMap.insert({variable, variableValue});
+    mapLocalVariableToValue(variable, variableValue);
     return variableValue;
 }
 
@@ -327,14 +397,13 @@ AnyValuePtr ASTSSACompiler::visitFieldVariableAccessNode(const ASTFieldVariableA
 
 AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
-    auto it = localVariableMap.find(node->variable);
-    auto variableValue = it != localVariableMap.end() ? it->second : node->variable->asSSAValueRequiredInPosition(node->sourcePosition);
-    return variableValue;
+    auto localValue = findLocalVariableMapping(node->variable);
+    return localValue ? localValue : node->variable->asSSAValueRequiredInPosition(node->sourcePosition);
 }
 
 AnyValuePtr ASTSSACompiler::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node)
 {
-    return localVariableMap.find(node->bindingName)->second;
+    return findLocalVariableMapping(node->bindingName);
 }
 
 AnyValuePtr ASTSSACompiler::visitProgramEntityNode(const ASTProgramEntityNodePtr &node)
@@ -354,14 +423,14 @@ AnyValuePtr ASTSSACompiler::visitFunctionalNode(const ASTFunctionalNodePtr &node
         auto capturedVariables = method->getCapturedVariables();
         capturedValues.reserve(capturedVariables.size());
         for(auto &variable : capturedVariables)
-            capturedValues.push_back(localVariableMap.find(variable)->second);
+            capturedValues.push_back(findLocalVariableMapping(variable));
 
         // Instantiate the closure.
         functionObject = builder->makeClosure(functionObject, capturedValues);
 
         // Bind the closure on the local variable map.
         if(!validAnyValue(method->getName())->isAnonymousNameSymbol())
-            localVariableMap.insert({method, functionObject});
+            mapLocalVariableToValue(method, functionObject);
     }
 
     return functionObject;
@@ -399,6 +468,14 @@ AnyValuePtr ASTSSACompiler::visitUpcastTypeConversionNode(const ASTUpcastTypeCon
 AnyValuePtr ASTSSACompiler::visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node)
 {
     return builder->downcast(node->analyzedType, visitNodeForValue(node->expression));
+}
+
+AnyValuePtr ASTSSACompiler::visitValueAsReferenceReinterpretConversionNode(const ASTValueAsReferenceReinterpretConversionNodePtr &node)
+{
+    assert(node->expression->analyzedType->isPassedByReference());
+    auto result = visitNodeForValue(node->expression);
+    assert(result->getValueType()->isReferenceLikeType());
+    return result;
 }
 
 SSACodeRegionPtr ASTSSACompiler::buildRegionForNode(const ASTNodePtr &node)
@@ -450,6 +527,8 @@ AnyValuePtr ASTSSACompiler::visitReturnNode(const ASTReturnNodePtr &node)
         resultValue = visitNodeForValue(node->expression);
     else
         resultValue = builder->literal(getVoidConstant());
+
+    
     return builder->returnFromFunction(resultValue);
 }
 
@@ -481,5 +560,29 @@ void ASTSSACompiler::buildRegionForNodeWith(const SSACodeRegionPtr &region, cons
     });
 }
 
+void ASTSSACompiler::returnValueFromFunction(const SSAValuePtr &result)
+{
+    auto sanitizedResult = prepareForReturningValueFromRegion(result, currentSSAFunction->getMainCodeRegion());
+    builder->returnFromFunction(sanitizedResult);
+}
+
+void ASTSSACompiler::returnValueFromRegion(const SSAValuePtr &result)
+{
+    auto sanitizedResult = prepareForReturningValueFromRegion(result, currentCodeRegion);
+    builder->returnFromRegion(sanitizedResult);
+}
+
+SSAValuePtr ASTSSACompiler::prepareForReturningValueFromRegion(const SSAValuePtr &result, const SSACodeRegionPtr &returningRegion)
+{
+    if(returningRegion->isReturningByReference())
+    {
+        auto resultArgument = returningRegion->getArgument(0);
+        assert(!result->getValueType()->isVoidType() && resultArgument->getValueType()->isPointerLikeType());
+        assignInitialValueFrom(resultArgument, resultArgument->getValueType().staticAs<PointerLikeType> ()->getBaseType(), result);
+        return builder->literal(getVoidConstant());
+    }
+
+    return result;
+}
 } // End of namespace Environment
 } // End of namespace Sysmel

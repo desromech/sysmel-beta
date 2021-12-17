@@ -323,12 +323,12 @@ public:
     static constexpr bool __isEphemeralCompileTimeObject__ = false;
     static constexpr bool __isNullableType__ = true;
     static constexpr bool __isImmutableType__ = false;
-    static constexpr bool __hasTrivialInitialization__ = false;
-    static constexpr bool __hasTrivialInitializationCopyingFrom__ = false;
-    static constexpr bool __hasTrivialInitializationMovingFrom__ = false;
-    static constexpr bool __hasTrivialFinalization__ = false;
-    static constexpr bool __hasTrivialCopyingFrom__ = false;
-    static constexpr bool __hasTrivialMovingFrom__ = false;
+    static constexpr bool __hasTrivialInitialization__ = true;
+    static constexpr bool __hasTrivialInitializationCopyingFrom__ = true;
+    static constexpr bool __hasTrivialInitializationMovingFrom__ = true;
+    static constexpr bool __hasTrivialFinalization__ = true;
+    static constexpr bool __hasTrivialCopyingFrom__ = true;
+    static constexpr bool __hasTrivialMovingFrom__ = true;
     static constexpr uint64_t __memorySize__ = 0;
     static constexpr uint64_t __memoryAlignment__()
     {
@@ -563,6 +563,9 @@ public:
 
     /// Is this object an AST downcast type conversion node?
     virtual bool isASTDowncastTypeConversionNode() const;
+
+    ///Is this object an AST value as reference reinterpret conversion node?
+    virtual bool isASTValueAsReferenceReinterpretConversionNode() const;
 
     /// Is this object an AST if node?
     virtual bool isASTIfNode() const;

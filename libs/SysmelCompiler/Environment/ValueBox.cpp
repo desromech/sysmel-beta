@@ -1,4 +1,5 @@
 #include "Environment/ValueBox.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/PointerLikeType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -12,6 +13,11 @@ static BootstrapTypeRegistration<ValueBox> valueBoxTypeRegistration;
 bool ValueBox::isValueBox() const
 {
     return true;
+}
+
+AnyValuePtr ValueBox::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitValueBox(selfFromThis());
 }
 
 SExpression ValueBox::asSExpression() const

@@ -17,6 +17,7 @@ public:
     static constexpr char const __typeName__[] = "SSACodeRegionArgument";
 
     static SSACodeRegionArgumentPtr make(const TypePtr &valueType);
+    static SSACodeRegionArgumentPtr makeResult(const TypePtr &valueType);
 
     virtual bool isSSACodeRegionArgument() const override;
 
@@ -28,10 +29,16 @@ public:
     
     virtual TypePtr getValueType() const override;
 
+    bool isResult() const
+    {
+        return isResult_;
+    }
+
 protected:
     TypePtr valueType;
     ASTSourcePositionPtr declarationSourcePosition;
     ASTSourcePositionPtr definitionSourcePosition;
+    bool isResult_ = false;
 };
 
 } // End of namespace Environment

@@ -24,6 +24,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralInteger);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralString);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ValueBox);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveTensorType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveScalarType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveBooleanType);
@@ -70,6 +72,8 @@ public:
     virtual AnyValuePtr visitLiteralFloat(const LiteralFloatPtr &value);
     virtual AnyValuePtr visitLiteralString(const LiteralStringPtr &value);
     virtual AnyValuePtr visitLiteralSymbol(const LiteralSymbolPtr &value);
+
+    virtual AnyValuePtr visitValueBox(const ValueBoxPtr &value);
 
     virtual AnyValuePtr visitPrimitiveTensorType(const PrimitiveTensorTypePtr &value);
     virtual AnyValuePtr visitPrimitiveScalarType(const PrimitiveScalarTypePtr &value);

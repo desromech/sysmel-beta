@@ -23,6 +23,8 @@ public:
     virtual bool isDecoratedType() const override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
+    virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
+
     virtual bool isConstDecoratedType() const override;
     virtual bool isVolatileDecoratedType() const override;
     virtual bool isRestrictDecoratedType() const override;

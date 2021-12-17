@@ -59,6 +59,7 @@ public:
    
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     
+    const ArgumentVariablePtr &getReceiverArgument() const;
     const ArgumentVariablePtrList &getArguments() const;
 
     void recordCapturedFunctionVariable(const FunctionVariablePtr &capturedVariable);

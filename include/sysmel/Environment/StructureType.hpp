@@ -21,7 +21,8 @@ public:
     virtual bool isStructureType() const override;
     
     virtual AnyValuePtr basicNewValue() override;
-    
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
+
 protected:
     virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
 };
@@ -39,6 +40,7 @@ public:
 
     virtual bool isStructureTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
+    
     virtual SExpression asSExpression() const override;
     virtual TypePtr getType() const override;
     virtual AnyValuePtr asMutableStoreValue() override;

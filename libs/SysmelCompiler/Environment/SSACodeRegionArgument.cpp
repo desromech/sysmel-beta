@@ -18,6 +18,14 @@ SSACodeRegionArgumentPtr SSACodeRegionArgument::make(const TypePtr &valueType)
     return result;
 }
 
+SSACodeRegionArgumentPtr SSACodeRegionArgument::makeResult(const TypePtr &valueType)
+{
+    auto result = basicMakeObject<SSACodeRegionArgument> ();
+    result->valueType = valueType;
+    result->isResult_ = true;
+    return result;
+}
+
 bool SSACodeRegionArgument::isSSACodeRegionArgument() const
 {
     return true;

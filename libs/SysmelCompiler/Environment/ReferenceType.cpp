@@ -50,6 +50,11 @@ AnyValuePtr ReferenceType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitReferenceType(selfFromThis());
 }
 
+AnyValuePtr ReferenceType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
+}
+
 ReferenceTypePtr ReferenceType::ref()
 {
     return selfFromThis();

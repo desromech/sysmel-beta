@@ -21,12 +21,6 @@ public:
     static constexpr char const __sysmelTypeName__[] = "Void";
     static constexpr bool __isDynamicCompileTimeType__ = false;
     static constexpr bool __isNullableType__ = false;
-    static constexpr bool __hasTrivialInitialization__ = true;
-    static constexpr bool __hasTrivialInitializationCopyingFrom__ = true;
-    static constexpr bool __hasTrivialInitializationMovingFrom__ = true;
-    static constexpr bool __hasTrivialFinalization__ = true;
-    static constexpr bool __hasTrivialCopyingFrom__ = true;
-    static constexpr bool __hasTrivialMovingFrom__ = true;
     
     static VoidPtr uniqueInstance();
 

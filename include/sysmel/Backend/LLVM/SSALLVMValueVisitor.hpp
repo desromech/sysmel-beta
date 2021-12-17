@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMValueVisitor)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMCodeGenerationBackend)
 
 /**
- * I wrap a llvm type in an AnyValue
+ * I wrap a llvm value in an AnyValue
  */
 class SSALLVMValue : public SubtypeOf<CompilerObject, SSALLVMValue>
 {
@@ -26,7 +26,19 @@ public:
     llvm::Value *value = nullptr;
 };
 
+/**
+ * I wrap a llvm constant in an AnyValue
+ */
+class SSALLVMConstant : public SubtypeOf<CompilerObject, SSALLVMValue>
+{
+public:
+    static constexpr char const __typeName__[] = "SSALLVMConstant";
+
+    llvm::Constant *value = nullptr;
+};
+
 AnyValuePtr wrapLLVMValue(llvm::Value *value);
+AnyValuePtr wrapLLVMConstant(llvm::Constant *value);
 
 struct IntrinsicGenerationContext
 {
@@ -57,7 +69,9 @@ public:
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction) override;    
     virtual AnyValuePtr visitIfInstruction(const SSAIfInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;

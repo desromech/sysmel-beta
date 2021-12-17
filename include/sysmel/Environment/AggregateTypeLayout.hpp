@@ -23,6 +23,13 @@ public:
     virtual uint64_t getMemorySize();
     virtual uint64_t getMemoryAlignment();
 
+    virtual bool hasTrivialInitialization();
+    virtual bool hasTrivialInitializationCopyingFrom();
+    virtual bool hasTrivialInitializationMovingFrom();
+    virtual bool hasTrivialFinalization();
+    virtual bool hasTrivialCopyingFrom();
+    virtual bool hasTrivialMovingFrom();
+
     /// Begin building a group.
     virtual void beginGroup();
 
@@ -34,6 +41,7 @@ public:
 
     /// Finish building a group.
     virtual void finishGroup();
+    
 };
 
 } // End of namespace Environment

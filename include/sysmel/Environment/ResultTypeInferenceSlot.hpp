@@ -21,6 +21,7 @@ public:
     static constexpr char const __typeName__[] = "ResultTypeInferenceSlot";
 
     static ResultTypeInferenceSlotPtr makeForType(const TypePtr &expectedType);
+    static ResultTypeInferenceSlotPtr makeForReceiverType(const TypePtr &expectedType);
     static ResultTypeInferenceSlotPtr makeForTypeSet(const TypePtrList &expectedTypeSet);
     static ResultTypeInferenceSlotPtr makeForAuto();
     static ResultTypeInferenceSlotPtr makeForLiteralAuto();

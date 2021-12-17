@@ -1,4 +1,5 @@
 #include "Environment/LiteralBoolean.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include <sstream>
@@ -17,6 +18,11 @@ TypePtr WrapperTypeFor<bool>::apply()
 bool LiteralBoolean::isLiteralBoolean() const
 {
     return true;
+}
+
+AnyValuePtr LiteralBoolean::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitLiteralBoolean(selfFromThis());
 }
 
 } // End of namespace Environment

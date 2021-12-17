@@ -5,6 +5,8 @@
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/FunctionalType.hpp"
+#include "Environment/PointerLikeType.hpp"
+#include "Environment/ReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -26,14 +28,18 @@ AnyValuePtr SSACodeRegion::accept(const SSAValueVisitorPtr &visitor)
 
 void SSACodeRegion::setFunctionalType(const FunctionalTypePtr &functionalType)
 {
+    resultType = functionalType->getResultType();
+    if(resultType->isReturnedByReference())
+    {
+        addResultArgumentWithType(resultType->tempRef());
+        resultType = Type::getVoidType();
+    }
+
     addArgumentWithType(functionalType->getReceiverType());
     auto argumentCount = functionalType->getArgumentCount();
     for(size_t i = 0; i < argumentCount; ++i)
         addArgumentWithType(functionalType->getArgument(i));
-
-    resultType = functionalType->getResultType();
 }
-
 
 void SSACodeRegion::setSignature(const TypePtrList &newArgumentTypes, const TypePtr &newResultType)
 {
@@ -49,7 +55,20 @@ void SSACodeRegion::addArgumentWithType(const TypePtr &argumentType)
     if(argumentType->isVoidType())
         return;
     
-    arguments.push_back(SSACodeRegionArgument::make(argumentType));
+    if(argumentType->isPassedByReference())
+    {
+        arguments.push_back(SSACodeRegionArgument::make(argumentType->ref()));
+    }
+    else
+    {
+        arguments.push_back(SSACodeRegionArgument::make(argumentType));
+    }
+}
+
+void SSACodeRegion::addResultArgumentWithType(const TypePtr &argumentType)
+{
+    assert(argumentType->isReferenceLikeType());
+    arguments.push_back(SSACodeRegionArgument::makeResult(argumentType));
 }
 
 void SSACodeRegion::setSourcePosition(const ASTSourcePositionPtr &newSourcePosition)
@@ -75,6 +94,11 @@ const SSACodeRegionArgumentPtr &SSACodeRegion::getArgument(size_t index)
 const SSACodeRegionArgumentPtrList &SSACodeRegion::getArguments()
 {
     return arguments;
+}
+
+bool SSACodeRegion::isReturningByReference() const
+{
+    return !arguments.empty() && arguments[0]->isResult();
 }
 
 bool SSACodeRegion::isEmpty() const

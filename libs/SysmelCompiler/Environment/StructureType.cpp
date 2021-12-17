@@ -5,6 +5,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 #include <iostream>
 
@@ -35,6 +36,11 @@ AnyValuePtr StructureType::basicNewValue()
         result->slots.push_back(validAnyValue(slotType->basicNewValue())->asMutableStoreValue());
 
     return result;
+}
+
+AnyValuePtr StructureType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitStructureType(selfFromThis());
 }
 
 AggregateTypeLayoutPtr StructureType::makeLayoutInstance()

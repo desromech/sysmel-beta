@@ -2,6 +2,8 @@
 #include "Backend/LLVM/LLVMLiteralValueVisitor.hpp"
 
 #include "Environment/Type.hpp"
+#include "Environment/FunctionalType.hpp"
+#include "Environment/FieldVariable.hpp"
 
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/SSAFunction.hpp"
@@ -13,7 +15,10 @@
 #include "Environment/SSACallInstruction.hpp"
 #include "Environment/SSAConditionalJumpInstruction.hpp"
 #include "Environment/SSAIfInstruction.hpp"
+#include "Environment/SSAGetAggregateFieldReferenceInstruction.hpp"
+#include "Environment/SSAGetAggregateSlotReferenceInstruction.hpp"
 #include "Environment/SSAJumpInstruction.hpp"
+#include "Environment/SSALoadInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSADoWhileInstruction.hpp"
@@ -38,6 +43,7 @@ namespace LLVM
 
 static BootstrapTypeRegistration<SSALLVMValueVisitor> SSALLVMValueVisitorTypeRegistration;
 static BootstrapTypeRegistration<SSALLVMValue> SSALLVMValueTypeRegistration;
+static BootstrapTypeRegistration<SSALLVMConstant> SSALLVMConstantTypeRegistration;
 
 std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext &)>> SSALLVMValueVisitor::intrinsicGenerators = {
 
@@ -114,6 +120,12 @@ AnyValuePtr wrapLLVMValue(llvm::Value *value)
     return wrapper;
 }
 
+AnyValuePtr wrapLLVMConstant(llvm::Constant *value)
+{
+    auto wrapper = basicMakeObject<SSALLVMConstant> ();
+    wrapper->value = value;
+    return wrapper;
+}
 
 llvm::Value *SSALLVMValueVisitor::visitValueForLLVM(const SSAValuePtr &value)
 {
@@ -168,6 +180,13 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     
     currentFunction = llvm::Function::Create(functionType, linkage, name, *backend->getTargetModule());
     backend->setGlobalValueTranslation(function, currentFunction);
+
+    // Make the argument used for returning by reference with sret.
+    if(mainCodeRegion->isReturningByReference())
+    {
+        auto structureResultType = backend->translateType(function->getValueType().staticAs<FunctionalType> ()->getResultType());
+        currentFunction->getArg(0)->addAttr(llvm::Attribute::getWithStructRetType(*backend->getContext(), structureResultType));
+    }
 
     // Translate the function body.
     translateMainCodeRegion(mainCodeRegion);
@@ -458,6 +477,13 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWhileInstruction(const SSADoWhileInstruc
     return wrapLLVMValue(makeVoidValue());
 }
 
+AnyValuePtr SSALLVMValueVisitor::visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction)
+{
+    assert(instruction->getAggregate()->getValueType()->isPointerLikeType());
+    auto aggregate = translateValue(instruction->getAggregate());
+    return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, 0*instruction->getFieldVariable()->getSlotIndex()));
+}
+
 AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &instruction)
 {
     auto condition = translateValue(instruction->getCondition());
@@ -519,8 +545,11 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
 
 AnyValuePtr SSALLVMValueVisitor::visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction)
 {
-    auto valueType = backend->translateType(instruction->getVariableValueType());
-    return wrapLLVMValue(allocaBuilder->CreateAlloca(valueType));
+    auto variableValueType = instruction->getVariableValueType();
+    auto valueType = backend->translateType(variableValueType);
+    auto alloca = allocaBuilder->CreateAlloca(valueType);
+    alloca->setAlignment(llvm::Align(std::max(uint64_t(1), variableValueType->getMemoryAlignment())));
+    return wrapLLVMValue(alloca);
 }
 
 void SSALLVMValueVisitor::returnFromFunction(const SSAValuePtr &resultValue)
@@ -571,6 +600,12 @@ AnyValuePtr SSALLVMValueVisitor::visitReturnFromRegionInstruction(const SSARetur
     }
         
     return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitLoadInstruction(const SSALoadInstructionPtr &instruction)
+{
+    auto reference = translateValue(instruction->getReference());
+    return wrapLLVMValue(builder->CreateLoad(reference));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitStoreInstruction(const SSAStoreInstructionPtr &instruction)

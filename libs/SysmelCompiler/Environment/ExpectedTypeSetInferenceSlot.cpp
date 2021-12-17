@@ -17,6 +17,16 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForType(const TypePtr &e
     return makeForTypeSet({expectedType});
 }
 
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForReceiverType(const TypePtr &expectedType)
+{
+    if(expectedType->isAutoType())
+        return makeForAuto();
+    auto typeInferenceSlot = basicMakeObject<ExpectedTypeSetInferenceSlot> ();
+    typeInferenceSlot->expectedTypeSet = {expectedType};
+    typeInferenceSlot->isReceiverType = true;
+    return typeInferenceSlot;
+}
+
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtrList &expectedTypeSet)
 {
     assert(!expectedTypeSet.empty());
@@ -27,7 +37,7 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtr
 
 ASTNodePtr ExpectedTypeSetInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    return semanticAnalyzer->addImplicitCastToOneOf(node, expectedTypeSet);
+    return semanticAnalyzer->addImplicitCastToOneOf(node, expectedTypeSet, isReceiverType);
 }
 
 } // End of namespace Environment

@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ValueBox";
 
     virtual bool isValueBox() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
     virtual AnyValuePtr copyAssignValue(const AnyValuePtr &newValue) override;
     

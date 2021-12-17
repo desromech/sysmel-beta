@@ -192,6 +192,11 @@ void CompiledMethod::ensureSemanticAnalysis()
     asSSAValueRequiredInPosition(nullptr);
 }
 
+const ArgumentVariablePtr &CompiledMethod::getReceiverArgument() const
+{
+    return receiverArgument;
+}
+
 const ArgumentVariablePtrList &CompiledMethod::getArguments() const
 {
     return arguments;
@@ -247,12 +252,13 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     auto mainCodeRegion = ssaCompiledFunction->getMainCodeRegion();
 
     // Set the argument metadata.
-    size_t argumentsOffset = 0;
+    size_t receiverOffset = functionalType->getResultType()->isReturnedByReference() ? 1 : 0;
+    size_t argumentsOffset = receiverOffset;
     auto receiverType = functionalType->getReceiverType();
     if(!receiverType->isVoidType())
     {
-        mainCodeRegion->getArgument(0)->setDeclarationPosition(declarationPosition);
-        ++argumentsOffset = 1;
+        mainCodeRegion->getArgument(receiverOffset)->setDeclarationPosition(declarationPosition);
+        ++argumentsOffset;
     }
 
     for(size_t i = 0; i < arguments.size(); ++i)
@@ -270,7 +276,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     {
         ssaCompiledFunction->setDefinitionPosition(definitionPosition);
         if(!receiverType->isVoidType())
-            mainCodeRegion->getArgument(0)->setDefinitionPosition(declarationPosition);
+            mainCodeRegion->getArgument(receiverOffset)->setDefinitionPosition(declarationPosition);
         for(size_t i = 0; i < arguments.size(); ++i)
             mainCodeRegion->getArgument(i + argumentsOffset)->setDefinitionPosition(arguments[i]->getDefinitionPosition());
 
