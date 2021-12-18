@@ -4,6 +4,7 @@
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/FunctionType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/AggregateTypeSequentialLayout.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -161,6 +162,15 @@ TypePtr TupleType::appendResultTypeMakingFunctionType(const TypePtr &nextType)
 
 void TupleType::addSpecializedInstanceMethods()
 {
+}
+
+void TupleType::buildLayout()
+{
+    layout = basicMakeObject<AggregateTypeSequentialLayout>();
+    layout->beginGroup();
+    for(auto &type : elementTypes)
+        layout->addSlotWithType(type);
+    layout->finishGroup();
 }
 
 bool TupleTypeValue::isTupleTypeValue() const

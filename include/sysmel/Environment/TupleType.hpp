@@ -40,6 +40,9 @@ public:
     void addSpecializedInstanceMethods();
 
     TypePtrList elementTypes;
+
+protected:
+    virtual void buildLayout() override;
 };
 
 /**
