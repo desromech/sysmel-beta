@@ -124,17 +124,33 @@ AnyValuePtr AggregateTypeValue::getReferenceToSlotWithType(int64_t slotIndex, in
 
 AnyValuePtr AggregateTypeValue::loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType)
 {
-    SysmelSelfSubclassResponsibility();
+    (void)slotOffset;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate load element.");
+
+    return validAnyValue(slots[slotIndex])->accessVariableAsValueWithType(elementType);
 }
 
 AnyValuePtr AggregateTypeValue::copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
 {
-    SysmelSelfSubclassResponsibility();
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
+
+    slots[slotIndex] = newValue;
+    return newValue;
 }
 
 AnyValuePtr AggregateTypeValue::moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
 {
-    SysmelSelfSubclassResponsibility();
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
+
+    slots[slotIndex] = newValue;
+    return newValue;
 }
 
 } // End of namespace Environment

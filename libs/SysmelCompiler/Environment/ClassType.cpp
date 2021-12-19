@@ -133,36 +133,5 @@ TypePtr ClassTypeValue::getType() const
     return type;
 }
 
-AnyValuePtr ClassTypeValue::loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType)
-{
-    (void)slotOffset;
-    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
-        signalNewWithMessage<Error> ("Invalid aggregate load element.");
-
-    return validAnyValue(slots[slotIndex])->accessVariableAsValueWithType(elementType);
-}
-
-AnyValuePtr ClassTypeValue::copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
-{
-    (void)slotOffset;
-    (void)elementType;
-    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
-        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
-
-    slots[slotIndex] = newValue;
-    return newValue;
-}
-
-AnyValuePtr ClassTypeValue::moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
-{
-    (void)slotOffset;
-    (void)elementType;
-    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
-        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
-
-    slots[slotIndex] = newValue;
-    return newValue;
-}
-
 } // End of namespace Environment
 } // End of namespace Sysmel

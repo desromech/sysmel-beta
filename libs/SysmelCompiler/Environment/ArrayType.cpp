@@ -117,12 +117,12 @@ SExpression ArrayType::asSExpression() const
 
 AnyValuePtr ArrayType::basicNewValue()
 {
-    auto tuple = basicMakeObject<ArrayTypeValue> ();
-    tuple->type = selfFromThis();
-    tuple->elements.reserve(size);
+    auto array = basicMakeObject<ArrayTypeValue> ();
+    array->type = selfFromThis();
+    array->slots.reserve(size);
     for(size_t i = 0; i < size; ++i)
-        tuple->elements.push_back(elementType->basicNewValue());
-    return tuple;
+        array->slots.push_back(elementType->basicNewValue());
+    return array;
 }
 
 void ArrayType::addSpecializedInstanceMethods()
@@ -146,13 +146,11 @@ TypePtr ArrayTypeValue::getType() const
 
 std::string ArrayTypeValue::printString() const
 {
-    assert(!elements.empty());
-
     std::ostringstream out;
     out << type->printString();
     out << '(';
     bool first = true;
-    for(auto &el : elements)
+    for(auto &el : slots)
     {
         if(first)
             first = false;
@@ -168,8 +166,8 @@ std::string ArrayTypeValue::printString() const
 SExpression ArrayTypeValue::asSExpression() const
 {
     SExpressionList elementsSExpr;
-    elementsSExpr.elements.reserve(elements.size());
-    for(auto &el : elements)
+    elementsSExpr.elements.reserve(slots.size());
+    for(auto &el : slots)
         elementsSExpr.elements.push_back(el->asSExpression());
 
     return SExpressionList{{

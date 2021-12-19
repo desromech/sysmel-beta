@@ -62,8 +62,6 @@ public:
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
-
-    AnyValuePtrList elements;
 };
 
 } // End of namespace Environment

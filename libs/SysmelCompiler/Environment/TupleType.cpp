@@ -120,9 +120,9 @@ AnyValuePtr TupleType::basicNewValue()
 {
     auto tuple = basicMakeObject<TupleTypeValue> ();
     tuple->type = selfFromThis();
-    tuple->elements.reserve(elementTypes.size());
+    tuple->slots.reserve(elementTypes.size());
     for(auto & elType : elementTypes)
-        tuple->elements.push_back(elType->basicNewValue());
+        tuple->slots.push_back(elType->basicNewValue());
     return tuple;
 }
 
@@ -130,7 +130,7 @@ TupleTypeValuePtr TupleType::makeWithElements(const AnyValuePtrList &elements)
 {
     auto tuple = basicMakeObject<TupleTypeValue> ();
     tuple->type = selfFromThis();
-    tuple->elements = elements;
+    tuple->slots = elements;
     return tuple;
 }
 
@@ -190,12 +190,12 @@ TypePtr TupleTypeValue::getType() const
 
 std::string TupleTypeValue::printString() const
 {
-    assert(!elements.empty());
+    assert(!slots.empty());
 
     std::ostringstream out;
     out << '(';
     bool first = true;
-    for(auto &el : elements)
+    for(auto &el : slots)
     {
         if(first)
             first = false;
@@ -211,8 +211,8 @@ std::string TupleTypeValue::printString() const
 SExpression TupleTypeValue::asSExpression() const
 {
     SExpressionList elementsSExpr;
-    elementsSExpr.elements.reserve(elements.size());
-    for(auto &el : elements)
+    elementsSExpr.elements.reserve(slots.size());
+    for(auto &el : slots)
         elementsSExpr.elements.push_back(el->asSExpression());
 
     return SExpressionList{{
