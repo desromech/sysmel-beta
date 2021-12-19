@@ -9,6 +9,7 @@
 #include "Environment/LiteralFloat.hpp"
 #include "Environment/LiteralString.hpp"
 #include "Environment/LiteralSymbol.hpp"
+#include "Environment/AggregateElementReference.hpp"
 #include "Environment/ValueBox.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
@@ -107,6 +108,11 @@ AnyValuePtr LiteralValueVisitor::visitLiteralSymbol(const LiteralSymbolPtr &valu
 }
 
 AnyValuePtr LiteralValueVisitor::visitValueBox(const ValueBoxPtr &value)
+{
+    return visitAnyValue(value);
+}
+
+AnyValuePtr LiteralValueVisitor::visitAggregateElementReference(const AggregateElementReferencePtr &value)
 {
     return visitAnyValue(value);
 }

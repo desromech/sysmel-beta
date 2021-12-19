@@ -738,6 +738,9 @@ public:
     // Is this object a value box?
     virtual bool isValueBox() const;
 
+    // Is this object an aggregate element reference?
+    virtual bool isAggregateElementReference() const;
+
     // Is this a functional type?
     virtual bool isFunctionalType() const;
 
@@ -1153,7 +1156,16 @@ public:
     virtual AnyValuePtr getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType);
 
     // Gets a references to an inner slot with the specified type.
-    virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType);
+    virtual AnyValuePtr getReferenceToSlotWithType(int64_t slotIndex, int64_t slotOffset, const TypePtr &referenceType);
+
+    // Loads a value from the aggregate element
+    virtual AnyValuePtr loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType);
+
+    // Assigns a new value onto the aggregate elemenet.
+    virtual AnyValuePtr copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue);
+
+    // Assigns a new value onto the aggregate element by value.
+    virtual AnyValuePtr moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue);
 
     template<typename ResultType, typename... Args>
     ResultType perform(const AnyValuePtr &selector, Args&& ...arguments)

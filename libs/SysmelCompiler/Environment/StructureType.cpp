@@ -1,11 +1,11 @@
 #include "Environment/StructureType.hpp"
 #include "Environment/Error.hpp"
-#include "Environment/PointerLikeType.hpp"
 #include "Environment/FieldVariable.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/Error.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 #include <iostream>
 
@@ -33,7 +33,7 @@ AnyValuePtr StructureType::basicNewValue()
     result->slots.reserve(slotTypes.size());
 
     for(const auto &slotType : slotTypes)
-        result->slots.push_back(validAnyValue(slotType->basicNewValue())->asMutableStoreValue());
+        result->slots.push_back(slotType->basicNewValue());
 
     return result;
 }
@@ -77,23 +77,35 @@ TypePtr StructureTypeValue::getType() const
     return type;
 }
 
-AnyValuePtr StructureTypeValue::asMutableStoreValue()
+AnyValuePtr StructureTypeValue::loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType)
 {
-    auto result = basicMakeObject<StructureTypeValue> ();
-    result->type = type;
-    result->slots.reserve(slots.size());
-    for(auto &slot : slots)
-        result->slots.push_back(slot->asMutableStoreValue());
-    return result;
+    (void)slotOffset;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate load element.");
+
+    return validAnyValue(slots[slotIndex])->accessVariableAsValueWithType(elementType);
 }
 
-AnyValuePtr StructureTypeValue::getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType)
+AnyValuePtr StructureTypeValue::copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
 {
-    assert(referenceType->isPointerLikeType());
-    if(slotIndex < 0 || uint64_t(slotIndex) >= slots.size())
-        signalNewWithMessage<Error> (formatString("Invalid slot index {0} for accessing structure of type {1}.", {castToString(slotIndex), type->printString()}));
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
 
-    return referenceType.staticAs<PointerLikeType>()->makeWithValue(slots[slotIndex]);
+    slots[slotIndex] = newValue;
+    return newValue;
+}
+
+AnyValuePtr StructureTypeValue::moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
+{
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
+
+    slots[slotIndex] = newValue;
+    return newValue;
 }
 
 } // End of namespace Environment

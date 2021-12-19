@@ -43,8 +43,10 @@ public:
     
     virtual SExpression asSExpression() const override;
     virtual TypePtr getType() const override;
-    virtual AnyValuePtr asMutableStoreValue() override;
-    virtual AnyValuePtr getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType) override;
+
+    virtual AnyValuePtr loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType) override;
+    virtual AnyValuePtr copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue) override;
+    virtual AnyValuePtr moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue) override;
 
     AnyValuePtrList slots;
 };

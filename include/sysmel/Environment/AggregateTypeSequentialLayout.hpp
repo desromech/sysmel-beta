@@ -33,6 +33,8 @@ public:
     virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
     virtual void finishGroup() override;
 
+    virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
+
     const TypePtrList &getSlotTypes() const
     {
         return slotTypes;

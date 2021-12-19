@@ -87,6 +87,16 @@ void FieldVariable::setSlotIndex(uint32_t newSlotIndex)
     slotIndex = newSlotIndex;
 }
 
+uint32_t FieldVariable::getOffset() const
+{
+    return offset;
+}
+
+void FieldVariable::setOffset(uint32_t newOffset)
+{
+    offset = newOffset;
+}
+
 ASTNodePtr FieldVariableWithReceiverVariable::analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     auto receiverAccess = basicMakeObject<ASTVariableAccessNode> ();

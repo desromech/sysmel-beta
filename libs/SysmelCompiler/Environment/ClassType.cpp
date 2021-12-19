@@ -97,7 +97,7 @@ AnyValuePtr ClassType::basicNewValue()
     result->slots.reserve(slotTypes.size());
 
     for(const auto &slotType : slotTypes)
-        result->slots.push_back(validAnyValue(slotType->basicNewValue())->asMutableStoreValue());
+        result->slots.push_back(slotType->basicNewValue());
 
     // TODO: Set the vtable/typeinfo values.
 
@@ -128,29 +128,40 @@ SExpression ClassTypeValue::asSExpression() const
     }};
 }
 
-
 TypePtr ClassTypeValue::getType() const
 {
     return type;
 }
 
-AnyValuePtr ClassTypeValue::asMutableStoreValue()
+AnyValuePtr ClassTypeValue::loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType)
 {
-    auto result = basicMakeObject<ClassTypeValue> ();
-    result->type = type;
-    result->slots.reserve(slots.size());
-    for(auto &slot : slots)
-        result->slots.push_back(slot->asMutableStoreValue());
-    return result;
+    (void)slotOffset;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate load element.");
+
+    return validAnyValue(slots[slotIndex])->accessVariableAsValueWithType(elementType);
 }
 
-AnyValuePtr ClassTypeValue::getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType)
+AnyValuePtr ClassTypeValue::copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
 {
-    assert(referenceType->isPointerLikeType());
-    if(slotIndex < 0 || uint64_t(slotIndex) >= slots.size())
-        signalNewWithMessage<Error> (formatString("Invalid slot index {0} for accessing class of type {1}.", {castToString(slotIndex), type->printString()}));
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
 
-    return referenceType.staticAs<PointerLikeType>()->makeWithValue(slots[slotIndex]);
+    slots[slotIndex] = newValue;
+    return newValue;
+}
+
+AnyValuePtr ClassTypeValue::moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
+{
+    (void)slotOffset;
+    (void)elementType;
+    if(slotIndex < 0 || size_t(slotIndex) >= slots.size())
+        signalNewWithMessage<Error> ("Invalid aggregate move asign element.");
+
+    slots[slotIndex] = newValue;
+    return newValue;
 }
 
 } // End of namespace Environment

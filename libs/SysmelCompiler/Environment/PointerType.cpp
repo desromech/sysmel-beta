@@ -79,10 +79,16 @@ void PointerType::addSpecializedInstanceMethods()
 
                 // []
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr, AnyValuePtr)> ("pointer.element", "[]", selfFromThis(), referenceType, {Type::getIntPointerType()}, [=](const PointerTypeValuePtr &value, const AnyValuePtr &index) {
-                    return value->baseValue->getReferenceToSlotWithType(index->unwrapAsInt64(), referenceType);
+                    auto indexValue = index->unwrapAsInt64();
+                    auto baseType = value->getType().staticAs<PointerLikeType> ()->getBaseType();
+                    auto offset = indexValue * baseType->getAlignedMemorySize();
+                    return value->baseValue->getReferenceToSlotWithType(indexValue, offset, referenceType);
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr, AnyValuePtr)> ("pointer.element", "[]", selfFromThis(), referenceType, {Type::getUIntPointerType()}, [=](const PointerTypeValuePtr &value, const AnyValuePtr &index) {
-                    return value->baseValue->getReferenceToSlotWithType(index->unwrapAsUInt64(), referenceType);
+                    auto indexValue = index->unwrapAsUInt64();
+                    auto baseType = value->getType().staticAs<PointerLikeType> ()->getBaseType();
+                    auto offset = indexValue * baseType->getAlignedMemorySize();
+                    return value->baseValue->getReferenceToSlotWithType(indexValue, offset, referenceType);
                 }, MethodFlags::Pure),
             }
         }

@@ -164,5 +164,15 @@ TypePtr TemporaryReferenceTypeValue::getType() const
     return type;
 }
 
+AnyValuePtr TemporaryReferenceTypeValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)
+{
+    return validAnyValue(baseValue)->getReferenceToFieldWithType(field, referenceType);
+}
+
+AnyValuePtr TemporaryReferenceTypeValue::getReferenceToSlotWithType(int64_t slotIndex, int64_t slotOffset, const TypePtr &referenceType)
+{
+    return validAnyValue(baseValue)->getReferenceToSlotWithType(slotIndex, slotOffset, referenceType);
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

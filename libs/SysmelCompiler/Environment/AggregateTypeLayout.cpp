@@ -71,5 +71,12 @@ void AggregateTypeLayout::finishGroup()
 {
 }
 
+TypePtr AggregateTypeLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset)
+{
+    (void)slotIndex;
+    (void)slotOffset;
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

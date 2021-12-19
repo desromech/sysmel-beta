@@ -21,6 +21,7 @@ public:
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
     virtual AnyValuePtr copyAssignValue(const AnyValuePtr &newValue) override;
+    virtual AnyValuePtr moveAssignValue(const AnyValuePtr &newValue) override;
     
     virtual AnyValuePtr accessVariableAsReferenceWithType(const TypePtr &referenceType) override;
     virtual AnyValuePtr accessVariableAsValueWithType(const TypePtr &valueType) override;

@@ -41,6 +41,9 @@ public:
 
     /// Finish building a group.
     virtual void finishGroup();
+
+    /// Get the type for a specific slot and offset.
+    virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset);
     
 };
 

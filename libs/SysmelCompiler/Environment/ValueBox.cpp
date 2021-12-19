@@ -35,10 +35,16 @@ AnyValuePtr ValueBox::copyAssignValue(const AnyValuePtr &newValue)
     return selfFromThis();
 }
 
+AnyValuePtr ValueBox::moveAssignValue(const AnyValuePtr &newValue)
+{
+    value = newValue;
+    return selfFromThis();
+}
+
 AnyValuePtr ValueBox::accessVariableAsReferenceWithType(const TypePtr &referenceType)
 {
     if(referenceType->isReferenceLikeType())
-        return referenceType.staticAs<PointerLikeType> ()->makeWithValue(value);
+        return referenceType.staticAs<PointerLikeType> ()->makeWithValue(selfFromThis());
     return value;
 }
 
@@ -50,10 +56,7 @@ AnyValuePtr ValueBox::accessVariableAsValueWithType(const TypePtr &valueType)
 
 AnyValuePtr ValueBox::asMutableStoreValue()
 {
-    auto result = basicMakeObject<ValueBox> ();
-    result->value = value;
-    result->type = type;
-    return result;
+    return shallowClone();
 }
 
 } // End of namespace Environment

@@ -92,5 +92,14 @@ void AggregateTypeSequentialLayout::finishGroup()
         memorySize = alignedTo(memorySize, memoryAlignment);
 }
 
+TypePtr AggregateTypeSequentialLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset)
+{
+    (void)slotOffset;
+    if(slotIndex < 0 || size_t(slotIndex) >= slotTypes.size())
+        return nullptr;
+
+    return slotTypes[slotIndex];
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

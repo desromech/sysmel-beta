@@ -1,4 +1,5 @@
 set(Environment_Sources
+    AggregateElementReference.cpp
     AggregateType.cpp
     AggregateTypeArrayLayout.cpp
     AggregateTypeLayout.cpp

@@ -764,6 +764,11 @@ bool AnyValue::isValueBox() const
     return false;
 }
 
+bool AnyValue::isAggregateElementReference() const
+{
+    return false;
+}
+
 bool AnyValue::isFunctionalType() const
 {
     return false;
@@ -1471,10 +1476,30 @@ AnyValuePtr AnyValue::getReferenceToFieldWithType(const FieldVariablePtr &field,
     signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for field {0} from {1}.", {field->printString(), printString()}));
 }
 
-AnyValuePtr AnyValue::getReferenceToSlotWithType(const int64_t slotIndex, const TypePtr &referenceType)
+AnyValuePtr AnyValue::getReferenceToSlotWithType(int64_t slotIndex, const int64_t slotOffset, const TypePtr &referenceType)
 {
     (void)referenceType;
-    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for slot {0} from {1}.", {castToString(slotIndex), printString()}));
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot get reference in compile time for slot ({0}:{1}) from {2}.", {castToString(slotIndex), castToString(slotOffset), printString()}));
+}
+
+AnyValuePtr AnyValue::loadAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType)
+{
+    (void)elementType;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot load aggregate element in compile time for slot ({0}:{1}) from {2}.", {castToString(slotIndex), castToString(slotOffset), printString()}));
+}
+
+AnyValuePtr AnyValue::copyAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
+{
+    (void)elementType;
+    (void)newValue;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot load aggregate element in compile time for slot ({0}:{1}) from {2}.", {castToString(slotIndex), castToString(slotOffset), printString()}));
+}
+
+AnyValuePtr AnyValue::moveAssignAggregateElement(int64_t slotIndex, int64_t slotOffset, const TypePtr &elementType, const AnyValuePtr &newValue)
+{
+    (void)elementType;
+    (void)newValue;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot load aggregate element in compile time for slot ({0}:{1}) from {2}.", {castToString(slotIndex), castToString(slotOffset), printString()}));
 }
 
 AnyValuePtr AnyValue::asMutableStoreValue()

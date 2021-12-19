@@ -47,7 +47,7 @@ AnyValuePtr AggregateTypeWithFieldsValue::getReferenceToFieldWithType(const Fiel
 {
     if(field->isBootstrapFieldVariable())
         SuperType::getReferenceToFieldWithType(field, referenceType);
-    return getReferenceToSlotWithType(field->getSlotIndex(), referenceType);
+    return getReferenceToSlotWithType(field->getSlotIndex(), field->getOffset(), referenceType);
 }
 } // End of namespace Environment
 } // End of namespace Sysmel
