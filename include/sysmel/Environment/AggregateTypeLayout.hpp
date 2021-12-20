@@ -27,8 +27,8 @@ public:
     virtual bool hasTrivialInitializationCopyingFrom();
     virtual bool hasTrivialInitializationMovingFrom();
     virtual bool hasTrivialFinalization();
-    virtual bool hasTrivialCopyingFrom();
-    virtual bool hasTrivialMovingFrom();
+    virtual bool hasTrivialAssignCopyingFrom();
+    virtual bool hasTrivialAssignMovingFrom();
 
     /// Begin building a group.
     virtual void beginGroup();

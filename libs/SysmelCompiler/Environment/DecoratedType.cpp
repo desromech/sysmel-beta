@@ -17,7 +17,6 @@ TypePtr DecoratedType::make(const TypePtr &baseType, TypeDecorationFlags decorat
     if(decorations == TypeDecorationFlags::None)
         return baseType;
     
-
     auto &cache = RuntimeContext::getActive()->decoratedTypeCache;
     auto it = cache.find({baseType, uint32_t(decorations)});
     if(it != cache.end())
@@ -97,14 +96,14 @@ bool DecoratedType::hasTrivialFinalization()
     return baseType->hasTrivialFinalization();
 }
 
-bool DecoratedType::hasTrivialCopyingFrom()
+bool DecoratedType::hasTrivialAssignCopyingFrom()
 {
-    return baseType->hasTrivialCopyingFrom();
+    return baseType->hasTrivialAssignCopyingFrom();
 }
 
-bool DecoratedType::hasTrivialMovingFrom()
+bool DecoratedType::hasTrivialAssignMovingFrom()
 {
-    return baseType->hasTrivialMovingFrom();
+    return baseType->hasTrivialAssignMovingFrom();
 }
 
 uint64_t DecoratedType::getMemorySize()

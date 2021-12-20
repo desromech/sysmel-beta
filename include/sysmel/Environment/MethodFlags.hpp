@@ -42,6 +42,9 @@ enum class MethodFlags : uint32_t
     Override = 1<<12,
     Virtual = 1<<13,
     Static = 1<<14,
+
+    // Special semantics.
+    Trivial = 1<<15,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)

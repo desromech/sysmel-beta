@@ -147,5 +147,17 @@ ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNod
     return matchingCandidates.front()->analyzeMessageSendNode(node, semanticAnalyzer);
 }
 
+AnyValuePtr PatternMatchingMethod::asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    for(const auto &pattern : patterns)
+    {
+        auto matchedPattern = pattern->asMethodMatchingSignature(receiverType, argumentTypes, resultType);
+        if(matchedPattern)
+            return matchedPattern;
+    }
+    
+    return nullptr;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

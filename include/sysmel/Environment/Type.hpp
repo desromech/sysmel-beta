@@ -147,20 +147,38 @@ public:
     /// Is this a type with a trivial initialization?
     virtual bool hasTrivialInitialization();
 
+    /// Retrieves the initialize method.
+    virtual AnyValuePtr getInitializeMethod();
+
     /// Is this a type with a trivial initialization copying from?
     virtual bool hasTrivialInitializationCopyingFrom();
+
+    /// Retrieves the finalzie method.
+    virtual AnyValuePtr getInitializeCopyingFromMethod();
 
     /// Is this a type with a trivial initialization moving from?
     virtual bool hasTrivialInitializationMovingFrom();
 
+    /// Retrieves the finalzie method.
+    virtual AnyValuePtr getInitializeMovingFromMethod();
+
     /// Is this a type with a trivial finalization?
     virtual bool hasTrivialFinalization();
 
+    /// Retrieves the finalzie method.
+    virtual AnyValuePtr getFinalizeMethod();
+
     /// Is this a type with a trivial copy process?
-    virtual bool hasTrivialCopyingFrom();
+    virtual bool hasTrivialAssignCopyingFrom();
+
+    /// Retrieves the := (self const ref) method.
+    virtual AnyValuePtr getAssignCopyingFromMethod();
 
     /// Is this a type with a trivial movement process?
-    virtual bool hasTrivialMovingFrom();
+    virtual bool hasTrivialAssignMovingFrom();
+
+    /// Retrieves the := (self tempRef) method.
+    virtual AnyValuePtr getAssignMovingFromMethod();
 
     /// Gets the type value size.
     virtual uint64_t getValueSize();
@@ -390,6 +408,18 @@ protected:
 
     /// This method evaluates all of the pending body block code fragments.
     virtual void evaluateAllPendingBodyBlockCodeFragments();
+
+    /// This method ensures the creation of the implicit life-time methods.
+    virtual void ensureImplicitLifeTimeMethodsAreCreated();
+
+    /// Lookup for a valid specific lifetime method.
+    AnyValuePtr lookupValidLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
+
+    /// Lookup for a specific lifetime method.
+    AnyValuePtr lookupLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
+
+    /// Has a trivial lifetime method?
+    bool hasTrivialLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
 
     AnyValuePtr name;
     mutable TypePtr supertype;

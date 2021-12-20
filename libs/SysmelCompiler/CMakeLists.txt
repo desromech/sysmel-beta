@@ -231,6 +231,7 @@ set(Environment_Sources
     SSADoWhileInstruction.cpp
     SSADoWithCleanupInstruction.cpp
     SSADowncastInstruction.cpp
+    SSAEnableLocalFinalization.cpp
     SSAFunction.cpp
     SSAGlobalValue.cpp
     SSAGlobalVariable.cpp
@@ -238,6 +239,7 @@ set(Environment_Sources
     SSAInstruction.cpp
     SSAJumpInstruction.cpp
     SSALoadInstruction.cpp
+    SSALocalFinalization.cpp
     SSALocalVariableInstruction.cpp
     SSAGetAggregateFieldReferenceInstruction.cpp
     SSAGetAggregateSlotReferenceInstruction.cpp

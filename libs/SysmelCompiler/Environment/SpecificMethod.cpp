@@ -114,6 +114,11 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
     return MethodPatternMatchingResult{selfFromThis(), totalRank};
 }
 
+AnyValuePtr SpecificMethod::asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    return functionalType && functionalType->matchesSignature(receiverType, argumentTypes, resultType) ? selfFromThis() : nullptr;
+}
+
 bool SpecificMethod::isMacroMethod() const
 {
     return functionalType->getReceiverType()
@@ -318,6 +323,16 @@ bool SpecificMethod::isConversion() const
 void SpecificMethod::makeConversion()
 {
     methodFlags = methodFlags | MethodFlags::Conversion;
+}
+
+bool SpecificMethod::isTrivial() const
+{
+    return (methodFlags & MethodFlags::Trivial) != MethodFlags::None;
+}
+
+void SpecificMethod::makeTrivial()
+{
+    methodFlags = methodFlags | MethodFlags::Trivial;
 }
 
 } // End of namespace Environment

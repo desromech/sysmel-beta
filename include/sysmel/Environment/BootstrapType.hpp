@@ -29,8 +29,8 @@ public:
     virtual bool hasTrivialInitializationCopyingFrom() override;
     virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
-    virtual bool hasTrivialCopyingFrom() override;
-    virtual bool hasTrivialMovingFrom() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
 
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;

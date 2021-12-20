@@ -253,6 +253,7 @@ AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
     if(isMetaType())
         getInstanceType()->evaluateAllPendingBodyBlockCodeFragments();
     evaluateAllPendingBodyBlockCodeFragments();
+    ensureImplicitLifeTimeMethodsAreCreated();
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
@@ -449,32 +450,62 @@ bool Type::isReturnedByReference()
 
 bool Type::hasTrivialInitialization()
 {
-    return true;
+    return hasTrivialLifetimeMethod("initialize", {}, getVoidType());
+}
+
+AnyValuePtr Type::getInitializeMethod()
+{
+    return lookupValidLifetimeMethod("initialize", {}, getVoidType());
 }
 
 bool Type::hasTrivialInitializationCopyingFrom()
 {
-    return true;
+    return hasTrivialLifetimeMethod("initializeCopyingFrom:", {asConstReceiverType()}, getVoidType());
+}
+
+AnyValuePtr Type::getInitializeCopyingFromMethod()
+{
+    return lookupValidLifetimeMethod("initializeCopyingFrom:", {asConstReceiverType()}, getVoidType());
 }
 
 bool Type::hasTrivialInitializationMovingFrom()
 {
-    return true;
+    return hasTrivialLifetimeMethod("initializeMovingFrom:", {tempRef()}, getVoidType());
+}
+
+AnyValuePtr Type::getInitializeMovingFromMethod()
+{
+    return lookupValidLifetimeMethod("initializeMovingFrom:", {tempRef()}, getVoidType());
 }
 
 bool Type::hasTrivialFinalization()
 {
-    return true;
+    return hasTrivialLifetimeMethod("finalize", {}, getVoidType());
 }
 
-bool Type::hasTrivialCopyingFrom()
+AnyValuePtr Type::getFinalizeMethod()
 {
-    return true;
+    return lookupValidLifetimeMethod("finalize", {}, getVoidType());
 }
 
-bool Type::hasTrivialMovingFrom()
+bool Type::hasTrivialAssignCopyingFrom()
 {
-    return true;
+    return hasTrivialLifetimeMethod(":=", {asConstReceiverType()}, asConstReceiverType());
+}
+
+AnyValuePtr Type::getAssignCopyingFromMethod()
+{
+    return lookupValidLifetimeMethod(":=", {asConstReceiverType()}, asConstReceiverType());
+}
+
+bool Type::hasTrivialAssignMovingFrom()
+{
+    return hasTrivialLifetimeMethod(":=", {tempRef()}, asConstReceiverType());
+}
+
+AnyValuePtr Type::getAssignMovingFromMethod()
+{
+    return lookupValidLifetimeMethod(":=", {tempRef()}, asConstReceiverType());
 }
 
 uint64_t Type::getValueSize()
@@ -1172,6 +1203,41 @@ SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
     }
 
     return ssaTypeProgramEntity;
+}
+
+void Type::ensureImplicitLifeTimeMethodsAreCreated()
+{
+}
+
+AnyValuePtr Type::lookupValidLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    evaluateAllPendingBodyBlockCodeFragments();
+    ensureImplicitLifeTimeMethodsAreCreated();
+    return lookupLifetimeMethod(selector, argumentTypes, resultType);
+}
+
+AnyValuePtr Type::lookupLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    if(!methodDictionary)
+        return nullptr;
+
+    auto method = methodDictionary->lookupSelector(internSymbol(selector));
+    if(!method)
+        return nullptr;
+
+    return method->asMethodMatchingSignature(asReceiverType(), argumentTypes, resultType);
+}
+
+bool Type::hasTrivialLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    auto method = lookupLifetimeMethod(selector, argumentTypes, resultType);
+    if(!method || method->isUndefined())
+        return true;
+
+    if(!method->isSpecificMethod())
+        return false;
+
+    return method.staticAs<SpecificMethod> ()->isTrivial();
 }
 
 } // End of namespace Environment

@@ -86,6 +86,11 @@ FunctionTypePtr FunctionalType::copyWithResultType(const TypePtr &newResultType)
     SysmelSelfSubclassResponsibility();
 }
 
+bool FunctionalType::matchesSignature(const TypePtr &testReceiverType, const TypePtrList &testArgumentTypes, const TypePtr &testResultType) const
+{
+    return getReceiverType() == testReceiverType && arguments == testArgumentTypes && result == testResultType;
+}
+
 bool FunctionalTypeValue::isFunctionalTypeValue() const
 {
     return true;

@@ -61,5 +61,16 @@ TypePtr SSACodeRegionArgument::getValueType() const
     return valueType;
 }
 
+bool SSACodeRegionArgument::isLocalFinalizationRequired() const
+{
+    return localFinalizationRequired;
+}
+
+void SSACodeRegionArgument::markLocalFinalizationRequired()
+{
+    assert(isResult_);
+    localFinalizationRequired = true;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

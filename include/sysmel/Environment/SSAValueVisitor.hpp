@@ -63,6 +63,9 @@ public:
     virtual AnyValuePtr visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction);
     virtual AnyValuePtr visitDowncastInstruction(const SSADowncastInstructionPtr &instruction);
     virtual AnyValuePtr visitBitcastInstruction(const SSABitcastInstructionPtr &instruction);
+
+    virtual AnyValuePtr visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction);
+    virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction);
 };
 
 } // End of namespace Environment

@@ -134,6 +134,7 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     initializePrimitiveTypeMap();
 
     functionPassManager = std::make_unique<llvm::legacy::FunctionPassManager> (targetModule.get());
+    functionPassManager->add(llvm::createCFGSimplificationPass());
     /*functionPassManager->add(llvm::createPromoteMemoryToRegisterPass());
     functionPassManager->add(llvm::createInstructionCombiningPass());
     functionPassManager->add(llvm::createReassociatePass());

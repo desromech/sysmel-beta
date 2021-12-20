@@ -30,9 +30,15 @@ public:
     const TypePtr &getVariableReferenceType() const;
     void setVariableReferenceType(const TypePtr &newReferenceType);
 
+    bool isLocalFinalizationRequired() const;
+    virtual void markLocalFinalizationRequired() override;
+    
 protected:
     TypePtr referenceType;
     TypePtr variableValueType;
+
+    bool localFinalizationRequired = false;
+
 };
 
 } // End of namespace Environment

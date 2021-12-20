@@ -71,14 +71,14 @@ bool ArrayType::hasTrivialFinalization()
     return elementType->hasTrivialFinalization();
 }
 
-bool ArrayType::hasTrivialCopyingFrom()
+bool ArrayType::hasTrivialAssignCopyingFrom()
 {
-    return elementType->hasTrivialCopyingFrom();
+    return elementType->hasTrivialAssignCopyingFrom();
 }
 
-bool ArrayType::hasTrivialMovingFrom()
+bool ArrayType::hasTrivialAssignMovingFrom()
 {
-    return elementType->hasTrivialMovingFrom();
+    return elementType->hasTrivialAssignMovingFrom();
 }
 
 uint64_t ArrayType::getMemorySize()

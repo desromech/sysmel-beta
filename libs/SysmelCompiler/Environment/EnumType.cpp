@@ -68,14 +68,14 @@ bool EnumType::hasTrivialFinalization()
     return getBaseType()->hasTrivialFinalization();
 }
 
-bool EnumType::hasTrivialCopyingFrom()
+bool EnumType::hasTrivialAssignCopyingFrom()
 {
-    return getBaseType()->hasTrivialCopyingFrom();
+    return getBaseType()->hasTrivialAssignCopyingFrom();
 }
 
-bool EnumType::hasTrivialMovingFrom()
+bool EnumType::hasTrivialAssignMovingFrom()
 {
-    return getBaseType()->hasTrivialMovingFrom();
+    return getBaseType()->hasTrivialAssignMovingFrom();
 }
 
 uint64_t EnumType::getMemorySize()

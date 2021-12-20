@@ -105,7 +105,10 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
         {
             if(!undecoratedDestinationValueType->hasTrivialInitializationMovingFrom())
             {
-                assert("TODO: Basic initialize, then initializeMovingFrom:" && false);
+                auto method = undecoratedDestinationValueType->getInitializeMovingFromMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
+                auto methodType = method->getValueType();
+                assert(methodType->isFunctionalType());
+                builder->call(methodType.staticAs<FunctionalType> ()->getResultType(), method, {destination, initialValue});
             }
             else
             {
@@ -117,7 +120,10 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
         {
             if(!undecoratedDestinationValueType->hasTrivialInitializationCopyingFrom())
             {
-                assert("TODO: Basic initialize, then initializeCopyingFrom:" && false);
+                auto method = undecoratedDestinationValueType->getInitializeCopyingFromMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
+                auto methodType = method->getValueType();
+                assert(methodType->isFunctionalType());
+                builder->call(methodType.staticAs<FunctionalType> ()->getResultType(), method, {destination, initialValue});
             }
             else
             {
@@ -127,10 +133,26 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
         }
     }
 
-    if(!destinationValueType->hasTrivialFinalization())
-    {
-        assert("TODO: register finalization:" && false);
-    }
+    addFinalizationFor(destination, undecoratedDestinationValueType);
+}
+
+void ASTSSACompiler::addFinalizationFor(const SSAValuePtr &localVariable, const TypePtr &valueType)
+{
+    if(valueType->hasTrivialFinalization())
+        return;
+
+    localVariable->markLocalFinalizationRequired();
+    auto finalizationRegion = builder->makeCodeRegionWithSignature({}, Type::getVoidType());
+    buildRegionForSourcePositionWith(finalizationRegion, builder->getSourcePosition(), [&](){
+        auto finalizer = valueType->getFinalizeMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
+        auto finalizerType = finalizer->getValueType();
+        assert(finalizerType->isFunctionalType());
+        auto cleanUp = builder->call(finalizerType.staticAs<FunctionalType> ()->getResultType(), finalizer, {localVariable});
+        builder->returnFromRegion(builder->literal(getVoidConstant()));
+    });
+
+    builder->enableLocalFinalization(localVariable);
+    cleanUpBuilder->localFinalization(localVariable, finalizationRegion);
 }
 
 void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node)
@@ -542,10 +564,10 @@ AnyValuePtr ASTSSACompiler::visitBreakNode(const ASTBreakNodePtr &)
     return builder->breakInstruction();
 }
 
-void ASTSSACompiler::buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock)
+void ASTSSACompiler::buildRegionForSourcePositionWith(const SSACodeRegionPtr &region, const ASTSourcePositionPtr &sourcePosition, const ASTSSACodeRegionBuildingBlock &aBlock)
 {
     auto regionBuilder = basicMakeObject<SSABuilder> ();
-    regionBuilder->setSourcePosition(node->sourcePosition);
+    regionBuilder->setSourcePosition(sourcePosition);
     regionBuilder->setCodeRegion(region);
     regionBuilder->makeBasicBlockHere();
 
@@ -558,6 +580,11 @@ void ASTSSACompiler::buildRegionForNodeWith(const SSACodeRegionPtr &region, cons
         builder = oldBuilder;
         currentCodeRegion = oldRegion;
     });
+}
+
+void ASTSSACompiler::buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock)
+{
+    return buildRegionForSourcePositionWith(region, node->sourcePosition, aBlock);
 }
 
 void ASTSSACompiler::returnValueFromFunction(const SSAValuePtr &result)

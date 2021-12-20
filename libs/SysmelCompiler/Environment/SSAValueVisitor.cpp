@@ -234,5 +234,15 @@ AnyValuePtr SSAValueVisitor::visitBitcastInstruction(const SSABitcastInstruction
     return visitCastInstruction(instruction);
 }
 
+AnyValuePtr SSAValueVisitor::visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitLocalFinalization(const SSALocalFinalizationPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

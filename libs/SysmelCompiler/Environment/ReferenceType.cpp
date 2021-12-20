@@ -143,6 +143,14 @@ void ReferenceType::addSpecializedInstanceMethods()
         }
     });
 
+    if(baseType->isConstDecoratedType())
+    {
+        auto nonConstRefType = baseType->asUndecoratedType()->refFor(addressSpace);
+        addConstructor(makeIntrinsicConstructorWithSignature<AnyValuePtr (ReferenceTypePtr, ReferenceTypeValuePtr)> ("reference.reinterpret", getType(), selfFromThis(), {nonConstRefType}, [=](const ReferenceTypePtr &self, const ReferenceTypeValuePtr &nonConstRef) {
+            return self->makeWithValue(nonConstRef->baseValue);
+        }));
+    }
+
     addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", selfFromThis(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
         return validAnyValue(self->baseValue)->accessVariableAsValueWithType(baseType);
     }));

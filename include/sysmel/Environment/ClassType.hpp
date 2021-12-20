@@ -37,6 +37,7 @@ protected:
     /// This method evaluates all of the pending super class definition code fragments.
     virtual void evaluatePendingSuperclassDefinitions() const;
 
+    virtual void computeObjectLifetimeTriviality() override;
     virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
 
     mutable DeferredCompileTimeCodeFragmentPtrList pendingSuperclassCodeFragments;

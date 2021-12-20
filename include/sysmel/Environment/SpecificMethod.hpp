@@ -34,6 +34,7 @@ public:
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex) override;
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
     virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
 
     virtual bool isMacroMethod() const override;
 
@@ -64,6 +65,9 @@ public:
 
     bool isConversion() const;
     void makeConversion();
+
+    bool isTrivial() const;
+    void makeTrivial();
 
 protected:
     FunctionalTypePtr functionalType;

@@ -34,11 +34,15 @@ public:
         return isResult_;
     }
 
+    bool isLocalFinalizationRequired() const;
+    virtual void markLocalFinalizationRequired() override;
+
 protected:
     TypePtr valueType;
     ASTSourcePositionPtr declarationSourcePosition;
     ASTSourcePositionPtr definitionSourcePosition;
     bool isResult_ = false;
+    bool localFinalizationRequired = false;
 };
 
 } // End of namespace Environment

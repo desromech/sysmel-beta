@@ -68,6 +68,10 @@ public:
     SSABitcastInstructionPtr bitcast(const TypePtr &targetType, const SSAValuePtr &value);
     SSAUpcastInstructionPtr upcast(const TypePtr &targetType, const SSAValuePtr &value);
     SSADowncastInstructionPtr downcast(const TypePtr &targetType, const SSAValuePtr &value);
+
+    SSAEnableLocalFinalizationPtr enableLocalFinalization(const SSAValuePtr &localVariable);
+    SSALocalFinalizationPtr localFinalization(const SSAValuePtr &localVariable, const SSACodeRegionPtr &finalizationCodeRegion);
+
 protected:
     SSACodeRegionPtr currentRegion;
     SSABasicBlockPtr currentBasicBlock;

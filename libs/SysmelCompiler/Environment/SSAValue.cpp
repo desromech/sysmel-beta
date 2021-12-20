@@ -1,6 +1,7 @@
 #include "Environment/SSAValue.hpp"
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/SubclassResponsibility.hpp"
+#include "Environment/UnsupportedOperation.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -70,6 +71,11 @@ void SSAValue::replaceWith(const SSAValuePtr &replacement)
     }
 
     useList.clear();
+}
+
+void SSAValue::markLocalFinalizationRequired()
+{
+    signalNewWithMessage<UnsupportedOperation> ("Local finalization required on invalid reference type.");
 }
 
 } // End of namespace Environment

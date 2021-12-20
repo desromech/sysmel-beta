@@ -57,6 +57,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAUpcastInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSADowncastInstruction);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSABitcastInstruction);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAEnableLocalFinalization);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALocalFinalization);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAValueVisitor);
 
 /**
@@ -83,6 +86,8 @@ public:
 
     virtual void addUse(const SSAValuePtr &useLocation);
     virtual void replaceWith(const SSAValuePtr &replacement);
+
+    virtual void markLocalFinalizationRequired();
 
 protected:
     std::unordered_set<SSAValueWeakPtr> useList;

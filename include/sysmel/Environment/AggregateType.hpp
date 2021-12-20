@@ -24,6 +24,7 @@ public:
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
 
+    virtual bool isNullableType() const override;
     virtual bool isImmutableType() override;
     virtual bool isPassedByReference() override;
     virtual bool isReturnedByReference() override;
@@ -34,15 +35,23 @@ public:
     virtual bool hasTrivialInitializationCopyingFrom() override;
     virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
-    virtual bool hasTrivialCopyingFrom() override;
-    virtual bool hasTrivialMovingFrom() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
 
     const AggregateTypeLayoutPtr &getLayout();
 
 protected:
     virtual void buildLayout();
+    virtual void computeObjectLifetimeTriviality();
+    virtual void ensureImplicitLifeTimeMethodsAreCreated() override;
 
     AggregateTypeLayoutPtr layout;
+    bool hasTrivialInitialization_ = true;
+    bool hasTrivialInitializationCopyingFrom_ = true;
+    bool hasTrivialInitializationMovingFrom_ = true;
+    bool hasTrivialFinalization_ = true;
+    bool hasTrivialAssignCopyingFrom_ = true;
+    bool hasTrivialAssignMovingFrom_ = true;
 };
 
 /**

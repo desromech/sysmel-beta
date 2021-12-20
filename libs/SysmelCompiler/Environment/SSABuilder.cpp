@@ -29,6 +29,9 @@
 #include "Environment/SSADowncastInstruction.hpp"
 #include "Environment/SSAUpcastInstruction.hpp"
 
+#include "Environment/SSAEnableLocalFinalization.hpp"
+#include "Environment/SSALocalFinalization.hpp"
+
 #include "Environment/Type.hpp"
 #include "Environment/PointerLikeType.hpp"
 
@@ -359,6 +362,25 @@ SSADowncastInstructionPtr SSABuilder::downcast(const TypePtr &targetType, const 
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setTargetType(targetType);
     instruction->setValue(value);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAEnableLocalFinalizationPtr SSABuilder::enableLocalFinalization(const SSAValuePtr &localVariable)
+{
+    auto instruction = basicMakeObject<SSAEnableLocalFinalization> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLocalVariable(localVariable);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSALocalFinalizationPtr SSABuilder::localFinalization(const SSAValuePtr &localVariable, const SSACodeRegionPtr &finalizationCodeRegion)
+{
+    auto instruction = basicMakeObject<SSALocalFinalization> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLocalVariable(localVariable);
+    instruction->setFinalizationRegion(finalizationCodeRegion);
     addInstruction(instruction);
     return instruction;
 }

@@ -27,8 +27,8 @@ public:
     virtual bool hasTrivialInitializationCopyingFrom() override;
     virtual bool hasTrivialInitializationMovingFrom() override;
     virtual bool hasTrivialFinalization() override;
-    virtual bool hasTrivialCopyingFrom() override;
-    virtual bool hasTrivialMovingFrom() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
 
     virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
     virtual void finishGroup() override;
@@ -53,8 +53,8 @@ protected:
     bool hasTrivialInitializationCopyingFrom_ = true;
     bool hasTrivialInitializationMovingFrom_ = true;
     bool hasTrivialFinalization_ = true;
-    bool hasTrivialCopyingFrom_ = true;
-    bool hasTrivialMovingFrom_ = true;
+    bool hasTrivialAssignCopyingFrom_ = true;
+    bool hasTrivialAssignMovingFrom_ = true;
 
     TypePtrList slotTypes;
     std::vector<uint64_t> offsets;

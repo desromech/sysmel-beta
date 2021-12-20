@@ -87,8 +87,8 @@ struct StaticBootstrapDefinedTypeMetadata
     bool hasTrivialInitializationCopyingFrom;
     bool hasTrivialInitializationMovingFrom;
     bool hasTrivialFinalization;
-    bool hasTrivialCopyingFrom;
-    bool hasTrivialMovingFrom;
+    bool hasTrivialAssignCopyingFrom;
+    bool hasTrivialAssignMovingFrom;
     uint64_t memorySize;
     uint64_t (*memoryAlignment)();
     std::string sysmelLanguageTopLevelName;
@@ -139,8 +139,8 @@ StaticBootstrapDefinedTypeMetadata StaticBootstrapDefinedTypeMetadataFor<T>::met
     T::__hasTrivialInitializationCopyingFrom__,
     T::__hasTrivialInitializationMovingFrom__,
     T::__hasTrivialFinalization__,
-    T::__hasTrivialCopyingFrom__,
-    T::__hasTrivialMovingFrom__,
+    T::__hasTrivialAssignCopyingFrom__,
+    T::__hasTrivialAssignMovingFrom__,
     T::__memorySize__,
     &T::__memoryAlignment__,
     T::__sysmelTypeName__,
@@ -327,8 +327,8 @@ public:
     static constexpr bool __hasTrivialInitializationCopyingFrom__ = true;
     static constexpr bool __hasTrivialInitializationMovingFrom__ = true;
     static constexpr bool __hasTrivialFinalization__ = true;
-    static constexpr bool __hasTrivialCopyingFrom__ = true;
-    static constexpr bool __hasTrivialMovingFrom__ = true;
+    static constexpr bool __hasTrivialAssignCopyingFrom__ = true;
+    static constexpr bool __hasTrivialAssignMovingFrom__ = true;
     static constexpr uint64_t __memorySize__ = 0;
     static constexpr uint64_t __memoryAlignment__()
     {
@@ -380,6 +380,9 @@ public:
 
     /// Generic method for initializing the object.
     virtual void initialize();
+
+    /// Generic method for finalizing the object.
+    virtual void finalize();
 
     /// Performs a shallow clone of the object.
     virtual AnyValuePtr shallowClone();
@@ -1032,6 +1035,12 @@ public:
     // Is this a SSA Downcast instruction?
     virtual bool isSSADowncastInstruction() const;
 
+    // Is this a SSA enable local finalization?
+    virtual bool isSSAEnableLocalFinalization() const;
+
+    // Is this a SSA local finalization?
+    virtual bool isSSALocalFinalization() const;
+
     /// Convert the object into a string.
     virtual std::string asString() const;
 
@@ -1124,6 +1133,9 @@ public:
 
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
+
+    /// This converts the receiver into a method with the matching signature if possible.
+    virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType);
 
     /// Evaluates the requested message with the given arguments.
     virtual AnyValuePtr performWithArguments(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments);

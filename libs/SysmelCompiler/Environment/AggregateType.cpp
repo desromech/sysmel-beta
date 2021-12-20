@@ -32,6 +32,11 @@ uint64_t AggregateType::getMemoryAlignment()
     return layout ? layout->getMemoryAlignment() : 0;
 }
 
+bool AggregateType::isNullableType() const
+{
+    return false;
+}
+
 bool AggregateType::isImmutableType()
 {
     return false;
@@ -59,40 +64,64 @@ TypePtr AggregateType::asReceiverType()
 
 bool AggregateType::hasTrivialInitialization()
 {
-    return SuperType::hasTrivialInitialization() && getLayout() && layout->hasTrivialInitialization();
+    getLayout();
+    return hasTrivialInitialization_;
 }
 
 bool AggregateType::hasTrivialInitializationCopyingFrom()
 {
-    return SuperType::hasTrivialInitializationCopyingFrom() && getLayout() && layout->hasTrivialInitializationCopyingFrom();
+    getLayout();
+    return hasTrivialInitializationCopyingFrom_;
 }
 
 bool AggregateType::hasTrivialInitializationMovingFrom()
 {
-    return SuperType::hasTrivialInitializationMovingFrom() && getLayout() && layout->hasTrivialInitializationMovingFrom();
+    getLayout();
+    return hasTrivialInitializationMovingFrom_;
 }
 
 bool AggregateType::hasTrivialFinalization()
 {
-    return SuperType::hasTrivialFinalization() && getLayout() && layout->hasTrivialFinalization();
+    getLayout();
+    return hasTrivialFinalization_;
 }
 
-bool AggregateType::hasTrivialCopyingFrom()
+bool AggregateType::hasTrivialAssignCopyingFrom()
 {
-    return SuperType::hasTrivialCopyingFrom() && getLayout() && layout->hasTrivialCopyingFrom();
+    getLayout();
+    return hasTrivialAssignCopyingFrom_;
 }
 
-bool AggregateType::hasTrivialMovingFrom()
+bool AggregateType::hasTrivialAssignMovingFrom()
 {
-    return SuperType::hasTrivialMovingFrom() && getLayout() && layout->hasTrivialMovingFrom();
+    getLayout();
+    return hasTrivialAssignMovingFrom_;
 }
 
 const AggregateTypeLayoutPtr &AggregateType::getLayout()
 {
     if(!layout)
+    {
         buildLayout();
+        computeObjectLifetimeTriviality();
+    }
 
     return layout;
+}
+
+void AggregateType::computeObjectLifetimeTriviality()
+{
+    evaluateAllPendingBodyBlockCodeFragments();
+    hasTrivialInitialization_ = hasTrivialInitialization_ && SuperType::hasTrivialInitialization() && supertype->hasTrivialInitialization() && layout->hasTrivialInitialization();
+    hasTrivialInitializationCopyingFrom_ = hasTrivialInitializationCopyingFrom_ && SuperType::hasTrivialInitializationCopyingFrom() && supertype->hasTrivialInitializationCopyingFrom() && layout->hasTrivialInitializationCopyingFrom();
+    hasTrivialInitializationMovingFrom_ = hasTrivialInitializationMovingFrom_ && SuperType::hasTrivialInitializationMovingFrom() && supertype->hasTrivialInitializationMovingFrom() && layout->hasTrivialInitializationMovingFrom();
+    hasTrivialFinalization_ = hasTrivialFinalization_&& SuperType::hasTrivialFinalization() && supertype->hasTrivialFinalization() && layout->hasTrivialFinalization();
+    hasTrivialAssignCopyingFrom_ = hasTrivialAssignCopyingFrom_ && SuperType::hasTrivialAssignCopyingFrom() && supertype->hasTrivialAssignCopyingFrom() && layout->hasTrivialAssignCopyingFrom();
+    hasTrivialAssignMovingFrom_ = hasTrivialAssignMovingFrom_ && SuperType::hasTrivialAssignMovingFrom() && supertype->hasTrivialAssignMovingFrom() && layout->hasTrivialAssignMovingFrom();
+}
+
+void AggregateType::ensureImplicitLifeTimeMethodsAreCreated()
+{
 }
 
 void AggregateType::buildLayout()

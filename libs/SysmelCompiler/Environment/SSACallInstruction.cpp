@@ -72,5 +72,16 @@ void SSACallInstruction::setArguments(const SSAValuePtrList &newArguments)
         arg->addUse(selfFromThis());
 }
 
+bool SSACallInstruction::isImplicitCleanUp() const
+{
+    return implicitCleanUp;
+}
+
+void SSACallInstruction::setImplicitCleanUp(bool newImplicitCleanUp)
+{
+    implicitCleanUp = newImplicitCleanUp;
+}
+
+
 } // End of namespace Environment
 } // End of namespace Sysmel

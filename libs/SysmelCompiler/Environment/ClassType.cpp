@@ -80,6 +80,20 @@ void ClassType::enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCo
     enqueuePendingSemanticAnalysis();
 }
 
+void ClassType::computeObjectLifetimeTriviality()
+{
+    if(supertype && supertype->isAggregateType())
+    {
+        hasTrivialInitialization_ = supertype->hasTrivialInitialization();
+        hasTrivialInitializationCopyingFrom_ = supertype->hasTrivialInitializationCopyingFrom();
+        hasTrivialInitializationMovingFrom_ = supertype->hasTrivialInitializationMovingFrom();
+        hasTrivialFinalization_ = supertype->hasTrivialFinalization();
+        hasTrivialAssignCopyingFrom_ = supertype->hasTrivialAssignCopyingFrom();
+        hasTrivialAssignMovingFrom_ = supertype->hasTrivialAssignMovingFrom();
+    }
+    SuperType::computeObjectLifetimeTriviality();
+}
+
 AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
 {
     return basicMakeObject<AggregateTypeSequentialLayout> ();

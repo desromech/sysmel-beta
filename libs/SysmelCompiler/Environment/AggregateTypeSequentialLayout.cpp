@@ -42,14 +42,14 @@ bool AggregateTypeSequentialLayout::hasTrivialFinalization()
     return hasTrivialFinalization_;
 }
 
-bool AggregateTypeSequentialLayout::hasTrivialCopyingFrom()
+bool AggregateTypeSequentialLayout::hasTrivialAssignCopyingFrom()
 {
-    return hasTrivialCopyingFrom_;
+    return hasTrivialAssignCopyingFrom_;
 }
 
-bool AggregateTypeSequentialLayout::hasTrivialMovingFrom()
+bool AggregateTypeSequentialLayout::hasTrivialAssignMovingFrom()
 {
-    return hasTrivialMovingFrom_;
+    return hasTrivialAssignMovingFrom_;
 }
 
 uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
@@ -58,8 +58,8 @@ uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
     hasTrivialInitializationCopyingFrom_ = hasTrivialInitializationCopyingFrom_ && slotType->hasTrivialInitializationCopyingFrom();
     hasTrivialInitializationMovingFrom_ = hasTrivialInitializationMovingFrom_ && slotType->hasTrivialInitializationMovingFrom();
     hasTrivialFinalization_ = hasTrivialFinalization_ && slotType->hasTrivialFinalization();
-    hasTrivialCopyingFrom_ = hasTrivialCopyingFrom_ && slotType->hasTrivialCopyingFrom();
-    hasTrivialMovingFrom_ = hasTrivialMovingFrom_ && slotType->hasTrivialMovingFrom();
+    hasTrivialAssignCopyingFrom_ = hasTrivialAssignCopyingFrom_ && slotType->hasTrivialAssignCopyingFrom();
+    hasTrivialAssignMovingFrom_ = hasTrivialAssignMovingFrom_ && slotType->hasTrivialAssignMovingFrom();
 
     auto offset = memorySize;
     if(memoryAlignment != 0)

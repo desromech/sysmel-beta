@@ -58,7 +58,8 @@ MethodCategories AnyValue::__instanceMethods__()
         }},
 
         {"initialization", {
-            makeIntrinsicMethodBinding("object.initialize", "initialize", &AnyValue::initialize),
+            makeIntrinsicMethodBinding("object.initialize", "initialize", &AnyValue::initialize, MethodFlags::Trivial),
+            makeIntrinsicMethodBinding("object.finalize", "finalize", &AnyValue::finalize, MethodFlags::Trivial),
         }},
 
         {"printing", {
@@ -161,6 +162,10 @@ AnyValue::~AnyValue()
 }
 
 void AnyValue::initialize()
+{
+}
+
+void AnyValue::finalize()
 {
 }
 
@@ -1254,6 +1259,16 @@ bool AnyValue::isSSADowncastInstruction() const
     return false;
 }
 
+bool AnyValue::isSSAEnableLocalFinalization() const
+{
+    return false;
+}
+
+bool AnyValue::isSSALocalFinalization() const
+{
+    return false;
+}
+
 std::string AnyValue::asString() const
 {
     return printString();
@@ -1415,6 +1430,11 @@ AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std:
     (void)receiver;
     (void)arguments;
     signalNew<CannotEvaluateMessage> ();
+}
+
+AnyValuePtr AnyValue::asMethodMatchingSignature(const TypePtr &, const TypePtrList &, const TypePtr &)
+{
+    return nullptr;
 }
 
 AnyValuePtr AnyValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)

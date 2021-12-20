@@ -63,9 +63,11 @@ public:
     virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
     virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
 
+    void buildRegionForSourcePositionWith(const SSACodeRegionPtr &region, const ASTSourcePositionPtr &sourcePosition, const ASTSSACodeRegionBuildingBlock &aBlock);
     void buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock);
     SSACodeRegionPtr buildRegionForNode(const ASTNodePtr &node);
     void assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue);
+    void addFinalizationFor(const SSAValuePtr &localVariable, const TypePtr &valueType);
     void mapLocalVariableToValue(const AnyValuePtr &binding, const SSAValuePtr &value);
     SSAValuePtr findLocalVariableMapping(const AnyValuePtr &binding);
 

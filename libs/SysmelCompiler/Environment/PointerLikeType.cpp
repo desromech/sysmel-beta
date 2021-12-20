@@ -60,12 +60,12 @@ bool PointerLikeType::hasTrivialFinalization()
     return true;
 }
 
-bool PointerLikeType::hasTrivialCopyingFrom()
+bool PointerLikeType::hasTrivialAssignCopyingFrom()
 {
     return true;
 }
 
-bool PointerLikeType::hasTrivialMovingFrom()
+bool PointerLikeType::hasTrivialAssignMovingFrom()
 {
     return true;
 }

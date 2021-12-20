@@ -83,6 +83,9 @@ public:
     virtual AnyValuePtr visitDowncastInstruction(const SSADowncastInstructionPtr &instruction) override;
     virtual AnyValuePtr visitBitcastInstruction(const SSABitcastInstructionPtr &instruction) override;
 
+    virtual AnyValuePtr visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction) override;
+    virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction) override;
+
     SSALLVMCodeGenerationBackend *backend = nullptr;
 
 protected:
@@ -91,7 +94,7 @@ protected:
     void translateMainCodeRegion(const SSACodeRegionPtr &codeRegion);
     llvm::Value *translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments);
 
-    void translateBasicBlockInto(const SSABasicBlockPtr &sourceBasicBlock, llvm::BasicBlock *targetBasicBlock);
+    void translateBasicBlockInto(size_t index, const SSABasicBlockPtr &sourceBasicBlock, llvm::BasicBlock *targetBasicBlock);
     void translateInstruction(const SSAInstructionPtr &instruction);
     llvm::Value *translateIntrinsicCall(const std::string &intrinsicName, const SSACallInstructionPtr &instruction);
     llvm::Value *translateCall(const SSACallInstructionPtr &instruction);
@@ -101,7 +104,9 @@ protected:
     llvm::Value *coerceBooleanIntoI1(llvm::Value *value);
     llvm::Value *coerceI1IntoBoolean8(llvm::Value *value);
     llvm::Value *simplifyDegeneratePhi(llvm::PHINode *phi);
-    bool isLastTerminator() const;
+    bool isLastTerminator() const;    
+    llvm::Value *createLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
+    llvm::Value *findLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
 
     llvm::Function *currentFunction = nullptr;
     SSACodeRegionPtr currentCodeRegion;
@@ -110,7 +115,11 @@ protected:
     
     std::unique_ptr<llvm::IRBuilder<>> builder;
     std::unique_ptr<llvm::IRBuilder<>> allocaBuilder;
+
+    std::vector<SSACodeRegionPtr> cleanUpRegionStack;
+
     std::unordered_map<SSAValuePtr, llvm::Value*> localTranslatedValueMap;
+    std::unordered_map<SSAValuePtr, llvm::Value*> localTranslatedFinalizationEnabledFlagMap;
 };
 
 } // End of namespace LLVM

@@ -41,12 +41,12 @@ bool AggregateTypeLayout::hasTrivialFinalization()
     SysmelSelfSubclassResponsibility();
 }
 
-bool AggregateTypeLayout::hasTrivialCopyingFrom()
+bool AggregateTypeLayout::hasTrivialAssignCopyingFrom()
 {
     SysmelSelfSubclassResponsibility();
 }
 
-bool AggregateTypeLayout::hasTrivialMovingFrom()
+bool AggregateTypeLayout::hasTrivialAssignMovingFrom()
 {
     SysmelSelfSubclassResponsibility();
 }

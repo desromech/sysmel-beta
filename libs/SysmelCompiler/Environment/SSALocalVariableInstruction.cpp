@@ -50,5 +50,15 @@ void SSALocalVariableInstruction::setVariableReferenceType(const TypePtr &newRef
     referenceType = newReferenceType;
 }
 
+bool SSALocalVariableInstruction::isLocalFinalizationRequired() const
+{
+    return localFinalizationRequired;
+}
+
+void SSALocalVariableInstruction::markLocalFinalizationRequired()
+{
+    localFinalizationRequired = true;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -32,6 +32,9 @@
 #include "Environment/SSADowncastInstruction.hpp"
 #include "Environment/SSABitcastInstruction.hpp"
 
+#include "Environment/SSAEnableLocalFinalization.hpp"
+#include "Environment/SSALocalFinalization.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
@@ -106,6 +109,10 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     {"reference.to.pointer", +[](const IntrinsicGenerationContext &context) {
         assert(context.arguments.size() == 1);
         return context.arguments[0];
+    }},
+    {"reference.reinterpret", +[](const IntrinsicGenerationContext &context) {
+        assert(context.arguments.size() <= 2);
+        return context.arguments.back();
     }},
     {"reference.copy.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
         assert(context.arguments.size() == 2);
@@ -275,7 +282,7 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
 
     // Translate the blocks in-order
     for(size_t i = 0; i < basicBlockCount; ++i)
-        translateBasicBlockInto(sourceBasicBlocks[i], translatedBlocks[i]);
+        translateBasicBlockInto(i, sourceBasicBlocks[i], translatedBlocks[i]);
 
     // Add the final entry.
     allocaBuilder->CreateBr(translatedBlocks.front());
@@ -326,7 +333,7 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
 
         // Translate the blocks in-order
         for(size_t i = 0; i < basicBlockCount; ++i)
-            translateBasicBlockInto(sourceBasicBlocks[i], translatedBlocks[i]);
+            translateBasicBlockInto(i, sourceBasicBlocks[i], translatedBlocks[i]);
     }, [&]{
         currentCodeRegion = oldCodeRegion;
         currentCodeRegionReturnBlock = oldCodeRegionReturnBlock;
@@ -344,11 +351,19 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
     return result;
 }
 
-void SSALLVMValueVisitor::translateBasicBlockInto(const SSABasicBlockPtr &sourceBasicBlock, llvm::BasicBlock *targetBasicBlock)
+void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBlockPtr &sourceBasicBlock, llvm::BasicBlock *targetBasicBlock)
 {
     // Insert the block into the target function.
     targetBasicBlock->insertInto(currentFunction);
     builder->SetInsertPoint(targetBasicBlock);
+
+    // Create the code region result finalization flag if it is required.
+    if(index == 0 && currentCodeRegion->getArgumentCount() > 0)
+    {
+        auto firstArgument = currentCodeRegion->getArgument(0);
+        if(firstArgument->isLocalFinalizationRequired())
+            createLocalFinalizationFlagFor(firstArgument);
+    }
 
     sourceBasicBlock->instructionsDo([&](const SSAInstructionPtr &instruction){
         translateInstruction(instruction);
@@ -413,8 +428,16 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
 
 AnyValuePtr SSALLVMValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction)
 {
-    auto result = translateCodeRegionWithArguments(instruction->getBodyRegion(), {});
-    translateCodeRegionWithArguments(instruction->getCleanUpRegion(), {});
+    auto cleanUpRegion = instruction->getCleanUpRegion();
+    cleanUpRegionStack.push_back(cleanUpRegion);
+    auto result = doWithEnsure([&]{
+        return translateCodeRegionWithArguments(instruction->getBodyRegion(), {});
+    }, [&]{
+        cleanUpRegionStack.pop_back();
+    });
+
+    if(!llvm::pred_empty(builder->GetInsertBlock()))
+        translateCodeRegionWithArguments(cleanUpRegion, {});
     return wrapLLVMValue(result);
 }
 
@@ -549,6 +572,8 @@ AnyValuePtr SSALLVMValueVisitor::visitLocalVariableInstruction(const SSALocalVar
     auto valueType = backend->translateType(variableValueType);
     auto alloca = allocaBuilder->CreateAlloca(valueType);
     alloca->setAlignment(llvm::Align(std::max(uint64_t(1), variableValueType->getMemoryAlignment())));
+    if(instruction->isLocalFinalizationRequired())
+        createLocalFinalizationFlagFor(instruction);
     return wrapLLVMValue(alloca);
 }
 
@@ -572,7 +597,11 @@ void SSALLVMValueVisitor::returnFromFunction(const SSAValuePtr &resultValue)
 
 void SSALLVMValueVisitor::emitCleanUpsForReturning()
 {
-    // TODO: Emit the clean-ups here.
+    for(size_t i = 0; i < cleanUpRegionStack.size(); ++i)
+    {
+        auto &region = cleanUpRegionStack[cleanUpRegionStack.size() - i - 1];
+        translateCodeRegionWithArguments(region, {});
+    }
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction)
@@ -695,6 +724,41 @@ AnyValuePtr SSALLVMValueVisitor::visitBitcastInstruction(const SSABitcastInstruc
     return wrapLLVMValue(builder->CreateBitCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
 }
 
+AnyValuePtr SSALLVMValueVisitor::visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction)
+{
+    auto flagType = llvm::Type::getInt1Ty(*backend->getContext());
+    builder->CreateStore(llvm::ConstantInt::get(flagType, 1), findLocalFinalizationFlagFor(instruction->getLocalVariable()));
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitLocalFinalization(const SSALocalFinalizationPtr &instruction)
+{
+    auto flag = builder->CreateLoad(findLocalFinalizationFlagFor(instruction->getLocalVariable()));
+
+    auto thenRegion = instruction->getFinalizationRegion();
+
+    auto thenBlock = llvm::BasicBlock::Create(*backend->getContext(), "localFinalizationCondition");
+    auto mergeBlock = llvm::BasicBlock::Create(*backend->getContext(), "localFinalizationMerge");
+
+    // Condition.
+    builder->CreateCondBr(flag, thenBlock, mergeBlock);
+    builder->SetInsertPoint(thenBlock);
+
+    // Then block
+    thenBlock->insertInto(currentFunction);
+    
+    translateCodeRegionWithArguments(thenRegion, {});
+
+    if(!isLastTerminator())
+        builder->CreateBr(mergeBlock);
+
+    // Merge block.
+    builder->SetInsertPoint(mergeBlock);
+    mergeBlock->insertInto(currentFunction);
+
+    return wrapLLVMValue(makeVoidValue());
+}
+
 llvm::Value *SSALLVMValueVisitor::makeVoidValue()
 {
     return llvm::UndefValue::get(backend->translateType(Type::getVoidType()));
@@ -735,5 +799,20 @@ bool SSALLVMValueVisitor::isLastTerminator() const
 {
     return builder->GetInsertBlock()->back().isTerminator();
 }
+
+llvm::Value *SSALLVMValueVisitor::createLocalFinalizationFlagFor(const SSAValuePtr &localVariable)
+{
+    auto flagType = llvm::Type::getInt1Ty(*backend->getContext());
+    auto flag = allocaBuilder->CreateAlloca(flagType);
+    builder->CreateStore(llvm::ConstantInt::get(flagType, 0), flag);
+    localTranslatedFinalizationEnabledFlagMap.insert({localVariable, flag});
+    return flag;
+}
+
+llvm::Value *SSALLVMValueVisitor::findLocalFinalizationFlagFor(const SSAValuePtr &localVariable)
+{
+    return localTranslatedFinalizationEnabledFlagMap.find(localVariable)->second;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

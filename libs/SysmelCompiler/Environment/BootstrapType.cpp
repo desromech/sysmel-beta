@@ -65,14 +65,14 @@ bool BootstrapType::hasTrivialFinalization()
     return staticMetadata->hasTrivialFinalization;
 }
 
-bool BootstrapType::hasTrivialCopyingFrom()
+bool BootstrapType::hasTrivialAssignCopyingFrom()
 {
-    return staticMetadata->hasTrivialCopyingFrom;
+    return staticMetadata->hasTrivialAssignCopyingFrom;
 }
 
-bool BootstrapType::hasTrivialMovingFrom()
+bool BootstrapType::hasTrivialAssignMovingFrom()
 {
-    return staticMetadata->hasTrivialMovingFrom;
+    return staticMetadata->hasTrivialAssignMovingFrom;
 }
 
 uint64_t BootstrapType::getMemorySize()

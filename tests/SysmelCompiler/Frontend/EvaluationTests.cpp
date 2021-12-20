@@ -1431,4 +1431,90 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(NonTrivialInitialization)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {public method initialize => Void := sideEffect().}");
+                CHECK(!structureType->hasTrivialInitialization());
+
+                auto initializeMethod = structureType->getInitializeMethod();
+                CHECK(!structureType->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(NonTrivialFinalizer)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {public method finalize => Void := sideEffect().}");
+                CHECK(!structureType->hasTrivialFinalization());
+
+                auto finalizedMethod = structureType->getFinalizeMethod();
+                CHECK(!structureType->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(NonTrivialInitializeCopyingFrom)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {public method initializeCopyingFrom: (other: TestStruct const ref) ::=> Void := sideEffect().}");
+                CHECK(!structureType->hasTrivialInitializationCopyingFrom());
+
+                auto initializeMethod = structureType->getInitializeCopyingFromMethod();
+                CHECK(!structureType->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(NonTrivialInitializeMovingFrom)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {public method initializeMovingFrom: (other: TestStruct tempRef) ::=> Void := sideEffect().}");
+                CHECK(!structureType->hasTrivialInitializationMovingFrom());
+
+                auto initializeMethod = structureType->getInitializeMovingFromMethod();
+                CHECK(!structureType->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(NonTrivialAssignCopyingFrom)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {(public method := (other: TestStruct const ref)) => TestStruct const ref := {sideEffect() . self}.}");
+                CHECK(!structureType->hasTrivialAssignCopyingFrom());
+                CHECK(structureType->getAssignCopyingFromMethod()->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(NonTrivialAssignMovingFrom)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structureType = evaluateStringWithValueOfType<TypePtr> ("public function sideEffect() => Void := {}. struct TestStruct definition: {(public method := (other: TestStruct tempRef)) => TestStruct const ref := {sideEffect() . self}.}");
+                CHECK(!structureType->hasTrivialAssignMovingFrom());
+                CHECK(structureType->getAssignMovingFromMethod()->isCompiledMethod());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
 }

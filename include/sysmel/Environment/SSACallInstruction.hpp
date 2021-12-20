@@ -34,11 +34,15 @@ public:
     const SSAValuePtrList &getArguments() const;
     void setArguments(const SSAValuePtrList &newArguments);
     
+    bool isImplicitCleanUp() const;
+    void setImplicitCleanUp(bool newImplicitCleanUp);
+    
 protected:
     TypePtr valueType;
 
     SSAValuePtr function;
     SSAValuePtrList arguments;
+    bool implicitCleanUp = false;
 };
 
 } // End of namespace Environment
