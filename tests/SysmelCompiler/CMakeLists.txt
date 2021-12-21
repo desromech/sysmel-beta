@@ -14,6 +14,7 @@ set(FrontendTests_Sources
     ScannerTests.cpp
     ParserTests.cpp
     EvaluationTests.cpp
+    SSATests.cpp
 )
 
 list(TRANSFORM FrontendTests_Sources PREPEND "Frontend/")

@@ -25,6 +25,8 @@ struct RuntimeContextTargetDescription
 {
     static RuntimeContextTargetDescription makeForScripting();
     static RuntimeContextTargetDescription makeForHost();
+    static RuntimeContextTargetDescription makeForCPU32();
+    static RuntimeContextTargetDescription makeForCPU64();
 
     TargetMachineKind targetMachineKind = TargetMachineKind::CPU;
     

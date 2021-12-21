@@ -36,6 +36,8 @@ struct SExpressionList
 
 std::string sexpressionToString(const SExpression &sexpr);
 std::string sexpressionToPrettyString(const SExpression &sexpr);
+std::string sexpressionCanonicalizeString(const std::string &string);
+SExpression stripSExpressionFromPositions(const SExpression &sexpr);
 
 } // End of namespace Environment
 } // End of namespace Sysmel

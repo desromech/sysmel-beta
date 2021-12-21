@@ -190,5 +190,74 @@ std::string sexpressionToPrettyString(const SExpression &sexpr)
     std::visit(visitor, sexpr);
     return visitor.out.str();
 }
+
+static bool isWhite(char c)
+{
+    return c <= ' ';
+}
+
+static bool isWhiteEater(char c)
+{
+    return isWhite(c) || c == '(' || c == ')';
+}
+
+std::string sexpressionCanonicalizeString(const std::string &string)
+{
+    std::string result;
+    result.reserve(string.size());
+    for(auto c : string)
+    {
+        if((result.empty() || isWhiteEater(result.back())) && isWhite(c))
+            continue;
+        if(isWhite(c))
+            c = ' ';
+        result.push_back(c);
+    }
+
+    return result;
+}
+
+static bool isPositionElement(const SExpression &value)
+{
+    if(std::holds_alternative<SExpressionIdentifier> (value))
+    {
+        const auto &identifier = std::get<SExpressionIdentifier> (value);
+        return identifier.value == "emptySourcePosition";
+    }
+    else if(std::holds_alternative<SExpressionList> (value))
+    {
+        const auto &list = std::get<SExpressionList> (value);
+        if(!list.elements.empty() && std::holds_alternative<SExpressionIdentifier> (list.elements[0]))
+        {
+            const auto &identifier = std::get<SExpressionIdentifier> (list.elements[0]);
+            return identifier.value == "position";
+        }
+    }
+
+    return false;
+}
+
+SExpression stripSExpressionFromPositions(const SExpression &sexpr)
+{
+    return std::visit([](auto&& arg) {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, SExpressionList>)
+        {
+            SExpressionList result;
+            result.elements.reserve(arg.elements.size());
+            for(auto &element : arg.elements)
+            {
+                if(!isPositionElement(element))
+                    result.elements.push_back(stripSExpressionFromPositions(element));
+            }
+            return SExpression(result);
+        }
+        else
+        {
+            return SExpression(arg);
+        }
+    }, sexpr);
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel
