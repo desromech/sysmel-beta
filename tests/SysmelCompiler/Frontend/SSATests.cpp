@@ -270,6 +270,185 @@ R"(
         });
     }
 
+    TEST(Tuples)
+    {
+        RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForCPU64())->activeDuring([&](){
+            ProgramModule::create("Test")->activeDuring([&](){
+CHECK(checkStringEvaluationSSAIsSameTo(
+R"(
+public function makeTupleInt32Float32(first: Int32, second: Float32) => (Int32 & Float32)
+  := (first, second).
+)",
+R"(
+
+)"));
+            });
+        });
+    }
+
+    TEST(Struct)
+    {
+        RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForCPU64())->activeDuring([&](){
+            ProgramModule::create("Test")->activeDuring([&](){
+              auto structureType = evaluateString(
+R"(
+  public struct TestStruct := {
+      public field first type: Int8.
+      public field second type: Int32.
+      
+      public method extractFirst => Int8
+          := first.
+  }.
+)");
+
+CHECK(checkStringEvaluationSSAIsSameTo(
+R"(
+public function getFirst(s: TestStruct) => Int8
+    := s first.
+)", R"(
+(function #getFirst nil
+  (functionType ("TestStruct") "Int8")
+  (region ((argument 0
+    (refType "TestStruct" #generic))) () "Int8" ((basicBlock 0 (
+    (doWithCleanUp 1 "Void"
+      (region nil () () "Void" ((basicBlock 1
+        (
+          (getAggregateField 2
+            (refType "Int8" #generic)
+            (local 0))
+          (call 3 "Int8"
+            (function #conv #"reference.load")
+            (local 2))
+          (returnFromFunction 4 "Void" (local 3))))))
+      (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 5 "Void"
+        (constantLiteralValue void "Void")))))))
+    (unreachable 6 "Void"))))))
+)"));
+
+CHECK(checkStringEvaluationSSAIsSameTo(
+R"(
+public function getSecond(s: TestStruct) => Int32
+    := s second.
+)", R"(
+(function #getSecond nil
+  (functionType ("TestStruct") "Int32")
+  (region ((argument 0
+    (refType "TestStruct" #generic))) () "Int32" ((basicBlock 0 (
+    (doWithCleanUp 1 "Void"
+      (region nil () () "Void" ((basicBlock 1
+        (
+          (getAggregateField 2
+            (refType "Int32" #generic)
+            (local 0))
+          (call 3 "Int32"
+            (function #conv #"reference.load")
+            (local 2))
+          (returnFromFunction 4 "Void" (local 3))))))
+      (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 5 "Void"
+        (constantLiteralValue void "Void")))))))
+    (unreachable 6 "Void"))))))
+)"));
+
+CHECK(checkStringEvaluationSSAIsSameTo(
+R"(
+public function returnStruct(first: Int8, second: Int32) => TestStruct
+    := TestStruct basicNewValue
+        first: first;
+        second: second;
+        yourself.
+)", R"(
+(function #returnStruct nil
+  (functionType ("Int8" "Int32") "TestStruct")
+  (region
+    (
+      (argument 0
+        (tempRefType "TestStruct" #generic)
+        nil
+        nil)
+      (argument 1 "Int8")
+      (argument 2 "Int32"))
+    ()
+    "Void"
+    ((basicBlock 0 (
+      (doWithCleanUp 3 "Void"
+        (region nil () () "Void" ((basicBlock 1
+          (
+            (localVariable 4
+              (tempRefType "TestStruct" #generic))
+            (store 5 "Void"
+              (constantLiteralValue
+                (struct "TestStruct" ((int8 0) (int32 0)))
+                "TestStruct")
+              (local 4))
+            (localVariable 6
+              (tempRefType "TestStruct" #generic))
+            (load 7 "TestStruct" (local 4))
+            (store 8 "Void" (local 7) (local 6))
+            (getAggregateField 9
+              (refType "Int8" #generic)
+              (local 6))
+            (call 10
+              (refType "Int8" #generic)
+              (function #":=" #"reference.copy.assignment.trivial")
+              (local 9)
+              (local 1))
+            (getAggregateField 11
+              (refType "Int32" #generic)
+              (local 6))
+            (call 12
+              (refType "Int32" #generic)
+              (function #":=" #"reference.copy.assignment.trivial")
+              (local 11)
+              (local 2))
+            (load 13 "TestStruct" (local 6))
+            (store 14 "Void" (local 13) (local 0))
+            (returnFromFunction 15 "Void"
+              (constantLiteralValue void "Void"))))))
+        (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 16 "Void"
+          (constantLiteralValue void "Void")))))))
+      (unreachable 17 "Void"))))))
+)"));
+
+CHECK(checkStringEvaluationSSAIsSameTo(
+R"(
+public function returnEmptyStruct(first: Int8, second: Int32) => TestStruct
+    := TestStruct basicNewValue.
+)", R"(
+(function #returnEmptyStruct nil
+  (functionType ("Int8" "Int32") "TestStruct")
+  (region
+    (
+      (argument 0
+        (tempRefType "TestStruct" #generic)
+        nil
+        nil)
+      (argument 1 "Int8")
+      (argument 2 "Int32"))
+    ()
+    "Void"
+    ((basicBlock 0 (
+      (doWithCleanUp 3 "Void"
+        (region nil () () "Void" ((basicBlock 1
+          (
+            (localVariable 4
+              (tempRefType "TestStruct" #generic))
+            (store 5 "Void"
+              (constantLiteralValue
+                (struct "TestStruct" ((int8 0) (int32 0)))
+                "TestStruct")
+              (local 4))
+            (load 6 "TestStruct" (local 4))
+            (store 7 "Void" (local 6) (local 0))
+            (returnFromFunction 8 "Void"
+              (constantLiteralValue void "Void"))))))
+        (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 9 "Void"
+          (constantLiteralValue void "Void")))))))
+      (unreachable 10 "Void"))))))
+)"));
+            });
+        });
+    }
+
     TEST(ImplicitCleanUp)
     {
         RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForCPU64())->activeDuring([&](){
