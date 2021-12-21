@@ -393,9 +393,13 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
         initialValue = builder->literalWithType(variable->getValueType()->defaultValue(), variable->getValueType());
 
     auto variableValue = initialValue;
-    if(node->isMutable)
+    auto valueType = variable->getValueType();
+    if(node->isMutable || valueType->isReturnedByReference())
     {
         auto referenceType = variable->getReferenceType();
+        if(!referenceType->isReferenceLikeType() && valueType->isReturnedByReference())
+            referenceType = valueType->tempRef();
+
         assert(referenceType->isReferenceLikeType());
         auto valueType = variable->getValueType();
         variableValue = builder->localVariable(referenceType, valueType);

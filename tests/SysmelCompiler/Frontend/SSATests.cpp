@@ -341,7 +341,7 @@ R"(
       (region nil () () "Void" ((basicBlock 1
         (
           (localVariable 1
-            (refType "Mutex" #generic))
+            (tempRefType "Mutex" #generic))
           (store 2 "Void"
             (constantLiteralValue
               (struct "Mutex" ())
