@@ -5,6 +5,7 @@
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -162,6 +163,20 @@ bool TemporaryReferenceTypeValue::isReferenceLikeTypeValue() const
 TypePtr TemporaryReferenceTypeValue::getType() const
 {
     return type;
+}
+
+SExpression TemporaryReferenceTypeValue::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"tempRefValue"}},
+        type->asSExpression(),
+        baseValue ? baseValue->asSExpression() : nullptr
+    }};
+}
+
+AnyValuePtr TemporaryReferenceTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitTemporaryReferenceTypeValue(selfFromThis());
 }
 
 AnyValuePtr TemporaryReferenceTypeValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)

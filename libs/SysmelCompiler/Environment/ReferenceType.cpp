@@ -4,6 +4,7 @@
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -133,7 +134,6 @@ void ReferenceType::addDefaultTypeConversionRules()
 void ReferenceType::addSpecializedInstanceMethods()
 {
     auto pointerType = baseType->pointerFor(addressSpace);
-
     addMethodCategories(MethodCategories{
             {"accessing", {
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr)> ("reference.to.pointer", "address", selfFromThis(), pointerType, {}, [=](const ReferenceTypeValuePtr &self) {
@@ -145,10 +145,11 @@ void ReferenceType::addSpecializedInstanceMethods()
 
     if(baseType->isConstDecoratedType())
     {
-        auto nonConstRefType = baseType->asUndecoratedType()->refFor(addressSpace);
+        auto nonConstBaseType = baseType->asUndecoratedType();
+        auto nonConstRefType = nonConstBaseType->refFor(addressSpace);
         addConstructor(makeIntrinsicConstructorWithSignature<AnyValuePtr (ReferenceTypePtr, ReferenceTypeValuePtr)> ("reference.reinterpret", getType(), selfFromThis(), {nonConstRefType}, [=](const ReferenceTypePtr &self, const ReferenceTypeValuePtr &nonConstRef) {
             return self->makeWithValue(nonConstRef->baseValue);
-        }));
+        }, MethodFlags::Pure));
     }
 
     addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", selfFromThis(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
@@ -156,16 +157,18 @@ void ReferenceType::addSpecializedInstanceMethods()
     }));
 
     // Define the assignment
-    // TODO: Depend on the triviality of assignment.
-    addMethodCategories(MethodCategories{
-            {"assignment", {
-                makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", selfFromThis(), selfFromThis(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
-                    self->baseValue->copyAssignValue(newValue);
-                    return self;
-                }),
+    if(!baseType->isConstDecoratedType() && baseType->hasTrivialAssignCopyingFrom() && baseType->hasTrivialAssignMovingFrom())
+    {
+        addMethodCategories(MethodCategories{
+                {"assignment", {
+                    makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("reference.copy.assignment.trivial", ":=", selfFromThis(), selfFromThis(), {baseType}, [=](const ReferenceTypeValuePtr &self, const AnyValuePtr &newValue) {
+                        self->baseValue->copyAssignValue(newValue);
+                        return self;
+                    }),
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 TypePtr ReferenceType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
@@ -199,6 +202,20 @@ bool ReferenceTypeValue::isReferenceLikeTypeValue() const
 TypePtr ReferenceTypeValue::getType() const
 {
     return type;
+}
+
+SExpression ReferenceTypeValue::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"refValue"}},
+        type->asSExpression(),
+        baseValue ? baseValue->asSExpression() : nullptr
+    }};
+}
+
+AnyValuePtr ReferenceTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitReferenceTypeValue(selfFromThis());
 }
 
 AnyValuePtr ReferenceTypeValue::getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType)

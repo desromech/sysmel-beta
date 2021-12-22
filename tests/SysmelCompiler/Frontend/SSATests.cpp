@@ -55,6 +55,44 @@ R"(
         });
     }
 
+    TEST(CString)
+    {
+        RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForCPU64())->activeDuring([&](){
+            ProgramModule::create("Test")->activeDuring([&](){
+                CHECK(checkStringEvaluationSSAIsSameTo("public function cstring() => Char8 const pointer := \"Hello World\\n\".",
+R"(
+(function #cstring nil
+  (functionType
+    ()
+    (pointerType
+      (decoratedType "Char8" const)
+      #generic))
+  (region
+    ()
+    ()
+    (pointerType
+      (decoratedType "Char8" const)
+      #generic)
+    ((basicBlock 0 (
+      (doWithCleanUp 0 "Void"
+        (region nil () () "Void" ((basicBlock 1 ((returnFromFunction 1 "Void"
+          (constantLiteralValue
+            (pointerValue
+              (pointerType
+                (decoratedType "Char8" const)
+                #generic)
+              "Hello World\n")
+            (pointerType
+              (decoratedType "Char8" const)
+              #generic)))))))
+        (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 2 "Void"
+          (constantLiteralValue void "Void")))))))
+      (unreachable 3 "Void"))))))
+)"));
+            });
+        });
+    }
+
     TEST(ControlFlow)
     {
         RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForCPU64())->activeDuring([&](){

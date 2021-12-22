@@ -59,6 +59,9 @@ public:
 
     llvm::Constant *translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType);
 
+    llvm::Constant *internStringConstant(const TypePtr &elementType, const std::string &constant, bool addNullTerminator);
+    llvm::Constant *internStringConstantPointer(const TypePtr &elementType, const std::string &constant, bool addNullTerminator);
+
     llvm::LLVMContext *getContext() const
     {
         return context.get();

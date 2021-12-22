@@ -42,7 +42,9 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_PointerType";
 
     virtual bool isPointerTypeValue() const override;
+    virtual SExpression asSExpression() const override;
     virtual TypePtr getType() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 };
 
 } // End of namespace Environment

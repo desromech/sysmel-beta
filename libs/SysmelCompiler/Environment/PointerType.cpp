@@ -2,6 +2,9 @@
 #include "Environment/ReferenceType.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/PrimitiveCharacterType.hpp"
+#include "Environment/LiteralString.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -66,6 +69,18 @@ void PointerType::addSpecializedInstanceMethods()
 {
     auto referenceType = baseType->refFor(addressSpace);
 
+    // LiteralString -> CString
+    if(baseType->isConstDecoratedType())
+    {
+        auto nonConstBaseType = baseType->asUndecoratedType();
+        if(nonConstBaseType == Char8::__staticType__() || nonConstBaseType == Char16::__staticType__() || nonConstBaseType == Char32::__staticType__())
+        {
+            addConstructor(makeIntrinsicConstructorWithSignature<PointerTypeValuePtr (PointerTypePtr, LiteralStringPtr)> ("pointer.for.cstring", getType(), selfFromThis(), {LiteralString::__staticType__()}, [=](const PointerTypePtr &self, const LiteralStringPtr &literalString) {
+                return self->makeWithValue(literalString);
+            }, MethodFlags::Pure));
+        }
+    }
+
     addMethodCategories(MethodCategories{
             {"accessing", {
                 // value/_
@@ -108,6 +123,20 @@ bool PointerTypeValue::isPointerTypeValue() const
 TypePtr PointerTypeValue::getType() const
 {
     return type;
+}
+
+SExpression PointerTypeValue::asSExpression() const
+{
+    return SExpressionList{{
+        SExpressionIdentifier{{"pointerValue"}},
+        type->asSExpression(),
+        baseValue ? baseValue->asSExpression() : nullptr
+    }};
+}
+
+AnyValuePtr PointerTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitPointerTypeValue(selfFromThis());
 }
 
 } // End of namespace Environment

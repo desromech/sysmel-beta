@@ -33,6 +33,7 @@ public:
     virtual AnyValuePtr visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value) override;
 
+    virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value) override;
     virtual AnyValuePtr visitStructureTypeValue(const StructureTypeValuePtr &value) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;

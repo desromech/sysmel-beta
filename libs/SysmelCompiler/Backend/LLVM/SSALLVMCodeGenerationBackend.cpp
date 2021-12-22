@@ -119,6 +119,25 @@ llvm::Constant *SSALLVMCodeGenerationBackend::translateLiteralValueWithExpectedT
     return visitor->translateValueWithExpectedType(literal, expectedType);
 }
 
+llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstant(const TypePtr &elementType, const std::string &constant, bool addNullTerminator)
+{
+    switch(elementType->getMemorySize())
+    {
+    case 1:
+        return llvm::ConstantDataArray::getString(*context, constant, addNullTerminator);
+    case 2:
+    case 4:
+    default:
+        assert("Unsupported string type." && false);
+    }
+}
+
+llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstantPointer(const TypePtr &elementType, const std::string &constant, bool addNullTerminator)
+{
+    auto stringConstantData = internStringConstant(elementType, constant, addNullTerminator);
+    return new llvm::GlobalVariable(*targetModule, stringConstantData->getType(), true, llvm::GlobalValue::PrivateLinkage, stringConstantData);
+}
+
 bool SSALLVMCodeGenerationBackend::isSignedIntegerType(const TypePtr &type)
 {
     return signedIntegerTypeSet.find(type) != signedIntegerTypeSet.end();

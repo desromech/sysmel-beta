@@ -4,6 +4,7 @@
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/ValueBox.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
@@ -67,6 +68,35 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveFloatType(const PrimitiveFloa
 {
     auto data = value->unwrapAsFloat64();
     return wrapLLVMConstant(llvm::ConstantFP::get(translatedExpectedType, data));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value)
+{
+    assert(translatedExpectedType->isPointerTy());
+    auto resultType = llvm::cast<llvm::PointerType> (translatedExpectedType);
+    auto baseValue = value->baseValue;
+    if(!baseValue || baseValue->isUndefined())
+    {
+        return wrapLLVMConstant(llvm::ConstantPointerNull::get(resultType));
+    }
+    else if(baseValue->isLiteralString())
+    {
+        auto elementType = value->getType().staticAs<PointerLikeType> ()->getBaseType()->asUndecoratedType();
+        auto result = backend->internStringConstantPointer(elementType, baseValue->asString(), true);
+        assert(result->getType()->isPointerTy());
+
+        return wrapLLVMConstant(llvm::ConstantExpr::getBitCast(result, translatedExpectedType));
+    }
+    else if(baseValue->isLiteralInteger())
+    {
+        assert("TODO: translate integer address into constant pointer" && false);
+    }
+    else if(baseValue->isProgramEntity())
+    {
+        assert("TODO: translate program entity address into constant pointer" && false);
+    }
+
+    assert("unsupported pointer type value constant" && false);
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitStructureTypeValue(const StructureTypeValuePtr &value)

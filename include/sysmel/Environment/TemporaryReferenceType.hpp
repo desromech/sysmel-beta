@@ -55,7 +55,9 @@ public:
     
     virtual bool isTemporaryReferenceTypeValue() const override;
     virtual bool isReferenceLikeTypeValue() const override;
+    virtual SExpression asSExpression() const override;
     virtual TypePtr getType() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual AnyValuePtr getReferenceToFieldWithType(const FieldVariablePtr &field, const TypePtr &referenceType) override;
     virtual AnyValuePtr getReferenceToSlotWithType(int64_t slotIndex, int64_t slotOffset, const TypePtr &referenceType) override;
