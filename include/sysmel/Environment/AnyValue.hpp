@@ -1005,9 +1005,6 @@ public:
     // Is this a SSA get aggregate field reference instruction?
     virtual bool isSSAGetAggregateSlotReferenceInstruction() const;
 
-    // Is this a SSA make aggregate instruction?
-    virtual bool isSSAMakeAggregateInstruction() const;
-
     // Is this a SSA make closure instruction?
     virtual bool isSSAMakeClosureInstruction() const;
 

@@ -14,6 +14,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompiledMethod)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSACodeRegion)
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSABuilder)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SSAValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateType)
 
 typedef std::function<void ()> ASTSSACodeRegionBuildingBlock;
 
@@ -66,7 +68,7 @@ public:
     void buildRegionForSourcePositionWith(const SSACodeRegionPtr &region, const ASTSourcePositionPtr &sourcePosition, const ASTSSACodeRegionBuildingBlock &aBlock);
     void buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock);
     SSACodeRegionPtr buildRegionForNode(const ASTNodePtr &node);
-    void assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue);
+    void assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue, bool isAggregateComponent = false);
     void addFinalizationFor(const SSAValuePtr &localVariable, const TypePtr &valueType);
     void mapLocalVariableToValue(const AnyValuePtr &binding, const SSAValuePtr &value);
     SSAValuePtr findLocalVariableMapping(const AnyValuePtr &binding);
@@ -74,6 +76,8 @@ public:
     void returnValueFromFunction(const SSAValuePtr &result);
     void returnValueFromRegion(const SSAValuePtr &result);
     SSAValuePtr prepareForReturningValueFromRegion(const SSAValuePtr &result, const SSACodeRegionPtr &returningRegion);
+
+    SSAValuePtr makeAggregateWithElements(const AggregateTypePtr &aggregateType, const SSAValuePtrList &elements);
 
     SpecificMethodPtr currentMethod;
     SSAFunctionPtr currentSSAFunction;

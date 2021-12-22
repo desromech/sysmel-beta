@@ -5,6 +5,9 @@
 #include "ASTProgramEntityNode.hpp"
 #include "ProgramEntityVisibility.hpp"
 #include "MethodFlags.hpp"
+#include "DllLinkageMode.hpp"
+#include "ExternalLanguageMode.hpp"
+#include "CallingConvention.hpp"
 
 namespace Sysmel
 {
@@ -32,6 +35,9 @@ public:
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
     MethodFlags methodFlags = MethodFlags::None;
+    DllLinkageMode dllLinkageMode = DllLinkageMode::None;
+    ExternalLanguageMode externalLanguageMode = ExternalLanguageMode::None;
+    CallingConvention callingConvention = CallingConvention::Default;
 };
 
 } // End of namespace Environment

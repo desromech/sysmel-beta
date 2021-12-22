@@ -78,5 +78,10 @@ TypePtr AggregateTypeLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t 
     SysmelSelfSubclassResponsibility();
 }
 
+TypePtr AggregateTypeLayout::getTypeForSlot(int64_t slotIndex)
+{
+    return getTypeForSlotAndOffset(slotIndex, 0);
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

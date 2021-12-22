@@ -504,7 +504,24 @@ AnyValuePtr SSALLVMValueVisitor::visitGetAggregateFieldReferenceInstruction(cons
 {
     assert(instruction->getAggregate()->getValueType()->isPointerLikeType());
     auto aggregate = translateValue(instruction->getAggregate());
-    return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, 0*instruction->getFieldVariable()->getSlotIndex()));
+    return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, instruction->getFieldVariable()->getSlotIndex()));
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitGetAggregateSlotReferenceInstruction(const SSAGetAggregateSlotReferenceInstructionPtr &instruction)
+{
+    assert(instruction->getAggregate()->getValueType()->isPointerLikeType());
+    auto aggregate = translateValue(instruction->getAggregate());
+    auto index = instruction->getSlotIndex();
+    if(index->isSSAConstantLiteralValue())
+    {
+        auto constantValue = validAnyValue(index.staticAs<SSAConstantLiteralValue> ()->getValue());
+        if(constantValue->isLiteralInteger())
+            return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, constantValue->unwrapAsInt32()));
+    }
+
+    auto translatedIndex = translateValue(index);
+    auto indexType = backend->translateType(Type::getUIntPointerType());
+    return wrapLLVMValue(builder->CreateGEP(nullptr, aggregate, {llvm::ConstantInt::get(indexType, 0), translatedIndex}));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &instruction)

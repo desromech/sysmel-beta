@@ -4,6 +4,7 @@
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/FunctionType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 #include <sstream>
 
@@ -124,6 +125,11 @@ AnyValuePtr TupleType::basicNewValue()
     for(auto & elType : elementTypes)
         tuple->slots.push_back(elType->basicNewValue());
     return tuple;
+}
+
+AnyValuePtr TupleType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitTupleType(selfFromThis());
 }
 
 TupleTypeValuePtr TupleType::makeWithElements(const AnyValuePtrList &elements)

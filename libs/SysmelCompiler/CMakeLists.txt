@@ -243,7 +243,6 @@ set(Environment_Sources
     SSALocalVariableInstruction.cpp
     SSAGetAggregateFieldReferenceInstruction.cpp
     SSAGetAggregateSlotReferenceInstruction.cpp
-    SSAMakeAggregateInstruction.cpp
     SSAMakeClosureInstruction.cpp
     SSAModule.cpp
     SSANamespace.cpp

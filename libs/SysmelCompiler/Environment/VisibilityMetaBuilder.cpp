@@ -54,10 +54,18 @@ static std::unordered_map<std::string, MethodFlags> methodFlagsMap = {
     {"virtual", MethodFlags::Virtual},
 };
 
+static std::unordered_map<std::string, CallingConvention> callingConventionMap = {
+    {"cdecl", CallingConvention::Cdecl},
+    {"stdcall", CallingConvention::Stdcall},
+    {"thiscal", CallingConvention::Thiscall},
+    {"apicall", CallingConvention::Apicall},
+};
+
 ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &selector, const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     if(node->arguments.empty())
     {
+        // Method flags.
         {
             auto it = methodFlagsMap.find(selector);
             if(it != methodFlagsMap.end())
@@ -66,6 +74,41 @@ ASTNodePtr VisibilityMetaBuilder::analyzeMessageSendNodeWithSelector(const std::
                 return node->receiver;
             }
         }
+
+        // Calling convention
+        {
+            auto it = callingConventionMap.find(selector);
+            if(it != callingConventionMap.end())
+            {
+                instanceContext->callingConvention = it->second;
+                return node->receiver;
+            }
+        }
+
+        // Extern language.
+        if(selector == "externC")
+        {
+            instanceContext->externalLanguageMode = ExternalLanguageMode::C;
+            return node->receiver;
+        }
+        else if(selector == "externCpp")
+        {
+            instanceContext->externalLanguageMode = ExternalLanguageMode::Cpp;
+            return node->receiver;
+        }
+
+        // Dll linkage
+        if(selector == "dllexport")
+        {
+            instanceContext->dllLinkageMode = DllLinkageMode::Export;
+            return node->receiver;
+        }
+        else if(selector == "dllimport")
+        {
+            instanceContext->dllLinkageMode = DllLinkageMode::Import;
+            return node->receiver;
+        }
+
         // Functional
         if(selector == "function")
             return delegateToMetaBuilderAt<FunctionMetaBuilder> (node->sourcePosition);

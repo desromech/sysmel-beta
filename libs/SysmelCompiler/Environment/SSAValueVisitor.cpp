@@ -174,11 +174,6 @@ AnyValuePtr SSAValueVisitor::visitGetAggregateSlotReferenceInstruction(const SSA
     SysmelSelfSubclassResponsibility();
 }
 
-AnyValuePtr SSAValueVisitor::visitMakeAggregateInstruction(const SSAMakeAggregateInstructionPtr &)
-{
-    SysmelSelfSubclassResponsibility();
-}
-
 AnyValuePtr SSAValueVisitor::visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

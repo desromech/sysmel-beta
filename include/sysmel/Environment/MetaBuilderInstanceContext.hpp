@@ -5,6 +5,9 @@
 #include "CompilerObject.hpp"
 #include "ProgramEntityVisibility.hpp"
 #include "MethodFlags.hpp"
+#include "DllLinkageMode.hpp"
+#include "ExternalLanguageMode.hpp"
+#include "CallingConvention.hpp"
 
 namespace Sysmel
 {
@@ -26,7 +29,10 @@ public:
     ASTNodePtr instanceNode;
 
     ProgramEntityVisibility programEntityVisibility = ProgramEntityVisibility::Default;
+    DllLinkageMode dllLinkageMode = DllLinkageMode::None;
+    ExternalLanguageMode externalLanguageMode = ExternalLanguageMode::None;
     MethodFlags methodFlags = MethodFlags::None;
+    CallingConvention callingConvention = CallingConvention::Default;
     bool isCompileTime = false;
 };
 

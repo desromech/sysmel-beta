@@ -69,7 +69,8 @@ public:
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction) override;
-    virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction) override;    
+    virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitGetAggregateSlotReferenceInstruction(const SSAGetAggregateSlotReferenceInstructionPtr &instruction) override;
     virtual AnyValuePtr visitIfInstruction(const SSAIfInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction) override;

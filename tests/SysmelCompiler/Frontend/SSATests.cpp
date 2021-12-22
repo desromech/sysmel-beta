@@ -280,7 +280,39 @@ public function makeTupleInt32Float32(first: Int32, second: Float32) => (Int32 &
   := (first, second).
 )",
 R"(
-
+(function #makeTupleInt32Float32 nil
+  (functionType ("Int32" "Float32") (tupleType ("Int32" "Float32")))
+  (region
+    (
+      (argument 0
+        (tempRefType (tupleType ("Int32" "Float32")) #generic)
+        nil
+        nil)
+      (argument 1 "Int32")
+      (argument 2 "Float32"))
+    ()
+    "Void"
+    ((basicBlock 0 (
+      (doWithCleanUp 3 "Void"
+        (region nil () () "Void" ((basicBlock 1
+          (
+            (localVariable 4
+              (tempRefType (tupleType ("Int32" "Float32")) #generic))
+            (getAggregateSlot 5 "Int32"
+              (local 4)
+              (constantLiteralValue 0 "LiteralPositiveInteger"))
+            (store 6 "Void" (local 1) (local 5))
+            (getAggregateSlot 7 "Float32"
+              (local 4)
+              (constantLiteralValue 1 "LiteralPositiveInteger"))
+            (store 8 "Void" (local 2) (local 7))
+            (load 9 (tupleType ("Int32" "Float32")) (local 4))
+            (store 10 "Void" (local 9) (local 0))
+            (returnFromFunction 11 "Void"
+              (constantLiteralValue void "Void"))))))
+        (region nil () () "Void" ((basicBlock 2 ((returnFromRegion 12 "Void"
+          (constantLiteralValue void "Void")))))))
+      (unreachable 13 "Void"))))))
 )"));
             });
         });

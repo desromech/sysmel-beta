@@ -10,6 +10,7 @@
 #include "Environment/StructureType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/UnionType.hpp"
+#include "Environment/TupleType.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -84,7 +85,7 @@ AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type
     return wrapLLVMType(llvm::PointerType::getUnqual(translatedBaseType));
 }
 
-AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
+AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type)
 {
     auto translatedType = llvm::StructType::create(*backend->getContext(), validAnyValue(type->getName())->asString());
     backend->setTypeTranslation(type, translatedType);
@@ -98,7 +99,22 @@ AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
 
     translatedType->setBody(translatedSlotTypes);
     return wrapLLVMType(translatedType);
-
 }
+
+AnyValuePtr LLVMTypeVisitor::visitClassType(const ClassTypePtr &type)
+{
+    return translateAggregateTypeWithSequentialLayout(type);
+}
+
+AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
+{
+    return translateAggregateTypeWithSequentialLayout(type);
+}
+
+AnyValuePtr LLVMTypeVisitor::visitTupleType(const TupleTypePtr &type)
+{
+    return translateAggregateTypeWithSequentialLayout(type);
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

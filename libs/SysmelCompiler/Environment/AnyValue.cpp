@@ -1209,11 +1209,6 @@ bool AnyValue::isSSAGetAggregateSlotReferenceInstruction() const
     return false;
 }
 
-bool AnyValue::isSSAMakeAggregateInstruction() const
-{
-    return false;
-}
-
 bool AnyValue::isSSAMakeClosureInstruction() const
 {
     return false;

@@ -48,10 +48,10 @@
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSADoWhileInstruction.hpp"
 #include "Environment/SSAGetAggregateFieldReferenceInstruction.hpp"
+#include "Environment/SSAGetAggregateSlotReferenceInstruction.hpp"
 #include "Environment/SSAIfInstruction.hpp"
 #include "Environment/SSALoadInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
-#include "Environment/SSAMakeAggregateInstruction.hpp"
 #include "Environment/SSAMakeClosureInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSASendMessageInstruction.hpp"
@@ -63,11 +63,14 @@
 #include "Environment/SSAUpcastInstruction.hpp"
 
 #include "Environment/FunctionalType.hpp"
+#include "Environment/AggregateType.hpp"
+#include "Environment/AggregateTypeLayout.hpp"
 #include "Environment/PointerLikeType.hpp"
 #include "Environment/ArgumentVariable.hpp"
 #include "Environment/LocalVariable.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
+#include "Environment/Wrappers.hpp"
 
 namespace Sysmel
 {
@@ -90,7 +93,7 @@ SSAValuePtr ASTSSACompiler::visitNodeForValue(const ASTNodePtr &node)
     return staticObjectCast<SSAValue> (value);
 }
 
-void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue)
+void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue, bool isAggregateComponent)
 {
     auto initialValueType = initialValue->getValueType()->asUndecoratedType();
     auto undecoratedDestinationValueType = destinationValueType->asUndecoratedType();
@@ -133,7 +136,8 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
         }
     }
 
-    addFinalizationFor(destination, undecoratedDestinationValueType);
+    if(!isAggregateComponent)
+        addFinalizationFor(destination, undecoratedDestinationValueType);
 }
 
 void ASTSSACompiler::addFinalizationFor(const SSAValuePtr &localVariable, const TypePtr &valueType)
@@ -153,6 +157,22 @@ void ASTSSACompiler::addFinalizationFor(const SSAValuePtr &localVariable, const 
 
     builder->enableLocalFinalization(localVariable);
     cleanUpBuilder->localFinalization(localVariable, finalizationRegion);
+}
+
+SSAValuePtr ASTSSACompiler::makeAggregateWithElements(const AggregateTypePtr &aggregateType, const SSAValuePtrList &elements)
+{
+    auto result = builder->localVariable(aggregateType->tempRef(), aggregateType);
+    auto layout = aggregateType->getLayout();
+
+    for(size_t i = 0; i < elements.size(); ++i)
+    {
+        auto slotType = layout->getTypeForSlot(i);
+        auto slot = builder->getAggregateSlotReference(slotType, result, builder->literal(wrapValue(i)));
+        assignInitialValueFrom(slot, slotType, elements[i], true);
+    }
+    
+    addFinalizationFor(result, aggregateType);
+    return result;
 }
 
 void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node)
@@ -332,7 +352,8 @@ AnyValuePtr ASTSSACompiler::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
         return builder->literalWithType(getVoidConstant(), node->analyzedType);
     }
 
-    return builder->makeAggregate(node->analyzedType, elements);
+    assert(node->analyzedType->isAggregateType());
+    return makeAggregateWithElements(staticObjectCast<AggregateType> (node->analyzedType), elements);
 }
 
 AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &node)

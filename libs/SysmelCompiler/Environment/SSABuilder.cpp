@@ -16,7 +16,6 @@
 #include "Environment/SSAIfInstruction.hpp"
 #include "Environment/SSALoadInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
-#include "Environment/SSAMakeAggregateInstruction.hpp"
 #include "Environment/SSAMakeClosureInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
@@ -265,17 +264,6 @@ SSAMakeClosureInstructionPtr SSABuilder::makeClosure(const SSAValuePtr &closureI
     return instruction;
 }
 
-SSAMakeAggregateInstructionPtr SSABuilder::makeAggregate(const TypePtr &aggregateType, const SSAValuePtrList &elements)
-{
-    assert(aggregateType->asUndecoratedType()->isAggregateType());
-
-    auto instruction = basicMakeObject<SSAMakeAggregateInstruction> ();
-    instruction->setSourcePosition(currentSourcePosition);
-    instruction->setValueType(aggregateType);
-    instruction->setElements(elements);
-    addInstruction(instruction);
-    return instruction;
-}
 
 SSAReturnFromFunctionInstructionPtr SSABuilder::returnFromFunction(const SSAValuePtr &value)
 {

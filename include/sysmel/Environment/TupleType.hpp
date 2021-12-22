@@ -28,6 +28,7 @@ public:
     virtual bool isNullableType() const override;
 
     virtual AnyValuePtr basicNewValue() override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
     TupleTypeValuePtr makeWithElements(const AnyValuePtrList &elements);
 
     virtual std::string printString() const override;

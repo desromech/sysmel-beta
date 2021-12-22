@@ -50,6 +50,9 @@ ASTNodePtr MethodMetaBuilder::concretizeMetaBuilder()
     result->sourcePosition = instanceContext->concreteSourcePosition();
     result->visibility = instanceContext->programEntityVisibility;
     result->methodFlags = instanceContext->methodFlags;
+    result->dllLinkageMode = instanceContext->dllLinkageMode;
+    result->externalLanguageMode = instanceContext->externalLanguageMode;
+    result->callingConvention = instanceContext->callingConvention;
 
     result->name = selectorNode;
     result->arguments = argumentsNode;
