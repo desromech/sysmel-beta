@@ -110,102 +110,104 @@ _PrimitiveIntegerType | _EnumType extend: {
         ``((`,self & `,mask) value == 0).
 }.
 
-## Range loop macro
-_NumberType macro method to: stop by: increment do: aBlock := {
-    let index := __astBuilder gensym: #index.
-    let stopValue := __astBuilder gensym: #stopValue.
-    let incrementValue := __astBuilder gensym: #incrementValue.
-    let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
-    let indexType mutable type: _ASTNodeType.
+_NumberType extend: {
+    macro method to: stop by: increment do: aBlock := {
+        let index := __astBuilder gensym: #index.
+        let stopValue := __astBuilder gensym: #stopValue.
+        let incrementValue := __astBuilder gensym: #incrementValue.
+        let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
+        let indexType mutable type: _ASTNodeType.
 
-    aBlock isBlockClosureNode && aBlock arguments size = 1
-        && aBlock arguments first valueType isNotNil ifTrue: {
-        indexType := aBlock arguments first valueType castTo: _ASTNodeType
-    } ifFalse: {
-        indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
-            castTo: _ASTNodeType
+        aBlock isBlockClosureNode && aBlock arguments size = 1
+            && aBlock arguments first valueType isNotNil ifTrue: {
+            indexType := aBlock arguments first valueType castTo: _ASTNodeType
+        } ifFalse: {
+            indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
+                castTo: _ASTNodeType
+        }.
+
+        ``{
+            let `,index mutable type: `,indexType := `,self.
+            let `,stopValue type: `,indexType := `,stopAnalyzedNode.
+            let `,incrementValue type: `,indexType := `,increment.
+
+            while: (`,incrementValue > 0 ifTrue: `,index <= `,stopValue ifFalse: `,index >= `,stopValue) do: {
+                `,aBlock  __macroInlineBlock: `,index
+            } continueWith: (`,index := `,index + `,incrementValue)
+        }
     }.
 
-    ``{
-        let `,index mutable type: `,indexType := `,self.
-        let `,stopValue type: `,indexType := `,stopAnalyzedNode.
-        let `,incrementValue type: `,indexType := `,increment.
+    macro method to: stop do: aBlock := ``(`,self to: `,stop by: 1 do: `,aBlock)
 
-        while: (`,incrementValue > 0 ifTrue: `,index <= `,stopValue ifFalse: `,index >= `,stopValue) do: {
-            `,aBlock  __macroInlineBlock: `,index
-        } continueWith: (`,index := `,index + `,incrementValue)
-    }
-}.
+    macro method until: stop by: increment do: aBlock := {
+        let index := __astBuilder gensym: #index.
+        let stopValue := __astBuilder gensym: #stopValue.
+        let incrementValue := __astBuilder gensym: #incrementValue.
+        let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
+        let indexType mutable type: _ASTNodeType.
 
-#*
-_NumberType macro method to: stop do: aBlock := ``(`,self to: `,stop by: 1 do: `,aBlock).
+        aBlock isBlockClosureNode && aBlock arguments size = 1
+            && aBlock arguments first valueType isNotNil ifTrue: {
+            indexType := aBlock arguments first valueType castTo: _ASTNodeType
+        } ifFalse: {
+            indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
+                castTo: _ASTNodeType
+        }.
 
-_NumberType macro method until: stop by: increment do: aBlock := {
-    let index := __astBuilder gensym: #index.
-    let stopValue := __astBuilder gensym: #stopValue.
-    let incrementValue := __astBuilder gensym: #incrementValue.
-    let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
-    let indexType mutable type: _ASTNodeType.
+        ``{
+            let `,index mutable type: `,indexType := `,self.
+            let `,stopValue type: `,indexType := `,stopAnalyzedNode.
+            let `,incrementValue type: `,indexType := `,increment.
 
-    aBlock isBlockClosureNode && aBlock arguments size = 1
-        && aBlock arguments first valueType isNotNil ifTrue: {
-        indexType := aBlock arguments first valueType castTo: _ASTNodeType
-    } ifFalse: {
-        indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
-            castTo: _ASTNodeType
+            while: (`,incrementValue > 0 ifTrue: `,index < `,stopValue ifFalse: `,index > `,stopValue) do: {
+                `,aBlock  __macroInlineBlock: `,index
+            } continueWith: (`,index := `,index + `,incrementValue)
+        }
     }.
 
-    ``{
-        let `,index mutable type: `,indexType := `,self.
-        let `,stopValue type: `,indexType := `,stopAnalyzedNode.
-        let `,incrementValue type: `,indexType := `,increment.
+    macro method until: stop do: aBlock := {
+        let index := __astBuilder gensym: #index.
+        let stopValue := __astBuilder gensym: #stopValue.
+        let incrementValue := __astBuilder gensym: #incrementValue.
+        let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
+        let indexType mutable type: _ASTNodeType.
 
-        while: (`,incrementValue > 0 ifTrue: `,index < `,stopValue ifFalse: `,index > `,stopValue) do: {
-            `,aBlock  __macroInlineBlock: `,index
-        } continueWith: (`,index := `,index + `,incrementValue)
-    }
-}.
+        aBlock isBlockClosureNode && aBlock arguments size = 1
+            && aBlock arguments first valueType isNotNil ifTrue: {
+            indexType := aBlock arguments first valueType castTo: _ASTNodeType
+        } ifFalse: {
+            indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
+                castTo: _ASTNodeType
+        }.
 
-## Unfold directly to avoid a bug in a gpu backend.
-_NumberType macro method until: stop do: aBlock := {
-    let index := __astBuilder gensym: #index.
-    let stopValue := __astBuilder gensym: #stopValue.
-    let incrementValue := __astBuilder gensym: #incrementValue.
-    let stopAnalyzedNode := (__analyzer analyzeNodeIfNeeded: stop) castTo: _ASTNodeType.
-    let indexType mutable type: _ASTNodeType.
+        ``{
+            let `,index mutable type: `,indexType := `,self.
+            let `,stopValue type: `,indexType := `,stopAnalyzedNode.
+            let `,incrementValue type: `,indexType := 1.
 
-    aBlock isBlockClosureNode && aBlock arguments size = 1
-        && aBlock arguments first valueType isNotNil ifTrue: {
-        indexType := aBlock arguments first valueType castTo: _ASTNodeType
-    } ifFalse: {
-        indexType := (__analyzer computeArithmethicCoercionTypeNodeFor: self with: stopAnalyzedNode fallbackTo: Int32 at: self)
-            castTo: _ASTNodeType
+            while: (`,index < `,stopValue) do: {
+                `,aBlock  __macroInlineBlock: `,index
+            } continueWith: (`,index := `,index + `,incrementValue)
+        }
     }.
-
-    ``{
-        let `,index mutable type: `,indexType := `,self.
-        let `,stopValue type: `,indexType := `,stopAnalyzedNode.
-        let `,incrementValue type: `,indexType := 1.
-
-        while: (`,index < `,stopValue) do: {
-            `,aBlock  __macroInlineBlock: `,index
-        } continueWith: (`,index := `,index + `,incrementValue)
-    }
 }.
 
-Boolean8 macro method asBit := ``(`,self castTo: UInt8).
+Boolean8 extend: {
+    macro method asBit := ``(`,self castTo: UInt8).
+}.
 
-_AbstractBlockClosureType macro method repeat := ``(while: true do: `,self __macroInlineBlock).
-_AbstractBlockClosureType macro method doWhileFalse: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == false).
-_AbstractBlockClosureType macro method doWhileTrue: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == true).
+_AbstractBlockClosureType extend: {
+    macro method repeat := ``(while: true do: `,self __macroInlineBlock).
+    macro method doWhileFalse: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == false).
+    macro method doWhileTrue: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == true).
 
-_AbstractBlockClosureType macro method whileTrue := ``(while: `,self __macroInlineBlock == true do: void).
-_AbstractBlockClosureType macro method whileTrue: aBlock := ``(while: `,self __macroInlineBlock == true do: `,aBlock __macroInlineBlock).
-_AbstractBlockClosureType macro method whileFalse := ``(while: `,self __macroInlineBlock == false do: void).
-_AbstractBlockClosureType macro method whileFalse: aBlock := ``(while: `,self __macroInlineBlock == false do: `,aBlock __macroInlineBlock).
+    macro method whileTrue := ``(while: `,self __macroInlineBlock == true do: void).
+    macro method whileTrue: aBlock := ``(while: `,self __macroInlineBlock == true do: `,aBlock __macroInlineBlock).
+    macro method whileFalse := ``(while: `,self __macroInlineBlock == false do: void).
+    macro method whileFalse: aBlock := ``(while: `,self __macroInlineBlock == false do: `,aBlock __macroInlineBlock).
 
-_AbstractBlockClosureType macro method whileNil := ``(while: `,self __macroInlineBlock isNil do: void).
-_AbstractBlockClosureType macro method whileNil: aBlock := ``(while: `,self __macroInlineBlock isNil do: `,aBlock __macroInlineBlock).
-_AbstractBlockClosureType macro method whileNotNil := ``(while: `,self __macroInlineBlock isNotNil do: void).
-_AbstractBlockClosureType macro method whileNotNil: aBlock := ``(while: `,self __macroInlineBlock isNotNil do: `,aBlock __macroInlineBlock).
-*#
+    macro method whileNil := ``(while: `,self __macroInlineBlock isNil do: void).
+    macro method whileNil: aBlock := ``(while: `,self __macroInlineBlock isNil do: `,aBlock __macroInlineBlock).
+    macro method whileNotNil := ``(while: `,self __macroInlineBlock isNotNil do: void).
+    macro method whileNotNil: aBlock := ``(while: `,self __macroInlineBlock isNotNil do: `,aBlock __macroInlineBlock).
+}.
