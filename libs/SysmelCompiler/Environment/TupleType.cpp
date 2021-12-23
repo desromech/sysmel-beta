@@ -42,7 +42,7 @@ TypePtr TupleType::make(const TypePtrList &elementTypes)
 
 TupleTypePtr TupleType::makeNormalized(const TypePtrList &elementTypes)
 {
-    assert(!elementTypes.empty());
+    sysmelAssert(!elementTypes.empty());
 
     auto &cache = RuntimeContext::getActive()->tupleTypeCache;
     auto it = cache.find(elementTypes);
@@ -74,7 +74,7 @@ bool TupleType::isNullableType() const
 
 std::string TupleType::printString() const
 {
-    assert(!elementTypes.empty());
+    sysmelAssert(!elementTypes.empty());
 
     bool hasTupleTypeElement = false;
     for(auto &el : elementTypes)
@@ -196,7 +196,7 @@ TypePtr TupleTypeValue::getType() const
 
 std::string TupleTypeValue::printString() const
 {
-    assert(!slots.empty());
+    sysmelAssert(!slots.empty());
 
     std::ostringstream out;
     out << '(';

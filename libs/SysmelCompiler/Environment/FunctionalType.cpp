@@ -23,7 +23,7 @@ size_t FunctionalType::getArgumentCount() const
 
 const TypePtr &FunctionalType::getArgument(size_t index) const
 {
-    assert(index < arguments.size());
+    sysmelAssert(index < arguments.size());
     return arguments[index];
 }
 

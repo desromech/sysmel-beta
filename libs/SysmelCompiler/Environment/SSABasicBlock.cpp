@@ -82,9 +82,9 @@ void SSABasicBlock::instructionsDo(const SSAInstructionIterationBlock &aBlock)
 
 void SSABasicBlock::addInstructionBefore(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position)
 {
-    assert(!instruction->getParentBasicBlock());
-    assert(!instruction->getPreviousInstruction());
-    assert(!instruction->getNextInstruction());
+    sysmelAssert(!instruction->getParentBasicBlock());
+    sysmelAssert(!instruction->getPreviousInstruction());
+    sysmelAssert(!instruction->getNextInstruction());
 
     SSAInstructionPtr before = position ? position->getPreviousInstruction() : lastInstruction;
     SSAInstructionPtr after = position;
@@ -114,9 +114,9 @@ void SSABasicBlock::addInstructionBefore(const SSAInstructionPtr &instruction, c
 
 void SSABasicBlock::addInstructionAfter(const SSAInstructionPtr &instruction, const SSAInstructionPtr &position)
 {
-    assert(!instruction->getParentBasicBlock());
-    assert(!instruction->getPreviousInstruction());
-    assert(!instruction->getNextInstruction());
+    sysmelAssert(!instruction->getParentBasicBlock());
+    sysmelAssert(!instruction->getPreviousInstruction());
+    sysmelAssert(!instruction->getNextInstruction());
 
     SSAInstructionPtr before = position;
     SSAInstructionPtr after = position ? position->getNextInstruction() : firstInstruction;
@@ -156,7 +156,7 @@ void SSABasicBlock::appendInstruction(const SSAInstructionPtr &instruction)
 
 void SSABasicBlock::removeInstruction(const SSAInstructionPtr &instruction)
 {
-    assert(instruction && instruction->getParentBasicBlock() == selfFromThis());
+    sysmelAssert(instruction && instruction->getParentBasicBlock() == selfFromThis());
     SSAInstructionPtr before = instruction->getPreviousInstruction();
     SSAInstructionPtr after = instruction->getNextInstruction();
 

@@ -20,7 +20,7 @@ RefCountedObjectMemoryPool::RefCountedObjectMemoryPool()
 
 RefCountedObjectMemoryPool::~RefCountedObjectMemoryPool()
 {
-    assert(!shuttingDown);
+    sysmelAssert(!shuttingDown);
     shuttingDown = true;
 
     // First pass: disconnect from the memory pool.
@@ -48,7 +48,7 @@ RefCountedObjectMemoryPool::~RefCountedObjectMemoryPool()
 
 void* RefCountedObjectMemoryPool::allocateMemory(size_t size)
 {
-    assert(!shuttingDown);
+    sysmelAssert(!shuttingDown);
     auto allocationSize = sizeof(AllocationHeader) + size;
     auto header = reinterpret_cast<AllocationHeader*> (malloc(allocationSize));
     memset(header, 0, allocationSize);

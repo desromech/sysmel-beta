@@ -75,7 +75,7 @@ void SSACodeRegion::addReceiverArgumentWithType(const TypePtr &argumentType)
 
 void SSACodeRegion::addResultArgumentWithType(const TypePtr &argumentType)
 {
-    assert(argumentType->isReferenceLikeType());
+    sysmelAssert(argumentType->isReferenceLikeType());
     arguments.push_back(SSACodeRegionArgument::makeResult(argumentType));
 }
 
@@ -136,7 +136,7 @@ const SSACodeRegionCapturePtrList &SSACodeRegion::getCaptures()
 
 SSACodeRegionCapturePtr SSACodeRegion::addCaptureWithType(const TypePtr &captureType)
 {
-    assert(!captureType->isVoidType());
+    sysmelAssert(!captureType->isVoidType());
     auto result = SSACodeRegionCapture::make(captureType);
     captures.push_back(result);
     return result;

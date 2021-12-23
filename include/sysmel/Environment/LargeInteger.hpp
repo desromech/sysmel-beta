@@ -6,7 +6,7 @@
 #include <string>
 #include <ostream>
 #include <vector>
-#include <cassert>
+#include "Assert.hpp"
 
 namespace Sysmel
 {

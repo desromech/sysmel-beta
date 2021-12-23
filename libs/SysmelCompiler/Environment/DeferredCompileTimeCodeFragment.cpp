@@ -35,7 +35,7 @@ AnyValuePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluateWithExpectedType(
 TypePtr DeferredCompileTimeCodeFragment::analyzeAndEvaluateAsTypeExpression()
 {
     auto result = analyzeAndEvaluateWithExpectedType(Type::__staticType__());
-    assert(result->isType());
+    sysmelAssert(result->isType());
     return staticObjectCast<Type> (result);
 }
 

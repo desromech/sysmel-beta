@@ -52,7 +52,7 @@ void Namespace::recordChildProgramEntityDefinition(const ProgramEntityPtr &newCh
 
 void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
 {
-    assert(symbol && !symbol->isAnonymousNameSymbol());
+    sysmelAssert(symbol && !symbol->isAnonymousNameSymbol());
     if(bindings.find(symbol) != bindings.end())
         signalNewWithMessage<Error> ("Expected a new symbol binding.");
 
@@ -168,7 +168,7 @@ SSAValuePtr Namespace::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &
         auto parentSSAValue = getParentProgramEntity()->asProgramEntitySSAValue();
         if(!parentSSAValue->isSSAModule())
         {
-            assert(parentSSAValue->isSSAProgramEntity());
+            sysmelAssert(parentSSAValue->isSSAProgramEntity());
             parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaNamespace);
         }
     }

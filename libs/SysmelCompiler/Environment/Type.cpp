@@ -103,12 +103,12 @@ MethodCategories Type::__instanceMethods__()
 
 TypePtr Type::extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode)
 {
-    assert(receiverNode->analyzedType);
+    sysmelAssert(receiverNode->analyzedType);
 
     if(receiverNode->isASTLiteralTypeNode())
     {
         auto typeValue = receiverNode.staticAs<ASTLiteralValueNode> ()->value;
-        assert(typeValue && typeValue->isType());
+        sysmelAssert(typeValue && typeValue->isType());
         return staticObjectCast<Type> (typeValue);
     }
 
@@ -329,13 +329,13 @@ AnyValuePtr Type::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const Id
 
 ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    assert(node->function && node->function->analyzedType);
+    sysmelAssert(node->function && node->function->analyzedType);
 
     // In case the fuction is an error, analyze the arguments to
     // further discover more error, and then return the receiver to propagate an error node.
     if(isCompilationErrorValueType())
     {
-        assert(node->function->analyzedType->isCompilationErrorValueType());
+        sysmelAssert(node->function->analyzedType->isCompilationErrorValueType());
         for(const auto &arg : node->arguments)
             semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
         return node->function;
@@ -354,8 +354,8 @@ ASTNodePtr Type::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAn
 
 ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    assert(node->receiver && node->receiver->analyzedType);
-    assert(node->selector && node->selector->analyzedType);
+    sysmelAssert(node->receiver && node->receiver->analyzedType);
+    sysmelAssert(node->selector && node->selector->analyzedType);
 
     // Allow the actual instance to analyze the message. This is typically used by metabuilders.
     if(supportsMessageAnalysisByLiteralValueReceivers() && node->receiver->isASTLiteralValueNode())
@@ -369,14 +369,14 @@ ASTNodePtr Type::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const
 
 ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    assert(node->receiver && node->receiver->analyzedType);
-    assert(node->selector && node->selector->analyzedType);
+    sysmelAssert(node->receiver && node->receiver->analyzedType);
+    sysmelAssert(node->selector && node->selector->analyzedType);
 
     // In case the receiver is an error, analyze the arguments to
     // further discover more error, and then return the receiver to propagate an error node.
     if(isCompilationErrorValueType())
     {
-        assert(node->receiver->analyzedType->isCompilationErrorValueType());
+        sysmelAssert(node->receiver->analyzedType->isCompilationErrorValueType());
         for(const auto &arg : node->arguments)
             semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
         return node->receiver;
@@ -600,7 +600,7 @@ void Type::addConversions(const AnyValuePtrList &conversionMethods)
 
 void Type::addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility)
 {
-    assert(!field->getParentProgramEntity());
+    sysmelAssert(!field->getParentProgramEntity());
     if(!canHaveUserDefinedFields() && !field->isBootstrapFieldVariable())
         signalNewWithMessage<UnsupportedOperation> (formatString("Cannot add an user defined field to type {0}.", {printString()}));
 
@@ -756,7 +756,7 @@ void Type::enqueuePendingBodyBlockCodeFragment(const DeferredCompileTimeCodeFrag
 void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     auto oldParent = newChild->getParentProgramEntity();
-    assert(!oldParent || oldParent == selfFromThis());
+    sysmelAssert(!oldParent || oldParent == selfFromThis());
     if(oldParent)
         return;
 
@@ -766,7 +766,7 @@ void Type::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 
 void Type::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
 {
-    assert(symbol && !symbol->isAnonymousNameSymbol());
+    sysmelAssert(symbol && !symbol->isAnonymousNameSymbol());
     if(bindings.find(symbol) != bindings.end())
         signalNewWithMessage<Error> ("Expected a new symbol binding.");
 
@@ -945,7 +945,7 @@ ASTNodePtr Type::expandCopyConstruction(const MacroInvocationContextPtr &context
     if(isImmutableType())
         return valueNode;
 
-    assert("TODO: expandCopyConstruction" && false);
+    sysmelAssert("TODO: expandCopyConstruction" && false);
 }
 
 ASTNodePtr Type::expandMoveConstruction(const MacroInvocationContextPtr &context, const ASTNodePtr &valueNode)
@@ -954,7 +954,7 @@ ASTNodePtr Type::expandMoveConstruction(const MacroInvocationContextPtr &context
     if(isImmutableType())
         return valueNode;
 
-    assert("TODO: expandMoveConstruction" && false);
+    sysmelAssert("TODO: expandMoveConstruction" && false);
 }
 
 ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
@@ -1212,7 +1212,7 @@ SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
             auto parentSSAValue = parentProgramEntity->asProgramEntitySSAValue();
             if(parentSSAValue->isSSAProgramEntity())
             {
-                assert(parentSSAValue->isSSAProgramEntity());
+                sysmelAssert(parentSSAValue->isSSAProgramEntity());
                 parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaTypeProgramEntity);
             }
         }

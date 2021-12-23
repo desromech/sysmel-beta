@@ -1,6 +1,6 @@
 #include "Frontend/SysmelSyntax/Parser.hpp"
+#include "Environment/Assert.hpp"
 #include <optional>
-#include <cassert>
 
 namespace Sysmel
 {
@@ -222,7 +222,7 @@ static ASTNodePtr parseString(TokenRange &currentPosition)
 
     auto startPosition = currentPosition;
     auto rawStringValue = currentPosition.next().text();
-    assert(rawStringValue.size() >= 2);
+    sysmelAssert(rawStringValue.size() >= 2);
     auto rawStringContent = rawStringValue.substr(1, rawStringValue.size() - 2);
 
     auto node = std::make_shared<ASTStringLiteralNode> ();
@@ -242,7 +242,7 @@ static ASTNodePtr parseCharacter(TokenRange &currentPosition)
 
     auto startPosition = currentPosition;
     auto rawStringValue = currentPosition.next().text();
-    assert(rawStringValue.size() >= 2);
+    sysmelAssert(rawStringValue.size() >= 2);
     auto rawStringContent = rawStringValue.substr(1, rawStringValue.size() - 2);
 
     auto node = std::make_shared<ASTCharacterLiteralNode> ();
@@ -266,7 +266,7 @@ static ASTNodePtr parseSimpleLiteralSymbol(TokenRange &currentPosition, size_t p
     node->setTokenRange(currentPosition.until(1));
 
     auto rawSymbolValue = currentPosition.next().text();
-    assert(rawSymbolValue.size() > prefixSize);
+    sysmelAssert(rawSymbolValue.size() > prefixSize);
     node->value = rawSymbolValue.substr(prefixSize);
     return node;
 }
@@ -302,7 +302,7 @@ static ASTNodePtr parseLiteralSymbolString(TokenRange &currentPosition)
 
     auto startPosition = currentPosition;
     auto rawStringValue = currentPosition.next().text();
-    assert(rawStringValue.size() >= 3);
+    sysmelAssert(rawStringValue.size() >= 3);
     auto rawStringContent = rawStringValue.substr(2, rawStringValue.size() - 3);
 
     auto node = std::make_shared<ASTSymbolLiteralNode> ();
@@ -696,7 +696,7 @@ static ASTNodePtr parseDictionaryKey(TokenRange &currentPosition, bool isLiteral
         symbol->setTokenRange(keywordPosition);
 
         auto keyword = currentPosition.next().text();
-        assert(keyword.size() > 1);
+        sysmelAssert(keyword.size() > 1);
         if(!isSingleKeyword(keyword))
             return makeParseErrorNodeAtToken(keywordPosition, "Expected a single keyword.");
 
@@ -1123,7 +1123,7 @@ static ASTNodePtr parseChainExpression(TokenRange &currentPosition)
         if(!firstChainKeywordMessage)
             return receiver;
 
-        assert(firstChainKeywordMessage->isMessageChainMessageNode());
+        sysmelAssert(firstChainKeywordMessage->isMessageChainMessageNode());
         auto &castedChain = firstChainKeywordMessage->as<ASTMessageChainMessageNode> ();
 
         auto messageNode = std::make_shared<ASTMessageSendNode> ();
@@ -1184,7 +1184,7 @@ static ASTNodePtr parseLowPrecedenceExpression(TokenRange &currentPosition)
         selector->setTokenRange(currentPosition.until(1));
 
         auto rawSelectorValue = currentPosition.next().text();
-        assert(rawSelectorValue.size() > 2);
+        sysmelAssert(rawSelectorValue.size() > 2);
         selector->value = rawSelectorValue.substr(2);
 
         auto argument = parseChainExpression(currentPosition);

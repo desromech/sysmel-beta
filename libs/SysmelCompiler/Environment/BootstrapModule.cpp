@@ -80,7 +80,7 @@ void BootstrapModule::initialize()
             continue;
 
         auto bootstrapType = getBootstrapDefinedType(metadata->bootstrapTypeID);
-        assert(bootstrapType);
+        sysmelAssert(bootstrapType);
         bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapType);
         bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(bootstrapType, ProgramEntityVisibility::Public);
 

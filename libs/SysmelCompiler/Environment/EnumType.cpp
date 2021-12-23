@@ -90,7 +90,7 @@ uint64_t EnumType::getMemoryAlignment()
 
 void EnumType::addSpecializedMethods()
 {
-    assert(baseType);
+    sysmelAssert(baseType);
     addConstructor(makeIntrinsicConstructorWithSignature<EnumTypeValuePtr (TypePtr, AnyValuePtr)> ("enum.wrap", getType(), selfFromThis(), {baseType}, +[](const TypePtr &selfType, const AnyValuePtr &value) {
         auto wrappedValue = basicMakeObject<EnumTypeValue> ();
         wrappedValue->type = staticObjectCast<EnumType> (selfType);

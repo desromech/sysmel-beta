@@ -89,7 +89,7 @@ SSAValuePtr ASTSSACompiler::visitNodeForValue(const ASTNodePtr &node)
         builder->setSourcePosition(oldPosition);
     });
 
-    assert(value->isSSAValue());
+    sysmelAssert(value->isSSAValue());
     return staticObjectCast<SSAValue> (value);
 }
 
@@ -103,14 +103,14 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
     }
     else
     {
-        assert(initialValueType->isReferenceLikeType());
+        sysmelAssert(initialValueType->isReferenceLikeType());
         if(initialValueType->isTemporaryReferenceType())
         {
             if(!undecoratedDestinationValueType->hasTrivialInitializationMovingFrom())
             {
                 auto method = undecoratedDestinationValueType->getInitializeMovingFromMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
                 auto methodType = method->getValueType();
-                assert(methodType->isFunctionalType());
+                sysmelAssert(methodType->isFunctionalType());
                 builder->call(methodType.staticAs<FunctionalType> ()->getResultType(), method, {destination, initialValue});
             }
             else
@@ -125,7 +125,7 @@ void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, cons
             {
                 auto method = undecoratedDestinationValueType->getInitializeCopyingFromMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
                 auto methodType = method->getValueType();
-                assert(methodType->isFunctionalType());
+                sysmelAssert(methodType->isFunctionalType());
                 builder->call(methodType.staticAs<FunctionalType> ()->getResultType(), method, {destination, initialValue});
             }
             else
@@ -150,7 +150,7 @@ void ASTSSACompiler::addFinalizationFor(const SSAValuePtr &localVariable, const 
     buildRegionForSourcePositionWith(finalizationRegion, builder->getSourcePosition(), [&](){
         auto finalizer = valueType->getFinalizeMethod()->asSSAValueRequiredInPosition(builder->getSourcePosition());
         auto finalizerType = finalizer->getValueType();
-        assert(finalizerType->isFunctionalType());
+        sysmelAssert(finalizerType->isFunctionalType());
         auto cleanUp = builder->call(finalizerType.staticAs<FunctionalType> ()->getResultType(), finalizer, {localVariable});
         builder->returnFromRegion(builder->literal(getVoidConstant()));
     });
@@ -297,7 +297,7 @@ AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &
 
 AnyValuePtr ASTSSACompiler::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    assert(node->analyzedProgramEntity->isCompiledMethod());
+    sysmelAssert(node->analyzedProgramEntity->isCompiledMethod());
     auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
     auto functionObject = node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
     if(node->analyzedType->isClosureType())
@@ -348,11 +348,11 @@ AnyValuePtr ASTSSACompiler::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 
     if(elements.empty())
     {
-        assert(node->analyzedType->isVoidType());
+        sysmelAssert(node->analyzedType->isVoidType());
         return builder->literalWithType(getVoidConstant(), node->analyzedType);
     }
 
-    assert(node->analyzedType->isAggregateType());
+    sysmelAssert(node->analyzedType->isAggregateType());
     return makeAggregateWithElements(staticObjectCast<AggregateType> (node->analyzedType), elements);
 }
 
@@ -372,7 +372,7 @@ AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &no
         arguments.push_back(visitNodeForValue(arg));
 
     // Replace the direct message sends by call.
-    assert(node->receiver || node->analyzedBoundMessageIsDirect);
+    sysmelAssert(node->receiver || node->analyzedBoundMessageIsDirect);
     if(node->analyzedBoundMessageIsDirect)
     {
         if(node->receiver && !node->receiver->analyzedType->isVoidType())
@@ -421,7 +421,7 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
         if(!referenceType->isReferenceLikeType() && valueType->isReturnedByReference())
             referenceType = valueType->tempRef();
 
-        assert(referenceType->isReferenceLikeType());
+        sysmelAssert(referenceType->isReferenceLikeType());
         auto valueType = variable->getValueType();
         variableValue = builder->localVariable(referenceType, valueType);
         assignInitialValueFrom(variableValue, valueType, initialValue);
@@ -460,7 +460,7 @@ AnyValuePtr ASTSSACompiler::visitProgramEntityNode(const ASTProgramEntityNodePtr
 
 AnyValuePtr ASTSSACompiler::visitFunctionalNode(const ASTFunctionalNodePtr &node)
 {
-    assert(node->analyzedProgramEntity->isCompiledMethod());
+    sysmelAssert(node->analyzedProgramEntity->isCompiledMethod());
     auto method = staticObjectCast<CompiledMethod> (node->analyzedProgramEntity);
     auto functionObject = node->analyzedProgramEntity->asSSAValueRequiredInPosition(builder->getSourcePosition());
     if(node->analyzedType->isClosureType())
@@ -519,9 +519,9 @@ AnyValuePtr ASTSSACompiler::visitDowncastTypeConversionNode(const ASTDowncastTyp
 
 AnyValuePtr ASTSSACompiler::visitValueAsReferenceReinterpretConversionNode(const ASTValueAsReferenceReinterpretConversionNodePtr &node)
 {
-    assert(node->expression->analyzedType->isPassedByReference());
+    sysmelAssert(node->expression->analyzedType->isPassedByReference());
     auto result = visitNodeForValue(node->expression);
-    assert(result->getValueType()->isReferenceLikeType());
+    sysmelAssert(result->getValueType()->isReferenceLikeType());
     return result;
 }
 
@@ -629,7 +629,7 @@ SSAValuePtr ASTSSACompiler::prepareForReturningValueFromRegion(const SSAValuePtr
     if(returningRegion->isReturningByReference())
     {
         auto resultArgument = returningRegion->getArgument(0);
-        assert(!result->getValueType()->isVoidType() && resultArgument->getValueType()->isPointerLikeType());
+        sysmelAssert(!result->getValueType()->isVoidType() && resultArgument->getValueType()->isPointerLikeType());
         assignInitialValueFrom(resultArgument, resultArgument->getValueType().staticAs<PointerLikeType> ()->getBaseType(), result);
         return builder->literal(getVoidConstant());
     }

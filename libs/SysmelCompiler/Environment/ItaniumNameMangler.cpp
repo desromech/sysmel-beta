@@ -198,13 +198,13 @@ public:
         if(argument->isType())
             return mangleType(staticObjectCast<Type> (argument));
 
-        assert("TODO: not yet supported" && false);
+        sysmelAssert("TODO: not yet supported" && false);
     }
 
     std::string encodeNameComponents(const NameComponents &components, bool mustBeNested = false, std::string prefixes = std::string())
     {
         std::ostringstream out;
-        assert(!components.empty());
+        sysmelAssert(!components.empty());
 
         if(components.size() != 1 || mustBeNested)
         {
@@ -318,7 +318,7 @@ public:
     std::string mangleProgramEntityName(const ProgramEntityPtr &programEntity)
     {
         auto ssaValue = programEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty());
-        assert(ssaValue->isSSAProgramEntity());
+        sysmelAssert(ssaValue->isSSAProgramEntity());
 
         return mangleSSAProgramEntityName(staticObjectCast<SSAProgramEntity> (ssaValue));
     }
@@ -326,7 +326,7 @@ public:
     std::string mangleProgramEntity(const ProgramEntityPtr &programEntity)
     {
         auto ssaValue = programEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty());
-        assert(ssaValue->isSSAProgramEntity());
+        sysmelAssert(ssaValue->isSSAProgramEntity());
 
         return mangleSSAProgramEntity(staticObjectCast<SSAProgramEntity> (ssaValue));
     }

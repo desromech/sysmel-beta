@@ -1,6 +1,6 @@
 #include "Environment/Fraction.hpp"
 #include "Environment/DivisionByZeroError.hpp"
-#include <assert.h>
+#include "Environment/Assert.hpp"
 
 namespace Sysmel
 {
@@ -16,8 +16,8 @@ Fraction Fraction::reduced() const
     auto result = Fraction{numerator / gcd, denominator / gcd};
     result.numerator.signBit = result.numerator.signBit ^ result.denominator.signBit;
     result.denominator.signBit = false;
-    assert(result.numerator.isNormalized());
-    assert(result.denominator.isNormalized());
+    sysmelAssert(result.numerator.isNormalized());
+    sysmelAssert(result.denominator.isNormalized());
     return result;
 }
 

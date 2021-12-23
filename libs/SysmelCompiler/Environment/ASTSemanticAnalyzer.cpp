@@ -115,7 +115,7 @@ static BootstrapTypeRegistration<ASTSemanticAnalyzer> ASTSemanticAnalyzerTypeReg
 
 static TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
 {
-    assert(node->isASTLiteralTypeNode());
+    sysmelAssert(node->isASTLiteralTypeNode());
     return staticObjectCast<Type> (
         node.staticAs<ASTLiteralValueNode> ()->value
     );
@@ -260,10 +260,10 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeNodeIfNeededWithCurrentExpectedType(const
         return node;
     
     auto analysisResult = visitNode(node);
-    assert(analysisResult->isASTNode());
+    sysmelAssert(analysisResult->isASTNode());
 
     auto analysisResultNode = staticObjectCast<ASTNode> (analysisResult);
-    assert(analysisResultNode->analyzedType);
+    sysmelAssert(analysisResultNode->analyzedType);
 
     if(concretizeEphemeralObjects && analysisResultNode->isASTLiteralValueNode() && analysisResultNode->analyzedType->isEphemeralCompileTimeObject())
         return analysisResultNode->analyzedType->concretizeEphemeralCompileTimeObject(staticObjectCast<ASTLiteralValueNode> (analysisResultNode), selfFromThis());
@@ -276,7 +276,7 @@ AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr
     if(node->isKindOf(expectedType))
         return node;
     
-    assert("TODO: Support non-node macro parameters" && false);
+    sysmelAssert("TODO: Support non-node macro parameters" && false);
 }
 
 PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType)
@@ -287,7 +287,7 @@ PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithValueOfType(cons
 
 PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node)
 {
-    assert(node->analyzedType);
+    sysmelAssert(node->analyzedType);
     return rankForMatchingTypeWithValueOfType(expectedType, node->analyzedType);
 }
 
@@ -307,7 +307,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const A
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro)
 {
-    assert("TODO: Invoke DNU macro" && false);
+    sysmelAssert("TODO: Invoke DNU macro" && false);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::evaluateInCompileTime(const ASTNodePtr &node)
@@ -387,7 +387,7 @@ AnyValuePtr ASTSemanticAnalyzer::evaluateNameSymbolValue(const ASTNodePtr &node)
     if(!node)
         return nullptr;
 
-    assert(node->isASTLiteralValueNode());
+    sysmelAssert(node->isASTLiteralValueNode());
     auto result = node.staticAs<ASTLiteralValueNode> ()->value;
     return validAnyValue(result)->isAnonymousNameSymbol() ? nullptr : result;
 }
@@ -432,7 +432,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
     if(analyzedNode->analyzedType->isControlFlowEscapeType())
         return analyzedNode;
 
-    assert(!expectedTypeSet.empty());
+    sysmelAssert(!expectedTypeSet.empty());
     if(expectedTypeSet.size() == 1)
         return addImplicitCastTo(node, expectedTypeSet[0], isReceiverType);
 
@@ -576,7 +576,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
     for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
         auto &arg = analyzedNode->arguments[i];
-        assert(arg->isASTArgumentDefinitionNode());
+        sysmelAssert(arg->isASTArgumentDefinitionNode());
         arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
@@ -989,7 +989,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitPragmaNode(const ASTPragmaNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)
 {
-    assert(false);
+    sysmelAssert(false);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node)
@@ -1091,7 +1091,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
         }
         else
         {
-            assert("TODO: Support deferred and/or default type " && false);    
+            sysmelAssert("TODO: Support deferred and/or default type " && false);    
         }
     }
 
@@ -1099,7 +1099,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
     if(analyzedNode->type->isASTLiteralValueNode())
     {
         auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
-        assert(literalTypeNode->value->isType());
+        sysmelAssert(literalTypeNode->value->isType());
 
         valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
@@ -1171,7 +1171,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
         }
         else
         {
-            assert("TODO: Support deferred and/or default type " && false);    
+            sysmelAssert("TODO: Support deferred and/or default type " && false);    
         }
     }
 
@@ -1179,7 +1179,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     if(analyzedNode->type->isASTLiteralValueNode())
     {
         auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
-        assert(literalTypeNode->value->isType());
+        sysmelAssert(literalTypeNode->value->isType());
 
         valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
@@ -1262,7 +1262,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
         }
         else
         {
-            assert("TODO: Support deferred and/or default type " && false);    
+            sysmelAssert("TODO: Support deferred and/or default type " && false);    
         }
     }
 
@@ -1270,7 +1270,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
     if(analyzedNode->type->isASTLiteralValueNode())
     {
         auto literalTypeNode = staticObjectCast<ASTLiteralValueNode> (analyzedNode->type);
-        assert(literalTypeNode->value->isType());
+        sysmelAssert(literalTypeNode->value->isType());
 
         valueType = staticObjectCast<Type> (literalTypeNode->value);
     }
@@ -1391,8 +1391,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
     if(variable->isFunctionVariable())
     {
         auto variableOwner = variable->getParentProgramEntity();
-        assert(variableOwner && variableOwner->isCompiledMethod());
-        assert(environment->localDefinitionsOwner && environment->localDefinitionsOwner->isCompiledMethod());
+        sysmelAssert(variableOwner && variableOwner->isCompiledMethod());
+        sysmelAssert(environment->localDefinitionsOwner && environment->localDefinitionsOwner->isCompiledMethod());
         if(variableOwner != environment->localDefinitionsOwner)
             environment->localDefinitionsOwner.staticAs<CompiledMethod> ()->recordCapturedFunctionVariable(staticObjectCast<FunctionVariable> (variable));
     }
@@ -1416,7 +1416,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
         auto &arg = analyzedNode->arguments[i];
-        assert(arg->isASTArgumentDefinitionNode());
+        sysmelAssert(arg->isASTArgumentDefinitionNode());
         arg = analyzeArgumentDefinitionNodeWithExpectedType(staticObjectCast<ASTArgumentDefinitionNode> (arg), currentExpectedType->getExpectedFunctionalArgumentType(i));
         hasError = hasError || arg->isASTErrorNode();
     }
@@ -1575,7 +1575,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
     for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
     {
         auto &arg = analyzedNode->arguments[i];
-        assert(arg->isASTArgumentDefinitionNode());
+        sysmelAssert(arg->isASTArgumentDefinitionNode());
         arg = analyzeTemplateArgumentDefinitionNode(staticObjectCast<ASTArgumentDefinitionNode> (arg));
         hasError = hasError || arg->isASTErrorNode();
     }
@@ -1989,7 +1989,7 @@ void ASTSemanticAnalyzer::analyzeAndEvaluateAsValuesForEnumType(const ASTNodePtr
         AnyValuePtr lastValue = nullptr;
         for(auto &element : makeDictionaryNode->elements)
         {
-            assert(element->isASTMakeAssociationNode());
+            sysmelAssert(element->isASTMakeAssociationNode());
             lastValue = analyzeAndEvaluateValueForEnumType(lastValue, staticObjectCast<ASTMakeAssociationNode> (element), enumType);
         }
 
@@ -2324,7 +2324,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCa
 
 AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)
 {
-    assert(node->analyzedType);
+    sysmelAssert(node->analyzedType);
     return node;
 }
 

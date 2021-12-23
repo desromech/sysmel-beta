@@ -32,7 +32,7 @@ size_t DowncastTypeConversionRule::getConversionCost(const ASTNodePtr &node, con
 ASTNodePtr DowncastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
     (void)semanticAnalyzer;
-    assert(node->analyzedType);
+    sysmelAssert(node->analyzedType);
 
     auto result = basicMakeObject<ASTDowncastTypeConversionNode> ();
     result->sourcePosition = sourcePosition;

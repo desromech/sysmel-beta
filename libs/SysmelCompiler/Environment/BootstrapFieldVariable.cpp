@@ -84,7 +84,7 @@ void BootstrapFieldVariableBase::storeFieldValueIn(const AnyValuePtr &, const An
 
 AnyValuePtr BootstrapFieldVariableBase::getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &referenceType)
 {
-    assert(referenceType->isPointerLikeType());
+    sysmelAssert(referenceType->isPointerLikeType());
     auto accessor = basicMakeObject<BootstrapFieldReferenceAccessor> ();
     accessor->receiver = receiver;
     accessor->fieldVariable = selfFromThis();

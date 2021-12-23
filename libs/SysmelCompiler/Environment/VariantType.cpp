@@ -48,7 +48,7 @@ TypePtr VariantType::make(const TypePtrList &elementTypes)
 
 VariantTypePtr VariantType::makeNormalized(const TypePtrList &elementTypes)
 {
-    assert(!elementTypes.empty());
+    sysmelAssert(!elementTypes.empty());
 
     auto &cache = RuntimeContext::getActive()->variantTypeCache;
     auto it = cache.find(elementTypes);
@@ -80,7 +80,7 @@ bool VariantType::isNullableType() const
 
 std::string VariantType::printString() const
 {
-    assert(!elementTypes.empty());
+    sysmelAssert(!elementTypes.empty());
 
     bool hasVariantTypeElement = false;
     for(auto &el : elementTypes)

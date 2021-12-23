@@ -22,7 +22,7 @@
 #include "Environment/FunctionalType.hpp"
 #include "Environment/ArgumentVariable.hpp"
 #include "Environment/ArgumentCountError.hpp"
-#include <assert.h>
+#include "Environment/Assert.hpp"
 
 namespace Sysmel
 {
@@ -153,13 +153,13 @@ void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumen
 
 void CompiledMethod::setArgumentDeclarationNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
-    assert(index < arguments.size());
+    sysmelAssert(index < arguments.size());
     arguments[index]->setArgumentDeclarationNode(argumentNode);
 }
 
 void CompiledMethod::setArgumentDefinitionNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
-    assert(index < arguments.size());
+    sysmelAssert(index < arguments.size());
     arguments[index]->setArgumentDefinitionNode(argumentNode);
 }
 
@@ -210,7 +210,7 @@ void CompiledMethod::recordCapturedFunctionVariable(const FunctionVariablePtr &c
     // Make sure that my parent also captures the variable.
     auto parentEntity = getParentProgramEntity();
     auto variableParentEntity = capturedVariable->getParentProgramEntity();
-    assert(variableParentEntity->isCompiledMethod());
+    sysmelAssert(variableParentEntity->isCompiledMethod());
     if(parentEntity->isCompiledMethod() && parentEntity != variableParentEntity)
         parentEntity.staticAs<CompiledMethod> ()->recordCapturedFunctionVariable(capturedVariable);
 
@@ -248,7 +248,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     if(parentEntity)
     {
         auto parentSSAValue = parentEntity->asProgramEntitySSAValue();
-        assert(parentSSAValue->isSSAProgramEntity());
+        sysmelAssert(parentSSAValue->isSSAProgramEntity());
         parentSSAValue.staticAs<SSAProgramEntity> ()->addChild(ssaCompiledFunction);
     }
 
@@ -335,7 +335,7 @@ void CompiledMethod::validateBeforeCompileTimeEvaluation()
 
 AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
-    assert(!functionalType->isClosureType());
+    sysmelAssert(!functionalType->isClosureType());
     (void)selector;
     
     validateBeforeCompileTimeEvaluation();
@@ -347,8 +347,8 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
 
 AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
 {
-    assert(functionalType->isClosureType());
-    assert(closure->isCompileTimeCleanUpScope());
+    sysmelAssert(functionalType->isClosureType());
+    sysmelAssert(closure->isCompileTimeCleanUpScope());
     validateBeforeCompileTimeEvaluation();
 
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeWithParent(staticObjectCast<CompileTimeCleanUpScope> (closure));
@@ -361,7 +361,7 @@ void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &rece
     auto expectedReceiverType = functionalType->getReceiverType();
     if(!expectedReceiverType->isVoidType())
     {
-        assert(receiverArgument);
+        sysmelAssert(receiverArgument);
         environment->setStoreBinding(receiverArgument, receiver);
     }
 
@@ -381,7 +381,7 @@ void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &rece
 
 AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
 {
-    assert(!functionalType->isClosureType());
+    sysmelAssert(!functionalType->isClosureType());
     validateBeforeCompileTimeEvaluation();
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
     setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);

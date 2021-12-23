@@ -34,7 +34,7 @@ size_t ConversionMethodTypeConversionRule::getConversionCost(const ASTNodePtr &n
 ASTNodePtr ConversionMethodTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
 {
     (void)targetType;
-    assert(node->analyzedType);
+    sysmelAssert(node->analyzedType);
 
     auto result = basicMakeObject<ASTMessageSendNode> ();
     result->sourcePosition = sourcePosition;

@@ -25,7 +25,7 @@ void GlobalVariable::ensureEvaluationOfInitialValue()
     auto evaluatedValue = initialValueCodeFragment->analyzeAndEvaluate();
     if(isMutable_)
     {
-        assert(referenceType->isReferenceLikeType());
+        sysmelAssert(referenceType->isReferenceLikeType());
         currentValueOrValueBox = evaluatedValue->asMutableStoreValue();
         referenceValue = staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(currentValueOrValueBox);
     }

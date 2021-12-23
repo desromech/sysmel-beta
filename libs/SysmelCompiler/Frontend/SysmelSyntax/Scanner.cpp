@@ -1,6 +1,6 @@
 #include "Frontend/SysmelSyntax/Scanner.hpp"
+#include "Environment/Assert.hpp"
 #include <unordered_map>
-#include <cassert>
 
 namespace Sysmel
 {
@@ -244,7 +244,7 @@ static TokenType skipNumber(SourcePosition &currentPosition)
 
 static bool skipStringLiteral(SourcePosition &currentPosition)
 {
-    assert(currentPosition.peek() == '"');
+    sysmelAssert(currentPosition.peek() == '"');
     currentPosition.advance();
 
     while(currentPosition.peek() != '"')
@@ -266,7 +266,7 @@ static bool skipStringLiteral(SourcePosition &currentPosition)
 
 static bool skipCharacterLiteral(SourcePosition &currentPosition)
 {
-    assert(currentPosition.peek() == '\'');
+    sysmelAssert(currentPosition.peek() == '\'');
     currentPosition.advance();
 
     while(currentPosition.peek() != '\'')

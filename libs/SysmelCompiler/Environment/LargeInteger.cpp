@@ -53,15 +53,15 @@ static size_t computeSignificantWordCount(const uint32_t words[], size_t wordCou
 
 static int32_t compareMagnitudes(const LargeInteger &left, const LargeInteger &right, size_t rightShift = 0)
 {
-    assert(left.isNormalized());
-    assert(right.isNormalized());
+    sysmelAssert(left.isNormalized());
+    sysmelAssert(right.isNormalized());
     auto leftWordCount = left.words.size();
     auto rightWordCount = right.words.size();
     auto effectiveRightWordCount = rightWordCount + rightShift;
     if(leftWordCount != effectiveRightWordCount)
         return leftWordCount < effectiveRightWordCount ? -1 : 1;
 
-    assert(leftWordCount == (rightWordCount + rightShift));
+    sysmelAssert(leftWordCount == (rightWordCount + rightShift));
     for(size_t i = 0; i < rightWordCount; ++i)
     {
         auto leftWord = left.words[leftWordCount - i - 1];
@@ -203,7 +203,7 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
     {
         quotient.words[m] = 1;
         remainder -= wordShifted(divisor, m);
-        assert(remainder.isNormalized());
+        sysmelAssert(remainder.isNormalized());
     }
     else
     {
@@ -214,7 +214,7 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
 
     for(auto i = m; i > 0;)
     {
-        assert(!remainder.signBit);
+        sysmelAssert(!remainder.signBit);
         --i;
 
         auto &qi = quotient.words[i];
@@ -225,13 +225,13 @@ static void divideMagnitudesInto(const LargeInteger &dividend, const LargeIntege
         remainder -= timeFactorWithOffset(divisor, qi, i);
         while(remainder.signBit)
         {
-            assert(qi > 0);
+            sysmelAssert(qi > 0);
             --qi;
             remainder += wordShifted(divisor, i);
         }
     }
 
-    assert(compareMagnitudes(remainder, divisor) < 0);
+    sysmelAssert(compareMagnitudes(remainder, divisor) < 0);
 }
 
 static uint8_t bitsPerDigitInRadix(uint8_t radix)
@@ -600,7 +600,7 @@ LargeInteger LargeInteger::operator<<(uint32_t shiftAmount) const
 
     if(carry != 0)
     {
-        assert(hasExtraWordAtEnd);
+        sysmelAssert(hasExtraWordAtEnd);
         result.words.back() = carry;
     }
 
@@ -676,7 +676,7 @@ LargeInteger LargeInteger::binomialCoefficient(const LargeInteger &n, const Larg
 
 uint32_t LargeInteger::highBitOfMagnitude() const
 {
-    assert(isNormalized());
+    sysmelAssert(isNormalized());
     if(isZero())
         return 0;
     return uint32_t(highBitOf(words.back()) + (words.size() - 1) * 32);
@@ -685,7 +685,7 @@ uint32_t LargeInteger::highBitOfMagnitude() const
 
 double LargeInteger::asDouble() const
 {
-    assert(isNormalized());
+    sysmelAssert(isNormalized());
     if(isZero())
         return 0.0;
 
@@ -833,7 +833,7 @@ std::string LargeInteger::asString() const
             ++segmentDigitCount;
         } while(segmentRemainder != 0);
 
-        assert(segmentDigitCount <= 19);
+        sysmelAssert(segmentDigitCount <= 19);
         if(!quotient.isZero())
         {
             auto paddingCount = 19 - segmentDigitCount;

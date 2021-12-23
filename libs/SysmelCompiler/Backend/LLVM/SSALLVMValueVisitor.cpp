@@ -52,71 +52,71 @@ static BootstrapTypeRegistration<SSALLVMConstant> SSALLVMConstantTypeRegistratio
 std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext &)>> SSALLVMValueVisitor::intrinsicGenerators = {
 
     {"integer.conversion.sign-extend", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() <= 2);
+        sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateSExt(context.arguments.back(), context.resultType);
     }},
     {"integer.conversion.zero-extend", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() <= 2);
+        sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateZExt(context.arguments.back(), context.resultType);
     }},
     {"integer.conversion.bitcast", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() <= 2);
+        sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateBitCast(context.arguments.back(), context.resultType);
     }},
     {"integer.conversion.truncate", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() <= 2);
+        sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateTrunc(context.arguments.back(), context.resultType);
     }},
 
     {"integer.less-than.signed", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpSLT(context.arguments[0], context.arguments[1]));
     }},
 
     {"integer.less-than.unsigned", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULT(context.arguments[0], context.arguments[1]));
     }},
 
     {"integer.add", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateAdd(context.arguments[0], context.arguments[1]);
     }},
 
     {"float.add", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateFAdd(context.arguments[0], context.arguments[1]);
     }},
     {"float.mul", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateFMul(context.arguments[0], context.arguments[1]);
     }},
 
 
     {"pointer.to.reference", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 1);
+        sysmelAssert(context.arguments.size() == 1);
         return context.arguments[0];
     }},
 
     {"pointer.element", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateGEP(context.arguments[0], context.arguments[1]);
     }},
 
     {"reference.load", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 1);
+        sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateLoad(context.arguments[0]);
     }},
     {"reference.to.pointer", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 1);
+        sysmelAssert(context.arguments.size() == 1);
         return context.arguments[0];
     }},
     {"reference.reinterpret", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() <= 2);
+        sysmelAssert(context.arguments.size() <= 2);
         return context.arguments.back();
     }},
     {"reference.copy.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
-        assert(context.arguments.size() == 2);
+        sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateStore(context.arguments[1], context.arguments[0]);
     }},
 };
@@ -146,7 +146,7 @@ llvm::Value *SSALLVMValueVisitor::translateValue(const SSAValuePtr &value)
     if(it != localTranslatedValueMap.end())
         return it->second;
     
-    assert(!value->isSSAInstruction());
+    sysmelAssert(!value->isSSAInstruction());
     auto result = visitValueForLLVM(value);
     if(value->isSSACodeRegionLocalValue())
         localTranslatedValueMap.insert({value, result});
@@ -289,8 +289,8 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
 
 llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments)
 {
-    assert(arguments.size() == codeRegion->getArgumentCount());
-    assert(!codeRegion->isEmpty());
+    sysmelAssert(arguments.size() == codeRegion->getArgumentCount());
+    sysmelAssert(!codeRegion->isEmpty());
 
     // Map the code region arguments.
     for(size_t i = 0; i < arguments.size(); ++ i)
@@ -414,7 +414,7 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
 {
     const auto &calledFunction = instruction->getFunction();
     auto functionType = calledFunction->getValueType();
-    assert(functionType->isFunctionalType());
+    sysmelAssert(functionType->isFunctionalType());
     
     auto translatedFunctionType = backend->translateType(functionType);
     auto translatedCalledFunction = translateValue(calledFunction);
@@ -501,14 +501,14 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWhileInstruction(const SSADoWhileInstruc
 
 AnyValuePtr SSALLVMValueVisitor::visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction)
 {
-    assert(instruction->getAggregate()->getValueType()->isPointerLikeType());
+    sysmelAssert(instruction->getAggregate()->getValueType()->isPointerLikeType());
     auto aggregate = translateValue(instruction->getAggregate());
     return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, instruction->getFieldVariable()->getSlotIndex()));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitGetAggregateSlotReferenceInstruction(const SSAGetAggregateSlotReferenceInstructionPtr &instruction)
 {
-    assert(instruction->getAggregate()->getValueType()->isPointerLikeType());
+    sysmelAssert(instruction->getAggregate()->getValueType()->isPointerLikeType());
     auto aggregate = translateValue(instruction->getAggregate());
     auto index = instruction->getSlotIndex();
     if(index->isSSAConstantLiteralValue())

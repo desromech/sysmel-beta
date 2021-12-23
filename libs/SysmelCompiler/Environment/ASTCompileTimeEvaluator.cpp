@@ -100,7 +100,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitCleanUpScopeNode(const ASTCleanUpScope
 
 AnyValuePtr ASTCompileTimeEvaluator::evaluateMethodBodyNode(const CompileTimeCleanUpScopePtr &initialEnvironment, const ASTNodePtr &node)
 {
-    assert(!currentCleanUpScope);
+    sysmelAssert(!currentCleanUpScope);
     currentCleanUpScope = initialEnvironment;
 
     return visitNodeCachingExplicitReturns(node);
@@ -207,7 +207,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
     case 1:
         return elements.back();
     default:
-        assert(node->analyzedType->isTupleType());
+        sysmelAssert(node->analyzedType->isTupleType());
         return node->analyzedType.staticAs<TupleType> ()->makeWithElements(elements);
     }
 }
@@ -230,7 +230,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMessageSendNode(const ASTMessageSendNo
 
 AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)
 {
-    assert(false);
+    sysmelAssert(false);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitQuoteNode(const ASTQuoteNodePtr &node)
@@ -248,7 +248,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitSequenceNode(const ASTSequenceNodePtr 
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
-    assert(currentCleanUpScope);
+    sysmelAssert(currentCleanUpScope);
 
     AnyValuePtr initialValue;
 
@@ -267,7 +267,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariab
     if(node->isMutable)
     {
         auto referenceType = variable->getReferenceType();
-        assert(referenceType->isReferenceLikeType());
+        sysmelAssert(referenceType->isReferenceLikeType());
 
         auto mutableValue = storeValue->asMutableStoreValue();
         storeValue = referenceType.staticAs<PointerLikeType> ()->makeWithValue(mutableValue);
@@ -293,7 +293,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitFieldVariableAccessNode(const ASTField
 AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto storeBinding = node->variable->findStoreBindingInCompileTime(currentCleanUpScope);
-    assert(storeBinding);
+    sysmelAssert(storeBinding);
     
     return storeBinding->accessVariableAsReferenceWithType(node->analyzedType);
 }
@@ -368,7 +368,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitValueAsReferenceReinterpretConversionN
 {
     auto value = visitNode(node->expression);
     auto resultType = node->analyzedType;
-    assert(resultType->isPointerLikeType());
+    sysmelAssert(resultType->isPointerLikeType());
     return resultType.staticAs<PointerLikeType> ()->makeWithValue(value);
 }
 
@@ -450,7 +450,7 @@ AnyValuePtr ASTCompileTimeEvaluator::visitDoWhileNode(const ASTDoWhileNodePtr &n
 
 AnyValuePtr ASTCompileTimeEvaluator::visitReturnNode(const ASTReturnNodePtr &node)
 {
-    assert(currentReturnToken);
+    sysmelAssert(currentReturnToken);
     auto result = getVoidConstant();
     if(node->expression)
         result = visitNode(node->expression);

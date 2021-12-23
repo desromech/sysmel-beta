@@ -47,7 +47,7 @@ SSAValuePtr Template::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
         auto parentProgramEntity = getParentProgramEntity()->asProgramEntitySSAValue();
         if(parentProgramEntity)
         {
-            assert(parentProgramEntity->isSSAProgramEntity());
+            sysmelAssert(parentProgramEntity->isSSAProgramEntity());
             parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplate);
         }
     }
@@ -85,19 +85,19 @@ void Template::setArgumentTypes(const TypePtrList &argumentTypes)
 
 void Template::setArgumentDeclarationNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
-    assert(index < arguments.size());
+    sysmelAssert(index < arguments.size());
     arguments[index]->setArgumentDeclarationNode(argumentNode);
 }
 
 void Template::setArgumentDefinitionNode(size_t index, const ASTArgumentDefinitionNodePtr &argumentNode)
 {
-    assert(index < arguments.size());
+    sysmelAssert(index < arguments.size());
     arguments[index]->setArgumentDefinitionNode(argumentNode);
 }
 
 TemplateInstancePtr Template::getOrCreateTemplateInstanceWithArguments(const AnyValuePtrList &instanceArguments)
 {
-    assert(instanceArguments.size() == arguments.size());
+    sysmelAssert(instanceArguments.size() == arguments.size());
     auto it = instanceCache.find(instanceArguments);
     if(it != instanceCache.end())
         return it->second;
@@ -163,7 +163,7 @@ ASTNodePtr Template::analyzeCallNode(const ASTCallNodePtr &callNode, const ASTSe
 
         if(hasError)
         {
-            assert(errorNode);
+            sysmelAssert(errorNode);
             return errorNode;
         }
 

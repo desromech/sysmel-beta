@@ -13,6 +13,7 @@ set(Environment_Sources
     ArgumentVariable.cpp
     ArithmeticError.cpp
     ArrayType.cpp
+    Assert.cpp
     ASTAnalysisEnvironment.cpp
     ASTArgumentDefinitionNode.cpp
     ASTBreakNode.cpp

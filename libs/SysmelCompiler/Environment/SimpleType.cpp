@@ -33,7 +33,7 @@ void SimpleType::setType(const TypePtr &theMetaType)
 
 void SimpleType::setSupertypeAndImplicitMetaType(const TypePtr &newSupertype)
 {
-    assert(newSupertype);
+    sysmelAssert(newSupertype);
     auto newMeta = basicMakeObject<MetaType> ();
     metaType = newMeta;
     newMeta->setThisType(selfFromThis());

@@ -43,7 +43,7 @@ SSAValuePtr TemplateInstance::asSSAValueRequiredInPosition(const ASTSourcePositi
 
         if(parentProgramEntity)
         {
-            assert(parentProgramEntity->isSSAProgramEntity());
+            sysmelAssert(parentProgramEntity->isSSAProgramEntity());
             parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplateInstance);
         }
     }

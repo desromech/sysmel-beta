@@ -123,7 +123,7 @@ bool SSABuilder::isLastTerminator() const
 
 void SSABuilder::addInstruction(const SSAInstructionPtr &instruction)
 {
-    assert(currentPosition || !isLastTerminator());
+    sysmelAssert(currentPosition || !isLastTerminator());
     currentBasicBlock->addInstructionBefore(instruction, currentPosition);
 }
 
@@ -230,7 +230,7 @@ SSAIfInstructionPtr SSABuilder::ifTrueIfFalse(const TypePtr &resultType, const S
 SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
 {
     auto referenceType = reference->getValueType();
-    assert(referenceType->isPointerLikeType());
+    sysmelAssert(referenceType->isPointerLikeType());
     auto resultType = referenceType.staticAs<PointerLikeType> ()->getBaseType();
 
     auto instruction = basicMakeObject<SSALoadInstruction> ();
@@ -243,8 +243,8 @@ SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
 
 SSALocalVariableInstructionPtr SSABuilder::localVariable(const TypePtr &referenceType, const TypePtr &valueType)
 {
-    assert(referenceType->isPointerLikeType());
-    assert(referenceType.staticAs<PointerLikeType> ()->getBaseType()->isSubtypeOf(valueType));
+    sysmelAssert(referenceType->isPointerLikeType());
+    sysmelAssert(referenceType.staticAs<PointerLikeType> ()->getBaseType()->isSubtypeOf(valueType));
 
     auto instruction = basicMakeObject<SSALocalVariableInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);

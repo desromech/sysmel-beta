@@ -3,7 +3,7 @@
 #pragma once
 
 #include <algorithm>
-#include <cassert>
+#include "../Environment/Assert.hpp"
 
 namespace Sysmel
 {
@@ -77,13 +77,13 @@ struct CollectionRange
 
     SelfType until(const SelfType &other) const
     {
-        assert(collection == other.collection);
+        sysmelAssert(collection == other.collection);
         return SelfType{{collection, startPosition, other.startPosition}};
     }
 
     SelfType untilEndOf(const SelfType &other) const
     {
-        assert(collection == other.collection);
+        sysmelAssert(collection == other.collection);
         return SelfType{{collection, startPosition, other.endPosition}};
     }
 

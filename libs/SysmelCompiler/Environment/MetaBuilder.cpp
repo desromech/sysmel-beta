@@ -76,7 +76,7 @@ ASTNodePtr MetaBuilder::concretizeMetaBuilder()
 ASTNodePtr MetaBuilder::concretizeEphemeralCompileTimeObject(const ASTLiteralValueNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     (void)node;
-    assert(node->value == selfFromThis());
+    sysmelAssert(node->value == selfFromThis());
     return concretizeMetaBuilderAndAnalyzeWith(semanticAnalyzer);
 }
 

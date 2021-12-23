@@ -102,7 +102,7 @@ AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
 AnyValuePtr ClassType::basicNewValue()
 {
     auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();
-    assert(sequentialLayout);
+    sysmelAssert(sequentialLayout);
 
     const auto &slotTypes = sequentialLayout->getSlotTypes();
 

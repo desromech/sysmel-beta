@@ -264,7 +264,7 @@ void SpecificMethod::concretizeAutoResultTypeWith(const TypePtr &newResultType)
     if(!functionalType->hasAutoResultType())
         return;
     
-    assert(!newResultType->isReturnType());
+    sysmelAssert(!newResultType->isReturnType());
     functionalType = functionalType->copyWithResultType(newResultType);
     if(functionalValue)
         functionalValue->type = functionalType;

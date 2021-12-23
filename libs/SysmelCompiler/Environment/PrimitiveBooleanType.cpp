@@ -55,7 +55,7 @@ bool Boolean8::__canBeInstantiatedWithLiteralValue__(const AnyValuePtr &value)
 
 AnyValuePtr Boolean8::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 {
-    assert(value->isLiteralBooleanTrue() || value->isLiteralBooleanFalse());
+    sysmelAssert(value->isLiteralBooleanTrue() || value->isLiteralBooleanFalse());
     return make(value->isLiteralBooleanTrue());
 }
 

@@ -1,6 +1,6 @@
 #include "Environment/BootstrapExtensionMethods.hpp"
 #include "Environment/Type.hpp"
-#include <assert.h>
+#include "Environment/Assert.hpp"
 
 namespace Sysmel
 {

@@ -79,7 +79,7 @@ bool SSACodeRegionArgument::isLocalFinalizationRequired() const
 
 void SSACodeRegionArgument::markLocalFinalizationRequired()
 {
-    assert(isResult_);
+    sysmelAssert(isResult_);
     localFinalizationRequired = true;
 }
 

@@ -29,7 +29,7 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForReceiverType(const Ty
 
 ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtrList &expectedTypeSet)
 {
-    assert(!expectedTypeSet.empty());
+    sysmelAssert(!expectedTypeSet.empty());
     auto typeInferenceSlot = basicMakeObject<ExpectedTypeSetInferenceSlot> ();
     typeInferenceSlot->expectedTypeSet = expectedTypeSet;
     return typeInferenceSlot;

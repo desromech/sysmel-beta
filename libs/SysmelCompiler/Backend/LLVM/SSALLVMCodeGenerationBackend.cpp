@@ -104,7 +104,7 @@ llvm::Type *SSALLVMCodeGenerationBackend::translateType(const TypePtr &type)
     visitor->backend = this;
     
     auto result = visitor->visitType(type);
-    assert(result);
+    sysmelAssert(result);
     typeMap.insert({type, result});
     return result;
 }
@@ -130,7 +130,7 @@ llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstant(const TypePtr
     case 2:
     case 4:
     default:
-        assert("Unsupported string type." && false);
+        sysmelAssert("Unsupported string type." && false);
     }
 }
 

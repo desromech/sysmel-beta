@@ -3,10 +3,10 @@
 #pragma once
 
 #include <stdint.h>
-#include <assert.h>
 #include <functional> // For std::hash
 #include <ostream>
 #include <unordered_set>
+#include "Assert.hpp"
 
 namespace Sysmel
 {
@@ -47,7 +47,7 @@ public:
 
     void strongRetain() const
     {
-        assert(strongCount > 0);
+        sysmelAssert(strongCount > 0);
         ++strongCount;
     }
 
@@ -56,7 +56,7 @@ public:
         if(!memoryPool)
             return;
 
-        assert(strongCount > 0);
+        sysmelAssert(strongCount > 0);
         --strongCount;
         if(strongCount == 0)
         {
@@ -67,7 +67,7 @@ public:
 
     void weakRetain() const
     {
-        assert(weakCount > 0);
+        sysmelAssert(weakCount > 0);
         ++weakCount;
     }
 
@@ -76,7 +76,7 @@ public:
         if(!memoryPool)
             return;
 
-        assert(weakCount > 0);
+        sysmelAssert(weakCount > 0);
         --weakCount;
         if(weakCount == 0)
         {
@@ -87,7 +87,7 @@ public:
 
     bool weakLock() const
     {
-        assert(weakCount > 0);
+        sysmelAssert(weakCount > 0);
 
         // TODO: Convert this into an atomic operation.
         if(strongCount > 0)

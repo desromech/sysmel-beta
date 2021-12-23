@@ -88,7 +88,7 @@ void AggregateTypeVariantLayout::finishGroup()
     if(elementMemoryAlignment == 0)
         return;
 
-    assert(elementTypes.size() <= 0xFF);
+    sysmelAssert(elementTypes.size() <= 0xFF);
     dataTypeIndexOffset = 0;
     dataTypeIndexType = UInt8::__staticType__();
 

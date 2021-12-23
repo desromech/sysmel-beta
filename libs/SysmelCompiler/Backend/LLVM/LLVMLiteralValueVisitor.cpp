@@ -72,7 +72,7 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveFloatType(const PrimitiveFloa
 
 AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value)
 {
-    assert(translatedExpectedType->isPointerTy());
+    sysmelAssert(translatedExpectedType->isPointerTy());
     auto resultType = llvm::cast<llvm::PointerType> (translatedExpectedType);
     auto baseValue = value->baseValue;
     if(!baseValue || baseValue->isUndefined())
@@ -83,31 +83,31 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLike
     {
         auto elementType = value->getType().staticAs<PointerLikeType> ()->getBaseType()->asUndecoratedType();
         auto result = backend->internStringConstantPointer(elementType, baseValue->asString(), true);
-        assert(result->getType()->isPointerTy());
+        sysmelAssert(result->getType()->isPointerTy());
 
         return wrapLLVMConstant(llvm::ConstantExpr::getBitCast(result, translatedExpectedType));
     }
     else if(baseValue->isLiteralInteger())
     {
-        assert("TODO: translate integer address into constant pointer" && false);
+        sysmelAssert("TODO: translate integer address into constant pointer" && false);
     }
     else if(baseValue->isProgramEntity())
     {
-        assert("TODO: translate program entity address into constant pointer" && false);
+        sysmelAssert("TODO: translate program entity address into constant pointer" && false);
     }
 
-    assert("unsupported pointer type value constant" && false);
+    sysmelAssert("unsupported pointer type value constant" && false);
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitStructureTypeValue(const StructureTypeValuePtr &value)
 {
-    assert(value->getType());
+    sysmelAssert(value->getType());
     auto structureType = value->getType().staticAs<StructureType> ();
     auto resultType = llvm::cast<llvm::StructType> (backend->translateType(value->getType()));
     
     const auto &slotTypes = structureType->getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes();
     auto slotCount = value->slots.size();
-    assert(slotCount == slotTypes.size());
+    sysmelAssert(slotCount == slotTypes.size());
 
     std::vector<llvm::Constant*> slots;
     slots.reserve(slotCount);

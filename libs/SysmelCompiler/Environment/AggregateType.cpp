@@ -141,7 +141,7 @@ AnyValuePtr AggregateTypeValue::asMutableStoreValue()
 
 AnyValuePtr AggregateTypeValue::getReferenceToSlotWithType(int64_t slotIndex, int64_t slotOffset, const TypePtr &referenceType)
 {
-    assert(referenceType->isPointerLikeType());
+    sysmelAssert(referenceType->isPointerLikeType());
     auto layout = type->getLayout();
     auto elementType = layout->getTypeForSlotAndOffset(slotIndex, slotOffset);
     if(!elementType)

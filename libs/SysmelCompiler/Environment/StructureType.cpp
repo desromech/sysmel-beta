@@ -24,7 +24,7 @@ bool StructureType::isStructureType() const
 AnyValuePtr StructureType::basicNewValue()
 {
     auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();
-    assert(sequentialLayout);
+    sysmelAssert(sequentialLayout);
 
     const auto &slotTypes = sequentialLayout->getSlotTypes();
 

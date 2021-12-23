@@ -1,5 +1,5 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
-#include <assert.h>
+#include "Environment/Assert.hpp"
 
 namespace Sysmel
 {
@@ -21,7 +21,7 @@ const StaticBootstrapDefinedTypeMetadataList &getBootstrapDefinedTypeMetadataLis
 
 void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *metadata)
 {
-    assert(metadata->bootstrapTypeID == 0);
+    sysmelAssert(metadata->bootstrapTypeID == 0);
     const auto &list = getOrCreateMetadataList();
     metadata->bootstrapTypeID = list->size()*2 + 1;
     list->push_back(metadata);
