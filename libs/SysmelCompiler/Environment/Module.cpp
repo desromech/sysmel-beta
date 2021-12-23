@@ -21,6 +21,11 @@ void Module::setActive(const ModulePtr &aModule)
     activeModuleInThisThread = aModule;
 }
 
+bool Module::isModule() const
+{
+    return true;
+}
+
 bool Module::isBootstrapModule() const
 {
     return false;

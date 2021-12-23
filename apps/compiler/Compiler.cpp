@@ -56,6 +56,12 @@ void writeStringToOutputFileNamed(const std::string &string, const std::string &
 
 }
 
+std::string basename(const std::string &name)
+{
+    auto pos = name.rfind('.');
+    return pos != std::string::npos ? name.substr(0, pos) : name;
+}
+
 int main(int argc, const char *argv[])
 {
     CompilerParameters parameters;
@@ -100,7 +106,7 @@ int main(int argc, const char *argv[])
 
     int exitCode = 0;
     RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForHost())->activeDuring([&]{
-        auto programModule = ProgramModule::create(parameters.moduleName);
+        auto programModule = ProgramModule::create(basename(parameters.moduleName));
         programModule->activeDuring([&]{
 
             for(auto &inputFileName : parameters.inputFileNames)

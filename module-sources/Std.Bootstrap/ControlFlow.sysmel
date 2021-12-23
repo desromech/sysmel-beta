@@ -1,0 +1,29 @@
+namespace __Environment__ definition: {
+namespace SysmelLanguage definition: {
+
+    ## For
+    macro method for: declarations while: condition do: body continueWith: continueAction := ``{
+        `,declarations.
+        while: `,condition do: `,body continueWith: `,continueAction
+    }.
+
+    ## until:do:continueWith:
+    macro method until: condition do: body := ``(
+        while: `,condition not do: `,body
+    ).
+
+    macro method until: condition do: body continueWith: continueAction := ``(
+        while: `,condition not do: `,body continueWith: `,continueAction
+    ).
+
+    ## do:until:
+    macro method do: body until: condition := ``(
+        do: `,body while: `,condition not
+    ).
+
+    macro method do: body continueWith: continueAction until: condition := ``(
+        do: `,body continueWith: `,continueAction while: `,condition not
+    ).
+
+}.
+}.

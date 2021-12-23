@@ -3,6 +3,8 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/TypeVisitor.hpp"
+#include "Environment/AggregateTypeVariantLayout.hpp"
 #include <unordered_set>
 #include <sstream>
 
@@ -129,6 +131,11 @@ AnyValuePtr VariantType::basicNewValue()
     return variant;
 }
 
+AnyValuePtr VariantType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitVariantType(selfFromThis());
+}
+
 TypePtr VariantType::appendTypeMakingVariant(const TypePtr &nextType)
 {
     auto newElementTypes = elementTypes;
@@ -147,6 +154,15 @@ TypePtr VariantType::appendTypeMakingVariant(const TypePtr &nextType)
 
 void VariantType::addSpecializedInstanceMethods()
 {
+}
+
+void VariantType::buildLayout()
+{
+    layout = basicMakeObject<AggregateTypeVariantLayout>();
+    layout->beginGroup();
+    for(auto &type : elementTypes)
+        layout->addSlotWithType(type);
+    layout->finishGroup();
 }
 
 bool VariantTypeValue::isVariantTypeValue() const

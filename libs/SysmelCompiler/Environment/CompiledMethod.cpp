@@ -232,6 +232,9 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
 
     // Make the function.    
     ssaCompiledFunction = basicMakeObject<SSAFunction> ();
+    ssaCompiledFunction->setExternalLanguageMode(externalLanguageMode);
+    ssaCompiledFunction->setVisibility(visibility);
+    ssaCompiledFunction->setDllLinkageMode(dllLinkageMode);
     ssaCompiledFunction->initializeWithNameAndType(getName(), functionalType);
     ssaCompiledFunction->setIntrinsicName(getIntrinsicName());
     ssaCompiledFunction->setDeclarationPosition(declarationPosition);

@@ -28,6 +28,7 @@ public:
     virtual bool isNullableType() const override;
 
     virtual AnyValuePtr basicNewValue() override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
     VariantTypeValuePtr makeWithElements(const AnyValuePtrList &elements);
 
     virtual std::string printString() const override;
@@ -38,6 +39,9 @@ public:
     void addSpecializedInstanceMethods();
 
     TypePtrList elementTypes;
+
+protected:
+    virtual void buildLayout() override;
 };
 
 /**

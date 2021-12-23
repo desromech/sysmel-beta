@@ -474,7 +474,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitArgumentDefinitionNode(const ASTArgumentDe
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(const ASTArgumentDefinitionNodePtr &node, const TypePtr &expectedType, bool isMacro)
 {
-    auto analyzedNode = basicMakeObject<ASTArgumentDefinitionNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     auto name = evaluateNameSymbolValue(analyzedNode->identifier);
     analyzedNode->analyzedIdentifier = name;
 
@@ -522,7 +522,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeArgumentDefinitionNodeWithExpectedType(co
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeTemplateArgumentDefinitionNode(const ASTArgumentDefinitionNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTArgumentDefinitionNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     auto name = evaluateNameSymbolValue(analyzedNode->identifier);
     analyzedNode->analyzedIdentifier = name;
 
@@ -553,7 +553,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeTemplateArgumentDefinitionNode(const ASTA
 
 AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTCleanUpScopeNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->analyzedScope = CleanUpScope::makeWithParent(environment->cleanUpScope);
 
     auto newEnvironment = environment->copyWithCleanUpcope(analyzedNode->analyzedScope);
@@ -567,7 +567,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCleanUpScopeNode(const ASTCleanUpScopeNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitClosureNode(const ASTClosureNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTClosureNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // TODO: Use the current expected type to assist the function type inference.
 
@@ -669,13 +669,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitIdentifierReferenceNode(const ASTIdentifie
         return recordSemanticErrorInNode(node, formatString("Failed to find binding for identifier {0}.", {{node->identifier->printString()}}));
     }
 
-    auto analyzedNode = basicMakeObject<ASTIdentifierReferenceNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     return boundSymbol->analyzeIdentifierReferenceNode(analyzedNode, selfFromThis());
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTCallNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->function = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->function);
     return analyzedNode->function->analyzedType->analyzeCallNode(analyzedNode, selfFromThis());
 }
@@ -708,7 +708,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallN
 
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTLexicalScopeNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->analyzedScope = basicMakeObject<LexicalScope> ();
     analyzedNode->analyzedScope->parent = environment->lexicalScope;
 
@@ -723,14 +723,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)
 {
-    auto result = basicMakeObject<ASTLiteralValueNode> (*node);
+    auto result = shallowCloneObject(node);
     result->analyzedType = node->type;
     return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTMakeAssociationNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->key = analyzeNodeIfNeededWithAutoType(analyzedNode->key);
     if(!analyzedNode->value)
         analyzedNode->value = getNilConstant()->asASTNodeRequiredInPosition(node->sourcePosition);
@@ -757,7 +757,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeAssociationNode(const ASTMak
     
 AnyValuePtr ASTSemanticAnalyzer::visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTMakeDictionaryNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     auto expectedDictionaryType = LiteralDictionary::__staticType__();
     auto expectedAssociationType = LiteralAssociation::__staticType__();
     for(auto &element : analyzedNode->elements)
@@ -796,7 +796,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeLiteralArrayNode(const ASTMakeLiteralA
         literalEnvironment = literalEnvironment->languageSupport->createMakeLiteralArrayAnalysisEnvironment();
 
     return withEnvironmentDoAnalysis(literalEnvironment, [&](){
-        auto analyzedNode = basicMakeObject<ASTMakeLiteralArrayNode> (*node);
+        auto analyzedNode = shallowCloneObject(node);
         auto hasError = false;
         ASTNodePtr errorNode;
         for(auto &el : analyzedNode->elements)
@@ -841,7 +841,7 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTMakeTupleNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     TypePtrList elementTypes;
     elementTypes.reserve(analyzedNode->elements.size());
@@ -895,7 +895,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
         return analyzeNodeIfNeededWithCurrentExpectedType(result);
     }
 
-    auto analyzedNode = basicMakeObject<ASTMessageChainNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->receiver = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->receiver);
 
     // Support inline analysis of meta-builders.
@@ -943,7 +943,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageChainNode(const ASTMessageChainNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTMessageSendNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->selector = analyzeNodeIfNeededWithAutoType(analyzedNode->selector);
 
     if(analyzedNode->receiver)
@@ -970,7 +970,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMessageSendNode(const ASTMessageSendNodePt
 
 AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr &node)
 {
-    auto result = basicMakeObject<ASTParseErrorNode> (*node);
+    auto result = shallowCloneObject(node);
     result->analyzedType = Type::getCompilationErrorValueType();
     recordedErrors.push_back(result);
     return result;
@@ -978,7 +978,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitParseErrorNode(const ASTParseErrorNodePtr 
 
 AnyValuePtr ASTSemanticAnalyzer::visitPragmaNode(const ASTPragmaNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTPragmaNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->selector = analyzeNodeIfNeededWithExpectedType(analyzedNode->selector, Type::getLiteralSymbolValue());
     for(auto &argument : node->arguments)
         argument = analyzeNodeIfNeededWithExpectedType(argument, Type::getLiteralValueType());
@@ -999,14 +999,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuoteNode(const ASTQuoteNodePtr &node)
 {
-    auto result = basicMakeObject<ASTQuoteNode> (*node);
+    auto result = shallowCloneObject(node);
     result->analyzedType = ASTNode::__staticType__();
     return result;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitSequenceNode(const ASTSequenceNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTSequenceNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // Simplify the single element sequence.
     if(analyzedNode->pragmas.empty() && analyzedNode->expressions.size() == 1)
@@ -1058,7 +1058,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTLocalVariableNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
@@ -1129,7 +1129,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNo
 
 AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTGlobalVariableNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1192,6 +1192,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
     if(!globalVariable)
     {
         globalVariable = basicMakeObject<GlobalVariable> ();
+        globalVariable->setVisibility(node->visibility);
+        globalVariable->setExternalLanguageMode(node->externalLanguageMode);
+        globalVariable->setDllLinkageMode(node->dllLinkageMode);
         globalVariable->setDefinitionParameters(name, valueType, analyzedNode->isMutable);
         globalVariable->setDeclarationNode(analyzedNode);
         globalVariable->setDefinitionNode(analyzedNode);
@@ -1218,7 +1221,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
 
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTFieldVariableNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->isMutable = true;
     
     // Concretize the default visibility.
@@ -1304,7 +1307,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
 
 AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTimeConstantNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTCompileTimeConstantNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1370,7 +1373,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitCompileTimeConstantNode(const ASTCompileTi
 
 AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTFieldVariableAccessNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->aggregate = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->aggregate);
     if(analyzedNode->aggregate->isASTErrorNode())
         return analyzedNode->aggregate;
@@ -1383,7 +1386,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableAccessNode(const ASTFieldVari
 
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTVariableAccessNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     const auto &variable = analyzedNode->variable;
     if(variable->isFunctionVariable())
     {
@@ -1400,7 +1403,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccess
 
 AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTFunctionNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1508,6 +1511,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         compiledMethod = basicMakeObject<CompiledMethod> ();
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
+        compiledMethod->setVisibility(node->visibility);
+        compiledMethod->setExternalLanguageMode(node->externalLanguageMode);
+        compiledMethod->setDllLinkageMode(node->dllLinkageMode);
 
         // If this is a local definition, then define it as a closure.
         if(isLocalDefinition)
@@ -1558,7 +1564,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
 AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTTemplateNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1620,6 +1626,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
         templateEntity->setName(name);
         templateEntity->setDeclarationNode(analyzedNode);
         templateEntity->setArgumentTypes(argumentTypes);
+        templateEntity->setVisibility(node->visibility);
+        templateEntity->setExternalLanguageMode(node->externalLanguageMode);
+        templateEntity->setDllLinkageMode(node->dllLinkageMode);
         templateEntity->enqueuePendingSemanticAnalysis();
 
         // Set the arguments declaration node.
@@ -1659,7 +1668,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitTemplateNode(const ASTTemplateNodePtr &nod
 
 AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTMethodNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
@@ -1780,6 +1789,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         compiledMethod->setName(name);
         compiledMethod->setDeclaration(analyzedNode);
         compiledMethod->setMethodSignature(receiverType, resultType, argumentTypes);
+        compiledMethod->setVisibility(node->visibility);
+        compiledMethod->setExternalLanguageMode(node->externalLanguageMode);
+        compiledMethod->setDllLinkageMode(node->dllLinkageMode);
 
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
@@ -1827,7 +1839,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTNamespaceNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
 
@@ -1893,7 +1905,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
 
 AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTEnumNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -1935,6 +1947,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
         enumType->setName(name);
         enumType->setBaseType(AnyValue::__staticType__());
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
+        enumType->setVisibility(node->visibility);
+        enumType->setExternalLanguageMode(node->externalLanguageMode);
+        enumType->setDllLinkageMode(node->dllLinkageMode);
         ownerEntity->recordChildProgramEntityDefinition(enumType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(enumType, analyzedNode->visibility);
@@ -2027,7 +2042,7 @@ AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyVal
 
 AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTClassNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -2068,6 +2083,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
         classType = basicMakeObject<ClassType> ();
         classType->setName(name);
         classType->setSupertypeAndImplicitMetaType(ClassTypeValue::__staticType__());
+        classType->setVisibility(node->visibility);
+        classType->setExternalLanguageMode(node->externalLanguageMode);
+        classType->setDllLinkageMode(node->dllLinkageMode);
         ownerEntity->recordChildProgramEntityDefinition(classType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(classType, analyzedNode->visibility);
@@ -2094,7 +2112,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTStructNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -2135,6 +2153,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
         structureType = basicMakeObject<StructureType> ();
         structureType->setName(name);
         structureType->setSupertypeAndImplicitMetaType(StructureTypeValue::__staticType__());
+        structureType->setVisibility(node->visibility);
+        structureType->setExternalLanguageMode(node->externalLanguageMode);
+        structureType->setDllLinkageMode(node->dllLinkageMode);
         ownerEntity->recordChildProgramEntityDefinition(structureType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(structureType, analyzedNode->visibility);
@@ -2154,7 +2175,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTUnionNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     auto name = evaluateNameSymbolValue(analyzedNode->name);
     auto ownerEntity = environment->programEntityForPublicDefinitions;
@@ -2195,6 +2216,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
         unionType = basicMakeObject<UnionType> ();
         unionType->setName(name);
         unionType->setSupertypeAndImplicitMetaType(UnionTypeValue::__staticType__());
+        unionType->setVisibility(node->visibility);
+        unionType->setExternalLanguageMode(node->externalLanguageMode);
+        unionType->setDllLinkageMode(node->dllLinkageMode);
         ownerEntity->recordChildProgramEntityDefinition(unionType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(unionType, analyzedNode->visibility);
@@ -2214,7 +2238,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTProgramEntityExtensionNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->programEntity = analyzeNodeIfNeededWithExpectedType(analyzedNode->programEntity, ProgramEntity::__staticType__());
     if(analyzedNode->programEntity->isASTErrorNode())
         return analyzedNode->programEntity;
@@ -2325,7 +2349,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
     if(!node->trueExpression && !node->falseExpression)
         return analyzeNodeIfNeededWithExpectedType(node->condition, Type::getVoidType());
 
-    auto analyzedNode = basicMakeObject<ASTIfNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
     if(analyzedNode->trueExpression)
@@ -2347,7 +2371,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTWhileNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     if(analyzedNode->condition)
         analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
@@ -2369,7 +2393,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitWhileNode(const ASTWhileNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTDoWhileNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
 
     if(analyzedNode->bodyExpression)
     {
@@ -2392,7 +2416,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitDoWhileNode(const ASTDoWhileNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitReturnNode(const ASTReturnNodePtr &node)
 {
-    auto analyzedNode = basicMakeObject<ASTReturnNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     auto returnTargetMethod = environment->returnTargetMethod;
     if(!returnTargetMethod)
     {
@@ -2445,7 +2469,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitContinueNode(const ASTContinueNodePtr &nod
     if(environment->continueLevelCount == 0)
         return recordSemanticErrorInNode(node, "Cannot use a continue statement in this location.");
 
-    auto analyzedNode = basicMakeObject<ASTContinueNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->analyzedType = Type::getContinueType();
     return analyzedNode;
 }
@@ -2455,7 +2479,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitBreakNode(const ASTBreakNodePtr &node)
     if(environment->breakLevelCount == 0)
         return recordSemanticErrorInNode(node, "Cannot use a break statement in this location.");
 
-    auto analyzedNode = basicMakeObject<ASTBreakNode> (*node);
+    auto analyzedNode = shallowCloneObject(node);
     analyzedNode->analyzedType = Type::getBreakType();
     return analyzedNode;
 }

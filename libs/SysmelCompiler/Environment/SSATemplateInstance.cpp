@@ -25,6 +25,11 @@ TypePtr SSATemplateInstance::getValueType() const
     return TemplateInstance::__staticType__();
 }
 
+SSAProgramEntityPtr SSATemplateInstance::getMainTemplateInstanceChild() const
+{
+    return children.empty() ? nullptr : children.front();
+}
+
 SExpression SSATemplateInstance::asSExpression() const
 {
     return SExpressionList{{
@@ -34,6 +39,11 @@ SExpression SSATemplateInstance::asSExpression() const
 
 SExpression SSATemplateInstance::asFullDefinitionSExpression() const
 {
+    SExpressionList argsSExpr;
+    argsSExpr.elements.reserve(arguments.size());
+    for(auto &arg : arguments)
+        argsSExpr.elements.push_back(arg->asFullDefinitionSExpression());
+
     SExpressionList childrenSExpr;
     childrenSExpr.elements.reserve(children.size());
     for(auto &child : children)
@@ -41,8 +51,19 @@ SExpression SSATemplateInstance::asFullDefinitionSExpression() const
 
     return SExpressionList{{
         SExpressionIdentifier{{"templateInstance"}},
+        argsSExpr,
         childrenSExpr
     }};
+}
+
+AnyValuePtrList &SSATemplateInstance::getArguments()
+{
+    return arguments;
+}
+
+void SSATemplateInstance::setArguments(const AnyValuePtrList &newArguments)
+{
+    arguments = newArguments;
 }
 
 } // End of namespace Environment

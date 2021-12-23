@@ -46,6 +46,7 @@ public:
         f();
     }
     
+    virtual bool isModule() const override;
     virtual bool isBootstrapModule() const;
     virtual bool isProgramModule() const;
     virtual bool isScriptModule() const;

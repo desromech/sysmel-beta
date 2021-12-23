@@ -21,9 +21,16 @@ public:
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
     virtual TypePtr getValueType() const override;
+    virtual SSAProgramEntityPtr getMainTemplateInstanceChild() const override;
 
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
+
+    AnyValuePtrList &getArguments();
+    void setArguments(const AnyValuePtrList &newArguments);
+
+protected:
+    AnyValuePtrList arguments;
 };
 
 } // End of namespace Environment

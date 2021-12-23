@@ -61,6 +61,11 @@ bool DecoratedType::isRestrictDecoratedType() const
     return (decorations & TypeDecorationFlags::Restrict) != TypeDecorationFlags::None;
 }
 
+bool DecoratedType::isParamsDecoratedType() const
+{
+    return (decorations & TypeDecorationFlags::Params) != TypeDecorationFlags::None;
+}
+
 bool DecoratedType::supportsDynamicCompileTimeMessageSend() const
 {
     return baseType->supportsDynamicCompileTimeMessageSend();
@@ -126,6 +131,16 @@ TypePtr DecoratedType::asUndecoratedType()
     return baseType;
 }
 
+TypePtr DecoratedType::asCanonicalArgumentType()
+{
+    return make(baseType, decorations & TypeDecorationFlags::ArgumentTypeDecorations);
+}
+
+TypePtr DecoratedType::asCanonicalResultType()
+{
+    return make(baseType, decorations & TypeDecorationFlags::ResultTypeDecorations);
+}
+
 TypePtr DecoratedType::asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
     // Remove the decoration from the value type inference.
@@ -151,6 +166,9 @@ std::string DecoratedType::printString() const
 
     if(isVolatileDecoratedType())
         out << " volatile";
+
+    if(isParamsDecoratedType())
+        out << " params";
     return out.str();
 }
 

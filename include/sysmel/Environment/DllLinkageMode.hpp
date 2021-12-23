@@ -19,7 +19,7 @@ enum class DllLinkageMode : uint8_t
     Import,
 };
 
-inline const char *DllLinkageModeToString(DllLinkageMode visibility)
+inline const char *dllLinkageModeToString(DllLinkageMode visibility)
 {
     switch(visibility)
     {

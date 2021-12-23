@@ -90,6 +90,7 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding("tempRefFor:", &Type::tempRefFor, MethodFlags::Pure),
 
             makeMethodBinding("const", &Type::withConst, MethodFlags::Pure),
+            makeMethodBinding("params", &Type::withParams, MethodFlags::Pure),
             makeMethodBinding("restrict", &Type::withRestrict, MethodFlags::Pure),
             makeMethodBinding("volatile", &Type::withVolatile, MethodFlags::Pure),
 
@@ -204,7 +205,7 @@ std::string Type::printString() const
 {
     if(name)
         return name->asString();
-    return SuperType::printString();
+    return "an anonymous type";
 }
 
 AnyValuePtr Type::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
@@ -1160,6 +1161,11 @@ TypePtr Type::withVolatile()
     return withDecorations(TypeDecorationFlags::Volatile);
 }
 
+TypePtr Type::withParams()
+{
+    return withDecorations(TypeDecorationFlags::Params);
+}
+
 TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 {
     return DecoratedType::make(selfFromThis(), decorations);
@@ -1168,6 +1174,16 @@ TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 TypePtr Type::asUndecoratedType()
 {
     return selfFromThis();
+}
+
+TypePtr Type::asCanonicalArgumentType()
+{
+    return asUndecoratedType();
+}
+
+TypePtr Type::asCanonicalResultType()
+{
+    return asUndecoratedType();
 }
 
 bool Type::isConstOrConstReferenceType() const
@@ -1185,7 +1201,11 @@ SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
     if(!ssaTypeProgramEntity)
     {
         ssaTypeProgramEntity = basicMakeObject<SSATypeProgramEntity> ();
+        ssaTypeProgramEntity->setName(getValidName());
         ssaTypeProgramEntity->setValue(selfFromThis());
+        ssaTypeProgramEntity->setExternalLanguageMode(externalLanguageMode);
+        ssaTypeProgramEntity->setVisibility(visibility);
+        ssaTypeProgramEntity->setDllLinkageMode(dllLinkageMode);
         auto parentProgramEntity = getParentProgramEntity();
         if(parentProgramEntity)
         {

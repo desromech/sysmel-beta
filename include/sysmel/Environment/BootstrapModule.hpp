@@ -25,6 +25,7 @@ public:
 
     virtual void initialize() override;
     virtual bool isBootstrapModule() const override;
+    virtual AnyValuePtr getName() const override;
     
     virtual NamespacePtr getGlobalNamespace() const override;
 
@@ -47,6 +48,7 @@ private:
     std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
 
+    AnyValuePtr name;
     NamespacePtr globalNamespace;
     NamespacePtr bootstrapEnvironmentNamespace;
     NamespacePtr bootstrapEnvironmentSysmelLanguageNamespace;

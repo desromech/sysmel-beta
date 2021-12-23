@@ -39,6 +39,7 @@ public:
     void addDefaultTypeConversionRules() override;
 
     virtual std::string printString() const override;
+    virtual SExpression asSExpression() const override;
     
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr shallowCloneInstance(const AnyValuePtr &cloned) override;

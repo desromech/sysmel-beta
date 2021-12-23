@@ -11,10 +11,20 @@ namespace Environment
 
 static BootstrapTypeRegistration<SSACodeRegionArgument> SSACodeRegionArgumentTypeRegistration;
 
-SSACodeRegionArgumentPtr SSACodeRegionArgument::make(const TypePtr &valueType)
+SSACodeRegionArgumentPtr SSACodeRegionArgument::make(const TypePtr &valueType, const TypePtr &sourceType)
 {
     auto result = basicMakeObject<SSACodeRegionArgument> ();
     result->valueType = valueType;
+    result->sourceType = sourceType;
+    return result;
+}
+
+SSACodeRegionArgumentPtr SSACodeRegionArgument::makeReceiver(const TypePtr &valueType)
+{
+    auto result = basicMakeObject<SSACodeRegionArgument> ();
+    result->valueType = valueType;
+    result->sourceType = valueType;
+    result->isReceiver_ = true;
     return result;
 }
 
@@ -22,6 +32,7 @@ SSACodeRegionArgumentPtr SSACodeRegionArgument::makeResult(const TypePtr &valueT
 {
     auto result = basicMakeObject<SSACodeRegionArgument> ();
     result->valueType = valueType;
+    result->sourceType = valueType;
     result->isResult_ = true;
     return result;
 }
@@ -70,6 +81,16 @@ void SSACodeRegionArgument::markLocalFinalizationRequired()
 {
     assert(isResult_);
     localFinalizationRequired = true;
+}
+
+const TypePtr &SSACodeRegionArgument::getSourceType() const
+{
+    return sourceType;
+}
+
+void SSACodeRegionArgument::setSourceType(const TypePtr &newSourceType)
+{
+    sourceType = newSourceType;
 }
 
 } // End of namespace Environment

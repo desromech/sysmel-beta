@@ -25,6 +25,8 @@ SExpression ASTClassNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"class"}},
         sourcePosition->asSExpression(),
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
+        SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
+        SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
         name ? name->asSExpression() : nullptr,
         superclass ? superclass->asSExpression() : nullptr,
         body ? body->asSExpression() : nullptr,

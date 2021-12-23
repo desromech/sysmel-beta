@@ -85,9 +85,9 @@ AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type
     return wrapLLVMType(llvm::PointerType::getUnqual(translatedBaseType));
 }
 
-AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type)
+AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix)
 {
-    auto translatedType = llvm::StructType::create(*backend->getContext(), validAnyValue(type->getName())->asString());
+    auto translatedType = llvm::StructType::create(*backend->getContext(), prefix + type->getQualifiedName());
     backend->setTypeTranslation(type, translatedType);
 
     auto layout = type->getLayout().staticAs<AggregateTypeSequentialLayout> ();
@@ -103,17 +103,17 @@ AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const Ag
 
 AnyValuePtr LLVMTypeVisitor::visitClassType(const ClassTypePtr &type)
 {
-    return translateAggregateTypeWithSequentialLayout(type);
+    return translateAggregateTypeWithSequentialLayout(type, "class.");
 }
 
 AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
 {
-    return translateAggregateTypeWithSequentialLayout(type);
+    return translateAggregateTypeWithSequentialLayout(type, "struct.");
 }
 
 AnyValuePtr LLVMTypeVisitor::visitTupleType(const TupleTypePtr &type)
 {
-    return translateAggregateTypeWithSequentialLayout(type);
+    return translateAggregateTypeWithSequentialLayout(type, "union.");
 }
 
 } // End of namespace Environment

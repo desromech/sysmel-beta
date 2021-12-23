@@ -16,6 +16,7 @@ static BootstrapTypeRegistration<BootstrapModule> bootstrapModuleTypeRegistratio
 
 void BootstrapModule::initialize()
 {
+    name = internSymbol("SCDB");
     auto &bootstrapMetadataList = getBootstrapDefinedTypeMetadataList();
 
     // First pass: create all of the bootstrap type instances.
@@ -100,6 +101,11 @@ bool BootstrapModule::isBootstrapModule() const
     return true;
 }
 
+AnyValuePtr BootstrapModule::getName() const
+{
+    return name;
+}
+
 NamespacePtr BootstrapModule::getGlobalNamespace() const
 {
     return globalNamespace;
@@ -128,6 +134,7 @@ SSAValuePtr BootstrapModule::asSSAValueRequiredInPosition(const ASTSourcePositio
     if(!ssaModule)
     {
         ssaModule = basicMakeObject<SSAModule> ();
+        ssaModule->setName(getValidName());
         ssaModule->setGlobalNamespace(globalNamespace->asSSAValueRequiredInPosition(position));
     }
     return ssaModule;

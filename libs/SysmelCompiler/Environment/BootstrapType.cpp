@@ -120,6 +120,11 @@ std::string BootstrapType::printString() const
     return staticMetadata->typeName;
 }
 
+SExpression BootstrapType::asSExpression() const
+{
+    return SExpressionSymbol{staticMetadata->typeName};
+}
+
 AnyValuePtr BootstrapType::basicNewValue()
 {
     return staticMetadata->basicNewValue();

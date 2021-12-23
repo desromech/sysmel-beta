@@ -27,6 +27,8 @@ SExpression ASTGlobalVariableNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"globalVariable"}},
         SExpressionIdentifier{{isMutable ? "mutable" : "immutable"}},
         SExpressionIdentifier{{typeInferenceModeToString(typeInferenceMode)}},
+        SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
+        SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
         analyzedType ? analyzedType->asSExpression() : nullptr,
         sourcePosition->asSExpression(),
         name ? name->asSExpression() : nullptr,

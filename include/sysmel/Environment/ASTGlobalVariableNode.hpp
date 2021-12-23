@@ -4,6 +4,8 @@
 
 #include "ASTVariableNode.hpp"
 #include "ProgramEntityVisibility.hpp"
+#include "DllLinkageMode.hpp"
+#include "ExternalLanguageMode.hpp"
 
 namespace Sysmel
 {
@@ -23,6 +25,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
+    DllLinkageMode dllLinkageMode = DllLinkageMode::None;
+    ExternalLanguageMode externalLanguageMode = ExternalLanguageMode::None;
 };
 
 } // End of namespace Environment

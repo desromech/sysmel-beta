@@ -35,7 +35,7 @@ void SSACodeRegion::setFunctionalType(const FunctionalTypePtr &functionalType)
         resultType = Type::getVoidType();
     }
 
-    addArgumentWithType(functionalType->getReceiverType());
+    addReceiverArgumentWithType(functionalType->getReceiverType());
     auto argumentCount = functionalType->getArgumentCount();
     for(size_t i = 0; i < argumentCount; ++i)
         addArgumentWithType(functionalType->getArgument(i));
@@ -57,12 +57,20 @@ void SSACodeRegion::addArgumentWithType(const TypePtr &argumentType)
     
     if(argumentType->isPassedByReference())
     {
-        arguments.push_back(SSACodeRegionArgument::make(argumentType->ref()));
+        arguments.push_back(SSACodeRegionArgument::make(argumentType->ref(), argumentType));
     }
     else
     {
-        arguments.push_back(SSACodeRegionArgument::make(argumentType));
+        arguments.push_back(SSACodeRegionArgument::make(argumentType, argumentType));
     }
+}
+
+void SSACodeRegion::addReceiverArgumentWithType(const TypePtr &argumentType)
+{
+    if(argumentType->isVoidType())
+        return;
+    
+    arguments.push_back(SSACodeRegionArgument::makeReceiver(argumentType));
 }
 
 void SSACodeRegion::addResultArgumentWithType(const TypePtr &argumentType)

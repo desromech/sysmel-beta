@@ -29,6 +29,9 @@ SSAValuePtr BootstrapMethodBase::asSSAValueRequiredInPosition(const ASTSourcePos
         ssaCompiledFunction->initializeWithNameAndType(getName(), getFunctionalType());
         ssaCompiledFunction->setIntrinsicName(getIntrinsicName());
         ssaCompiledFunction->setSourceProgramEntity(selfFromThis());
+        ssaCompiledFunction->setExternalLanguageMode(externalLanguageMode);
+        ssaCompiledFunction->setVisibility(visibility);
+        ssaCompiledFunction->setDllLinkageMode(dllLinkageMode);
     }
 
     return ssaCompiledFunction;

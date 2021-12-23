@@ -18,6 +18,10 @@ enum class TypeDecorationFlags : uint32_t
     Const = 1<<1,
     Volatile = 1<<2,
     Restrict = 1<<3,
+    Params = 1<<4,
+
+    ArgumentTypeDecorations = Params,
+    ResultTypeDecorations = 0,
 };
 
 inline TypeDecorationFlags operator|(TypeDecorationFlags a, TypeDecorationFlags b)

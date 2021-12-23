@@ -23,14 +23,10 @@ public:
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;
 
-    AnyValuePtr getName() const;
-    void setName(const AnyValuePtr &newName);
-
     const SSAValuePtr &getGlobalNamespace() const;
     void setGlobalNamespace(const SSAValuePtr &newGlobalNamespace);
 
 private:
-    AnyValuePtr name;
     SSAValuePtr globalNamespace;
 };
 

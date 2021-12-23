@@ -115,6 +115,7 @@ set(Environment_Sources
     ContinueType.cpp
     ControlFlowEscapeType.cpp
     ConversionMethodTypeConversionRule.cpp
+    CVarArg.cpp
     DecoratedType.cpp
     DeferredCompileTimeCodeFragment.cpp
     DerivedType.cpp
@@ -141,6 +142,7 @@ set(Environment_Sources
     IdentifierLookupScope.cpp
     IdentityTypeConversionRule.cpp
     InternalMetaBuilder.cpp
+    ItaniumNameMangler.cpp
     LanguageSupport.cpp
     LargeInteger.cpp
     LexicalScope.cpp
@@ -179,6 +181,7 @@ set(Environment_Sources
     ModuleDefinedProgramEntity.cpp
     ModuleReference.cpp
     NamedProgramEntityMetaBuilder.cpp
+    NameMangler.cpp
     Namespace.cpp
     NamespaceMetaBuilder.cpp
     NotMatchingPatternFound.cpp

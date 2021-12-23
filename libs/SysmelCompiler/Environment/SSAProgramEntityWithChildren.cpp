@@ -13,6 +13,7 @@ static BootstrapTypeRegistration<SSAProgramEntityWithChildren> SSAProgramEntityW
 void SSAProgramEntityWithChildren::addChild(const SSAProgramEntityPtr &child)
 {
     children.push_back(child);
+    child->setParent(selfFromThis());
 }
 
 const SSAProgramEntityPtrList &SSAProgramEntityWithChildren::getChildren() const

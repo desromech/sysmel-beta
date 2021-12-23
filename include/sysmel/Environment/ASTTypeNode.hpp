@@ -4,6 +4,8 @@
 
 #include "ASTProgramEntityNode.hpp"
 #include "ProgramEntityVisibility.hpp"
+#include "DllLinkageMode.hpp"
+#include "ExternalLanguageMode.hpp"
 
 namespace Sysmel
 {
@@ -27,6 +29,8 @@ public:
     ASTNodePtr alignment;
 
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
+    DllLinkageMode dllLinkageMode = DllLinkageMode::None;
+    ExternalLanguageMode externalLanguageMode = ExternalLanguageMode::None;
 };
 
 } // End of namespace Environment

@@ -9,6 +9,8 @@
 #include "Environment/PointerLikeType.hpp"
 #include "Environment/FunctionType.hpp"
 
+#include "Environment/ItaniumNameMangler.hpp"
+
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
@@ -148,6 +150,7 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     sourceModule = programModule;
     context = std::make_unique<llvm::LLVMContext> ();
     targetModule = std::make_unique<llvm::Module> (validAnyValue(programModule->getName())->asString(), *context);
+    nameMangler = basicMakeObject<ItaniumNameMangler> ();
 
     // Initialize the type map.
     initializePrimitiveTypeMap();

@@ -36,6 +36,14 @@ AnyValuePtr Namespace::getName() const
     return name;
 }
 
+std::string Namespace::getQualifiedName() const
+{
+    auto parent = getParentProgramEntity();
+    if(parent && parent->isModule())
+        return parent->getQualifiedName();
+    return SuperType::getQualifiedName();
+}
+
 void Namespace::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);

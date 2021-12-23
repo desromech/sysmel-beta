@@ -3,6 +3,7 @@
 #include "Environment/ArgumentVariable.hpp"
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
+#include "Environment/SSATemplate.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
 
@@ -32,6 +33,26 @@ AnyValuePtr Template::getName() const
 void Template::setName(const AnyValuePtr &newName)
 {
     name = newName;
+}
+
+SSAValuePtr Template::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
+{
+    if(!ssaTemplate)
+    {
+        ssaTemplate = basicMakeObject<SSATemplate> ();
+        ssaTemplate->setName(getValidName());
+        ssaTemplate->setExternalLanguageMode(externalLanguageMode);
+        ssaTemplate->setVisibility(visibility);
+        ssaTemplate->setDllLinkageMode(dllLinkageMode);
+        auto parentProgramEntity = getParentProgramEntity()->asProgramEntitySSAValue();
+        if(parentProgramEntity)
+        {
+            assert(parentProgramEntity->isSSAProgramEntity());
+            parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplate);
+        }
+    }
+
+    return ssaTemplate;
 }
 
 void Template::setDeclarationNode(const ASTNodePtr &node)
@@ -83,6 +104,9 @@ TemplateInstancePtr Template::getOrCreateTemplateInstanceWithArguments(const Any
 
     auto instance = basicMakeObject<TemplateInstance> ();
     instanceCache.insert({instanceArguments, instance});
+
+    // TODO: Record this on a module specific program entity if needed.
+    recordChildProgramEntityDefinition(instance);
 
     for(size_t i = 0; i < instanceArguments.size(); ++i)
         instance->addArgumentBinding(arguments[i]->getName(), instanceArguments[i]);

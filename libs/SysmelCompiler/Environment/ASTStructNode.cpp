@@ -25,6 +25,8 @@ SExpression ASTStructNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"struct"}},
         sourcePosition->asSExpression(),
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
+        SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
+        SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
         name ? name->asSExpression() : nullptr,
         body ? body->asSExpression() : nullptr,
     }};

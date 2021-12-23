@@ -20,6 +20,42 @@ class AggregateTypeVariantLayout : public SubtypeOf<AggregateTypeLayout, Aggrega
 public:
     static constexpr char const __typeName__[] = "AggregateTypeVariantLayout";
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
+
+    virtual void beginGroup() override;
+    virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
+    virtual void finishGroup() override;
+
+    virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
+    virtual TypePtr getTypeForSlot(int64_t slotIndex) override;
+
+private:
+    bool hasTrivialInitialization_ = true;
+    bool hasTrivialInitializationCopyingFrom_ = true;
+    bool hasTrivialInitializationMovingFrom_ = true;
+    bool hasTrivialFinalization_ = true;
+    bool hasTrivialAssignCopyingFrom_ = true;
+    bool hasTrivialAssignMovingFrom_ = true;
+
+    uint64_t memorySize = 0;
+    uint64_t memoryAlignment = 1;
+    uint64_t elementMemorySize = 0;
+    uint64_t elementMemoryAlignment = 1;
+    uint64_t elementMemoryOffset = 0;
+    
+    TypePtrList elementTypes;
+    
+    TypePtr dataTypeIndexType;
+    uint64_t dataTypeIndexOffset = 0;
+
 };
 
 } // End of namespace Environment

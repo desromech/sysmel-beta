@@ -28,6 +28,7 @@ public:
     virtual bool isConstDecoratedType() const override;
     virtual bool isVolatileDecoratedType() const override;
     virtual bool isRestrictDecoratedType() const override;
+    virtual bool isParamsDecoratedType() const override;
 
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
 
@@ -46,6 +47,8 @@ public:
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
     virtual TypePtr asUndecoratedType() override;
+    virtual TypePtr asCanonicalArgumentType() override;
+    virtual TypePtr asCanonicalResultType() override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

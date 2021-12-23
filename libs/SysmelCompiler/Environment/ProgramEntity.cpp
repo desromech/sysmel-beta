@@ -33,9 +33,34 @@ AnyValuePtr ProgramEntity::getName() const
     return nullptr;
 }
 
+AnyValuePtr ProgramEntity::getValidName() const
+{
+    return getName();
+}
+
+std::string ProgramEntity::getValidNameString() const
+{
+    return validAnyValue(getName())->asString();
+}
+
+std::string ProgramEntity::getQualifiedName() const
+{
+    std::string result;
+
+    auto parent = getParentProgramEntity();
+    if(parent)
+    {
+        result = parent->getQualifiedName();
+        result += "::";
+    }
+
+    result += getValidNameString();
+    return result;
+}
+
 SExpression ProgramEntity::asSExpression() const
 {
-    return printString();
+    return SExpressionSymbol{{getQualifiedName()}};
 }
 
 SSAValuePtr ProgramEntity::asProgramEntitySSAValue()

@@ -47,6 +47,7 @@ public:
     void enumerateLocalValues(struct SSACodeRegionLocalValueEnumerationState &state);
 protected:
     void addArgumentWithType(const TypePtr &argumentType);
+    void addReceiverArgumentWithType(const TypePtr &argumentType);
     void addResultArgumentWithType(const TypePtr &argumentType);
     
     ASTSourcePositionPtr sourcePosition;

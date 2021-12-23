@@ -4,6 +4,7 @@
 #include "Environment/Type.hpp"
 #include "Environment/FunctionalType.hpp"
 #include "Environment/FieldVariable.hpp"
+#include "Environment/NameMangler.hpp"
 
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/SSAFunction.hpp"
@@ -182,8 +183,7 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 
     // TODO: Compute a proper linkage.
     auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
-    // TODO: Compute a proper name.
-    auto name = validAnyValue(function->getName())->asString();
+    auto name = backend->getNameMangler()->mangleSSAProgramEntity(function);
     
     currentFunction = llvm::Function::Create(functionType, linkage, name, *backend->getTargetModule());
     backend->setGlobalValueTranslation(function, currentFunction);
@@ -226,8 +226,7 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
 
     // TODO: Compute a proper linkage.
     auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
-    // TODO: Compute a proper name.
-    auto name = validAnyValue(globalVariable->getName())->asString();
+    auto name = backend->getNameMangler()->mangleSSAProgramEntity(globalVariable);
 
     auto translatedGlobalVariable = new llvm::GlobalVariable(valueType, false, linkage, nullptr, name);
     backend->setGlobalValueTranslation(globalVariable, translatedGlobalVariable);

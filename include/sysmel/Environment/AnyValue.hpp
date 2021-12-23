@@ -600,6 +600,9 @@ public:
     /// Is this object a program entity?
     virtual bool isProgramEntity() const;
 
+    /// Is this object a module?
+    virtual bool isModule() const;
+
     /// Is this object a type?
     virtual bool isType() const;
 
@@ -768,6 +771,9 @@ public:
     // Is this a closure type value?
     virtual bool isClosureTypeValue() const;
 
+    // Is this a C variable argument?
+    virtual bool isCVarArg() const;
+
     // Is this a primitive value?
     virtual bool isPrimitiveTypeValue() const;
 
@@ -852,8 +858,11 @@ public:
     // Is this a volatile type?
     virtual bool isVolatileDecoratedType() const;
 
-    // Is this a restrict derived type?
+    // Is this a restrict decorated type?
     virtual bool isRestrictDecoratedType() const;
+
+    // Is this a params decorated type?
+    virtual bool isParamsDecoratedType() const;
 
     // Is this an enum type?
     virtual bool isEnumType() const;

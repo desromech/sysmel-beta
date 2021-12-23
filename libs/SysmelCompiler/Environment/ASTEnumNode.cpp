@@ -25,6 +25,8 @@ SExpression ASTEnumNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"enum"}},
         sourcePosition->asSExpression(),
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
+        SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
+        SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
         name ? name->asSExpression() : nullptr,
         valueType ? valueType->asSExpression() : nullptr,
         values ? values->asSExpression() : nullptr,

@@ -384,11 +384,20 @@ public:
     /// Adds the volatile decoration to this type.
     virtual TypePtr withVolatile();
 
+    /// Adds the params decoration to this type.
+    virtual TypePtr withParams();
+
     /// Adds the specified decorations to this type.
     virtual TypePtr withDecorations(TypeDecorationFlags decorations);
 
     /// Removes the decorations of this type.
     virtual TypePtr asUndecoratedType();
+
+    /// Removes the decorations of this that are omitted from an argument type.
+    virtual TypePtr asCanonicalArgumentType();
+
+    /// Removes the decorations of this that are omitted from a result type.
+    virtual TypePtr asCanonicalResultType();
 
     // Is this T const or T const ref?
     virtual bool isConstOrConstReferenceType() const;

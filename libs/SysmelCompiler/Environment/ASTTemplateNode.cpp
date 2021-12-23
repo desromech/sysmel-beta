@@ -32,6 +32,8 @@ SExpression ASTTemplateNode::asSExpression() const
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
+        SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
+        SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
         name ? name->asSExpression() : nullptr,
         argumentsSExpr,
         body ? body->asSExpression() : nullptr,

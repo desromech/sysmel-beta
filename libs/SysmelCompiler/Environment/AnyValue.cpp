@@ -534,6 +534,11 @@ bool AnyValue::isProgramEntity() const
     return false;
 }
 
+bool AnyValue::isModule() const
+{
+    return false;
+}
+
 bool AnyValue::isType() const
 {
     return false;
@@ -814,6 +819,11 @@ bool AnyValue::isClosureTypeValue() const
     return false;
 }
 
+bool AnyValue::isCVarArg() const
+{
+    return false;
+}
+
 bool AnyValue::isPrimitiveTypeValue() const
 {
     return false;
@@ -950,6 +960,11 @@ bool AnyValue::isVolatileDecoratedType() const
 }
 
 bool AnyValue::isRestrictDecoratedType() const
+{
+    return false;
+}
+
+bool AnyValue::isParamsDecoratedType() const
 {
     return false;
 }

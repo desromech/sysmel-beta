@@ -4,6 +4,7 @@
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/CompilationError.hpp"
 #include "Environment/LexicalScope.hpp"
+#include "Environment/SSATemplateInstance.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -22,6 +23,32 @@ void TemplateInstance::recordChildProgramEntityDefinition(const ProgramEntityPtr
 {
     children.push_back(newChild);
     newChild->setParentProgramEntity(selfFromThis());
+}
+
+SSAValuePtr TemplateInstance::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
+{
+    if(!ssaTemplateInstance)
+    {
+        ssaTemplateInstance = basicMakeObject<SSATemplateInstance> ();
+        ssaTemplateInstance->setExternalLanguageMode(externalLanguageMode);
+        ssaTemplateInstance->setVisibility(visibility);
+        ssaTemplateInstance->setDllLinkageMode(dllLinkageMode);
+        auto parentProgramEntity = getParentProgramEntity()->asProgramEntitySSAValue();
+
+        AnyValuePtrList arguments;
+        arguments.reserve(argumentBindings.size());
+        for(auto &binding : argumentBindings)
+            arguments.push_back(binding.second);
+        ssaTemplateInstance->setArguments(arguments);
+
+        if(parentProgramEntity)
+        {
+            assert(parentProgramEntity->isSSAProgramEntity());
+            parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplateInstance);
+        }
+    }
+
+    return ssaTemplateInstance;
 }
 
 const AnyValuePtr &TemplateInstance::getValue() const
@@ -44,6 +71,7 @@ void TemplateInstance::evaluateDefinitionFragment(const TemplateDefinitionFragme
         scope->setSymbolBinding(key, validAnyValue(value));
 
     auto evaluationEnvironment = fragment.environment->copyWithLexicalScope(scope);
+    evaluationEnvironment->programEntityForPublicDefinitions = selfFromThis();
     auto analyzer = basicMakeObject<ASTSemanticAnalyzer> ();
     analyzer->environment = evaluationEnvironment;
 

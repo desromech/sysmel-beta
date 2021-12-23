@@ -11,6 +11,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Template);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSATemplate);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemplateInstance);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ArgumentVariable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
@@ -41,6 +42,8 @@ public:
 
     virtual AnyValuePtr getName() const override;
     virtual void setName(const AnyValuePtr &newName);
+    
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
     void setDeclarationNode(const ASTNodePtr &node);
     void addDefinition(const ASTNodePtr &node, const ASTNodePtr &bodyNode, const ASTAnalysisEnvironmentPtr &bodyEnvironment);
@@ -58,6 +61,7 @@ protected:
 
     ASTSourcePositionPtr declarationPosition;
     ASTNodePtr declarationNode;
+    SSATemplatePtr ssaTemplate;
 
     std::vector<TemplateDefinitionFragment> definitionFragments;
 

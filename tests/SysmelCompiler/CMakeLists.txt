@@ -12,6 +12,7 @@ list(TRANSFORM EnvironmentTests_Sources PREPEND "Environment/")
 
 set(FrontendTests_Sources
     ScannerTests.cpp
+    ItaniumNameManglerTests.cpp
     ParserTests.cpp
     EvaluationTests.cpp
     SSATests.cpp

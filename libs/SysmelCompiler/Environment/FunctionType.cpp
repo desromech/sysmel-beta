@@ -15,10 +15,10 @@ static BootstrapTypeRegistration<FunctionTypeValue> functionalTypeRegistration;
 
 FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList &arguments)
 {
-    auto canonicalResultType = resultType->asUndecoratedType();
+    auto canonicalResultType = resultType->asCanonicalResultType();
     auto canonicalArgumentTypes = arguments;
     for(auto &el : canonicalArgumentTypes)
-        el = el->asUndecoratedType();
+        el = el->asCanonicalArgumentType();
 
     auto &cache = RuntimeContext::getActive()->functionTypeCache;
     auto it = cache.find({canonicalResultType, canonicalArgumentTypes});

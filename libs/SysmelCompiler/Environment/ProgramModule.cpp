@@ -76,7 +76,7 @@ SSAValuePtr ProgramModule::asSSAValueRequiredInPosition(const ASTSourcePositionP
     if(!ssaModule)
     {
         ssaModule = basicMakeObject<SSAModule> ();
-        ssaModule->setName(name);
+        ssaModule->setName(getValidName());
         ssaModule->setGlobalNamespace(globalNamespace->asSSAValueRequiredInPosition(position));
     }
     return ssaModule;

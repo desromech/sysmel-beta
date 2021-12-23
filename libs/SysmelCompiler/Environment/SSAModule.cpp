@@ -1,4 +1,5 @@
 #include "Environment/SSAModule.hpp"
+#include "Environment/SSANamespace.hpp"
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -36,16 +37,6 @@ SExpression SSAModule::asFullDefinitionSExpression() const
     }};
 }
 
-AnyValuePtr SSAModule::getName() const
-{
-    return name;
-}
-
-void SSAModule::setName(const AnyValuePtr &newName)
-{
-    name = newName;
-}
-
 const SSAValuePtr &SSAModule::getGlobalNamespace() const
 {
     return globalNamespace;
@@ -54,6 +45,8 @@ const SSAValuePtr &SSAModule::getGlobalNamespace() const
 void SSAModule::setGlobalNamespace(const SSAValuePtr &newGlobalNamespace)
 {
     globalNamespace = newGlobalNamespace;
+    if(globalNamespace->isSSANamespace())
+        globalNamespace.staticAs<SSANamespace>()->setParent(selfFromThis());
 }
 
 } // End of namespace Environment

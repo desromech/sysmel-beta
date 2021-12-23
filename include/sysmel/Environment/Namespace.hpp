@@ -29,6 +29,7 @@ public:
     virtual bool isNamespace() const override;
 
     virtual AnyValuePtr getName() const override;
+    virtual std::string getQualifiedName() const override;
 
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 

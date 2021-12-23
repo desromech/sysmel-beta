@@ -32,6 +32,13 @@
 
 namespace Sysmel
 {
+
+namespace Environment
+{
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler)
+}
+
 namespace LLVM
 {
 
@@ -67,6 +74,11 @@ public:
         return context.get();
     }
 
+    const NameManglerPtr &getNameMangler() const
+    {
+        return nameMangler;
+    }
+
     llvm::Module *getTargetModule() const
     {
         return targetModule.get();
@@ -83,6 +95,7 @@ protected:
 
 
     ProgramModulePtr sourceModule;
+    NameManglerPtr nameMangler;
     std::unique_ptr<llvm::LLVMContext> context;
     std::unique_ptr<llvm::Module> targetModule;
     std::unique_ptr<llvm::legacy::FunctionPassManager> functionPassManager;
