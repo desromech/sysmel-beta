@@ -111,7 +111,7 @@ _PrimitiveIntegerType | _EnumType extend: {
 }.
 
 _NumberType extend: {
-    macro method to: stop by: increment do: aBlock := {
+    public macro method to: stop by: increment do: aBlock := {
         let index := __astBuilder gensym: #index.
         let stopValue := __astBuilder gensym: #stopValue.
         let incrementValue := __astBuilder gensym: #incrementValue.
@@ -137,9 +137,9 @@ _NumberType extend: {
         }
     }.
 
-    macro method to: stop do: aBlock := ``(`,self to: `,stop by: 1 do: `,aBlock)
+    public macro method to: stop do: aBlock := ``(`,self to: `,stop by: 1 do: `,aBlock)
 
-    macro method until: stop by: increment do: aBlock := {
+    public macro method until: stop by: increment do: aBlock := {
         let index := __astBuilder gensym: #index.
         let stopValue := __astBuilder gensym: #stopValue.
         let incrementValue := __astBuilder gensym: #incrementValue.
@@ -165,7 +165,7 @@ _NumberType extend: {
         }
     }.
 
-    macro method until: stop do: aBlock := {
+    public macro method until: stop do: aBlock := {
         let index := __astBuilder gensym: #index.
         let stopValue := __astBuilder gensym: #stopValue.
         let incrementValue := __astBuilder gensym: #incrementValue.
@@ -193,21 +193,21 @@ _NumberType extend: {
 }.
 
 Boolean8 extend: {
-    macro method asBit := ``(`,self castTo: UInt8).
+    public macro method asBit := ``(`,self castTo: UInt8).
 }.
 
 _AbstractBlockClosureType extend: {
-    macro method repeat := ``(while: true do: `,self __macroInlineBlock).
-    macro method doWhileFalse: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == false).
-    macro method doWhileTrue: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == true).
+    public macro method repeat := ``(while: true do: `,self __macroInlineBlock).
+    public macro method doWhileFalse: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == false).
+    public macro method doWhileTrue: conditionBlock := ``(do: `,self __macroInlineBlock while: `,conditionBlock __macroInlineBlock == true).
 
-    macro method whileTrue := ``(while: `,self __macroInlineBlock == true do: void).
-    macro method whileTrue: aBlock := ``(while: `,self __macroInlineBlock == true do: `,aBlock __macroInlineBlock).
-    macro method whileFalse := ``(while: `,self __macroInlineBlock == false do: void).
-    macro method whileFalse: aBlock := ``(while: `,self __macroInlineBlock == false do: `,aBlock __macroInlineBlock).
+    public macro method whileTrue := ``(while: `,self __macroInlineBlock == true do: void).
+    public macro method whileTrue: aBlock := ``(while: `,self __macroInlineBlock == true do: `,aBlock __macroInlineBlock).
+    public macro method whileFalse := ``(while: `,self __macroInlineBlock == false do: void).
+    public macro method whileFalse: aBlock := ``(while: `,self __macroInlineBlock == false do: `,aBlock __macroInlineBlock).
 
-    macro method whileNil := ``(while: `,self __macroInlineBlock isNil do: void).
-    macro method whileNil: aBlock := ``(while: `,self __macroInlineBlock isNil do: `,aBlock __macroInlineBlock).
-    macro method whileNotNil := ``(while: `,self __macroInlineBlock isNotNil do: void).
-    macro method whileNotNil: aBlock := ``(while: `,self __macroInlineBlock isNotNil do: `,aBlock __macroInlineBlock).
+    public macro method whileNil := ``(while: `,self __macroInlineBlock isNil do: void).
+    public macro method whileNil: aBlock := ``(while: `,self __macroInlineBlock isNil do: `,aBlock __macroInlineBlock).
+    public macro method whileNotNil := ``(while: `,self __macroInlineBlock isNotNil do: void).
+    public macro method whileNotNil: aBlock := ``(while: `,self __macroInlineBlock isNotNil do: `,aBlock __macroInlineBlock).
 }.
