@@ -304,6 +304,7 @@ set(SysmelSyntax_Sources
 list(TRANSFORM SysmelSyntax_Sources PREPEND "Frontend/SysmelSyntax/")
 
 set(LLVMBackend_Sources
+    LLVMDebugTypeVisitor.cpp
     LLVMLiteralValueVisitor.cpp
     LLVMTypeVisitor.cpp
     SSALLVMCodeGenerationBackend.cpp

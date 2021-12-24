@@ -22,6 +22,7 @@ public:
     static constexpr char const __typeName__[] = "NameMangler";
 
     virtual std::string mangleType(const TypePtr &type);
+    virtual std::string mangleTypeInfo(const TypePtr &type);
     virtual std::string mangleProgramEntity(const ProgramEntityPtr &programEntity);
     virtual std::string mangleSSAProgramEntity(const SSAProgramEntityPtr &programEntity);
 };

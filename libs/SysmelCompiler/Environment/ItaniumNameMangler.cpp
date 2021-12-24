@@ -147,6 +147,11 @@ public:
         return visitor->result;
     }
 
+    std::string mangleTypeInfo(const TypePtr &type)
+    {
+        return "_ZTS" + mangleType(type);
+    }
+
     NameComponents extractProgramEntityNameComponents(const SSAProgramEntityPtr &programEntity)
     {
         NameComponents components;
@@ -369,6 +374,13 @@ std::string ItaniumNameMangler::mangleType(const TypePtr &type)
     ItaniumNameManglerContext context;
     context.mangler = this;
     return context.mangleType(type);
+}
+
+std::string ItaniumNameMangler::mangleTypeInfo(const TypePtr &type)
+{
+    ItaniumNameManglerContext context;
+    context.mangler = this;
+    return context.mangleTypeInfo(type);
 }
 
 std::string ItaniumNameMangler::mangleSSAProgramEntity(const SSAProgramEntityPtr &programEntity)

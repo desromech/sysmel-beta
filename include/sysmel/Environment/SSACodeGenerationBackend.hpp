@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CompilerObject.hpp"
+#include "DebugInformationType.hpp"
 
 namespace Sysmel
 {
@@ -32,14 +33,23 @@ public:
     static SSACodeGenerationBackendPtr makeNativeBackend();
     static SSACodeGenerationBackendPtr makeSpirVBackend();
 
+    virtual SSACodeGenerationOutputMode getOutputMode() const;
     virtual void setOutputMode(SSACodeGenerationOutputMode newOutputMode);
+
+    virtual DebugInformationType getDebugInformationType();
+    virtual void setDebugInformationType(DebugInformationType type);
+
+    virtual void setMainInputFileName(const std::string &newInputFileName);
     virtual void setOutputFileName(const std::string &newOutputFileName);
     virtual void setEmitTargetIR(bool newEmitTargetIR);
     virtual bool processAndWriteProgramModule(const ProgramModulePtr &programModule);
 
+
 protected:
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
+    std::string mainInputFileName;
     std::string outputFileName;
+    DebugInformationType debugInformationType = DebugInformationType::None;
     bool emitTargetIR = false;
 };
 

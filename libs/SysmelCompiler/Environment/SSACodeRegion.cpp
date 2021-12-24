@@ -84,6 +84,11 @@ void SSACodeRegion::setSourcePosition(const ASTSourcePositionPtr &newSourcePosit
     sourcePosition = newSourcePosition;
 }
 
+const ASTSourcePositionPtr &SSACodeRegion::getSourcePosition() const
+{
+    return sourcePosition;
+}
+
 const TypePtr &SSACodeRegion::getResultType() const
 {
     return resultType;

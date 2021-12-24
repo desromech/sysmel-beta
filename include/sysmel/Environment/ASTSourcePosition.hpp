@@ -22,6 +22,10 @@ public:
     static ASTSourcePositionPtr empty();
     
     virtual bool isASTSourcePosition() const override;
+
+    virtual std::string getSourceCodeFileName() const;
+    virtual int getLine() const;
+    virtual int getColumn() const;
 };
 
 } // End of namespace Environment

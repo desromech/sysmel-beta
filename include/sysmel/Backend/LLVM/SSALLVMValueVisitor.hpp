@@ -109,6 +109,8 @@ protected:
     llvm::Value *createLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
     llvm::Value *findLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
 
+    void withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock);
+
     llvm::Function *currentFunction = nullptr;
     SSACodeRegionPtr currentCodeRegion;
     llvm::BasicBlock *currentCodeRegionReturnBlock = nullptr;

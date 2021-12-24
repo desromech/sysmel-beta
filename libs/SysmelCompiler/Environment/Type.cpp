@@ -9,6 +9,7 @@
 #include "Environment/ASTProgramEntityExtensionNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTBuilder.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
@@ -49,6 +50,11 @@ namespace Sysmel
 namespace Environment
 {
 static BootstrapTypeRegistration<Type> typeTypeRegistration;
+
+Type::Type()
+{
+    definitionPosition = ASTSourcePosition::empty();
+}
 
 MethodCategories Type::__instanceMethods__()
 {
@@ -1258,6 +1264,16 @@ bool Type::hasTrivialLifetimeMethod(const std::string &selector, const TypePtrLi
         return false;
 
     return method.staticAs<SpecificMethod> ()->isTrivial();
+}
+
+const ASTSourcePositionPtr &Type::getSourceDefinitionPosition() const
+{
+    return definitionPosition;
+}
+
+void Type::setSourceDefinitionPosition(const ASTSourcePositionPtr &position)
+{
+    definitionPosition = position;
 }
 
 } // End of namespace Environment

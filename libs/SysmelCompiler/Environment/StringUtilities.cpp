@@ -220,5 +220,40 @@ std::string formatString(const std::string &format, const std::vector<std::strin
     return result;
 }
 
+std::string basename(const std::string &path)
+{
+    auto pos = std::string::npos;
+
+    for(size_t i = 0; i < path.size(); ++i)
+    {
+        auto c = path[i];
+        if(c == '/' || c == '\\')
+            pos = i;
+    }
+
+    return pos != std::string::npos ? path.substr(0, pos) : path;
+}
+
+std::string basenameWithoutExtension(const std::string &path)
+{
+    auto bn = basename(path);
+    auto pos = bn.rfind('.');
+    return pos != std::string::npos ? bn.substr(0, pos) : bn;
+}
+
+std::string dirname(const std::string &path)
+{
+    auto pos = std::string::npos;
+
+    for(size_t i = 0; i < path.size(); ++i)
+    {
+        auto c = path[i];
+        if(c == '/' || c == '\\')
+            pos = i;
+    }
+
+    return pos != std::string::npos ? path.substr(pos) : std::string();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

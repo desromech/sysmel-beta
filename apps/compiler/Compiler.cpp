@@ -4,6 +4,7 @@
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/SSAValue.hpp"
 #include "Environment/SSACodeGenerationBackend.hpp"
+#include "Environment/StringUtilities.hpp"
 
 #include <string>
 #include <vector>
@@ -18,6 +19,7 @@ struct CompilerParameters
     bool emitSExpression = false;
     bool emitSSASExpression = false;
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
+    DebugInformationType debugInformationType = DebugInformationType::None;
     std::string moduleName;
     std::string outputFileName;
     std::vector<std::string> modulePaths;
@@ -56,12 +58,6 @@ void writeStringToOutputFileNamed(const std::string &string, const std::string &
 
 }
 
-std::string basename(const std::string &name)
-{
-    auto pos = name.rfind('.');
-    return pos != std::string::npos ? name.substr(0, pos) : name;
-}
-
 int main(int argc, const char *argv[])
 {
     CompilerParameters parameters;
@@ -86,6 +82,16 @@ int main(int argc, const char *argv[])
                 parameters.emitSSASExpression = true;
             else if(arg == "-o")
                 parameters.outputFileName = argv[++i];
+            else if(arg == "-g")
+                parameters.debugInformationType = DebugInformationType::Default;
+            else if(arg == "-gdwarf")
+                parameters.debugInformationType = DebugInformationType::Dwarf;
+            else if(arg == "-gdwarf2")
+                parameters.debugInformationType = DebugInformationType::Dwarf2;
+            else if(arg == "-gdwarf3")
+                parameters.debugInformationType = DebugInformationType::Dwarf3;
+            else if(arg == "-gdwarf4")
+                parameters.debugInformationType = DebugInformationType::Dwarf4;
             else
             {
                 std::cout << "Unsupported command line parameter " << arg << std::endl;
@@ -100,9 +106,7 @@ int main(int argc, const char *argv[])
 
 
     if(parameters.moduleName.empty())
-    {
         parameters.moduleName = parameters.inputFileNames.front();
-    }
 
     int exitCode = 0;
     RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForHost())->activeDuring([&]{
@@ -144,7 +148,9 @@ int main(int argc, const char *argv[])
             }
  
             backend->setOutputMode(parameters.outputMode);
+            backend->setDebugInformationType(parameters.debugInformationType);
             backend->setOutputFileName(parameters.outputFileName);
+            backend->setMainInputFileName(parameters.inputFileNames.front());
             backend->setEmitTargetIR(parameters.emitTargetIR);
             auto success = backend->processAndWriteProgramModule(programModule);
             exitCode = success ? 0 : 1;

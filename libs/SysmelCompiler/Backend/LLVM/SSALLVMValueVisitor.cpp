@@ -5,6 +5,7 @@
 #include "Environment/FunctionalType.hpp"
 #include "Environment/FieldVariable.hpp"
 #include "Environment/NameMangler.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/SSAFunction.hpp"
@@ -189,17 +190,47 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     backend->setGlobalValueTranslation(function, currentFunction);
 
     // Make the argument used for returning by reference with sret.
+    size_t firstArgumentIndex = 0;
     if(mainCodeRegion->isReturningByReference())
     {
         auto structureResultType = backend->translateType(function->getValueType().staticAs<FunctionalType> ()->getResultType());
         currentFunction->getArg(0)->addAttr(llvm::Attribute::getWithStructRetType(*backend->getContext(), structureResultType));
+        ++firstArgumentIndex;
+    }
+
+    // Make the debug information
+    llvm::DISubprogram *subprogram = nullptr;
+    if(backend->getDIBuilder())
+    {
+        auto sourceLocation = function->getDefinitionSourcePosition();
+        auto file = backend->getOrCreateDIFileForSourcePosition(sourceLocation);
+        auto scope = file;
+        int scopeLine = sourceLocation->getLine();
+
+        auto flags = llvm::DINode::FlagPrototyped;
+        auto spFlags = llvm::DISubprogram::SPFlagZero;
+        if(!mainCodeRegion->isEmpty())
+            spFlags = llvm::DISubprogram::SPFlagDefinition;
+
+        subprogram = backend->getDIBuilder()->createFunction(
+            scope, function->getValidNameString(), llvm::StringRef(),
+            file, sourceLocation->getLine(),
+            backend->getOrCreateDIFunctionType(function->getFunctionalType()), scopeLine,
+            flags, spFlags
+        );
+        currentFunction->setSubprogram(subprogram);
     }
 
     // Translate the function body.
     translateMainCodeRegion(mainCodeRegion);
 
+    // Finalize the debug info.
+    if(subprogram)
+        backend->getDIBuilder()->finalizeSubprogram(subprogram);
+
     // Verify the function.
-    llvm::verifyFunction(*currentFunction);
+    if(llvm::verifyFunction(*currentFunction, &llvm::errs()))
+        abort();
 
     backend->getFunctionPassManager()->run(*currentFunction);
     
@@ -371,8 +402,10 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
 
 void SSALLVMValueVisitor::translateInstruction(const SSAInstructionPtr &instruction)
 {
-    auto instructionValue = visitValueForLLVM(instruction);
-    localTranslatedValueMap.insert({instruction, instructionValue});
+    withSourcePositionDo(instruction->getSourcePosition(), [&]{
+        auto instructionValue = visitValueForLLVM(instruction);
+        localTranslatedValueMap.insert({instruction, instructionValue});
+    });
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitCallInstruction(const SSACallInstructionPtr &instruction)
@@ -830,5 +863,20 @@ llvm::Value *SSALLVMValueVisitor::findLocalFinalizationFlagFor(const SSAValuePtr
     return localTranslatedFinalizationEnabledFlagMap.find(localVariable)->second;
 }
 
+void SSALLVMValueVisitor::withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock)
+{
+    if(!backend->getDIBuilder() || !builder)
+        return aBlock();
+
+    auto oldLocation = builder->getCurrentDebugLocation();
+    auto newLocation = backend->getDILocationFor(sourcePosition, currentFunction->getSubprogram());
+    builder->SetCurrentDebugLocation(newLocation);
+
+    doWithEnsure([&]{
+        return aBlock();
+    }, [&]{
+        builder->SetCurrentDebugLocation(oldLocation);
+    });
+}
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -38,6 +38,8 @@ public:
     static MethodCategories __instanceMethods__();
     static MethodCategories __instanceMacroMethods__();
 
+    Type();
+    
     virtual bool isType() const override;
     virtual std::string printString() const override;
     virtual void setName(const AnyValuePtr &newName);
@@ -408,6 +410,10 @@ public:
     // The type SSA value.
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
+    const ASTSourcePositionPtr &getSourceDefinitionPosition() const;
+
+    void setSourceDefinitionPosition(const ASTSourcePositionPtr &position);
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);
@@ -451,6 +457,8 @@ protected:
     DeferredCompileTimeCodeFragmentPtrList pendingBodyBlockCodeFragments;
 
     SSATypeProgramEntityPtr ssaTypeProgramEntity;
+
+    ASTSourcePositionPtr definitionPosition;
 };
 
 } // End of namespace Environment

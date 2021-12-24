@@ -22,6 +22,7 @@ public:
     ItaniumNameMangler();
 
     virtual std::string mangleType(const TypePtr &type) override;
+    virtual std::string mangleTypeInfo(const TypePtr &type) override;
     virtual std::string mangleProgramEntity(const ProgramEntityPtr &programEntity) override;
     virtual std::string mangleSSAProgramEntity(const SSAProgramEntityPtr &programEntity) override;
 

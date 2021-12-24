@@ -21,9 +21,29 @@ SSACodeGenerationBackendPtr SSACodeGenerationBackend::makeSpirVBackend()
     return nullptr;
 }
 
+SSACodeGenerationOutputMode SSACodeGenerationBackend::getOutputMode() const
+{
+    return outputMode;
+}
+
 void SSACodeGenerationBackend::setOutputMode(SSACodeGenerationOutputMode newOutputMode)
 {
     outputMode = newOutputMode;
+}
+
+DebugInformationType SSACodeGenerationBackend::getDebugInformationType()
+{
+    return debugInformationType;
+}
+
+void SSACodeGenerationBackend::setDebugInformationType(DebugInformationType type)
+{
+    debugInformationType = type;
+}
+
+void SSACodeGenerationBackend::setMainInputFileName(const std::string &newInputFileName)
+{
+    mainInputFileName = newInputFileName;
 }
 
 void SSACodeGenerationBackend::setOutputFileName(const std::string &newOutputFileName)

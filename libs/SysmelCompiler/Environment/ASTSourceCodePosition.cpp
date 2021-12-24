@@ -41,6 +41,21 @@ std::string ASTSourceCodePosition::printString() const
     return out.str();
 }
 
+std::string ASTSourceCodePosition::getSourceCodeFileName() const
+{
+    return sourceCode->name;
+}
+
+int ASTSourceCodePosition::getLine() const
+{
+    return startLine;
+}
+
+int ASTSourceCodePosition::getColumn() const
+{
+    return startColumn;
+}
+
 SExpression ASTSourceCodePosition::asSExpression() const
 {
     return SExpressionList{{SExpressionIdentifier{{"position"}},

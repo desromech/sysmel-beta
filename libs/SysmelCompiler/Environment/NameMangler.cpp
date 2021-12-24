@@ -13,6 +13,11 @@ std::string NameMangler::mangleType(const TypePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+std::string NameMangler::mangleTypeInfo(const TypePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 std::string NameMangler::mangleProgramEntity(const ProgramEntityPtr &)
 {
     SysmelSelfSubclassResponsibility();

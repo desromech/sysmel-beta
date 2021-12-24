@@ -20,6 +20,10 @@ std::string formatStringLiteral(const std::string &value);
 std::string formatSymbolLiteral(const std::string &value);
 std::string formatString(const std::string &format, const std::vector<std::string> &arguments);
 
+std::string basename(const std::string &path);
+std::string basenameWithoutExtension(const std::string &path);
+std::string dirname(const std::string &path);
+
 template<typename T>
 std::string castToString(const T &value)
 {

@@ -25,6 +25,7 @@ public:
     void setFunctionalType(const FunctionalTypePtr &functionalType);
     void setSignature(const TypePtrList &newArgumentTypes, const TypePtr &newResultType);
     void setSourcePosition(const ASTSourcePositionPtr &newSourcePosition);
+    const ASTSourcePositionPtr &getSourcePosition() const;
 
     const TypePtr &getResultType() const;
 

@@ -1972,6 +1972,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
     // Defer the body analysis.
     if(analyzedNode->body)
     {
+        enumType->setSourceDefinitionPosition(node->sourcePosition);
         enumType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(enumType)));
         analyzedNode->body.reset();
     }
@@ -2101,6 +2102,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
     // Defer the body analysis.
     if(analyzedNode->body)
     {
+        classType->setSourceDefinitionPosition(node->sourcePosition);
         classType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(classType)));
         analyzedNode->body.reset();
     }
@@ -2164,6 +2166,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
     // Defer the body analysis.
     if(analyzedNode->body)
     {
+        structureType->setSourceDefinitionPosition(node->sourcePosition);
         structureType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(structureType)));
         analyzedNode->body.reset();
     }
@@ -2227,6 +2230,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
     // Defer the body analysis.
     if(analyzedNode->body)
     {
+        unionType->setSourceDefinitionPosition(node->sourcePosition);
         unionType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(unionType)));
         analyzedNode->body.reset();
     }

@@ -15,6 +15,7 @@
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
@@ -63,6 +64,7 @@ public:
     llvm::Type *translateType(const TypePtr &type);
     void setTypeTranslation(const TypePtr &type, llvm::Type *translatedType);
     bool isSignedIntegerType(const TypePtr &type);
+    void setDebugTypeTranslation(const TypePtr &type, llvm::DIType *translatedType);
 
     llvm::Constant *translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType);
 
@@ -89,8 +91,26 @@ public:
         return functionPassManager.get(); 
     }
 
+    llvm::DIBuilder *getDIBuilder()
+    {
+        return diBuilder.get(); 
+    }
+
+    llvm::DICompileUnit *getDICompileUnit()
+    {
+        return diCompileUnit;
+    }
+
+    llvm::DIType *translateDIType(const TypePtr &type);
+
+    llvm::DIFile *getOrCreateDIFileFor(const std::string &filename);
+    llvm::DIFile *getOrCreateDIFileForSourcePosition(const ASTSourcePositionPtr &sourcePosition);
+    llvm::DISubroutineType *getOrCreateDIFunctionType(const FunctionalTypePtr &functionalType);
+    llvm::DILocation *getDILocationFor(const ASTSourcePositionPtr &sourcePosition, llvm::DIScope *scope);
+
 protected:
     void initializePrimitiveTypeMap();
+    void initializeDebugInfoBuilding();
     bool writeOutputOnto(llvm::raw_ostream &out);
 
 
@@ -99,8 +119,13 @@ protected:
     std::unique_ptr<llvm::LLVMContext> context;
     std::unique_ptr<llvm::Module> targetModule;
     std::unique_ptr<llvm::legacy::FunctionPassManager> functionPassManager;
+    std::unique_ptr<llvm::DIBuilder> diBuilder;
+    llvm::DICompileUnit *diCompileUnit = nullptr;
     std::unordered_map<TypePtr, llvm::Type*> typeMap;
     std::unordered_set<TypePtr> signedIntegerTypeSet;
+    std::unordered_map<TypePtr, std::function<llvm::DIType*(const TypePtr &type)>> basicDebugTypeConstructors;
+    std::unordered_map<TypePtr, llvm::DIType*> debugTypeMap;
+    std::unordered_map<std::string, llvm::DIFile*> debugFileMap;
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;
 };
 

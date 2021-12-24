@@ -25,6 +25,10 @@ public:
 
     virtual std::string printString() const override;
 
+    virtual std::string getSourceCodeFileName() const override;
+    virtual int getLine() const override;
+    virtual int getColumn() const override;
+
     ASTSourceCodePtr sourceCode;
     size_t startPosition = 0;
     size_t startLine = 0;

@@ -34,6 +34,9 @@ public:
 
     SSACodeRegionPtr getMainCodeRegion() const;
 
+    ASTSourcePositionPtr getDeclarationSourcePosition() const;
+    ASTSourcePositionPtr getDefinitionSourcePosition() const;
+
     const AnyValuePtr &getIntrinsicName() const;
     void setIntrinsicName(const AnyValuePtr &newIntrinsicName);
 

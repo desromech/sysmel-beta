@@ -58,6 +58,16 @@ SSACodeRegionPtr SSAFunction::getMainCodeRegion() const
     return mainCodeRegion;
 }
 
+ASTSourcePositionPtr SSAFunction::getDeclarationSourcePosition() const
+{
+    return sourcePosition;
+}
+
+ASTSourcePositionPtr SSAFunction::getDefinitionSourcePosition() const
+{
+    return mainCodeRegion->getSourcePosition();
+}
+
 const AnyValuePtr &SSAFunction::getIntrinsicName() const
 {
     return intrinsicName;
