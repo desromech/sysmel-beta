@@ -3,6 +3,7 @@
 #pragma once
 
 #include "NameMangler.hpp"
+#include <unordered_map>
 
 namespace Sysmel
 {

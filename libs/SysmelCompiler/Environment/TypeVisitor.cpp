@@ -37,7 +37,7 @@ AnyValuePtr TypeVisitor::visitSimpleType(const SimpleTypePtr &type)
 
 AnyValuePtr TypeVisitor::visitMetaType(const MetaTypePtr &type)
 {
-    return visitMetaType(type);
+    return visitAnyType(type);
 }
 
 AnyValuePtr TypeVisitor::visitBootstrapType(const BootstrapTypePtr &type)

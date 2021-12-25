@@ -28,7 +28,7 @@ public:
     virtual void parametersDo(const SSAInstructionParameterIterationBlock &aBlock) override;
     virtual void parametersDo(const SSAInstructionConstParameterIterationBlock &aBlock) const override;
 
-    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
+    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const override;
 
     const SSAValuePtr &getCondition() const;
     void setCondition(const SSAValuePtr &newCondition);

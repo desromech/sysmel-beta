@@ -24,7 +24,7 @@ public:
 
     virtual std::string getMnemonic() const override;
     
-    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
+    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const override;
 
     const SSACodeRegionPtr &getBodyRegion() const;
     void setBodyRegion(const SSACodeRegionPtr &newBodyRegion);

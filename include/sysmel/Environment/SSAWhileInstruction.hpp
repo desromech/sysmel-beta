@@ -23,7 +23,7 @@ public:
     virtual TypePtr getValueType() const override;
     virtual std::string getMnemonic() const override;
     
-    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const;
+    virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const override;
 
     const SSACodeRegionPtr &getConditionRegion() const;
     void setConditionRegion(const SSACodeRegionPtr &newConditionRegion);

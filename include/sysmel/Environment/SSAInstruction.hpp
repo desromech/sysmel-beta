@@ -35,7 +35,7 @@ public:
     virtual void replaceUsesOfWith(const SSAValuePtr &useToReplace, const SSAValuePtr &replacement) override;
     virtual void replaceWith(const SSAValuePtr &replacement) override;
 
-    virtual SExpression asFullDefinitionSExpression() const;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     const SSABasicBlockPtr &getParentBasicBlock() const;
     void setParentBasicBlock(const SSABasicBlockPtr &newParent);

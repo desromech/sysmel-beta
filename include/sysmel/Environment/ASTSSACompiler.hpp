@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ASTVisitor.hpp"
+#include <unordered_map>
 
 namespace Sysmel
 {
