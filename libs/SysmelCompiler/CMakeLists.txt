@@ -60,9 +60,13 @@ set(Environment_Sources
     ASTPragmaNode.cpp
     ASTProgramEntityExtensionNode.cpp
     ASTProgramEntityNode.cpp
+    ASTQuasiQuoteAnalyzer.cpp
+    ASTQuasiQuoteExpander.cpp
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
+    ASTQuasiQuotePatternExpansionNode.cpp
+    ASTQuasiQuotePatternExpansionArgumentNode.cpp
     ASTReinterpretCastNode.cpp
     ASTReturnNode.cpp
     ASTSemanticAnalyzer.cpp
@@ -75,6 +79,7 @@ set(Environment_Sources
     ASTSSACompiler.cpp
     ASTStructNode.cpp
     ASTTemplateNode.cpp
+    ASTTransformVisitor.cpp
     ASTTypeConversionNode.cpp
     ASTTypeNode.cpp
     ASTUnionNode.cpp

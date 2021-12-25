@@ -162,6 +162,16 @@ AnyValuePtr ASTVisitor::visitSpliceNode(const ASTSpliceNodePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr ASTVisitor::visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitQuasiQuotePatternExpansionArgumentNode(const ASTQuasiQuotePatternExpansionArgumentNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitProgramEntityNode(const ASTProgramEntityNodePtr &)
 {
     SysmelSelfSubclassResponsibility();

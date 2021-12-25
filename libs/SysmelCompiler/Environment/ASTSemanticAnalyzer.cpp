@@ -106,6 +106,9 @@
 #include "Environment/PrimitiveNumberType.hpp"
 #include "Environment/TupleType.hpp"
 
+#include "Environment/ASTQuasiQuoteAnalyzer.hpp"
+#include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
+
 namespace Sysmel
 {
 namespace Environment
@@ -989,7 +992,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitPragmaNode(const ASTPragmaNodePtr &node)
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)
 {
-    sysmelAssert(false);
+    auto quasiQuoteAnalyzer = basicMakeObject<ASTQuasiQuoteAnalyzer> ();
+    quasiQuoteAnalyzer->analyzer = selfFromThis();
+    return quasiQuoteAnalyzer->analyzeQuasiQuote(node);
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node)

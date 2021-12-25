@@ -588,6 +588,12 @@ public:
     /// Is this object an AST continue node?
     virtual bool isASTContinueNode() const;
 
+    /// Is this object an AST quasi quote pattern expansion?
+    virtual bool isASTQuasiQuotePatternExpansionNode() const;
+
+    /// Is this object an AST quasi ?
+    virtual bool isASTQuasiQuotePatternExpansionArgumentNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

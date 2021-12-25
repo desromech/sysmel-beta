@@ -514,6 +514,16 @@ bool AnyValue::isASTContinueNode() const
     return false;
 }
 
+bool AnyValue::isASTQuasiQuotePatternExpansionNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTQuasiQuotePatternExpansionArgumentNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;

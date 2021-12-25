@@ -20,6 +20,9 @@
 #include "Environment/ASTSequenceNode.hpp"
 #include "Environment/ASTSpliceNode.hpp"
 
+#include "Environment/ASTQuasiQuoteExpander.hpp"
+#include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
+
 #include "Environment/ASTGlobalVariableNode.hpp"
 #include "Environment/ASTLocalVariableNode.hpp"
 #include "Environment/ASTFieldVariableAccessNode.hpp"
@@ -228,11 +231,6 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMessageSendNode(const ASTMessageSendNo
     return validAnyValue(receiver)->performWithArguments(selector, arguments);
 }
 
-AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuoteNode(const ASTQuasiQuoteNodePtr &node)
-{
-    sysmelAssert(false);
-}
-
 AnyValuePtr ASTCompileTimeEvaluator::visitQuoteNode(const ASTQuoteNodePtr &node)
 {
     return node->expression;
@@ -244,6 +242,20 @@ AnyValuePtr ASTCompileTimeEvaluator::visitSequenceNode(const ASTSequenceNodePtr 
     for(const auto &expression : node->expressions)
         result = visitNode(expression);
     return result;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node)
+{
+    auto expander = basicMakeObject<ASTQuasiQuoteExpander> ();
+    auto pattern = visitNode(node->pattern);
+    sysmelAssert(pattern->isASTNode());
+
+    AnyValuePtrList arguments;
+    arguments.reserve(node->arguments.size());
+    for(auto &arg : node->arguments)
+        arguments.push_back(visitNode(arg));
+
+    return expander->expandPatternWithArguments(staticObjectCast<ASTNode> (pattern), arguments);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)

@@ -43,6 +43,9 @@ public:
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node);
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node);
 
+    virtual AnyValuePtr visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node);
+    virtual AnyValuePtr visitQuasiQuotePatternExpansionArgumentNode(const ASTQuasiQuotePatternExpansionArgumentNodePtr &node);
+
     virtual AnyValuePtr visitProgramEntityNode(const ASTProgramEntityNodePtr &node);
     virtual AnyValuePtr visitVariableNode(const ASTVariableNodePtr &node);
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node);

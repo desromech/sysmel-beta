@@ -12,6 +12,8 @@
 #include "Environment/ASTQuoteNode.hpp"
 #include "Environment/ASTSequenceNode.hpp"
 
+#include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
+
 #include "Environment/ASTGlobalVariableNode.hpp"
 #include "Environment/ASTLocalVariableNode.hpp"
 #include "Environment/ASTFieldVariableAccessNode.hpp"
@@ -397,6 +399,19 @@ AnyValuePtr ASTSSACompiler::visitSequenceNode(const ASTSequenceNodePtr &node)
     if(!result)
         result = builder->literal(getVoidConstant());
     return result;
+}
+
+AnyValuePtr ASTSSACompiler::visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node)
+{
+    auto pattern = visitNodeForValue(node->pattern);
+
+    SSAValuePtrList arguments;
+    arguments.reserve(node->arguments.size());
+    for(auto &arg : node->arguments)
+        arguments.push_back(visitNodeForValue(arg));
+    
+    //TODO: invoke an intrinsic function for expanding the pattern.
+    return pattern;
 }
 
 AnyValuePtr ASTSSACompiler::visitQuoteNode(const ASTQuoteNodePtr &node)

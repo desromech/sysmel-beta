@@ -81,6 +81,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTImplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReinterpretCastNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuotePatternExpansionNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuotePatternExpansionArgumentNode);
+
 typedef std::function<void (const ASTNodePtr &)> ASTIterationBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
