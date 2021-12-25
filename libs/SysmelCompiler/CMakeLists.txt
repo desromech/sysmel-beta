@@ -271,7 +271,7 @@ set(Environment_Sources
     Template.cpp
     TemplateInstance.cpp
     TemplateMetaBuilder.cpp
-    TemporaryReferenceType
+    TemporaryReferenceType.cpp
     TupleType.cpp
     Type.cpp
     TypeVisitor.cpp

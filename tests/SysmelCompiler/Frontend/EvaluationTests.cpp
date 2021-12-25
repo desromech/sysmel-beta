@@ -1517,4 +1517,20 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(QuasiQuote)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                evaluateString(R"(
+Boolean8 extend: {
+    public macro method ifTrue: trueBlock ifFalse: falseBlock := ``(if: `,trueBlock else: `, falseBlock).
+};
+)");
+            });
+            CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("true ifTrue: Int32(1) ifFalse: Int32(2)"));
+            CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("false ifTrue: Int32(1) ifFalse: Int32(2)"));
+        });
+    }
+
 }

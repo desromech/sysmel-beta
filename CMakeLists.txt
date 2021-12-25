@@ -9,6 +9,11 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 	set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build, options are: None (CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
+# Add the homebrew install of llvm to the search path.
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/llvm")
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Turn warnings and use C++ 2011.
