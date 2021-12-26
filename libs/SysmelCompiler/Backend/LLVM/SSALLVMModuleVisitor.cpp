@@ -23,8 +23,9 @@ AnyValuePtr SSALLVMModuleVisitor::visitModule(const SSAModulePtr &value)
 
 AnyValuePtr SSALLVMModuleVisitor::visitProgramEntityWithChildren(const SSAProgramEntityWithChildrenPtr &value)
 {
-    for(auto &child : value->getChildren())
-        visitValue(child);
+    auto &children = value->getChildren();
+    for(size_t i = 0; i < children.size(); ++i)
+        visitValue(children[i]);
     return nullptr;
 }
 
