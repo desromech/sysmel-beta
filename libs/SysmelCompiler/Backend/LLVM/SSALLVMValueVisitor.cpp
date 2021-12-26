@@ -197,6 +197,21 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
         currentFunction->getArg(0)->addAttr(llvm::Attribute::getWithStructRetType(*backend->getContext(), structureResultType));
         ++firstArgumentIndex;
     }
+    
+    // Zeroext/signext
+    if(backend->isSignedIntegerType(mainCodeRegion->getResultType()))
+        currentFunction->addAttribute(0, llvm::Attribute::SExt);
+    else if(backend->isUnsignedIntegerType(mainCodeRegion->getResultType()))
+        currentFunction->addAttribute(0, llvm::Attribute::ZExt);
+
+    for(size_t i = 0; i < mainCodeRegion->getArgumentCount(); ++i)
+    {
+        auto argType = mainCodeRegion->getArgument(i)->getValueType();
+        if(backend->isSignedIntegerType(argType))
+            currentFunction->addParamAttr(i, llvm::Attribute::SExt);
+        else if(backend->isUnsignedIntegerType(argType))
+            currentFunction->addParamAttr(i, llvm::Attribute::ZExt);
+    }
 
     // Make the debug information
     llvm::DISubprogram *subprogram = nullptr;

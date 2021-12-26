@@ -67,6 +67,7 @@ public:
     llvm::Type *translateType(const TypePtr &type);
     void setTypeTranslation(const TypePtr &type, llvm::Type *translatedType);
     bool isSignedIntegerType(const TypePtr &type);
+    bool isUnsignedIntegerType(const TypePtr &type);
     void setDebugTypeTranslation(const TypePtr &type, llvm::DIType *translatedType);
 
     llvm::Constant *translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType);
@@ -126,6 +127,7 @@ protected:
     llvm::DICompileUnit *diCompileUnit = nullptr;
     std::unordered_map<TypePtr, llvm::Type*> typeMap;
     std::unordered_set<TypePtr> signedIntegerTypeSet;
+    std::unordered_set<TypePtr> unsignedIntegerTypeSet;
     std::unordered_map<TypePtr, std::function<llvm::DIType*(const TypePtr &type)>> basicDebugTypeConstructors;
     std::unordered_map<TypePtr, llvm::DIType*> debugTypeMap;
     std::unordered_map<std::string, llvm::DIFile*> debugFileMap;

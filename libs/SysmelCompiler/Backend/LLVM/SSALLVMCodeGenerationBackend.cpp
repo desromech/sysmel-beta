@@ -77,6 +77,17 @@ void SSALLVMCodeGenerationBackend::initializePrimitiveTypeMap()
         Int32::__staticType__(),
         Int64::__staticType__(),
     };
+
+    unsignedIntegerTypeSet = {
+        UInt8::__staticType__(),
+        UInt16::__staticType__(),
+        UInt32::__staticType__(),
+        UInt64::__staticType__(),
+
+        Char8::__staticType__(),
+        Char16::__staticType__(),
+        Char32::__staticType__(),
+    };
 }
 
 void SSALLVMCodeGenerationBackend::initializeDebugInfoBuilding()
@@ -308,7 +319,12 @@ llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstantPointer(const 
 
 bool SSALLVMCodeGenerationBackend::isSignedIntegerType(const TypePtr &type)
 {
-    return signedIntegerTypeSet.find(type) != signedIntegerTypeSet.end();
+    return signedIntegerTypeSet.find(type->asUndecoratedType()) != signedIntegerTypeSet.end();
+}
+
+bool SSALLVMCodeGenerationBackend::isUnsignedIntegerType(const TypePtr &type)
+{
+    return unsignedIntegerTypeSet.find(type->asUndecoratedType()) != unsignedIntegerTypeSet.end();
 }
 
 bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramModulePtr &programModule)
