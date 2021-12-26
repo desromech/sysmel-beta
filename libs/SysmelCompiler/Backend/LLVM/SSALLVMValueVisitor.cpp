@@ -7,6 +7,8 @@
 #include "Environment/NameMangler.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 
+#include "Environment/ArgumentVariable.hpp"
+
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/SSAFunction.hpp"
 #include "Environment/SSACodeRegion.hpp"
@@ -16,6 +18,7 @@
 
 #include "Environment/SSACallInstruction.hpp"
 #include "Environment/SSAConditionalJumpInstruction.hpp"
+#include "Environment/SSADeclareLocalVariableInstruction.hpp"
 #include "Environment/SSAIfInstruction.hpp"
 #include "Environment/SSAGetAggregateFieldReferenceInstruction.hpp"
 #include "Environment/SSAGetAggregateSlotReferenceInstruction.hpp"
@@ -403,16 +406,81 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
     builder->SetInsertPoint(targetBasicBlock);
 
     // Create the code region result finalization flag if it is required.
-    if(index == 0 && currentCodeRegion->getArgumentCount() > 0)
+    if(index == 0)
     {
-        auto firstArgument = currentCodeRegion->getArgument(0);
-        if(firstArgument->isLocalFinalizationRequired())
-            createLocalFinalizationFlagFor(firstArgument);
+        auto argumentCount = currentCodeRegion->getArgumentCount();
+        for(size_t i = 0; i < argumentCount; ++i)
+        {
+            const auto &arg = currentCodeRegion->getArgument(i);
+            
+            // Argument local finalization.
+            if(i == 0 && arg->isLocalFinalizationRequired())
+                createLocalFinalizationFlagFor(arg);
+
+            // Declare the local argument.
+            declareDebugArgument(arg);
+        }
     }
 
     sourceBasicBlock->instructionsDo([&](const SSAInstructionPtr &instruction){
         translateInstruction(instruction);
     });
+}
+
+void SSALLVMValueVisitor::declareDebugArgument(const SSACodeRegionArgumentPtr &argument)
+{
+    auto diBuilder = backend->getDIBuilder();
+    if(!diBuilder)
+        return;
+
+    const auto &variable = argument->getVariable();
+    if(!variable)
+        return;
+
+    auto debugVariable = translateDebugLocalVariable(variable);   
+    if(!debugVariable)
+        return;
+
+    auto location = backend->getDILocationFor(argument->getDefinitionPosition(), currentFunction->getSubprogram());
+    auto value = translateValue(argument);
+    
+    auto address = value;
+
+    // If the argument is not in a reference, make a copy for exposing it in the debugger.
+    if(!variable->getValueType()->isPassedByReference())
+    {
+        address = allocaBuilder->CreateAlloca(address->getType());
+        builder->CreateStore(value, address);
+    }
+
+    diBuilder->insertDeclare(address, debugVariable, diBuilder->createExpression(), location, builder->GetInsertBlock());
+}
+
+llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const VariablePtr &variable)
+{
+    auto sourcePosition = variable->getDefinitionPosition();
+    auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
+    auto line = sourcePosition->getLine();
+    auto debugType = backend->translateDIType(variable->getValueType());
+
+    // Arguments
+    auto scope = currentFunction->getSubprogram();
+    if(variable->isArgumentVariable())
+    {
+        auto argumentIndex = variable.staticAs<ArgumentVariable> ()->argumentIndex;
+        return backend->getDIBuilder()->createParameterVariable(
+            scope, variable->getValidNameString(), 1 + argumentIndex,
+            file, line, debugType
+        );
+    }
+
+    if(validAnyValue(variable->getName())->isAnonymousNameSymbol())
+        return nullptr;
+
+    return backend->getDIBuilder()->createAutoVariable(
+        scope, variable->getValidNameString(),
+        file, line, debugType
+    );
 }
 
 void SSALLVMValueVisitor::translateInstruction(const SSAInstructionPtr &instruction)
@@ -471,6 +539,33 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
     for(auto &arg : instruction->getArguments())
         arguments.push_back(translateValue(arg));
     return builder->CreateCall(static_cast<llvm::FunctionType*> (translatedFunctionType), translatedCalledFunction, arguments);
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSADeclareLocalVariableInstructionPtr &instruction)
+{
+    auto diBuilder = backend->getDIBuilder();
+    auto value = translateValue(instruction->getValue());
+    auto variable = instruction->getVariable();
+    if(diBuilder && variable && !validAnyValue(variable->getName())->isAnonymousNameSymbol())
+    {
+        auto diVariable = translateDebugLocalVariable(variable);
+        if(diVariable)
+        {
+            auto address = value;
+            auto refType = variable->getReferenceType()->asUndecoratedType();
+            auto scope = currentFunction->getSubprogram();
+            auto location = backend->getDILocationFor(instruction->getSourcePosition(), scope);
+            if(!address->getType()->isPointerTy() || (!refType->isReferenceLikeType() && !refType->isPassedByReference()))
+            {
+                address = allocaBuilder->CreateAlloca(value->getType());
+                builder->CreateStore(value, address);
+            }
+
+            diBuilder->insertDeclare(address, diVariable, diBuilder->createExpression(), location, builder->GetInsertBlock());
+        }
+    }
+
+    return wrapLLVMValue(makeVoidValue());
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction)

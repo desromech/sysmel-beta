@@ -442,6 +442,7 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
         assignInitialValueFrom(variableValue, valueType, initialValue);
     }
 
+    builder->declareLocalVariable(variableValue, variable);
     mapLocalVariableToValue(variable, variableValue);
     return variableValue;
 }

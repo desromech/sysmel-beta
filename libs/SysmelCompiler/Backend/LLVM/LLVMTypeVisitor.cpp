@@ -61,18 +61,36 @@ AnyValuePtr LLVMTypeVisitor::visitEnumType(const EnumTypePtr &type)
     return wrapLLVMType(backend->translateType(type->getBaseType()));
 }
 
+llvm::Type *LLVMTypeVisitor::translateArgumentType(const TypePtr &type)
+{
+    auto result = backend->translateType(type);
+    if(type->isPassedByReference())
+        return llvm::PointerType::getUnqual(result);
+    return result;
+}
+
 AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
 {
-    auto resultType = backend->translateType(type->getResultType());
+    auto declaredResultType = type->getResultType();
+    auto resultType = backend->translateType(declaredResultType);
+    auto actualResultType = resultType;
     auto receiverType = type->getReceiverType();
     auto hasValidReceiverType = !receiverType->isVoidType();
+    bool hasResultReturnedByReference = declaredResultType->isReturnedByReference();
     std::vector<llvm::Type*> argumentType;
-    argumentType.reserve((hasValidReceiverType ? 1 : 0) + type->getArgumentCount());
+    argumentType.reserve((hasResultReturnedByReference ? 1 : 0) +(hasValidReceiverType ? 1 : 0) + type->getArgumentCount());
+
+    if(hasResultReturnedByReference)
+    {
+        argumentType.push_back(llvm::PointerType::getUnqual(resultType));
+        actualResultType = llvm::Type::getVoidTy(*backend->getContext());
+    }
+    
     if(hasValidReceiverType)
-        argumentType.push_back(backend->translateType(receiverType));
+        argumentType.push_back(translateArgumentType(receiverType));
 
     for(size_t i = 0; i < type->getArgumentCount(); ++i)
-        argumentType.push_back(backend->translateType(type->getArgument(i)));
+        argumentType.push_back(translateArgumentType(type->getArgument(i)));
 
     return wrapLLVMType(llvm::FunctionType::get(resultType, argumentType, false));
 }

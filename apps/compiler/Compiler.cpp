@@ -106,7 +106,7 @@ int main(int argc, const char *argv[])
 
 
     if(parameters.moduleName.empty())
-        parameters.moduleName = parameters.inputFileNames.front();
+        parameters.moduleName = basenameWithoutExtension(parameters.inputFileNames.front());
 
     int exitCode = 0;
     RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForHost())->activeDuring([&]{

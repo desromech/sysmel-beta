@@ -8,6 +8,9 @@ namespace Sysmel
 {
 namespace Environment
 {
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable)
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -26,7 +29,10 @@ public:
     virtual SExpression asFullDefinitionSExpression() const override;
 
     void setDeclarationPosition(const ASTSourcePositionPtr &position);
+    const ASTSourcePositionPtr &getDeclarationPosition() const;
+
     void setDefinitionPosition(const ASTSourcePositionPtr &position);
+    const ASTSourcePositionPtr &getDefinitionPosition() const;
     
     virtual TypePtr getValueType() const override;
 
@@ -46,11 +52,15 @@ public:
     const TypePtr &getSourceType() const;
     void setSourceType(const TypePtr &newSourceType);
 
+    const VariablePtr &getVariable() const;
+    void setVariable(const VariablePtr &variable);
+
 protected:
     TypePtr valueType;
     TypePtr sourceType;
     ASTSourcePositionPtr declarationSourcePosition;
     ASTSourcePositionPtr definitionSourcePosition;
+    VariablePtr variable;
     bool isResult_  = false;
     bool isReceiver_ = false;
     bool localFinalizationRequired = false;

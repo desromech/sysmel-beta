@@ -142,11 +142,13 @@ void CompiledMethod::createImplicitReceiverArgumentVariableWithType(const TypePt
 void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumentTypes)
 {
     arguments.reserve(argumentTypes.size());
-    for(const auto &type : argumentTypes)
+    for(size_t i = 0; i < argumentTypes.size(); ++i)
     {
+        const auto &type = argumentTypes[i];
         auto argument = basicMakeObject<ArgumentVariable> ();
         recordChildProgramEntityDefinition(argument);
         argument->setType(type);
+        argument->argumentIndex = i;
         arguments.push_back(argument);
     }
 }
@@ -260,12 +262,18 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     auto receiverType = functionalType->getReceiverType();
     if(!receiverType->isVoidType())
     {
-        mainCodeRegion->getArgument(receiverOffset)->setDeclarationPosition(declarationPosition);
+        auto ssaArg = mainCodeRegion->getArgument(receiverOffset);
+        ssaArg->setDeclarationPosition(declarationPosition);
+        ssaArg->setVariable(receiverArgument);
         ++argumentsOffset;
     }
 
     for(size_t i = 0; i < arguments.size(); ++i)
-        mainCodeRegion->getArgument(i + argumentsOffset)->setDeclarationPosition(arguments[i]->getDeclarationPosition());
+    {
+        auto ssaArg = mainCodeRegion->getArgument(i + argumentsOffset);
+        ssaArg->setDeclarationPosition(arguments[i]->getDeclarationPosition());
+        ssaArg->setVariable(arguments[i]);
+    }
 
     // Add the captured variables.
     for(auto &capturedVariable : capturedVariables)

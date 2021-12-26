@@ -62,9 +62,19 @@ void SSACodeRegionArgument::setDeclarationPosition(const ASTSourcePositionPtr &p
     declarationSourcePosition = position;
 }
 
+const ASTSourcePositionPtr &SSACodeRegionArgument::getDeclarationPosition() const
+{
+    return declarationSourcePosition;
+}
+
 void SSACodeRegionArgument::setDefinitionPosition(const ASTSourcePositionPtr &position)
 {
     definitionSourcePosition = position;
+}
+
+const ASTSourcePositionPtr &SSACodeRegionArgument::getDefinitionPosition() const
+{
+    return definitionSourcePosition;
 }
 
 TypePtr SSACodeRegionArgument::getValueType() const
@@ -91,6 +101,16 @@ const TypePtr &SSACodeRegionArgument::getSourceType() const
 void SSACodeRegionArgument::setSourceType(const TypePtr &newSourceType)
 {
     sourceType = newSourceType;
+}
+
+const VariablePtr &SSACodeRegionArgument::getVariable() const
+{
+    return variable;
+}
+
+void SSACodeRegionArgument::setVariable(const VariablePtr &newVariable)
+{
+    variable = newVariable;
 }
 
 } // End of namespace Environment

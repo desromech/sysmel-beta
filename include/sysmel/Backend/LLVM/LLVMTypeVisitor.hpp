@@ -37,6 +37,8 @@ public:
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
     virtual AnyValuePtr visitTupleType(const TupleTypePtr &type) override;
 
+    llvm::Type *translateArgumentType(const TypePtr &type);
+    
     SSALLVMCodeGenerationBackend *backend = nullptr;
 };
 

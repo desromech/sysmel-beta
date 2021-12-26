@@ -30,6 +30,7 @@ public:
     virtual SExpression asFullDefinitionSExpression() const override;
     
     bool isImplicit = false;
+    uint32_t argumentIndex = 0;
 };
 
 } // End of namespace Environment

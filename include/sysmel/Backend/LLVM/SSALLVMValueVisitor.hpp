@@ -67,6 +67,7 @@ public:
     virtual AnyValuePtr visitTypeProgramEntity(const SSATypeProgramEntityPtr &value) override;
 
     virtual AnyValuePtr visitCallInstruction(const SSACallInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitDeclareLocalVariableInstruction(const SSADeclareLocalVariableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction) override;
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction) override;
     virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction) override;
@@ -110,6 +111,10 @@ protected:
     llvm::Value *findLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
 
     void withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock);
+
+    void declareDebugArgument(const SSACodeRegionArgumentPtr &argument);
+    void declareDebugLocalVariable(const SSALocalVariableInstruction &localVariable);
+    llvm::DILocalVariable *translateDebugLocalVariable(const VariablePtr &variable);
 
     llvm::Function *currentFunction = nullptr;
     SSACodeRegionPtr currentCodeRegion;

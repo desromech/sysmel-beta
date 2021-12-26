@@ -154,6 +154,11 @@ AnyValuePtr SSAValueVisitor::visitLocalVariableInstruction(const SSALocalVariabl
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitDeclareLocalVariableInstruction(const SSADeclareLocalVariableInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitDoWhileInstruction(const SSADoWhileInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

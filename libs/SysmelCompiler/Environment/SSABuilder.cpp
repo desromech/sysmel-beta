@@ -9,6 +9,7 @@
 #include "Environment/SSABreakInstruction.hpp"
 #include "Environment/SSACallInstruction.hpp"
 #include "Environment/SSAContinueInstruction.hpp"
+#include "Environment/SSADeclareLocalVariableInstruction.hpp"
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSADoWhileInstruction.hpp"
 #include "Environment/SSAGetAggregateFieldReferenceInstruction.hpp"
@@ -169,6 +170,16 @@ SSAContinueInstructionPtr SSABuilder::continueInstruction()
     instruction->setSourcePosition(currentSourcePosition);
     addInstruction(instruction);
     return instruction;   
+}
+
+SSADeclareLocalVariableInstructionPtr SSABuilder::declareLocalVariable(const SSAValuePtr &value, const VariablePtr &variable)
+{
+    auto instruction = basicMakeObject<SSADeclareLocalVariableInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValue(value);
+    instruction->setVariable(variable);
+    addInstruction(instruction);
+    return instruction;
 }
 
 SSADoWithCleanupInstructionPtr SSABuilder::doWithCleanUp(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &cleanUpRegion)

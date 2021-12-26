@@ -1005,6 +1005,9 @@ public:
     // Is this a SSA local variable instruction?
     virtual bool isSSALocalVariableInstruction() const;
 
+    // Is this a SSA declara local variable instruction?
+    virtual bool isSSADeclareLocalVariableInstruction() const;
+
     // Is this a SSA while statement?
     virtual bool isSSAWhileInstruction() const;
 

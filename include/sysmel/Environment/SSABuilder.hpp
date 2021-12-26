@@ -49,6 +49,7 @@ public:
     SSABreakInstructionPtr breakInstruction();
     SSACallInstructionPtr call(const TypePtr &resultType, const SSAValuePtr &function, const SSAValuePtrList &arguments);
     SSAContinueInstructionPtr continueInstruction();
+    SSADeclareLocalVariableInstructionPtr declareLocalVariable(const SSAValuePtr &value, const VariablePtr &variable);
     SSADoWithCleanupInstructionPtr doWithCleanUp(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &cleanUpRegion);
     SSADoWhileInstructionPtr doWhileContinueWith(const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &continueRegion);
     SSAGetAggregateFieldReferenceInstructionPtr getAggregateFieldReference(const TypePtr &valueType, const SSAValuePtr &aggregate, const FieldVariablePtr &field);

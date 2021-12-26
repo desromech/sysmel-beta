@@ -1199,6 +1199,11 @@ bool AnyValue::isSSALocalVariableInstruction() const
     return false;
 }
 
+bool AnyValue::isSSADeclareLocalVariableInstruction() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAConditionalJumpInstruction() const
 {
     return false;

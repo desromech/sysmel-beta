@@ -237,6 +237,7 @@ set(Environment_Sources
     SSAContinueInstruction.cpp
     SSAConstantLiteralValue.cpp
     SSAConstantValue.cpp
+    SSADeclareLocalVariableInstruction.cpp
     SSADoWhileInstruction.cpp
     SSADoWithCleanupInstruction.cpp
     SSADowncastInstruction.cpp

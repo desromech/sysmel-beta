@@ -46,6 +46,7 @@ public:
     virtual AnyValuePtr visitJumpInstruction(const SSAJumpInstructionPtr &instruction);
     virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction);
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction);
+    virtual AnyValuePtr visitDeclareLocalVariableInstruction(const SSADeclareLocalVariableInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction);
     virtual AnyValuePtr visitDoWithCleanupInstruction(const SSADoWithCleanupInstructionPtr &instruction);
     virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction);
