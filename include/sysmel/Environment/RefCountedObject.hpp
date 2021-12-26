@@ -6,6 +6,7 @@
 #include <functional> // For std::hash
 #include <ostream>
 #include <unordered_set>
+#include <utility> // For std::swap
 #include "Assert.hpp"
 
 namespace Sysmel
@@ -41,8 +42,25 @@ private:
 class RefCountedObject
 {
 public:
+    RefCountedObject() {}
+    RefCountedObject(const RefCountedObject &)
+        : strongCount(1), weakCount(1) {}
+
+    RefCountedObject(RefCountedObject &&)
+        : strongCount(1), weakCount(1) {}
+
     virtual ~RefCountedObject()
     {
+    }
+
+    const RefCountedObject &operator=(const RefCountedObject &)
+    {
+        return *this;
+    }
+
+    const RefCountedObject &operator=(RefCountedObject &&)
+    {
+        return *this;
     }
 
     void strongRetain() const
@@ -178,40 +196,29 @@ public:
         return SelfType(pointer);
     }
 
+    void swap(SelfType &other)
+    {
+        std::swap(pointer_, other.pointer_);
+    }
+
     const SelfType &operator=(const SelfType &other)
     {
         if(this != &other)
-        {
-            auto newPointer = other.pointer_;
-            auto oldPointer = pointer_;
-
-            if(newPointer) reinterpret_cast<RefCountedObject*> (newPointer)->strongRetain();
-            pointer_ = newPointer;
-            if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->strongRelease();
-
-        }
+            SelfType(other).swap(*this);
         return *this;
     }
 
     template<typename U>
     const SelfType &operator=(const ObjectPtr<U> &other)
     {
-        T* newPointer = other.get();
-        auto oldPointer = pointer_;
-
-        if(newPointer) reinterpret_cast<RefCountedObject*> (newPointer)->strongRetain();
-        pointer_ = newPointer;
-        if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->strongRelease();
+        SelfType(other).swap(*this);
         return *this;
     }
 
     const SelfType &operator=(SelfType &&other)
     {
         if(this != &other)
-        {
-            pointer_ = other.pointer_;
-            other.pointer_ = nullptr;
-        }
+            SelfType(std::move(other)).swap(*this);
         return *this;
     }
 
@@ -249,9 +256,7 @@ public:
 
     void reset()
     {
-        auto oldPointer = pointer_;
-        pointer_ = nullptr;
-        if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->strongRelease();
+        SelfType().swap(*this);
     }
 
     template<typename U>
@@ -359,60 +364,42 @@ public:
         return SelfType(pointer);
     }
 
+    void swap(SelfType &other)
+    {
+        std::swap(pointer_, other.pointer_);
+    }
+
     const SelfType &operator=(const SelfType &other)
     {
         if(this != &other)
-        {
-            auto newPointer = other.pointer_;
-            auto oldPointer = pointer_;
-
-            if(newPointer) reinterpret_cast<RefCountedObject*> (newPointer)->weakRetain();
-            pointer_ = newPointer;
-            if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->weakRelease();
-
-        }
+            SelfType(other).swap(*this);
         return *this;
     }
 
     template<typename U>
     const SelfType &operator=(const ObjectPtr<U> &other)
     {
-        T* newPointer = other.get();
-        auto oldPointer = pointer_;
-
-        if(newPointer) reinterpret_cast<RefCountedObject*> (newPointer)->weakRetain();
-        pointer_ = newPointer;
-        if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->weakRelease();
+        SelfType(other).swap(*this);
         return *this;
     }
 
     template<typename U>
     const SelfType &operator=(const ObjectWeakPtr<U> &other)
     {
-        T* newPointer = other.get();
-        auto oldPointer = pointer_;
-
-        if(newPointer) reinterpret_cast<RefCountedObject*> (newPointer)->weakRetain();
-        pointer_ = newPointer;
-        if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->weakRelease();
+        SelfType(other).swap(*this);
         return *this;
     }
 
     const SelfType &operator=(SelfType &&other)
     {
         if(this != &other)
-        {
-            pointer_ = other.pointer_;
-            other.pointer_ = nullptr;
-        }
+            SelfType(std::move(other)).swap(*this);
         return *this;
     }
 
     void reset()
     {
-        auto oldPointer = pointer_;
-        pointer_ = nullptr;
-        if(oldPointer) reinterpret_cast<RefCountedObject*> (oldPointer)->weakRelease();
+        SelfType().swap(*this);
     }
 
     ObjectPtr<T> lock() const
