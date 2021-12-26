@@ -123,6 +123,23 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateStore(context.arguments[1], context.arguments[0]);
     }},
+
+    {"cvar.arg.identity", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.arguments.back();
+    }},
+    {"cvar.arg.zeroext32", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateZExt(context.arguments.back(), context.builder->getInt32Ty());
+    }},
+    {"cvar.arg.signext32", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateSExt(context.arguments.back(), context.builder->getInt32Ty());
+    }},
+    {"cvar.arg.float64", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateFPExt(context.arguments.back(), context.builder->getDoubleTy());
+    }},
 };
 
 AnyValuePtr wrapLLVMValue(llvm::Value *value)
@@ -171,12 +188,16 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 
     auto mainCodeRegion = function->getMainCodeRegion();
     auto resultType = backend->translateType(mainCodeRegion->getResultType());
+    auto argumentCount = mainCodeRegion->getArgumentCount();
+    auto hasCVarArgs = mainCodeRegion->hasCVarArgs();
+    if(hasCVarArgs)
+        --argumentCount;
     std::vector<llvm::Type*> argumentTypes;
-    argumentTypes.reserve(mainCodeRegion->getArgumentCount());
-    for(auto &arg : mainCodeRegion->getArguments())
-        argumentTypes.push_back(backend->translateType(arg->getValueType()));
+    argumentTypes.reserve(argumentCount);
+    for(size_t i = 0; i < argumentCount; ++i)
+        argumentTypes.push_back(backend->translateType(mainCodeRegion->getArgument(i)->getValueType()));
 
-    auto functionType = llvm::FunctionType::get(resultType, argumentTypes, false);
+    auto functionType = llvm::FunctionType::get(resultType, argumentTypes, hasCVarArgs);
 
     // Guard for recursive definitions.
     {
@@ -207,7 +228,7 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     else if(backend->isUnsignedIntegerType(mainCodeRegion->getResultType()))
         currentFunction->addAttribute(0, llvm::Attribute::ZExt);
 
-    for(size_t i = 0; i < mainCodeRegion->getArgumentCount(); ++i)
+    for(size_t i = 0; i < argumentCount; ++i)
     {
         auto argType = mainCodeRegion->getArgument(i)->getValueType();
         if(backend->isSignedIntegerType(argType))
@@ -309,7 +330,10 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
     currentCodeRegion = codeRegion;
 
     // Map the source arguments.
-    for(size_t i = 0; i < codeRegion->getArgumentCount(); ++i)
+    auto argumentCount = codeRegion->getArgumentCount();
+    if(codeRegion->hasCVarArgs())
+        --argumentCount;
+    for(size_t i = 0; i < argumentCount; ++i)
     {
         auto sourceArgument = codeRegion->getArgument(i);
         auto targetArgument = currentFunction->getArg(i);
@@ -474,7 +498,7 @@ llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const Va
         );
     }
 
-    if(validAnyValue(variable->getName())->isAnonymousNameSymbol())
+    if(validAnyValue(variable->getName())->isHiddenNameSymbol())
         return nullptr;
 
     return backend->getDIBuilder()->createAutoVariable(
@@ -515,7 +539,9 @@ llvm::Value *SSALLVMValueVisitor::translateIntrinsicCall(const std::string &intr
         context.self = this;
         context.builder = builder.get();
         context.intrinsicName = intrinsicName;
-        context.resultType = backend->translateType(instruction->getValueType());
+        context.originalResultType = instruction->getValueType();
+        if(!context.originalResultType->isCVarArgType())
+            context.resultType = backend->translateType(context.originalResultType);
         context.originalArguments = instruction->getArguments();
         context.arguments.reserve(instruction->getArguments().size());
         for(auto &arg : instruction->getArguments())
@@ -546,7 +572,7 @@ AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSAD
     auto diBuilder = backend->getDIBuilder();
     auto value = translateValue(instruction->getValue());
     auto variable = instruction->getVariable();
-    if(diBuilder && variable && !validAnyValue(variable->getName())->isAnonymousNameSymbol())
+    if(diBuilder && variable && !validAnyValue(variable->getName())->isHiddenNameSymbol())
     {
         auto diVariable = translateDebugLocalVariable(variable);
         if(diVariable)

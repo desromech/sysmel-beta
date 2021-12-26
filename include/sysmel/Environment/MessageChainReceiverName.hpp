@@ -17,6 +17,7 @@ class MessageChainReceiverName : public SubtypeOf<CompilerObject, MessageChainRe
 public:
     static constexpr char const __typeName__[] = "MessageChainReceiverName";
     
+    virtual bool isHiddenNameSymbol() const override;
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
 

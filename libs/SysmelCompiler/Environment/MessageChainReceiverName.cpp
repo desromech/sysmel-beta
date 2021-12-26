@@ -10,6 +10,11 @@ namespace Environment
 
 static BootstrapTypeRegistration<MessageChainReceiverName> MessageChainReceiverNameTypeRegistration;
 
+bool MessageChainReceiverName::isHiddenNameSymbol() const
+{
+    return true;
+}
+
 std::string MessageChainReceiverName::printString() const
 {
     return "MessageChainReceiver at " + sourcePosition->printString();

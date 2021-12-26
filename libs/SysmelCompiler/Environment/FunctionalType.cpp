@@ -91,6 +91,19 @@ bool FunctionalType::matchesSignature(const TypePtr &testReceiverType, const Typ
     return getReceiverType() == testReceiverType && arguments == testArgumentTypes && result == testResultType;
 }
 
+TypePtr FunctionalType::getParamsType() const
+{
+    if(!arguments.empty() && arguments.back()->isParamsDecoratedType())
+        return arguments.back();
+    return nullptr;
+}
+
+bool FunctionalType::hasCVarArgs() const
+{
+    auto paramsType = getParamsType();
+    return paramsType && paramsType->isCVarArgsType();
+}
+
 bool FunctionalTypeValue::isFunctionalTypeValue() const
 {
     return true;

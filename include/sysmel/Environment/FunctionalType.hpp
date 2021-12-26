@@ -36,6 +36,9 @@ public:
     
     bool matchesSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) const;
 
+    TypePtr getParamsType() const;
+    bool hasCVarArgs() const;
+
 protected:
     TypePtrList arguments;
     TypePtr result;

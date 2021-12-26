@@ -124,7 +124,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitStructureType(const StructureTypePtr &typ
     elements.reserve(type->getFieldCount());
     for(auto &field : type->getFields())
     {
-        if(validAnyValue(field->getName())->isAnonymousNameSymbol())
+        if(validAnyValue(field->getName())->isHiddenNameSymbol())
             continue;
 
         elements.push_back(translateFieldOf(field, declaration));

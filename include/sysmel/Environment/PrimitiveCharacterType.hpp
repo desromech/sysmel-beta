@@ -11,6 +11,10 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveCharacterType);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Char8);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Char16);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Char32);
+
 /**
  * I am a primitive character type.
  */

@@ -149,70 +149,72 @@ R"(
           (store 3 #Void
             (constantLiteralValue (int32 0) #Int32)
             (local 2))
-          (localVariable 4
+          (declareLocalVariable 4 #Void (local 2))
+          (localVariable 5
             (refType #Int32 #generic))
-          (store 5 #Void
+          (store 6 #Void
             (constantLiteralValue (int32 0) #Int32)
-            (local 4))
-          (while 6 #Void
+            (local 5))
+          (declareLocalVariable 7 #Void (local 5))
+          (while 8 #Void
             (region nil () () #Boolean8 ((basicBlock 2
               (
-                (call 7 #Int32
+                (call 9 #Int32
                   (function #conv #"reference.load")
-                  (local 4))
-                (call 8 #Boolean8
+                  (local 5))
+                (call 10 #Boolean8
                   (function #< #"integer.less-than.signed")
-                  (local 7)
+                  (local 9)
                   (local 0))
-                (returnFromRegion 9 #Void (local 8))))))
+                (returnFromRegion 11 #Void (local 10))))))
             (region nil () () #Void ((basicBlock 3 (
-              (doWithCleanUp 10 #Void
+              (doWithCleanUp 12 #Void
                 (region nil () () #Void ((basicBlock 4
                   (
-                    (call 11 #Int32
+                    (call 13 #Int32
                       (function #conv #"reference.load")
                       (local 2))
-                    (call 12 #Int32
+                    (call 14 #Int32
                       (function #conv #"reference.load")
-                      (local 4))
-                    (call 13 #Int32
+                      (local 5))
+                    (call 15 #Int32
                       (function #+ #"integer.add")
-                      (local 11)
-                      (local 12))
-                    (call 14
+                      (local 13)
+                      (local 14))
+                    (call 16
                       (refType #Int32 #generic)
                       (function #":=" #"reference.copy.assignment.trivial")
                       (local 2)
-                      (local 13))
-                    (returnFromRegion 15 #Void
+                      (local 15))
+                    (returnFromRegion 17 #Void
                       (constantLiteralValue void #Void))))))
-                (region nil () () #Void ((basicBlock 5 ((returnFromRegion 16 #Void
+                (region nil () () #Void ((basicBlock 5 ((returnFromRegion 18 #Void
                   (constantLiteralValue void #Void)))))))
-              (returnFromRegion 17 #Void
+              (returnFromRegion 19 #Void
                 (constantLiteralValue void #Void))))))
             (region nil () () #Void ((basicBlock 6
               (
-                (call 18 #Int32
+                (call 20 #Int32
                   (function #conv #"reference.load")
-                  (local 4))
-                (call 19 #Int32
+                  (local 5))
+                (call 21 #Int32
                   (function #+ #"integer.add")
-                  (local 18)
+                  (local 20)
                   (constantLiteralValue (int32 1) #Int32))
-                (call 20
+                (call 22
                   (refType #Int32 #generic)
                   (function #":=" #"reference.copy.assignment.trivial")
-                  (local 4)
-                  (local 19))
-                (returnFromRegion 21 #Void
+                  (local 5)
+                  (local 21))
+                (returnFromRegion 23 #Void
                   (constantLiteralValue void #Void)))))))
-          (call 22 #Int32
+          (call 24 #Int32
             (function #conv #"reference.load")
             (local 2))
-          (returnFromFunction 23 #Void (local 22))))))
-      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 24 #Void
+          (returnFromFunction 25 #Void (local 24))))))
+      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
         (constantLiteralValue void #Void)))))))
-    (unreachable 25 #Void))))))
+    (unreachable 27 #Void))))))
 )"));
 
 CHECK(checkStringEvaluationSSAIsSameTo(
@@ -239,70 +241,72 @@ R"(
           (store 3 #Void
             (constantLiteralValue (int32 0) #Int32)
             (local 2))
-          (localVariable 4
+          (declareLocalVariable 4 #Void (local 2))
+          (localVariable 5
             (refType #Int32 #generic))
-          (store 5 #Void
+          (store 6 #Void
             (constantLiteralValue (int32 0) #Int32)
-            (local 4))
-          (doWhile 6 #Void
+            (local 5))
+          (declareLocalVariable 7 #Void (local 5))
+          (doWhile 8 #Void
             (region nil () () #Void ((basicBlock 2 (
-              (doWithCleanUp 7 #Void
+              (doWithCleanUp 9 #Void
                 (region nil () () #Void ((basicBlock 3
                   (
-                    (call 8 #Int32
+                    (call 10 #Int32
                       (function #conv #"reference.load")
                       (local 2))
-                    (call 9 #Int32
+                    (call 11 #Int32
                       (function #conv #"reference.load")
-                      (local 4))
-                    (call 10 #Int32
+                      (local 5))
+                    (call 12 #Int32
                       (function #+ #"integer.add")
-                      (local 8)
-                      (local 9))
-                    (call 11
+                      (local 10)
+                      (local 11))
+                    (call 13
                       (refType #Int32 #generic)
                       (function #":=" #"reference.copy.assignment.trivial")
                       (local 2)
-                      (local 10))
-                    (returnFromRegion 12 #Void
+                      (local 12))
+                    (returnFromRegion 14 #Void
                       (constantLiteralValue void #Void))))))
-                (region nil () () #Void ((basicBlock 4 ((returnFromRegion 13 #Void
+                (region nil () () #Void ((basicBlock 4 ((returnFromRegion 15 #Void
                   (constantLiteralValue void #Void)))))))
-              (returnFromRegion 14 #Void
+              (returnFromRegion 16 #Void
                 (constantLiteralValue void #Void))))))
             (region nil () () #Boolean8 ((basicBlock 5
               (
-                (call 15 #Int32
+                (call 17 #Int32
                   (function #conv #"reference.load")
-                  (local 4))
-                (call 16 #Boolean8
+                  (local 5))
+                (call 18 #Boolean8
                   (function #< #"integer.less-than.signed")
-                  (local 15)
+                  (local 17)
                   (local 0))
-                (returnFromRegion 17 #Void (local 16))))))
+                (returnFromRegion 19 #Void (local 18))))))
             (region nil () () #Void ((basicBlock 6
               (
-                (call 18 #Int32
+                (call 20 #Int32
                   (function #conv #"reference.load")
-                  (local 4))
-                (call 19 #Int32
+                  (local 5))
+                (call 21 #Int32
                   (function #+ #"integer.add")
-                  (local 18)
+                  (local 20)
                   (constantLiteralValue (int32 1) #Int32))
-                (call 20
+                (call 22
                   (refType #Int32 #generic)
                   (function #":=" #"reference.copy.assignment.trivial")
-                  (local 4)
-                  (local 19))
-                (returnFromRegion 21 #Void
+                  (local 5)
+                  (local 21))
+                (returnFromRegion 23 #Void
                   (constantLiteralValue void #Void)))))))
-          (call 22 #Int32
+          (call 24 #Int32
             (function #conv #"reference.load")
             (local 2))
-          (returnFromFunction 23 #Void (local 22))))))
-      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 24 #Void
+          (returnFromFunction 25 #Void (local 24))))))
+      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
         (constantLiteralValue void #Void)))))))
-    (unreachable 25 #Void))))))
+    (unreachable 27 #Void))))))
 )"));
 
             });
@@ -561,20 +565,21 @@ R"(
               #"Test::Mutex")
             (local 1))
           (enableLocalFinalization 3 #Void (local 1))
-          (returnFromFunction 4 #Void
+          (declareLocalVariable 4 #Void (local 1))
+          (returnFromFunction 5 #Void
             (constantLiteralValue void #Void))))))
       (region nil () () #Void ((basicBlock 2 (
-        (localFinalization 5 #Void
+        (localFinalization 6 #Void
           (local 1)
           (region nil () () #Void ((basicBlock 3 (
-            (call 6 #Void
+            (call 7 #Void
               (function #finalize nil)
               (local 1))
-            (returnFromRegion 7 #Void
+            (returnFromRegion 8 #Void
               (constantLiteralValue void #Void)))))))
-        (returnFromRegion 8 #Void
+        (returnFromRegion 9 #Void
           (constantLiteralValue void #Void)))))))
-    (unreachable 9 #Void))))))
+    (unreachable 10 #Void))))))
 )"));
 
 CHECK(checkStringEvaluationSSAIsSameTo(
@@ -598,20 +603,21 @@ R"(
               #"Test::Mutex")
             (local 1))
           (enableLocalFinalization 3 #Void (local 1))
-          (returnFromFunction 4 #Void
+          (declareLocalVariable 4 #Void (local 1))
+          (returnFromFunction 5 #Void
             (constantLiteralValue void #Void))))))
       (region nil () () #Void ((basicBlock 2 (
-        (localFinalization 5 #Void
+        (localFinalization 6 #Void
           (local 1)
           (region nil () () #Void ((basicBlock 3 (
-            (call 6 #Void
+            (call 7 #Void
               (function #finalize nil)
               (local 1))
-            (returnFromRegion 7 #Void
+            (returnFromRegion 8 #Void
               (constantLiteralValue void #Void)))))))
-        (returnFromRegion 8 #Void
+        (returnFromRegion 9 #Void
           (constantLiteralValue void #Void)))))))
-    (unreachable 9 #Void))))))
+    (unreachable 10 #Void))))))
 )"));
 
             });

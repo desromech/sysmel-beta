@@ -4,7 +4,6 @@
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
-#include "Environment/CVarArg.hpp"
 
 #include "Environment/Type.hpp"
 #include "Environment/TypeVisitor.hpp"
@@ -365,7 +364,7 @@ ItaniumNameMangler::ItaniumNameMangler()
         {Float32::__staticType__(), "f"},
         {Float64::__staticType__(), "d"},
 
-        {CVarArg::__staticType__()->withParams(), "z"},
+        {Type::getCVarArgsType(), "z"},
     };
 }
 

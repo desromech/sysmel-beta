@@ -122,6 +122,10 @@ void SSALLVMCodeGenerationBackend::initializeDebugInfoBuilding()
         return diBuilder->createBasicType(type->getValidNameString(), type->getMemorySize()*8, llvm::dwarf::DW_ATE_float);
     };
 
+    auto cvarArgs = [=](const TypePtr &){
+        return nullptr;
+    };
+
     basicDebugTypeConstructors = {
         {Type::getVoidType(), primitiveVoidType},
         {Type::getControlFlowEscapeType(), primitiveVoidType},
@@ -148,6 +152,8 @@ void SSALLVMCodeGenerationBackend::initializeDebugInfoBuilding()
         {Float16::__staticType__(), primitiveFloat},
         {Float32::__staticType__(), primitiveFloat},
         {Float64::__staticType__(), primitiveFloat},
+
+        {Type::getCVarArgsType(), cvarArgs},
     };
 }
 

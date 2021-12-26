@@ -76,6 +76,10 @@ AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
     auto actualResultType = resultType;
     auto receiverType = type->getReceiverType();
     auto hasValidReceiverType = !receiverType->isVoidType();
+    auto argumentCount = type->getArgumentCount();
+    bool hasCVarArgs = type->hasCVarArgs();
+    if(hasCVarArgs)
+        --argumentCount;
     bool hasResultReturnedByReference = declaredResultType->isReturnedByReference();
     std::vector<llvm::Type*> argumentType;
     argumentType.reserve((hasResultReturnedByReference ? 1 : 0) +(hasValidReceiverType ? 1 : 0) + type->getArgumentCount());
@@ -89,10 +93,10 @@ AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
     if(hasValidReceiverType)
         argumentType.push_back(translateArgumentType(receiverType));
 
-    for(size_t i = 0; i < type->getArgumentCount(); ++i)
+    for(size_t i = 0; i < argumentCount; ++i)
         argumentType.push_back(translateArgumentType(type->getArgument(i)));
 
-    return wrapLLVMType(llvm::FunctionType::get(resultType, argumentType, false));
+    return wrapLLVMType(llvm::FunctionType::get(resultType, argumentType, hasCVarArgs));
 }
 
 AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type)

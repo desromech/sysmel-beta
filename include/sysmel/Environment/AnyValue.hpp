@@ -747,6 +747,9 @@ public:
     /// Is this object an anonymouse name?
     virtual bool isAnonymousNameSymbol() const;
 
+    /// Is this object an anonymouse name?
+    virtual bool isHiddenNameSymbol() const;
+
     // Is this object a value box?
     virtual bool isValueBox() const;
 

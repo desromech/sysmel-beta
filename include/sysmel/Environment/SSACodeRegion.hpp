@@ -33,6 +33,7 @@ public:
     const SSACodeRegionArgumentPtr &getArgument(size_t index);
     const SSACodeRegionArgumentPtrList &getArguments();
     bool isReturningByReference() const;
+    bool hasCVarArgs() const;
 
     size_t getCaptureCount() const;
     const SSACodeRegionCapturePtr &getCapture(size_t index);

@@ -11,6 +11,11 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveFloatType);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Float16);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Float32);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(Float64);
+
+
 /**
  * I am a primitive floating point type.
  */

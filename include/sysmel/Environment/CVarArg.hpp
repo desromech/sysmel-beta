@@ -20,8 +20,14 @@ class CVarArg : public SubtypeOf<PrimitiveType, CVarArg>
 public:
     static constexpr char const __typeName__[] = "CVarArg";
     static constexpr char const __sysmelTypeName__[] = "CVarArg";
+    
+    static AnyValuePtrList __constructors__();
+
+    static CVarArgPtr make(const AnyValuePtr &value);
 
     virtual bool isCVarArg() const override;
+
+    AnyValuePtr value;
 };
 
 } // End of namespace Environment

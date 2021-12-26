@@ -62,6 +62,7 @@ public:
     static TypePtr getContinueType();
     static TypePtr getBreakType();
     static TypePtr getCompilationErrorValueType();
+    static TypePtr getCVarArgsType();
 
     bool isUndefinedType() const;
     bool isVoidType() const;
@@ -72,6 +73,8 @@ public:
     bool isBreakType() const;
     bool isLiteralValueType() const;
     bool isCompilationErrorValueType() const;
+    bool isCVarArgType() const;
+    bool isCVarArgsType() const;
 
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 

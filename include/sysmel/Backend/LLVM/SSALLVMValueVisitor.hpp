@@ -46,6 +46,7 @@ struct IntrinsicGenerationContext
     llvm::IRBuilder<> *builder = nullptr;
     llvm::Type *resultType = nullptr;
     std::vector<llvm::Value*> arguments;
+    TypePtr originalResultType;
     SSAValuePtrList originalArguments;
     std::string intrinsicName;
 };

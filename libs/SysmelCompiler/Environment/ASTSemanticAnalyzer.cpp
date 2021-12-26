@@ -685,7 +685,24 @@ AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType)
 {
-    if(node->arguments.size() != functionType->getArgumentCount())
+    auto functionTypeArgumentCount = functionType->getArgumentCount();
+    auto callArgumentCount = node->arguments.size();
+    auto paramsType = functionType->getParamsType();
+    auto hasCVarArg = false;
+    if(paramsType)
+    {
+        hasCVarArg = paramsType->isCVarArgsType();
+        --functionTypeArgumentCount;
+        if(callArgumentCount < functionTypeArgumentCount)
+        {
+            // Analyze the arguments for discovering more error.
+            for(auto &arg : node->arguments)
+                analyzeNodeIfNeededWithTemporaryAutoType(arg);
+
+            return recordSemanticErrorInNode(node, "Less arguments than required are supplied.");
+        }
+    }
+    else if(callArgumentCount != functionTypeArgumentCount)
     {
         // Analyze the arguments for discovering more error.
         for(auto &arg : node->arguments)
@@ -694,11 +711,49 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallN
         return recordSemanticErrorInNode(node, "Call argument count mismatch.");
     }
 
-    // Analyze the arguments
-    for(size_t i = 0; i < node->arguments.size(); ++i)
+    // Analyze the required arguments.
+    for(size_t i = 0; i < functionTypeArgumentCount; ++i)
     {
         auto &arg = node->arguments[i];
         arg = analyzeNodeIfNeededWithExpectedType(arg, functionType->getArgument(i));
+    }
+
+    // Analyze the variadic arguments.
+    if(paramsType)
+    {
+        auto paramUndecoratedType = paramsType->asUndecoratedType();
+        if(hasCVarArg)
+        {
+            // CVarArg
+            for(size_t i = functionTypeArgumentCount; i < callArgumentCount; ++i)
+            {
+                auto &arg = node->arguments[i];
+                arg = analyzeNodeIfNeededWithExpectedType(arg, paramUndecoratedType);
+            }
+        }
+        else
+        {
+            // Extract the variadic parameters.
+            ASTNodePtrList variadicParameters;
+            variadicParameters.reserve(callArgumentCount - functionTypeArgumentCount);
+            for(size_t i = functionTypeArgumentCount; i < callArgumentCount; ++i)
+                variadicParameters.push_back(node->arguments[i]);
+
+            // Construct the variadic container.
+            auto variadicContainerParam = basicMakeObject<ASTCallNode> ();
+            if(variadicParameters.empty())
+                variadicContainerParam->sourcePosition = node->sourcePosition;
+            else
+                variadicContainerParam->sourcePosition = variadicParameters.front()->sourcePosition;
+            variadicContainerParam->function = paramUndecoratedType->asASTNodeRequiredInPosition(variadicContainerParam->sourcePosition);
+            variadicContainerParam->arguments = variadicParameters;
+            auto analyzedParams = analyzeNodeIfNeededWithExpectedType(variadicContainerParam, paramUndecoratedType);
+            if(analyzedParams->isASTErrorNode())
+                return analyzedParams;
+
+            node->arguments.resize(functionTypeArgumentCount);
+            node->arguments.push_back(analyzedParams);
+        }
     }
 
     // Make sure there is no receiver type.

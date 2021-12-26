@@ -114,6 +114,11 @@ bool SSACodeRegion::isReturningByReference() const
     return !arguments.empty() && arguments[0]->isResult();
 }
 
+bool SSACodeRegion::hasCVarArgs() const
+{
+    return !arguments.empty() && arguments.back()->getValueType()->isCVarArgsType();
+}
+
 bool SSACodeRegion::isEmpty() const
 {
     return basicBlocks.empty();

@@ -779,6 +779,11 @@ bool AnyValue::isAnonymousNameSymbol() const
     return false;
 }
 
+bool AnyValue::isHiddenNameSymbol() const
+{
+    return false;
+}
+
 bool AnyValue::isValueBox() const
 {
     return false;
