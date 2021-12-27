@@ -1,5 +1,6 @@
 #include "Environment/SSAProgramEntity.hpp"
 #include "Environment/SSAValueVisitor.hpp"
+#include "Environment/SSAFunction.hpp"
 #include "Environment/UnsupportedOperation.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -43,6 +44,16 @@ SSAProgramEntityPtr SSAProgramEntity::getMainTemplateInstanceChild() const
 SSAProgramEntityPtr SSAProgramEntity::getParent() const
 {
     return parent.lock();
+}
+
+SSAFunctionPtr SSAProgramEntity::getParentFunction() const
+{
+    auto p = getParent();
+    if(!p)
+        return nullptr;
+    if(p->isSSAFunction())
+        return staticObjectCast<SSAFunction> (p);
+    return p->getParentFunction();
 }
 
 void SSAProgramEntity::setParent(const SSAProgramEntityPtr &newParent)

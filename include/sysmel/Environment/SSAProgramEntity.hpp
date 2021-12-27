@@ -28,6 +28,8 @@ public:
     virtual void addChild(const SSAProgramEntityPtr &child);
     virtual SSAProgramEntityPtr getMainTemplateInstanceChild() const;
 
+    SSAFunctionPtr getParentFunction() const;
+
     SSAProgramEntityPtr getParent() const;
     void setParent(const SSAProgramEntityPtr &newParent);
 

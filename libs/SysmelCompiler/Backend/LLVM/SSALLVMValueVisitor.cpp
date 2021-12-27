@@ -144,6 +144,16 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     }},
 };
 
+static llvm::GlobalValue::DLLStorageClassTypes convertDLLStorageClass(DllLinkageMode mode)
+{
+    switch(mode)
+    {
+    case DllLinkageMode::Import: return llvm::GlobalValue::DLLImportStorageClass;
+    case DllLinkageMode::Export: return llvm::GlobalValue::DLLExportStorageClass;
+    default: return llvm::GlobalValue::DefaultStorageClass;
+    }
+}
+
 AnyValuePtr wrapLLVMValue(llvm::Value *value)
 {
     auto wrapper = basicMakeObject<SSALLVMValue> ();
@@ -224,12 +234,16 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     }
 
     // TODO: Compute a proper linkage.
-    auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
+    auto parentFunction = function->getParentFunction();
+    auto linkage = parentFunction ? llvm::GlobalValue::PrivateLinkage : llvm::GlobalValue::ExternalLinkage;
     auto name = backend->getNameMangler()->mangleSSAProgramEntity(function);
     
     currentFunction = llvm::Function::Create(functionType, linkage, name, *backend->getTargetModule());
     backend->setGlobalValueTranslation(function, currentFunction);
     currentFunctionBeingTranslated = function;
+
+    if(!parentFunction)
+        currentFunction->setDLLStorageClass(convertDLLStorageClass(function->getDllLinkageMode()));
 
     // Make the argument used for returning by reference with sret.
     if(mainCodeRegion->isReturningByReference())
@@ -309,9 +323,12 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
             return wrapLLVMValue(existent);
     }
 
-    // TODO: Compute a proper linkage.
-    auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
+    auto parentFunction = globalVariable->getParentFunction();
+    auto linkage = parentFunction ? llvm::GlobalValue::PrivateLinkage : llvm::GlobalValue::ExternalLinkage;
     auto name = backend->getNameMangler()->mangleSSAProgramEntity(globalVariable);
+
+    if(!parentFunction)
+        currentFunction->setDLLStorageClass(convertDLLStorageClass(globalVariable->getDllLinkageMode()));
 
     auto translatedGlobalVariable = new llvm::GlobalVariable(valueType, false, linkage, nullptr, name);
     backend->setGlobalValueTranslation(globalVariable, translatedGlobalVariable);
