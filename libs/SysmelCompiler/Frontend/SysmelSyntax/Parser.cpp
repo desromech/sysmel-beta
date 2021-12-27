@@ -1277,6 +1277,12 @@ ASTNodePtr parseTokenList(const TokenListPtr &tokenList)
 {
     auto currentPosition = TokenRange::forCollection(tokenList);
     auto expressionList = parseExpressionList(currentPosition);
+    if(currentPosition.peek().type != TokenType::EndOfSource)
+    {
+        auto error = makeParseErrorNodeAtToken(currentPosition, "Unexpected token at the end.");
+        std::static_pointer_cast<ASTExpressionListNode> (expressionList)->expressions.push_back(error);
+    }
+
     return expressionList;
 }
 
@@ -1284,6 +1290,11 @@ ASTNodePtr parseTokenListWithLiteralArrayContent(const TokenListPtr &tokenList)
 {
     auto currentPosition = TokenRange::forCollection(tokenList);
     auto expressionList = parseSourceWithLiteralArrayContent(currentPosition);
+    if(currentPosition.peek().type != TokenType::EndOfSource)
+    {
+        auto error = makeParseErrorNodeAtToken(currentPosition, "Unexpected token at the end.");
+        std::static_pointer_cast<ASTExpressionListNode> (expressionList)->expressions.push_back(error);
+    }
     return expressionList;
 }
 

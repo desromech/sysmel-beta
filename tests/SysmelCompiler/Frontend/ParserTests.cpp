@@ -1287,4 +1287,11 @@ SUITE(Parser)
         CHECK_EQUAL(LargeInteger{-5}, pragma->as<ASTPragmaNode> ().arguments[1]->as<ASTIntegerLiteralNode> ().value);
     }
 
+    TEST(ConsumeEnd)
+    {
+        auto node = parseString("1 {}");
+        CHECK(node->isExpressionListNode());
+        CHECK(!node->as<ASTExpressionListNode>().expressions.empty());
+        CHECK(node->as<ASTExpressionListNode>().expressions.back()->isParseErrorNode());
+    }
 }
