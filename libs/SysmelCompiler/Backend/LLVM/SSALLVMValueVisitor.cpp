@@ -13,6 +13,7 @@
 #include "Environment/SSAFunction.hpp"
 #include "Environment/SSACodeRegion.hpp"
 #include "Environment/SSACodeRegionArgument.hpp"
+#include "Environment/SSACodeRegionCapture.hpp"
 #include "Environment/SSABasicBlock.hpp"
 #include "Environment/SSAGlobalVariable.hpp"
 
@@ -27,6 +28,7 @@
 #include "Environment/SSALocalVariableInstruction.hpp"
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSADoWhileInstruction.hpp"
+#include "Environment/SSAMakeClosureInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
@@ -190,11 +192,26 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     auto resultType = backend->translateType(mainCodeRegion->getResultType());
     auto argumentCount = mainCodeRegion->getArgumentCount();
     auto hasCVarArgs = mainCodeRegion->hasCVarArgs();
+    auto isClosure = function->getFunctionalType()->isClosureType();
     if(hasCVarArgs)
         --argumentCount;
     std::vector<llvm::Type*> argumentTypes;
     argumentTypes.reserve(argumentCount);
-    for(size_t i = 0; i < argumentCount; ++i)
+
+    // Add the result argument first.
+    size_t firstArgumentIndex = 0;
+    if(mainCodeRegion->isReturningByReference())
+    {
+        argumentTypes.push_back(backend->translateType(mainCodeRegion->getArgument(0)->getValueType()));
+        ++firstArgumentIndex;
+    }
+
+    // Pass the closure context pointer.
+    if(isClosure)
+        argumentTypes.push_back(llvm::Type::getInt8PtrTy(*backend->getContext()));
+
+    // Add the remaining arguments.
+    for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
         argumentTypes.push_back(backend->translateType(mainCodeRegion->getArgument(i)->getValueType()));
 
     auto functionType = llvm::FunctionType::get(resultType, argumentTypes, hasCVarArgs);
@@ -212,14 +229,13 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     
     currentFunction = llvm::Function::Create(functionType, linkage, name, *backend->getTargetModule());
     backend->setGlobalValueTranslation(function, currentFunction);
+    currentFunctionBeingTranslated = function;
 
     // Make the argument used for returning by reference with sret.
-    size_t firstArgumentIndex = 0;
     if(mainCodeRegion->isReturningByReference())
     {
         auto structureResultType = backend->translateType(function->getValueType().staticAs<FunctionalType> ()->getResultType());
         currentFunction->getArg(0)->addAttr(llvm::Attribute::getWithStructRetType(*backend->getContext(), structureResultType));
-        ++firstArgumentIndex;
     }
     
     // Zeroext/signext
@@ -228,13 +244,14 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     else if(backend->isUnsignedIntegerType(mainCodeRegion->getResultType()))
         currentFunction->addAttribute(0, llvm::Attribute::ZExt);
 
-    for(size_t i = 0; i < argumentCount; ++i)
+    for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
     {
         auto argType = mainCodeRegion->getArgument(i)->getValueType();
+        auto paramIndex = isClosure ? i + 1 : i;
         if(backend->isSignedIntegerType(argType))
-            currentFunction->addParamAttr(i, llvm::Attribute::SExt);
+            currentFunction->addParamAttr(paramIndex, llvm::Attribute::SExt);
         else if(backend->isUnsignedIntegerType(argType))
-            currentFunction->addParamAttr(i, llvm::Attribute::ZExt);
+            currentFunction->addParamAttr(paramIndex, llvm::Attribute::ZExt);
     }
 
     // Make the debug information
@@ -331,10 +348,21 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
     auto argumentCount = codeRegion->getArgumentCount();
     if(codeRegion->hasCVarArgs())
         --argumentCount;
-    for(size_t i = 0; i < argumentCount; ++i)
+
+    size_t firstArgumentIndex = 0;
+    if(codeRegion->isReturningByReference())
+    {
+        auto sourceArgument = codeRegion->getArgument(0);
+        auto targetArgument = currentFunction->getArg(0);
+        localTranslatedValueMap.insert({sourceArgument, targetArgument});
+        ++firstArgumentIndex;
+    }
+
+    bool isClosure = currentFunctionBeingTranslated->getFunctionalType()->isClosureType();
+    for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
     {
         auto sourceArgument = codeRegion->getArgument(i);
-        auto targetArgument = currentFunction->getArg(i);
+        auto targetArgument = currentFunction->getArg(i + (isClosure ? 1 : 0));
         localTranslatedValueMap.insert({sourceArgument, targetArgument});
     }
 
@@ -430,6 +458,43 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
     // Create the code region result finalization flag if it is required.
     if(index == 0)
     {
+        auto captureCount = currentCodeRegion->getCaptureCount();
+        if(captureCount > 0)
+        {
+            auto contextArgumentIndex = currentCodeRegion->isReturningByReference() ? 1 : 0;
+
+            std::vector<llvm::Type*> contextElementTypes;
+            contextElementTypes.reserve(1 + captureCount);
+            contextElementTypes.push_back(llvm::Type::getInt8PtrTy(*backend->getContext()));
+
+            for(size_t i = 0; i < captureCount; ++i)
+            {
+                auto captureType = currentCodeRegion->getCapture(i)->getValueType();
+                auto translatedCaptureType = backend->translateType(captureType);
+                if(captureType->isPassedByReference())
+                    contextElementTypes.push_back(llvm::PointerType::getUnqual(translatedCaptureType));
+                else
+                    contextElementTypes.push_back(translatedCaptureType);
+            }
+
+            auto contextStructType = llvm::StructType::get(*backend->getContext(), contextElementTypes);
+            auto contextPointerType = llvm::PointerType::getUnqual(contextStructType);
+
+            auto contextPointer = builder->CreatePointerCast(currentFunction->getArg(contextArgumentIndex), contextPointerType);
+            for(size_t i = 0; i < captureCount; ++i)
+            {
+                const auto &capture = currentCodeRegion->getCapture(i);
+                auto captureType = capture->getValueType();
+                auto capturePointer = builder->CreateConstInBoundsGEP2_32(nullptr, contextPointer, 0, i + 1);
+                auto captureValue = capturePointer;
+                if(!captureType->isPassedByReference())
+                    captureValue = builder->CreateLoad(capturePointer);
+
+                localTranslatedValueMap.insert({capture, captureValue});
+                declareDebugCapture(capture, capturePointer);
+            }
+        }
+
         auto argumentCount = currentCodeRegion->getArgumentCount();
         for(size_t i = 0; i < argumentCount; ++i)
         {
@@ -476,6 +541,12 @@ void SSALLVMValueVisitor::declareDebugArgument(const SSACodeRegionArgumentPtr &a
     }
 
     diBuilder->insertDeclare(address, debugVariable, diBuilder->createExpression(), location, builder->GetInsertBlock());
+}
+
+void SSALLVMValueVisitor::declareDebugCapture(const SSACodeRegionCapturePtr &capture, llvm::Value *capturePointer)
+{
+    (void)capture;
+    (void)capturePointer;
 }
 
 llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const VariablePtr &variable)
@@ -555,14 +626,54 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
     const auto &calledFunction = instruction->getFunction();
     auto functionType = calledFunction->getValueType();
     sysmelAssert(functionType->isFunctionalType());
+
+    bool isClosure = functionType->isClosureType();
+    bool isReturningByReference = functionType.staticAs<FunctionalType> ()->getResultType()->isReturnedByReference();
     
     auto translatedFunctionType = backend->translateType(functionType);
     auto translatedCalledFunction = translateValue(calledFunction);
+    sysmelAssert(translatedCalledFunction->getType()->isPointerTy());
+
     std::vector<llvm::Value*> arguments;
-    arguments.reserve(instruction->getArguments().size());
-    for(auto &arg : instruction->getArguments())
-        arguments.push_back(translateValue(arg));
-    return builder->CreateCall(static_cast<llvm::FunctionType*> (translatedFunctionType), translatedCalledFunction, arguments);
+    auto argumentCount = instruction->getArguments().size();
+    arguments.reserve((isClosure ? 1 : 0) + argumentCount);
+
+    size_t firstArgumentIndex = 0;
+
+    // Translate the result argument first.
+    if(isReturningByReference)
+    {
+        arguments.push_back(translateValue(instruction->getArguments()[0]));
+        ++firstArgumentIndex;
+    }
+
+    llvm::FunctionType *calledFunctionType = nullptr;
+    auto calledFunctionValue = translatedCalledFunction;
+
+    // Add the closure argument first or second.
+    if(isClosure)
+    {
+        auto unwrappedType = llvm::cast<llvm::PointerType> (translatedFunctionType)->getElementType();
+        sysmelAssert(unwrappedType->isPointerTy());
+        unwrappedType = llvm::cast<llvm::PointerType> (unwrappedType)->getElementType();
+
+        sysmelAssert(unwrappedType->isFunctionTy());
+        calledFunctionType = llvm::cast<llvm::FunctionType> (unwrappedType);
+
+        calledFunctionValue = builder->CreateLoad(translatedCalledFunction);
+        arguments.push_back(builder->CreatePointerCast(translatedCalledFunction, llvm::Type::getInt8PtrTy(*backend->getContext())));
+    }
+    else
+    {
+        sysmelAssert(translatedFunctionType->isFunctionTy());
+        calledFunctionType = llvm::cast<llvm::FunctionType> (translatedFunctionType);
+    }
+
+    // Pass the remaining arguments.
+    for(size_t i = firstArgumentIndex; i < instruction->getArguments().size(); ++i)
+        arguments.push_back(translateValue(instruction->getArguments()[i]));
+
+    return builder->CreateCall(calledFunctionType, calledFunctionValue, arguments);
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSADeclareLocalVariableInstructionPtr &instruction)
@@ -785,6 +896,47 @@ void SSALLVMValueVisitor::emitCleanUpsForReturning()
         auto &region = cleanUpRegionStack[cleanUpRegionStack.size() - i - 1];
         translateCodeRegionWithArguments(region, {});
     }
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction)
+{
+    auto closureImplementation = translateValue(instruction->getClosureImplementation());
+    sysmelAssert(closureImplementation->getType()->isPointerTy());
+
+    auto rawCapturedValues = instruction->getCapturedValues();
+    auto resultType = backend->translateType(instruction->getValueType());
+    sysmelAssert(resultType->isPointerTy());
+
+    std::vector<llvm::Type*> closureStructTypes;
+    closureStructTypes.reserve(1 + rawCapturedValues.size());
+
+    // Extract the closure struct types,
+    closureStructTypes.push_back(closureImplementation->getType());
+    for(auto &capture : rawCapturedValues)
+    {
+        auto captureType = capture->getValueType()->asUndecoratedType();
+        auto translatedCaptureType = backend->translateType(captureType);
+        if(captureType->isPassedByReference())
+            closureStructTypes.push_back(llvm::PointerType::getUnqual(translatedCaptureType));
+        else
+            closureStructTypes.push_back(translatedCaptureType);
+    }
+
+    auto closureStructType = llvm::StructType::get(*backend->getContext(), closureStructTypes);
+
+    // Allocate the closure.
+    auto closureStruct = allocaBuilder->CreateAlloca(closureStructType);
+
+    // Set the closure data.
+    builder->CreateStore(closureImplementation, builder->CreateConstInBoundsGEP2_32(nullptr, closureStruct, 0, 0));
+    for(size_t i = 0; i < rawCapturedValues.size(); ++i)
+    {
+        auto capture = translateValue(rawCapturedValues[i]);
+        builder->CreateStore(capture, builder->CreateConstInBoundsGEP2_32(nullptr, closureStruct, 0, i + 1));
+    }
+
+    // Cast and return the closure.
+    return wrapLLVMValue(builder->CreatePointerCast(closureStruct, resultType));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction)

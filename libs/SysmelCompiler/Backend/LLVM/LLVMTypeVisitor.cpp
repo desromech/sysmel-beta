@@ -81,22 +81,37 @@ AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
     if(hasCVarArgs)
         --argumentCount;
     bool hasResultReturnedByReference = declaredResultType->isReturnedByReference();
+    bool isClosureType = type->isClosureType();
     std::vector<llvm::Type*> argumentType;
-    argumentType.reserve((hasResultReturnedByReference ? 1 : 0) +(hasValidReceiverType ? 1 : 0) + type->getArgumentCount());
+    argumentType.reserve(
+        (hasResultReturnedByReference ? 1 : 0) +
+        (isClosureType ? 1 : 0) +
+        (hasValidReceiverType ? 1 : 0) +
+        type->getArgumentCount());
 
     if(hasResultReturnedByReference)
     {
         argumentType.push_back(llvm::PointerType::getUnqual(resultType));
         actualResultType = llvm::Type::getVoidTy(*backend->getContext());
     }
-    
+
+    if(isClosureType)
+        argumentType.push_back(llvm::Type::getInt8PtrTy(*backend->getContext()));
+
     if(hasValidReceiverType)
         argumentType.push_back(translateArgumentType(receiverType));
 
     for(size_t i = 0; i < argumentCount; ++i)
         argumentType.push_back(translateArgumentType(type->getArgument(i)));
 
-    return wrapLLVMType(llvm::FunctionType::get(actualResultType, argumentType, hasCVarArgs));
+    auto llvmFunctionalType = llvm::FunctionType::get(actualResultType, argumentType, hasCVarArgs);
+    llvm::Type *llvmType = llvmFunctionalType;
+
+    // The closure type is actually a pointer type.
+    if(isClosureType)
+        llvmType = llvm::PointerType::getUnqual(llvm::PointerType::getUnqual(llvmFunctionalType));
+
+    return wrapLLVMType(llvmType);
 }
 
 AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type)

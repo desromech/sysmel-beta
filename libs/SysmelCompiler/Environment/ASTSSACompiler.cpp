@@ -39,6 +39,7 @@
 #include "Environment/SSAFunction.hpp"
 #include "Environment/SSACodeRegion.hpp"
 #include "Environment/SSACodeRegionArgument.hpp"
+#include "Environment/SSACodeRegionCapture.hpp"
 #include "Environment/SSABasicBlock.hpp"
 #include "Environment/SSABuilder.hpp"
 
@@ -210,15 +211,23 @@ void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SS
     size_t receiverOffset = functionalType->getResultType()->isReturnedByReference() ? 1 : 0;
     size_t argumentsOffset = receiverOffset;
 
+    // Map the receiver
     if(!receiverType->isVoidType())
     {
         mapLocalVariableToValue(method->getReceiverArgument(), methodCodeRegionArguments[receiverOffset]);
         ++argumentsOffset;
     }
 
+    // Map the arguments.
     const auto &methodArguments = method->getArguments();
     for(size_t i = 0; i < methodArguments.size(); ++i)
         mapLocalVariableToValue(methodArguments[i], methodCodeRegionArguments[argumentsOffset + i]);
+
+    // Map the captures.
+    const auto &methodCaptures = method->getCapturedVariables();
+    const auto &mainCodeRegionCaptures = methodCodeRegion->getCaptures();
+    for(size_t i = 0; i < methodCaptures.size(); ++i)
+        mapLocalVariableToValue(methodCaptures[i], mainCodeRegionCaptures[i]);
     
     auto resultValue = visitNodeForValue(node);
     if(!builder->isLastTerminator())
@@ -334,6 +343,7 @@ AnyValuePtr ASTSSACompiler::visitLiteralValueNode(const ASTLiteralValueNodePtr &
         return resultLocal;
     }
 
+    sysmelAssert(constantValue);
     return constantValue;
 }
 
@@ -467,7 +477,9 @@ AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodeP
 
 AnyValuePtr ASTSSACompiler::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node)
 {
-    return findLocalVariableMapping(node->bindingName);
+    auto result = findLocalVariableMapping(node->bindingName);
+    sysmelAssert(result);
+    return result;
 }
 
 AnyValuePtr ASTSSACompiler::visitProgramEntityNode(const ASTProgramEntityNodePtr &node)

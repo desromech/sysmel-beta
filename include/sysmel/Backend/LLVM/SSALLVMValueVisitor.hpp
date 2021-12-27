@@ -76,6 +76,7 @@ public:
     virtual AnyValuePtr visitIfInstruction(const SSAIfInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction) override;
@@ -114,10 +115,12 @@ protected:
     void withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock);
 
     void declareDebugArgument(const SSACodeRegionArgumentPtr &argument);
+    void declareDebugCapture(const SSACodeRegionCapturePtr &capture, llvm::Value *capturePointer);
     void declareDebugLocalVariable(const SSALocalVariableInstruction &localVariable);
     llvm::DILocalVariable *translateDebugLocalVariable(const VariablePtr &variable);
 
     llvm::Function *currentFunction = nullptr;
+    SSAFunctionPtr currentFunctionBeingTranslated;
     SSACodeRegionPtr currentCodeRegion;
     llvm::BasicBlock *currentCodeRegionReturnBlock = nullptr;
     llvm::PHINode *currentCodeRegionResultPHI = nullptr;

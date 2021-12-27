@@ -102,13 +102,25 @@ SExpression SSAFunction::asSExpression() const
 SExpression SSAFunction::asFullDefinitionSExpression() const
 {
     enumerateLocalValues();
-    return SExpressionList{{SExpressionIdentifier{{"function"}},
+
+    auto result = SExpressionList{{SExpressionIdentifier{{"function"}},
         name ? name->asSExpression() : nullptr,
         intrinsicName ? intrinsicName->asSExpression() : nullptr,
         functionalType ? functionalType->asSExpression() : nullptr,
         sourcePosition ? sourcePosition->asSExpression() : nullptr,
         mainCodeRegion ? mainCodeRegion->asFullDefinitionSExpression() : nullptr,
     }};
+
+    if(!children.empty())
+    {
+        SExpressionList childrenSExpr;
+        childrenSExpr.elements.reserve(children.size());
+        for(auto &child : children)
+            childrenSExpr.elements.push_back(child->asFullDefinitionSExpression());
+        result.elements.push_back(childrenSExpr);
+    }
+
+    return result;
 }
 
 void SSAFunction::enumerateLocalValues() const
