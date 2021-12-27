@@ -22,6 +22,23 @@ enum class SSACodeGenerationOutputMode : uint8_t
     Assembly,
 };
 
+enum class PICMode : uint8_t
+{
+    Default = 0,
+    PIC,
+    PIE,
+};
+
+enum class OptimizationLevel : uint8_t
+{
+    O0 = 0,
+    O1,
+    O2,
+    O3,
+    Os,
+    Oz
+};
+
 /**
  * I am the base interface for a SSA based code generation backend
  */
@@ -39,6 +56,12 @@ public:
     virtual DebugInformationType getDebugInformationType();
     virtual void setDebugInformationType(DebugInformationType type);
 
+    virtual PICMode getPICMode() const;
+    virtual void setPICMode(PICMode picMode);
+
+    virtual OptimizationLevel getOptimizationLevel() const;
+    virtual void setOptimizationLevel(OptimizationLevel OptimizationLevel);
+
     virtual void setMainInputFileName(const std::string &newInputFileName);
     virtual void setOutputFileName(const std::string &newOutputFileName);
     virtual void setEmitTargetIR(bool newEmitTargetIR);
@@ -50,6 +73,8 @@ protected:
     std::string mainInputFileName;
     std::string outputFileName;
     DebugInformationType debugInformationType = DebugInformationType::None;
+    PICMode picMode = PICMode::Default;
+    OptimizationLevel optimizationLevel = OptimizationLevel::O0;
     bool emitTargetIR = false;
 };
 

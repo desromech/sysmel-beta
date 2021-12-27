@@ -271,8 +271,6 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     if(llvm::verifyFunction(*currentFunction, &llvm::errs()))
         abort();
 
-    backend->getFunctionPassManager()->run(*currentFunction);
-    
     return wrapLLVMValue(currentFunction);
 }
 

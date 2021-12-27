@@ -18,8 +18,10 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
+#include "Environment/RuntimeContext.hpp"
 #include "Environment/StringUtilities.hpp"
 
+#include <mutex>
 #include <iostream>
 
 namespace Sysmel
@@ -27,8 +29,22 @@ namespace Sysmel
 namespace Environment
 {
 
+std::string getHostTargetTriple()
+{
+    return llvm::sys::getDefaultTargetTriple();
+}
+
+static std::once_flag llvmTargetInitializationFlag;
 SSACodeGenerationBackendPtr SSACodeGenerationBackend::makeNativeBackend()
 {
+    std::call_once(llvmTargetInitializationFlag, [](){
+        llvm::InitializeAllTargetInfos();
+        llvm::InitializeAllTargets();
+        llvm::InitializeAllTargetMCs();
+        llvm::InitializeAllAsmParsers();
+        llvm::InitializeAllAsmPrinters();
+    });
+
     return basicMakeObject<LLVM::SSALLVMCodeGenerationBackend> ();
 }
 
@@ -36,6 +52,29 @@ SSACodeGenerationBackendPtr SSACodeGenerationBackend::makeNativeBackend()
 
 namespace LLVM
 {
+
+static llvm::CodeGenOpt::Level optimizationLevelToCodeGen(OptimizationLevel level)
+{
+    switch(level)
+    {
+    case OptimizationLevel::O3: return llvm::CodeGenOpt::Aggressive;
+    default: return llvm::CodeGenOpt::Default;
+    }
+}
+
+static llvm::PassBuilder::OptimizationLevel convertOptimizationLevel(OptimizationLevel level)
+{
+    switch (level)
+    {
+    case OptimizationLevel::O1: return llvm::PassBuilder::OptimizationLevel::O1;
+    case OptimizationLevel::O2: return llvm::PassBuilder::OptimizationLevel::O2;
+    case OptimizationLevel::O3: return llvm::PassBuilder::OptimizationLevel::O3;
+    case OptimizationLevel::Os: return llvm::PassBuilder::OptimizationLevel::Os;
+    case OptimizationLevel::Oz: return llvm::PassBuilder::OptimizationLevel::Oz;
+    case OptimizationLevel::O0:
+    default: return llvm::PassBuilder::OptimizationLevel::O0;
+    }
+}
 
 static BootstrapTypeRegistration<SSALLVMCodeGenerationBackend> SSALLVMCodeGenerationBackendTypeRegistration;
 
@@ -333,6 +372,33 @@ bool SSALLVMCodeGenerationBackend::isUnsignedIntegerType(const TypePtr &type)
     return unsignedIntegerTypeSet.find(type->asUndecoratedType()) != unsignedIntegerTypeSet.end();
 }
 
+void SSALLVMCodeGenerationBackend::optimizeModule()
+{
+    // See https://llvm.org/docs/NewPassManager.html
+    llvm::LoopAnalysisManager LAM;
+    llvm::FunctionAnalysisManager FAM;
+    llvm::CGSCCAnalysisManager CGAM;
+    llvm::ModuleAnalysisManager MAM;
+
+    llvm::PassBuilder PB;
+
+    FAM.registerPass([&] { return PB.buildDefaultAAPipeline(); });
+
+    PB.registerModuleAnalyses(MAM);
+    PB.registerCGSCCAnalyses(CGAM);
+    PB.registerFunctionAnalyses(FAM);
+    PB.registerLoopAnalyses(LAM);
+    PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
+
+    llvm::ModulePassManager MPM;
+    if(optimizationLevel == OptimizationLevel::O0)
+        MPM.addPass(createModuleToFunctionPassAdaptor(llvm::SimplifyCFGPass()));
+    else
+        MPM = PB.buildPerModuleDefaultPipeline(convertOptimizationLevel(optimizationLevel));
+
+    MPM.run(*targetModule, MAM);
+}
+
 bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramModulePtr &programModule)
 {
     sourceModule = programModule;
@@ -340,18 +406,62 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     targetModule = std::make_unique<llvm::Module> (validAnyValue(programModule->getName())->asString(), *context);
     nameMangler = basicMakeObject<ItaniumNameMangler> ();
 
+    auto &currentTargetDescription = RuntimeContext::getActive()->getTargetDescription();
+    auto &currentTargetNameAndFeatures = currentTargetDescription.nameAndFeatures;
+    auto &triple = currentTargetNameAndFeatures.triple;
+    targetModule->setTargetTriple(triple);
+
+    // Lookup the LLVM target.
+    {
+        std::string error;
+        currentTarget = llvm::TargetRegistry::lookupTarget(triple, error);
+        if(!emitTargetIR && !currentTarget)
+        {
+            std::cerr << "Failed to find llvm target: " << error << std::endl;
+            return false;
+        }
+
+    }
+
+    auto isPie = (picMode == PICMode::Default && currentTargetNameAndFeatures.defaultsToPIE()) || picMode == PICMode::PIE;
+    auto isPic = picMode == PICMode::PIC;
+
+    // Position independent code
+    if(isPic) targetModule->setPICLevel(llvm::PICLevel::BigPIC);
+    if(isPie) targetModule->setPIELevel(llvm::PIELevel::Large);
+
+    // Create the target machine.
+    if(currentTarget)
+    {
+        auto cpu = currentTargetNameAndFeatures.cpu;
+        auto features = "";
+
+        llvm::TargetOptions opt;
+
+        // Default to separate sections.
+        opt.FunctionSections = true;
+        opt.DataSections = true;
+
+        // Convert the relocation model.
+        auto relocationModel = llvm::Optional<llvm::Reloc::Model>();
+        if(isPic || isPie)
+            relocationModel = llvm::Reloc::Model::PIC_;
+
+        // Float abi.
+        if(currentTargetNameAndFeatures.floatAbi == "soft")
+            opt.FloatABIType = llvm::FloatABI::Soft;
+        else if(currentTargetNameAndFeatures.floatAbi == "hard")
+            opt.FloatABIType = llvm::FloatABI::Hard;
+
+        currentTargetMachine = currentTarget->createTargetMachine(triple, cpu, features, opt, relocationModel);
+        targetModule->setDataLayout(currentTargetMachine->createDataLayout());
+
+        currentTargetMachine->setOptLevel(optimizationLevelToCodeGen(optimizationLevel));
+    }
+
     // Initialize the type map.
     initializePrimitiveTypeMap();
     initializeDebugInfoBuilding();
-
-    functionPassManager = std::make_unique<llvm::legacy::FunctionPassManager> (targetModule.get());
-    functionPassManager->add(llvm::createCFGSimplificationPass());
-    /*functionPassManager->add(llvm::createPromoteMemoryToRegisterPass());
-    functionPassManager->add(llvm::createInstructionCombiningPass());
-    functionPassManager->add(llvm::createReassociatePass());
-    functionPassManager->add(llvm::createGVNPass());
-    functionPassManager->add(llvm::createCFGSimplificationPass());*/
-    functionPassManager->doInitialization();
 
     // Process the module components.
     {
@@ -393,6 +503,9 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     if(llvm::verifyModule(*targetModule, &llvm::errs()))
         abort();
 
+    // Optimize the module.
+    optimizeModule();
+
     // Emit the module output.
     if(outputFileName.empty() || outputFileName == "-")
     {
@@ -409,10 +522,50 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     }
 }
 
-bool SSALLVMCodeGenerationBackend::writeOutputOnto(llvm::raw_ostream &out)
+bool SSALLVMCodeGenerationBackend::writeOutputOnto(llvm::raw_pwrite_stream &out)
 {
-    targetModule->print(out, nullptr);
-    return true;
+    if(emitTargetIR)
+    {
+        switch(outputMode)
+        {
+        case SSACodeGenerationOutputMode::Assembly:
+            targetModule->print(out, nullptr);
+            return true;
+        case SSACodeGenerationOutputMode::ObjectFile:
+            llvm::WriteBitcodeToFile(*targetModule, out);
+            return true;
+        default:
+            std::cerr << "Invalid output mode for writing the LLVM IR." << std::endl;
+            return false;
+        }
+    }
+
+    if(!currentTargetMachine)
+    {
+        std::cerr << "Cannot write output file without a LLVM target machine." << std::endl;
+        return false;
+    }
+
+    auto codeGenFileType = outputMode == SSACodeGenerationOutputMode::Assembly
+        ? llvm::CGFT_AssemblyFile
+        : llvm::CGFT_ObjectFile;
+
+    llvm::legacy::PassManager outputGenerationPass;
+    currentTargetMachine->addPassesToEmitFile(outputGenerationPass, out, nullptr, codeGenFileType);
+
+    switch(outputMode)
+    {
+    case SSACodeGenerationOutputMode::Assembly:
+    case SSACodeGenerationOutputMode::ObjectFile:
+    case SSACodeGenerationOutputMode::Executable:
+    case SSACodeGenerationOutputMode::SharedLibrary:
+    case SSACodeGenerationOutputMode::Plugin:
+        outputGenerationPass.run(*targetModule);
+        return false;
+    default:
+        std::cerr << "Unsupported output mode with the llvm backend." << std::endl;
+        return false;
+    }
 }
 } // End of namespace Environment
 } // End of namespace Sysmel

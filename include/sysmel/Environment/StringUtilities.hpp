@@ -23,6 +23,8 @@ std::string formatString(const std::string &format, const std::vector<std::strin
 std::string basename(const std::string &path);
 std::string basenameWithoutExtension(const std::string &path);
 std::string dirname(const std::string &path);
+bool stringBeginsWith(const std::string &string, const std::string &prefix);
+std::vector<std::string> split(const std::string &string, char delim = ' ');
 
 template<typename T>
 std::string castToString(const T &value)

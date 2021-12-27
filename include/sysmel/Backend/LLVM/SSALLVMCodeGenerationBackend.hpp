@@ -21,11 +21,18 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
-
-#include "llvm/Transforms/InstCombine/InstCombine.h"
-#include "llvm/Transforms/Scalar.h"
-#include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils.h"
+#include "llvm/Transforms/Scalar/SimplifyCFG.h"
+#include "llvm/Analysis/AliasAnalysis.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/Bitcode/BitcodeWriter.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -90,11 +97,6 @@ public:
         return targetModule.get();
     }
 
-    llvm::legacy::FunctionPassManager *getFunctionPassManager()
-    {
-        return functionPassManager.get(); 
-    }
-
     llvm::DIBuilder *getDIBuilder()
     {
         return diBuilder.get(); 
@@ -115,16 +117,17 @@ public:
 protected:
     void initializePrimitiveTypeMap();
     void initializeDebugInfoBuilding();
-    bool writeOutputOnto(llvm::raw_ostream &out);
-
+    void optimizeModule();
+    bool writeOutputOnto(llvm::raw_pwrite_stream &out);
 
     ProgramModulePtr sourceModule;
     NameManglerPtr nameMangler;
     std::unique_ptr<llvm::LLVMContext> context;
     std::unique_ptr<llvm::Module> targetModule;
-    std::unique_ptr<llvm::legacy::FunctionPassManager> functionPassManager;
     std::unique_ptr<llvm::DIBuilder> diBuilder;
     llvm::DICompileUnit *diCompileUnit = nullptr;
+    const llvm::Target* currentTarget = nullptr;
+    llvm::TargetMachine *currentTargetMachine = nullptr;
     std::unordered_map<TypePtr, llvm::Type*> typeMap;
     std::unordered_set<TypePtr> signedIntegerTypeSet;
     std::unordered_set<TypePtr> unsignedIntegerTypeSet;

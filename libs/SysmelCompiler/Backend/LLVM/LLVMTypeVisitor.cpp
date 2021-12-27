@@ -96,7 +96,7 @@ AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
     for(size_t i = 0; i < argumentCount; ++i)
         argumentType.push_back(translateArgumentType(type->getArgument(i)));
 
-    return wrapLLVMType(llvm::FunctionType::get(resultType, argumentType, hasCVarArgs));
+    return wrapLLVMType(llvm::FunctionType::get(actualResultType, argumentType, hasCVarArgs));
 }
 
 AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type)

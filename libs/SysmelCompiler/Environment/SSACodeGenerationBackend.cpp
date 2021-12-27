@@ -41,6 +41,26 @@ void SSACodeGenerationBackend::setDebugInformationType(DebugInformationType type
     debugInformationType = type;
 }
 
+PICMode SSACodeGenerationBackend::getPICMode() const
+{
+    return picMode;
+}
+
+void SSACodeGenerationBackend::setPICMode(PICMode newPicMode)
+{
+    picMode = newPicMode;
+}
+
+OptimizationLevel SSACodeGenerationBackend::getOptimizationLevel() const
+{
+    return optimizationLevel;
+}
+
+void SSACodeGenerationBackend::setOptimizationLevel(OptimizationLevel newOptimizationLevel)
+{
+    optimizationLevel = newOptimizationLevel;
+}
+
 void SSACodeGenerationBackend::setMainInputFileName(const std::string &newInputFileName)
 {
     mainInputFileName = newInputFileName;

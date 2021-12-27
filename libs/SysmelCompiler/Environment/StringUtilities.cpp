@@ -255,5 +255,39 @@ std::string dirname(const std::string &path)
     return pos != std::string::npos ? path.substr(pos) : std::string();
 }
 
+std::vector<std::string> split(const std::string &string, char delim)
+{
+    std::vector<std::string> result;
+    std::string currentString;
+    for(auto c : string)
+    {
+        if(c == delim)
+        {
+            result.push_back(currentString);
+            currentString.clear();
+        }
+        else
+        {
+            currentString.push_back(c);
+        }
+    }
+
+    return result;
+}
+
+bool stringBeginsWith(const std::string &string, const std::string &prefix)
+{
+    if(string.size() < prefix.size())
+        return false;
+
+    for(size_t i = 0; i < prefix.size(); ++i)
+    {
+        if(string[i] != prefix[i])
+            return false;
+    }
+
+    return true;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

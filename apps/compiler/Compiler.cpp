@@ -18,8 +18,11 @@ struct CompilerParameters
     bool emitTargetIR = false;
     bool emitSExpression = false;
     bool emitSSASExpression = false;
+    TargetNameAndFeatures targetName = TargetNameAndFeatures::getForHost();
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
     DebugInformationType debugInformationType = DebugInformationType::None;
+    OptimizationLevel optimizationLevel = OptimizationLevel::O0;
+    PICMode picMode = PICMode::Default;
     std::string moduleName;
     std::string outputFileName;
     std::vector<std::string> modulePaths;
@@ -62,7 +65,6 @@ int main(int argc, const char *argv[])
 {
     CompilerParameters parameters;
 
-
     for(int i = 1; i < argc; ++i)
     {
         auto arg = std::string(argv[i]);
@@ -92,6 +94,30 @@ int main(int argc, const char *argv[])
                 parameters.debugInformationType = DebugInformationType::Dwarf3;
             else if(arg == "-gdwarf4")
                 parameters.debugInformationType = DebugInformationType::Dwarf4;
+            else if(arg == "-target")
+                parameters.targetName.setTriple(argv[++i]);
+            else if(arg == "-mcpu")
+                parameters.targetName.cpu = argv[++i];
+            else if(arg == "-mfpu")
+                parameters.targetName.fpu = argv[++i];
+            else if(arg == "-mfloat-abi")
+                parameters.targetName.floatAbi = argv[++i];
+            else if(arg == "-O0")
+                parameters.optimizationLevel = OptimizationLevel::O0;
+            else if(arg == "-O1")
+                parameters.optimizationLevel = OptimizationLevel::O1;
+            else if(arg == "-O2")
+                parameters.optimizationLevel = OptimizationLevel::O2;
+            else if(arg == "-O3")
+                parameters.optimizationLevel = OptimizationLevel::O3;
+            else if(arg == "-Os")
+                parameters.optimizationLevel = OptimizationLevel::Os;
+            else if(arg == "-Oz")
+                parameters.optimizationLevel = OptimizationLevel::Oz;
+            else if(arg == "-fPIC")
+                parameters.picMode = PICMode::PIC;
+            else if(arg == "-fPIE")
+                parameters.picMode = PICMode::PIE;
             else
             {
                 std::cout << "Unsupported command line parameter " << arg << std::endl;
@@ -109,7 +135,7 @@ int main(int argc, const char *argv[])
         parameters.moduleName = basenameWithoutExtension(parameters.inputFileNames.front());
 
     int exitCode = 0;
-    RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForHost())->activeDuring([&]{
+    RuntimeContext::createForTarget(RuntimeContextTargetDescription::makeForTargetNameAndFeatures(parameters.targetName))->activeDuring([&]{
         auto programModule = ProgramModule::create(basename(parameters.moduleName));
         programModule->activeDuring([&]{
 
@@ -134,9 +160,13 @@ int main(int argc, const char *argv[])
             return;
 
         if(parameters.emitSExpression)
+        {
             writeStringToOutputFileNamed(sexpressionToPrettyString(programModule->asFullDefinitionSExpression()) + "\n", parameters.outputFileName);
+        }
         else if(parameters.emitSSASExpression)
+        {
             writeStringToOutputFileNamed(sexpressionToPrettyString(programModule->asSSAValueRequiredInPosition(ASTSourcePosition::empty())->asFullDefinitionSExpression()) + "\n", parameters.outputFileName);
+        }
         else
         {
             auto backend = SSACodeGenerationBackend::makeNativeBackend();
@@ -151,6 +181,8 @@ int main(int argc, const char *argv[])
             backend->setDebugInformationType(parameters.debugInformationType);
             backend->setOutputFileName(parameters.outputFileName);
             backend->setMainInputFileName(parameters.inputFileNames.front());
+            backend->setOptimizationLevel(parameters.optimizationLevel);
+            backend->setPICMode(parameters.picMode);
             backend->setEmitTargetIR(parameters.emitTargetIR);
             auto success = backend->processAndWriteProgramModule(programModule);
             exitCode = success ? 0 : 1;
