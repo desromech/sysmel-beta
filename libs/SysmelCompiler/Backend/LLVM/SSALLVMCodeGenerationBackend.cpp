@@ -561,7 +561,7 @@ bool SSALLVMCodeGenerationBackend::writeOutputOnto(llvm::raw_pwrite_stream &out)
     case SSACodeGenerationOutputMode::SharedLibrary:
     case SSACodeGenerationOutputMode::Plugin:
         outputGenerationPass.run(*targetModule);
-        return false;
+        return true;
     default:
         std::cerr << "Unsupported output mode with the llvm backend." << std::endl;
         return false;
