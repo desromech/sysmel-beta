@@ -10,6 +10,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 # Add the homebrew install of llvm to the search path.
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/llvm-install")
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/llvm")
 endif()
@@ -43,7 +44,15 @@ find_package(LLVM CONFIG)
 set(HAVE_LLVM_BACKEND FALSE)
 set(USED_LLVM_LIBS)
 if(LLVM_FOUND)
-	if(LLVM IN_LIST LLVM_AVAILABLE_LIBS)
+	if(WIN32)
+		add_definitions(
+			-DBUILD_WITH_LLVM_BACKEND=1
+		)
+		include_directories(${LLVM_INCLUDE_DIRS})
+		link_directories(${LLVM_LIBRARY_DIR})
+		llvm_map_components_to_libnames(USED_LLVM_LIBS core support native AllTargetsDescs AllTargetsAsmParsers AllTargetsInfos AllTargetsCodeGens)
+		set(HAVE_LLVM_BACKEND TRUE)
+	elseif(LLVM IN_LIST LLVM_AVAILABLE_LIBS)
 		add_definitions(
 			-DBUILD_WITH_LLVM_BACKEND=1
 		)
@@ -53,6 +62,7 @@ if(LLVM_FOUND)
 		set(USED_LLVM_LIBS LLVM)
 		set(HAVE_LLVM_BACKEND TRUE)
 	endif()
+	message(STATUS "Used LLVM Libs: ${USED_LLVM_LIBS}")
 endif()
 
 # Set output dir.
