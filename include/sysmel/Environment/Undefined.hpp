@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Undefined);
 /**
  * I am literal number value.
  */
-class Undefined : public SubtypeOf<AnyValue, Undefined>
+class SYSMEL_COMPILER_LIB_EXPORT Undefined : public SubtypeOf<AnyValue, Undefined>
 {
 public:
     static constexpr char const __typeName__[] = "Undefined";

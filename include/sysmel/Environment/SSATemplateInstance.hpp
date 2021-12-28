@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSATemplateInstance : public SubtypeOf<SSAProgramEntityWithChildren, SSATemplateInstance>
+class SYSMEL_COMPILER_LIB_EXPORT SSATemplateInstance : public SubtypeOf<SSAProgramEntityWithChildren, SSATemplateInstance>
 {
 public:
     static constexpr char const __typeName__[] = "SSATemplateInstance";

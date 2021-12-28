@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 /**
  * I am a node that is used for declaring or defining a program entity.
  */
-class ASTProgramEntityNode : public SubtypeOf<ASTNode, ASTProgramEntityNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTProgramEntityNode : public SubtypeOf<ASTNode, ASTProgramEntityNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTProgramEntityNode";

@@ -20,9 +20,9 @@ ASTNodePtr NamedProgramEntityMetaBuilder::analyzeMessageSendNode(const ASTMessag
     return SuperType::analyzeMessageSendNode(node, semanticAnalyzer);
 }
 
-bool NamedProgramEntityMetaBuilder::isValidNameNode(const ASTNodePtr &nameNode) const
+bool NamedProgramEntityMetaBuilder::isValidNameNode(const ASTNodePtr &newNameNode) const
 {
-    return nameNode->isASTIdentifierSymbolValue();
+    return newNameNode->isASTIdentifierSymbolValue();
 }
 
 } // End of namespace Environment

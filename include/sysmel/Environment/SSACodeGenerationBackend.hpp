@@ -42,7 +42,7 @@ enum class OptimizationLevel : uint8_t
 /**
  * I am the base interface for a SSA based code generation backend
  */
-class SSACodeGenerationBackend : public SubtypeOf<CompilerObject, SSACodeGenerationBackend>
+class SYSMEL_COMPILER_LIB_EXPORT SSACodeGenerationBackend : public SubtypeOf<CompilerObject, SSACodeGenerationBackend>
 {
 public:
     static constexpr char const __typeName__[] = "SSACodeGenerationBackend";

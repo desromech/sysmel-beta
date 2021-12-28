@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(VisibilityMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class VisibilityMetaBuilder : public SubtypeOf<MetaBuilder, VisibilityMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT VisibilityMetaBuilder : public SubtypeOf<MetaBuilder, VisibilityMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "VisibilityMetaBuilder";

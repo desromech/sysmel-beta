@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I declare the existence of a specific local variable. I am used to facilitate the generation of debug information.
  */
-class SSADeclareLocalVariableInstruction : public SubtypeOf<SSAInstruction, SSADeclareLocalVariableInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSADeclareLocalVariableInstruction : public SubtypeOf<SSAInstruction, SSADeclareLocalVariableInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSADeclareLocalVariableInstruction";

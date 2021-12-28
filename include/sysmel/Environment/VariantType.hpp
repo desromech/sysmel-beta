@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(VariantTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class VariantType : public SubMetaTypeOf<AggregateType, VariantType>
+class SYSMEL_COMPILER_LIB_EXPORT VariantType : public SubMetaTypeOf<AggregateType, VariantType>
 {
 public:
     static TypePtr make(const TypePtrList &elementTypes);

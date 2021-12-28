@@ -10,8 +10,8 @@ namespace Environment
 {
 
 typedef std::vector<StaticBootstrapDefinedTypeMetadata*> StaticBootstrapDefinedTypeMetadataList;
-const StaticBootstrapDefinedTypeMetadataList &getBootstrapDefinedTypeMetadataList();
-void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *metadata);
+SYSMEL_COMPILER_LIB_EXPORT const StaticBootstrapDefinedTypeMetadataList &getBootstrapDefinedTypeMetadataList();
+SYSMEL_COMPILER_LIB_EXPORT void registerBootstrapDefinedTypeMetadata(StaticBootstrapDefinedTypeMetadata *metadata);
 
 template<typename T>
 struct BootstrapTypeRegistration

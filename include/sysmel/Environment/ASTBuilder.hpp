@@ -30,7 +30,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
 /**
  * I am an utility for building AST nodes.
  */
-class ASTBuilder : public SubtypeOf<CompilerObject, ASTBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT ASTBuilder : public SubtypeOf<CompilerObject, ASTBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "ASTBuilder";

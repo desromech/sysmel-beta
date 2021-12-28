@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a variable program entity.
  */
-class LocalVariable : public SubtypeOf<FunctionVariable, LocalVariable>
+class SYSMEL_COMPILER_LIB_EXPORT LocalVariable : public SubtypeOf<FunctionVariable, LocalVariable>
 {
 public:
     static constexpr char const __typeName__[] = "LocalVariable";

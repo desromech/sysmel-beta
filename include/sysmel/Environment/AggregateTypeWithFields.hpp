@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FieldVariable);
 /**
  * I am an instance of a function type object.
  */
-class AggregateTypeWithFields : public SubMetaTypeOf<AggregateType, AggregateTypeWithFields>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeWithFields : public SubMetaTypeOf<AggregateType, AggregateTypeWithFields>
 {
 public:
     virtual bool isAggregateTypeWithFields() const override;
@@ -31,7 +31,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class AggregateTypeWithFieldsValue : public SubtypeOf<AggregateTypeValue, AggregateTypeWithFieldsValue>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeWithFieldsValue : public SubtypeOf<AggregateTypeValue, AggregateTypeWithFieldsValue>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateTypeWithFields";

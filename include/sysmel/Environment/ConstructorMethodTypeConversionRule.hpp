@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
 /**
  * I am an instance of a function type object.
  */
-class ConstructorMethodTypeConversionRule : public SubtypeOf<TypeConversionRule, ConstructorMethodTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT ConstructorMethodTypeConversionRule : public SubtypeOf<TypeConversionRule, ConstructorMethodTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "ConstructorMethodTypeConversionRule";

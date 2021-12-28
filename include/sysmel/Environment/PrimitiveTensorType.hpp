@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveTensorType);
 /**
  * I am a primitive tensor type. I designed to be directly supported by the cpu vectorial units.
  */
-class PrimitiveTensorType : public SubtypeOf<PrimitiveType, PrimitiveTensorType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveTensorType : public SubtypeOf<PrimitiveType, PrimitiveTensorType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveTensorType";

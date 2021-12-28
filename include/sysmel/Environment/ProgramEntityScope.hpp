@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 /**
  * I am the interface for the scope that is used for the identifier lookup.
  */
-class ProgramEntityScope : public SubtypeOf<IdentifierLookupScope, ProgramEntityScope>
+class SYSMEL_COMPILER_LIB_EXPORT ProgramEntityScope : public SubtypeOf<IdentifierLookupScope, ProgramEntityScope>
 {
 public:
     static constexpr char const __typeName__[] = "ProgramEntityScope";

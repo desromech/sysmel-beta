@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class FunctionType : public SubMetaTypeOf<FunctionalType, FunctionType>
+class SYSMEL_COMPILER_LIB_EXPORT FunctionType : public SubMetaTypeOf<FunctionalType, FunctionType>
 {
 public:
     static FunctionTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
@@ -35,9 +35,12 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class FunctionTypeValue : public SubtypeOf<FunctionalTypeValue, FunctionTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT FunctionTypeValue : public SubtypeOf<FunctionalTypeValue, FunctionTypeValue>
 {
 public:
+    static constexpr char const __typeName__[] = "FunctionType";
+    static constexpr char const __sysmelTypeName__[] = "_FunctionType";
+
     virtual bool isFunctionTypeValue() const override;
 
     virtual TypePtr getType() const override;

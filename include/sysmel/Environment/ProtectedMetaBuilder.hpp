@@ -9,12 +9,12 @@ namespace Sysmel
 namespace Environment
 {
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(LetMetaBuilder);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProtectedMetaBuilder);
 
 /**
  * I am the base interface for a meta-builder.
  */
-class ProtectedMetaBuilder : public SubtypeOf<VisibilityMetaBuilder, ProtectedMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT ProtectedMetaBuilder : public SubtypeOf<VisibilityMetaBuilder, ProtectedMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "ProtectedMetaBuilder";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class CompileTimeMetaBuilder : public SubtypeOf<MetaBuilder, CompileTimeMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT CompileTimeMetaBuilder : public SubtypeOf<MetaBuilder, CompileTimeMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "CompileTimeMetaBuilder";

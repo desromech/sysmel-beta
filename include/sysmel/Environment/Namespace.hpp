@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSANamespace);
 /**
  * I am a namespace.
  */
-class Namespace : public SubtypeOf<ModuleDefinedProgramEntity, Namespace>
+class SYSMEL_COMPILER_LIB_EXPORT Namespace : public SubtypeOf<ModuleDefinedProgramEntity, Namespace>
 {
 public:
     static constexpr char const __typeName__[] = "Namespace";

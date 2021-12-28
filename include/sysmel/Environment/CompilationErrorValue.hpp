@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationErrorValue);
 /**
  * I am literal number value.
  */
-class CompilationErrorValue : public SubtypeOf<AnyValue, CompilationErrorValue>
+class SYSMEL_COMPILER_LIB_EXPORT CompilationErrorValue : public SubtypeOf<AnyValue, CompilationErrorValue>
 {
 public:
     static constexpr char const __typeName__[] = "CompilationErrorValue";

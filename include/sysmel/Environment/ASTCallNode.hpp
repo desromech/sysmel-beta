@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node that applies a generic intrinsic operation for processing its parameters.
  */
-class ASTCallNode : public SubtypeOf<ASTNode, ASTCallNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTCallNode : public SubtypeOf<ASTNode, ASTCallNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTCallNode";

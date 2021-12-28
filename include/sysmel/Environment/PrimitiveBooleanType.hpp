@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Boolean8);
 /**
  * I am a primitive boolean type.
  */
-class PrimitiveBooleanType : public SubtypeOf<PrimitiveScalarType, PrimitiveBooleanType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveBooleanType : public SubtypeOf<PrimitiveScalarType, PrimitiveBooleanType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveBooleanType";
@@ -28,7 +28,7 @@ public:
 /**
  * I am a 8 bits boolean value.
  */
-class Boolean8 : public SubtypeOf<PrimitiveBooleanType, Boolean8>
+class SYSMEL_COMPILER_LIB_EXPORT Boolean8 : public SubtypeOf<PrimitiveBooleanType, Boolean8>
 {
 public:
     typedef bool ValueType;

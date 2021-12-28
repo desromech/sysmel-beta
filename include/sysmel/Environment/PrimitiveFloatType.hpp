@@ -19,7 +19,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Float64);
 /**
  * I am a primitive floating point type.
  */
-class PrimitiveFloatType : public SubtypeOf<PrimitiveNumberType, PrimitiveFloatType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveFloatType : public SubtypeOf<PrimitiveNumberType, PrimitiveFloatType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveFloatType";
@@ -32,7 +32,7 @@ public:
 /**
  * I am an IEEE 754 16-bits floating point value.
  */
-class Float16 : public SubtypeOf<PrimitiveFloatType, Float16>
+class SYSMEL_COMPILER_LIB_EXPORT Float16 : public SubtypeOf<PrimitiveFloatType, Float16>
 {
 public:
     static constexpr char const __typeName__[] = "Float16";
@@ -49,7 +49,7 @@ public:
 /**
  * I am an IEEE 754 32-bits floating point value.
  */
-class Float32 : public SubtypeOf<PrimitiveFloatType, Float32>
+class SYSMEL_COMPILER_LIB_EXPORT Float32 : public SubtypeOf<PrimitiveFloatType, Float32>
 {
 public:
     typedef float ValueType;
@@ -80,7 +80,7 @@ public:
 /**
  * I am an IEEE 754 64-bits floating point value.
  */
-class Float64 : public SubtypeOf<PrimitiveFloatType, Float64>
+class SYSMEL_COMPILER_LIB_EXPORT Float64 : public SubtypeOf<PrimitiveFloatType, Float64>
 {
 public:
     typedef double ValueType;

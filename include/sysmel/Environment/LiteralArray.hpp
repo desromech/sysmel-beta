@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralArray);
 /**
  * I am literal number value.
  */
-class LiteralArray : public SubtypeOf<LiteralValue, LiteralArray>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralArray : public SubtypeOf<LiteralValue, LiteralArray>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralArray";

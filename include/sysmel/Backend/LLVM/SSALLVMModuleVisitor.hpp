@@ -17,7 +17,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMCodeGenerationBackend)
 /**
  * I am the base interface for a SSA based code generation backend
  */
-class SSALLVMModuleVisitor : public SubtypeOf<SSAValueVisitor, SSALLVMModuleVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT SSALLVMModuleVisitor : public SubtypeOf<SSAValueVisitor, SSALLVMModuleVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "SSALLVMModuleVisitor";

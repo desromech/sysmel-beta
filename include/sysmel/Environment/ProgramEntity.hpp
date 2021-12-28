@@ -38,7 +38,7 @@ enum class MessageSendExpansionLevel : uint8_t
 /**
  * I am the base interface for any program metamodel entity
  */
-class ProgramEntity : public SubtypeOf<CompilerObject, ProgramEntity>
+class SYSMEL_COMPILER_LIB_EXPORT ProgramEntity : public SubtypeOf<CompilerObject, ProgramEntity>
 {
 public:
     static constexpr char const __typeName__[] = "ProgramEntity";

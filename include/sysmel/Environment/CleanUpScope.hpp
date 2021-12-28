@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CleanUpScope)
  * I am a clean-up scope. I am used for binding the clean-up for deferred actions,
  * and the clean-up of local variables.
  */
-class CleanUpScope : public SubtypeOf<CompilerObject, CleanUpScope>
+class SYSMEL_COMPILER_LIB_EXPORT CleanUpScope : public SubtypeOf<CompilerObject, CleanUpScope>
 {
 public:
     static constexpr char const __typeName__[] = "CleanUpScope";

@@ -148,7 +148,7 @@ void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumen
         auto argument = basicMakeObject<ArgumentVariable> ();
         recordChildProgramEntityDefinition(argument);
         argument->setType(type);
-        argument->argumentIndex = i;
+        argument->argumentIndex = uint32_t(i);
         arguments.push_back(argument);
     }
 }
@@ -341,7 +341,7 @@ void CompiledMethod::validateBeforeCompileTimeEvaluation()
     ensureSemanticAnalysis();
 }
 
-AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
+AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &argumentValues, const AnyValuePtr &receiver)
 {
     sysmelAssert(!functionalType->isClosureType());
     (void)selector;
@@ -349,18 +349,18 @@ AnyValuePtr CompiledMethod::runWithArgumentsIn(const AnyValuePtr &selector, cons
     validateBeforeCompileTimeEvaluation();
 
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
-    setArgumentsInEvaluationEnvironment(receiver, arguments, evaluationEnvironment);
+    setArgumentsInEvaluationEnvironment(receiver, argumentValues, evaluationEnvironment);
     return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
-AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &arguments)
+AnyValuePtr CompiledMethod::applyInClosureWithArguments(const AnyValuePtr &closure, const std::vector<AnyValuePtr> &argumentValues)
 {
     sysmelAssert(functionalType->isClosureType());
     sysmelAssert(closure->isCompileTimeCleanUpScope());
     validateBeforeCompileTimeEvaluation();
 
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeWithParent(staticObjectCast<CompileTimeCleanUpScope> (closure));
-    setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
+    setArgumentsInEvaluationEnvironment(nullptr, argumentValues, evaluationEnvironment);
     return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 
@@ -387,12 +387,12 @@ void CompiledMethod::setArgumentsInEvaluationEnvironment(const AnyValuePtr &rece
         environment->setStoreBinding(arguments[i], argumentValues[i]);
 }
 
-AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
+AnyValuePtr CompiledMethod::applyWithArguments(const std::vector<AnyValuePtr> &argumentValues)
 {
     sysmelAssert(!functionalType->isClosureType());
     validateBeforeCompileTimeEvaluation();
     auto evaluationEnvironment = CompileTimeCleanUpScope::makeEmpty();
-    setArgumentsInEvaluationEnvironment(nullptr, arguments, evaluationEnvironment);
+    setArgumentsInEvaluationEnvironment(nullptr, argumentValues, evaluationEnvironment);
     return basicMakeObject<ASTCompileTimeEvaluator> ()->evaluateMethodBodyNode(evaluationEnvironment, analyzedBodyNode);
 }
 

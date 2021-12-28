@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CleanUpScope);
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTCleanUpScopeNode : public SubtypeOf<ASTNode, ASTCleanUpScopeNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTCleanUpScopeNode : public SubtypeOf<ASTNode, ASTCleanUpScopeNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTCleanUpScopeNode";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ScriptModule);
 /**
  * I am a particular module in the system.
  */
-class ScriptModule : public SubtypeOf<ProgramModule, ScriptModule>
+class SYSMEL_COMPILER_LIB_EXPORT ScriptModule : public SubtypeOf<ProgramModule, ScriptModule>
 {
 public:
     static constexpr char const __typeName__[] = "ScriptModule";

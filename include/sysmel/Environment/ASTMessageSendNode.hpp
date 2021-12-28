@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTMessageSendNode : public SubtypeOf<ASTNode, ASTMessageSendNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTMessageSendNode : public SubtypeOf<ASTNode, ASTMessageSendNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTMessageSendNode";

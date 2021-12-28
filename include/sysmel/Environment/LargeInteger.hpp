@@ -16,7 +16,7 @@ namespace Environment
 /**
  * I represent a large integer value.
  */
-struct LargeInteger
+struct SYSMEL_COMPILER_LIB_EXPORT LargeInteger
 {
     bool signBit = 0;
     std::vector<uint32_t> words;

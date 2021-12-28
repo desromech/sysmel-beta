@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MacroInvocationContext);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class MacroInvocationContext : public SubtypeOf<CompilerObject, MacroInvocationContext>
+class SYSMEL_COMPILER_LIB_EXPORT MacroInvocationContext : public SubtypeOf<CompilerObject, MacroInvocationContext>
 {
 public:
     static constexpr char const __typeName__[] = "MacroInvocationContext";

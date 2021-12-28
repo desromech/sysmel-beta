@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Error);
 /**
  * Basic error
  */
-class Error : public SubtypeOf<Exception, Error>
+class SYSMEL_COMPILER_LIB_EXPORT Error : public SubtypeOf<Exception, Error>
 {
 public:
     static constexpr char const __typeName__[] = "Error";

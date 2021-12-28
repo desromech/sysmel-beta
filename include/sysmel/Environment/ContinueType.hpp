@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ContinueType);
 /**
  * I am literal number value.
  */
-class ContinueType : public SubtypeOf<ControlFlowEscapeType, ContinueType>
+class SYSMEL_COMPILER_LIB_EXPORT ContinueType : public SubtypeOf<ControlFlowEscapeType, ContinueType>
 {
 public:
     static constexpr char const __typeName__[] = "ContinueType";

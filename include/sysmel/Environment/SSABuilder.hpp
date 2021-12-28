@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSABuilder : public SubtypeOf<CompilerObject, SSABuilder>
+class SYSMEL_COMPILER_LIB_EXPORT SSABuilder : public SubtypeOf<CompilerObject, SSABuilder>
 {
 public:
     static constexpr char const __typeName__[] = "SSABuilder";

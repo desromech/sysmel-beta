@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
 /**
  * I am a node that is used for accessing a variable.
  */
-class ASTLocalImmutableAccessNode : public SubtypeOf<ASTNode, ASTLocalImmutableAccessNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTLocalImmutableAccessNode : public SubtypeOf<ASTNode, ASTLocalImmutableAccessNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTLocalImmutableAccessNode";

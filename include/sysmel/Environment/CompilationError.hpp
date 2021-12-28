@@ -18,7 +18,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeEvaluationError);
 /**
  * I am a generic compilation error.
  */
-class CompilationError : public SubtypeOf<Error, CompilationError>
+class SYSMEL_COMPILER_LIB_EXPORT CompilationError : public SubtypeOf<Error, CompilationError>
 {
 public:
     static constexpr char const __typeName__[] = "CompilationError";

@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAConditionalJumpInstruction : public SubtypeOf<SSAInstruction, SSAConditionalJumpInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSAConditionalJumpInstruction : public SubtypeOf<SSAInstruction, SSAConditionalJumpInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAConditionalJumpInstruction";

@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class MethodType : public SubMetaTypeOf<FunctionalType, MethodType>
+class SYSMEL_COMPILER_LIB_EXPORT MethodType : public SubMetaTypeOf<FunctionalType, MethodType>
 {
 public:
     virtual bool isMethodType() const override;
@@ -37,9 +37,12 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class MethodTypeValue : public SubtypeOf<FunctionalTypeValue, MethodTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT MethodTypeValue : public SubtypeOf<FunctionalTypeValue, MethodTypeValue>
 {
 public:
+    static constexpr char const __typeName__[] = "MethodType";
+    static constexpr char const __sysmelTypeName__[] = "_MethodType";
+
     virtual bool isMethodTypeValue() const override;
 
     virtual TypePtr getType() const override;

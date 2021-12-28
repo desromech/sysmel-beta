@@ -28,10 +28,14 @@ void BootstrapModule::initialize()
         type->setType(metaType);
         metaType->setThisType(type);
 
+        auto index = bootstrapDefinedTypeTable.size() + 1;
         bootstrapDefinedTypeTable.push_back(type);
         bootstrapDefinedTypeTable.push_back(metaType);
         if(!metadata->typeName.empty())
-            bootstrapDefinedTypeNameMap.insert(std::make_pair(metadata->typeName, type));
+        {
+            bootstrapDefinedTypeNameMap.insert({metadata->typeName, type});
+            bootstrapDefinedTypeIndexMap.insert({metadata->typeName, index});
+        }
     }
 
     // Second pass: initialize the bootstrap types.
@@ -56,7 +60,7 @@ void BootstrapModule::initialize()
     // Third pass: apply the extension methods.
     for(const auto &[typeMetadata, extensionMethods] : getRegisteredBootstrapExtensionMethods())
     {
-        extensionMethods.applyToType(getBootstrapDefinedType(typeMetadata->bootstrapTypeID));
+        extensionMethods.applyToType(getBootstrapDefinedType(typeMetadata));
     }
 
     // Create namespaces.
@@ -79,7 +83,7 @@ void BootstrapModule::initialize()
         if(metadata->typeName.empty())
             continue;
 
-        auto bootstrapType = getBootstrapDefinedType(metadata->bootstrapTypeID);
+        auto bootstrapType = getBootstrapDefinedType(metadata);
         sysmelAssert(bootstrapType);
         bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(bootstrapType);
         bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(bootstrapType, ProgramEntityVisibility::Public);
@@ -117,16 +121,27 @@ TypePtr BootstrapModule::getBootstrapDefinedTypeNamed(const std::string &typeNam
     return it != bootstrapDefinedTypeNameMap.end() ? it->second : TypePtr();    
 }
 
-TypePtr BootstrapModule::getBootstrapDefinedType(size_t bootstrapTypeID)
+TypePtr BootstrapModule::getBootstrapDefinedType(StaticBootstrapDefinedTypeMetadata *metadata)
 {
-    if(bootstrapTypeID == 0 || bootstrapTypeID > bootstrapDefinedTypeTable.size())
+    if(!metadata)
         return TypePtr();
-    return bootstrapDefinedTypeTable[bootstrapTypeID - 1];
+
+    if(metadata->bootstrapTypeID == 0 && !metadata->typeName.empty())
+    {
+        auto it = bootstrapDefinedTypeIndexMap.find(metadata->typeName);
+        if(it != bootstrapDefinedTypeIndexMap.end())
+            metadata->bootstrapTypeID = it->second;
+    }
+    
+    auto typeID = metadata->bootstrapTypeID;
+    if(typeID == 0 || typeID > bootstrapDefinedTypeTable.size())
+        return TypePtr();
+    return bootstrapDefinedTypeTable[typeID - 1];
 }
 
-TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID)
+TypePtr getBootstrapDefinedTypeWithMetadata(StaticBootstrapDefinedTypeMetadata *metadata)
 {
-    return RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(bootstrapTypeID);
+    return RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(metadata);
 }
 
 SSAValuePtr BootstrapModule::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &position)

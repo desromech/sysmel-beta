@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class FieldMetaBuilder : public SubtypeOf<VariableMetaBuilder, FieldMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT FieldMetaBuilder : public SubtypeOf<VariableMetaBuilder, FieldMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "FieldMetaBuilder";

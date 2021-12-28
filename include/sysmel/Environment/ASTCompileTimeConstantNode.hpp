@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a node that is used for declaring or defining a variable.
  */
-class ASTCompileTimeConstantNode : public SubtypeOf<ASTProgramEntityNode, ASTCompileTimeConstantNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTCompileTimeConstantNode : public SubtypeOf<ASTProgramEntityNode, ASTCompileTimeConstantNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTCompileTimeConstantNode";

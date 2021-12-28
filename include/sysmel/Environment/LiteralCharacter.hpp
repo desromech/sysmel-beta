@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralCharacter : public SubtypeOf<LiteralPositiveInteger, LiteralCharacter>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralCharacter : public SubtypeOf<LiteralPositiveInteger, LiteralCharacter>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralCharacter";

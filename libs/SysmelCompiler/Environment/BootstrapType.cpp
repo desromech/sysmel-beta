@@ -93,7 +93,7 @@ void BootstrapType::initializeWithMetadata(const StaticBootstrapDefinedTypeMetad
 
     if(staticMetadata->supertype)
     {
-        supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype->bootstrapTypeID);
+        supertype = RuntimeContext::getActive()->getBootstrapModule()->getBootstrapDefinedType(staticMetadata->supertype);
         metaType->setSupertype(supertype->getType());
     }
         

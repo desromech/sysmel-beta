@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base implementation for a simple type
  */
-class SimpleType : public SubtypeOf<Type, SimpleType>
+class SYSMEL_COMPILER_LIB_EXPORT SimpleType : public SubtypeOf<Type, SimpleType>
 {
 public:
     static constexpr char const __typeName__[] = "SimpleType";

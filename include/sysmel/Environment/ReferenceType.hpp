@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReferenceTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class ReferenceType : public SubMetaTypeOf<PointerLikeType, ReferenceType>
+class SYSMEL_COMPILER_LIB_EXPORT ReferenceType : public SubMetaTypeOf<PointerLikeType, ReferenceType>
 {
 public:
     static ReferenceTypePtr make(const TypePtr &baseType);
@@ -52,7 +52,7 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class ReferenceTypeValue : public SubtypeOf<PointerLikeTypeValue, ReferenceTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT ReferenceTypeValue : public SubtypeOf<PointerLikeTypeValue, ReferenceTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "ReferenceType";

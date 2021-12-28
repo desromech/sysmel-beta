@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAValueVisitor : public SubtypeOf<CompilerObject, SSAValueVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT SSAValueVisitor : public SubtypeOf<CompilerObject, SSAValueVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "SSAValueVisitor";

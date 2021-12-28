@@ -56,10 +56,10 @@ AnyValuePtr FunctionType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
 
 FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
-    auto result = basicMakeObject<FunctionTypeValue> ();
-    result->type = selfFromThis();
-    result->functionalImplementation = implementation;
-    return result;
+    auto resultValue = basicMakeObject<FunctionTypeValue> ();
+    resultValue->type = selfFromThis();
+    resultValue->functionalImplementation = implementation;
+    return resultValue;
 }
 
 SExpression FunctionType::asSExpression() const

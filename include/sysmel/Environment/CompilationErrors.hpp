@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a collection of compilation errors.
  */
-class CompilationErrors : public SubtypeOf<CompilationError, CompilationErrors>
+class SYSMEL_COMPILER_LIB_EXPORT CompilationErrors : public SubtypeOf<CompilationError, CompilationErrors>
 {
 public:
     static constexpr char const __typeName__[] = "CompilationErrors";

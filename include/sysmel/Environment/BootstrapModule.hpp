@@ -18,7 +18,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAModule);
  * I am the bootstrap module of the system. I am a
  * special module that holds exclusively objects that are defined by the runtime execution model.
  */
-class BootstrapModule : public SubtypeOf<Module, BootstrapModule>
+class SYSMEL_COMPILER_LIB_EXPORT BootstrapModule : public SubtypeOf<Module, BootstrapModule>
 {
 public:
     static constexpr char const __typeName__[] = "BootstrapModule";
@@ -30,7 +30,7 @@ public:
     virtual NamespacePtr getGlobalNamespace() const override;
 
     TypePtr getBootstrapDefinedTypeNamed(const std::string &typeName);
-    TypePtr getBootstrapDefinedType(size_t id);
+    TypePtr getBootstrapDefinedType(StaticBootstrapDefinedTypeMetadata *metadata);
 
     const NamespacePtr &getEnvironmentNamespace() const
     {
@@ -47,6 +47,7 @@ public:
 private:
     std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
+    std::unordered_map<std::string, size_t> bootstrapDefinedTypeIndexMap;
 
     AnyValuePtr name;
     NamespacePtr globalNamespace;

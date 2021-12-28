@@ -26,31 +26,31 @@ struct IntPointerValue
 };
 
 template<>
-struct WrapperTypeFor<UIntPointerValue> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<UIntPointerValue> 
 {
     static TypePtr apply();
 };
 
 template<>
-struct WrapperTypeFor<IntPointerValue> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<IntPointerValue> 
 {
     static TypePtr apply();
 };
 
 template<>
-struct WrapperTypeFor<bool>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<bool>
 {
     static TypePtr apply();
 };
 
 template<>
-struct WrapperTypeFor<void>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<void>
 {
     static TypePtr apply();
 };
 
 template<>
-struct WrapperTypeFor<LargeInteger> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<LargeInteger> 
 {
     static TypePtr apply();
 };
@@ -80,7 +80,7 @@ template<>
 struct WrapperTypeFor<int64_t> : WrapperTypeFor<LargeInteger> {};
 
 template<>
-struct WrapperTypeFor<char32_t> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<char32_t> 
 {
     static TypePtr apply();
 };
@@ -92,13 +92,13 @@ template<>
 struct WrapperTypeFor<char16_t> : WrapperTypeFor<char32_t> {};
 
 template<>
-struct WrapperTypeFor<Fraction> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<Fraction> 
 {
     static TypePtr apply();
 };
 
 template<>
-struct WrapperTypeFor<double> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<double> 
 {
     static TypePtr apply();
 };
@@ -107,7 +107,7 @@ template<>
 struct WrapperTypeFor<float> : WrapperTypeFor<double> {};
 
 template<>
-struct WrapperTypeFor<std::string> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<std::string> 
 {
     static TypePtr apply();
 };
@@ -128,7 +128,7 @@ struct WrapperTypeFor<AnyValuePtr>
 };
 
 template<>
-struct WrapperTypeFor<AnyValuePtrList>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeFor<AnyValuePtrList>
 {
     static TypePtr apply();
 };
@@ -182,7 +182,7 @@ template<typename T>
 struct WrapperTypeForReturning : WrapperTypeFor<T> {};
 
 template<>
-struct WrapperTypeForReturning<Fraction>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapperTypeForReturning<Fraction>
 {
     static TypePtr apply();
 };
@@ -197,31 +197,31 @@ TypePtr wrapperTypeForReturning()
 // Wrap Value
 //=============================================================================
 template<>
-struct WrapValue<bool>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<bool>
 {
     static AnyValuePtr apply(bool value);
 };
 
 template<>
-struct WrapValue<uint32_t>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<uint32_t>
 {
     static AnyValuePtr apply(uint32_t value);
 };
 
 template<>
-struct WrapValue<int32_t>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<int32_t>
 {
     static AnyValuePtr apply(int32_t value);
 };
 
 template<>
-struct WrapValue<uint64_t>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<uint64_t>
 {
     static AnyValuePtr apply(uint64_t value);
 };
 
 template<>
-struct WrapValue<int64_t>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<int64_t>
 {
     static AnyValuePtr apply(int64_t value);
 };
@@ -229,31 +229,31 @@ struct WrapValue<int64_t>
 struct LargeInteger;
 
 template<>
-struct WrapValue<LargeInteger>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<LargeInteger>
 {
     static AnyValuePtr apply(const LargeInteger &value);
 };
 
 template<>
-struct WrapValue<char32_t>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<char32_t>
 {
     static AnyValuePtr apply(char32_t value);
 };
 
 template<>
-struct WrapValue<Fraction> 
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<Fraction> 
 {
     static AnyValuePtr apply(const Fraction &value);
 };
 
 template<>
-struct WrapValue<double>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<double>
 {
     static AnyValuePtr apply(double value);
 };
 
 template<>
-struct WrapValue<std::string>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<std::string>
 {
     static AnyValuePtr apply(const std::string &value);
 };
@@ -295,7 +295,7 @@ struct WrapValue<AnyValuePtr>
 };
 
 template<>
-struct WrapValue<AnyValuePtrList>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<AnyValuePtrList>
 {
     static AnyValuePtr apply(const AnyValuePtrList &content);
 };
@@ -330,13 +330,13 @@ template<typename T>
 struct WrapValue<T&&> : WrapValue<T> {};
 
 template<>
-struct WrapValue<UIntPointerValue>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<UIntPointerValue>
 {
     static AnyValuePtr apply(UIntPointerValue value);
 };
 
 template<>
-struct WrapValue<IntPointerValue>
+struct SYSMEL_COMPILER_LIB_EXPORT WrapValue<IntPointerValue>
 {
     static AnyValuePtr apply(IntPointerValue value);
 };

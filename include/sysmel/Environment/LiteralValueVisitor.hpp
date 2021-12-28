@@ -53,7 +53,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionTypeValue);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class LiteralValueVisitor : public SubtypeOf<CompilerObject, LiteralValueVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralValueVisitor : public SubtypeOf<CompilerObject, LiteralValueVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralValueVisitor";

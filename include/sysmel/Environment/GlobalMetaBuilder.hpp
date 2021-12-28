@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(GlobalMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class GlobalMetaBuilder : public SubtypeOf<VariableMetaBuilder, GlobalMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT GlobalMetaBuilder : public SubtypeOf<VariableMetaBuilder, GlobalMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "GlobalMetaBuilder";

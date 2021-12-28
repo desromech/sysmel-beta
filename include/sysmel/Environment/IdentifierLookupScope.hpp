@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
 /**
  * I am the interface for the scope that is used for the identifier lookup.
  */
-class IdentifierLookupScope : public SubtypeOf<CompilerObject, IdentifierLookupScope>
+class SYSMEL_COMPILER_LIB_EXPORT IdentifierLookupScope : public SubtypeOf<CompilerObject, IdentifierLookupScope>
 {
 public:
     static constexpr char const __typeName__[] = "IdentifierLookupScope";

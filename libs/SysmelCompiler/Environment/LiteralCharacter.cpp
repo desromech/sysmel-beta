@@ -37,7 +37,8 @@ std::string LiteralCharacter::asString() const
 {
     std::string result;
     result.reserve(1);
-    result[0] = value.wordAt(0);
+    result[0] = char(value.wordAt(0));
+    // FIXME: Encode the Char32 as UTF8!!!
     return result;
 }
 

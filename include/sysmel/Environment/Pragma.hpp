@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Pragma);
 /**
  * I am the base interface for any program metamodel entity
  */
-class Pragma : public SubtypeOf<CompilerObject, Pragma>
+class SYSMEL_COMPILER_LIB_EXPORT Pragma : public SubtypeOf<CompilerObject, Pragma>
 {
 public:
     static constexpr char const __typeName__[] = "Pragma";

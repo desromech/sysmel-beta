@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeUnionLayout);
 /**
  * I represent the layout of an aggregate type whose elements all share the same position.
  */
-class AggregateTypeUnionLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeUnionLayout>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeUnionLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeUnionLayout>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateTypeUnionLayout";

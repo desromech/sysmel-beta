@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class UnsupportedOperation : public SubtypeOf<Error, UnsupportedOperation>
+class SYSMEL_COMPILER_LIB_EXPORT UnsupportedOperation : public SubtypeOf<Error, UnsupportedOperation>
 {
 public:
     static constexpr char const __typeName__[] = "UnsupportedOperation";

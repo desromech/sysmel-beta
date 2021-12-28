@@ -447,7 +447,7 @@ AnyValuePtr ASTSSACompiler::visitLocalVariableNode(const ASTLocalVariableNodePtr
             referenceType = valueType->tempRef();
 
         sysmelAssert(referenceType->isReferenceLikeType());
-        auto valueType = variable->getValueType();
+        valueType = variable->getValueType();
         variableValue = builder->localVariable(referenceType, valueType);
         assignInitialValueFrom(variableValue, valueType, initialValue);
     }

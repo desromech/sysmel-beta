@@ -20,7 +20,7 @@ struct MethodPatternMatchingResult
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class Method : public SubtypeOf<ModuleDefinedProgramEntity, Method>
+class SYSMEL_COMPILER_LIB_EXPORT Method : public SubtypeOf<ModuleDefinedProgramEntity, Method>
 {
 public:
     static constexpr char const __typeName__[] = "Method";

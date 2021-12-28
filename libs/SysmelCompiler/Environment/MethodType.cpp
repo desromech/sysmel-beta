@@ -40,10 +40,10 @@ TypePtr MethodType::getReceiverType() const
 
 FunctionalTypeValuePtr MethodType::makeValueWithImplementation(const AnyValuePtr &implementation)
 {
-    auto result = basicMakeObject<MethodTypeValue> ();
-    result->type = selfFromThis();
-    result->functionalImplementation = implementation;
-    return result;
+    auto resultValue = basicMakeObject<MethodTypeValue> ();
+    resultValue->type = selfFromThis();
+    resultValue->functionalImplementation = implementation;
+    return resultValue;
 }
 
 MethodTypePtr getOrCreateMethodType(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &arguments)

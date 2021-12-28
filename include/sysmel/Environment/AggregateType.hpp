@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class AggregateType : public SubMetaTypeOf<SimpleType, AggregateType>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateType : public SubMetaTypeOf<SimpleType, AggregateType>
 {
 public:
     virtual bool isAggregateType() const override;
@@ -57,7 +57,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class AggregateTypeValue : public SubtypeOf<AnyValue, AggregateTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeValue : public SubtypeOf<AnyValue, AggregateTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateType";

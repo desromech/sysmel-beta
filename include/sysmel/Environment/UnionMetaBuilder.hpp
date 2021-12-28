@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class UnionMetaBuilder : public SubtypeOf<TypeMetaBuilder, UnionMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT UnionMetaBuilder : public SubtypeOf<TypeMetaBuilder, UnionMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "UnionMetaBuilder";

@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a collection of compilation errors.
  */
-class ParseError : public SubtypeOf<CompilationError, ParseError>
+class SYSMEL_COMPILER_LIB_EXPORT ParseError : public SubtypeOf<CompilationError, ParseError>
 {
 public:
     static constexpr char const __typeName__[] = "ParseError";

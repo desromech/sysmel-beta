@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node that is used for defining methods.
  */
-class ASTMethodNode : public SubtypeOf<ASTFunctionalNode, ASTMethodNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTMethodNode : public SubtypeOf<ASTFunctionalNode, ASTMethodNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTMethodNode";

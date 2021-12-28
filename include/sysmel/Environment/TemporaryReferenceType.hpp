@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemporaryReferenceTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class TemporaryReferenceType : public SubMetaTypeOf<PointerLikeType, TemporaryReferenceType>
+class SYSMEL_COMPILER_LIB_EXPORT TemporaryReferenceType : public SubMetaTypeOf<PointerLikeType, TemporaryReferenceType>
 {
 public:
     static TemporaryReferenceTypePtr make(const TypePtr &baseType);

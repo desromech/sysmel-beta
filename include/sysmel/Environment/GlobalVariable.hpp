@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
 /**
  * I am a variable program entity.
  */
-class GlobalVariable : public SubtypeOf<Variable, GlobalVariable>
+class SYSMEL_COMPILER_LIB_EXPORT GlobalVariable : public SubtypeOf<Variable, GlobalVariable>
 {
 public:
     static constexpr char const __typeName__[] = "GlobalVariable";

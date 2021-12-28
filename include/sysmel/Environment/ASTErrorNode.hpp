@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationError);
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTErrorNode : public SubtypeOf<ASTNode, ASTErrorNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTErrorNode : public SubtypeOf<ASTNode, ASTErrorNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTASTErrorNode";

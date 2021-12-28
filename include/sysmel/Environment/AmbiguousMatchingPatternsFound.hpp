@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class AmbiguousMatchingPatternsFound : public SubtypeOf<Error, AmbiguousMatchingPatternsFound>
+class SYSMEL_COMPILER_LIB_EXPORT AmbiguousMatchingPatternsFound : public SubtypeOf<Error, AmbiguousMatchingPatternsFound>
 {
 public:
     static constexpr char const __typeName__[] = "AmbiguousMatchingPatternsFound";

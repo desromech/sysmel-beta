@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class EnumType : public SubMetaTypeOf<DerivedType, EnumType>
+class SYSMEL_COMPILER_LIB_EXPORT EnumType : public SubMetaTypeOf<DerivedType, EnumType>
 {
 public:
     virtual bool isEnumType() const override;
@@ -65,7 +65,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class EnumTypeValue : public SubtypeOf<DerivedTypeValue, EnumTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT EnumTypeValue : public SubtypeOf<DerivedTypeValue, EnumTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "EnumType";

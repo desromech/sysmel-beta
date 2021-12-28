@@ -66,7 +66,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAValueVisitor);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAValue : public SubtypeOf<CompilerObject, SSAValue>
+class SYSMEL_COMPILER_LIB_EXPORT SSAValue : public SubtypeOf<CompilerObject, SSAValue>
 {
 public:
     static constexpr char const __typeName__[] = "SSAValue";

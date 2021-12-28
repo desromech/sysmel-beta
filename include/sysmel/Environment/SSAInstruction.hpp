@@ -16,7 +16,7 @@ typedef std::function<void (const SSACodeRegionPtr&)> SSAInstructionRegionIterat
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAInstruction : public SubtypeOf<SSACodeRegionLocalValue, SSAInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSAInstruction : public SubtypeOf<SSACodeRegionLocalValue, SSAInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAInstruction";

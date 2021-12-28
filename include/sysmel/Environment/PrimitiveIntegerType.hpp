@@ -24,7 +24,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Int64);
 /**
  * I am a primitive integer type.
  */
-class PrimitiveIntegerType : public SubtypeOf<PrimitiveNumberType, PrimitiveIntegerType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveIntegerType : public SubtypeOf<PrimitiveNumberType, PrimitiveIntegerType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveIntegerType";
@@ -37,7 +37,7 @@ public:
 /**
  * I am a 8-bit unsigned integer.
  */
-class UInt8 : public SubtypeOf<PrimitiveIntegerType, UInt8>
+class SYSMEL_COMPILER_LIB_EXPORT UInt8 : public SubtypeOf<PrimitiveIntegerType, UInt8>
 {
 public:
     typedef uint8_t ValueType;
@@ -69,7 +69,7 @@ public:
 /**
  * I am a 16-bit unsigned integer.
  */
-class UInt16 : public SubtypeOf<PrimitiveIntegerType, UInt16>
+class SYSMEL_COMPILER_LIB_EXPORT UInt16 : public SubtypeOf<PrimitiveIntegerType, UInt16>
 {
 public:
     typedef uint16_t ValueType;
@@ -101,7 +101,7 @@ public:
 /**
  * I am a 32-bit unsigned integer.
  */
-class UInt32 : public SubtypeOf<PrimitiveIntegerType, UInt32>
+class SYSMEL_COMPILER_LIB_EXPORT UInt32 : public SubtypeOf<PrimitiveIntegerType, UInt32>
 {
 public:
     typedef uint32_t ValueType;
@@ -133,7 +133,7 @@ public:
 /**
  * I am a 64-bit unsigned integer.
  */
-class UInt64 : public SubtypeOf<PrimitiveIntegerType, UInt64>
+class SYSMEL_COMPILER_LIB_EXPORT UInt64 : public SubtypeOf<PrimitiveIntegerType, UInt64>
 {
 public:
     typedef uint64_t ValueType;
@@ -165,7 +165,7 @@ public:
 /**
  * I am a 8-bit signed integer.
  */
-class Int8 : public SubtypeOf<PrimitiveIntegerType, Int8>
+class SYSMEL_COMPILER_LIB_EXPORT Int8 : public SubtypeOf<PrimitiveIntegerType, Int8>
 {
 public:
     typedef int8_t ValueType;
@@ -197,7 +197,7 @@ public:
 /**
  * I am a 16-bit signed integer.
  */
-class Int16 : public SubtypeOf<PrimitiveIntegerType, Int16>
+class SYSMEL_COMPILER_LIB_EXPORT Int16 : public SubtypeOf<PrimitiveIntegerType, Int16>
 {
 public:
     typedef int16_t ValueType;
@@ -229,7 +229,7 @@ public:
 /**
  * I am a 32-bit signed integer.
  */
-class Int32 : public SubtypeOf<PrimitiveIntegerType, Int32>
+class SYSMEL_COMPILER_LIB_EXPORT Int32 : public SubtypeOf<PrimitiveIntegerType, Int32>
 {
 public:
     typedef int32_t ValueType;
@@ -261,7 +261,7 @@ public:
 /**
  * I am a 64-bit signed integer.
  */
-class Int64 : public SubtypeOf<PrimitiveIntegerType, Int64>
+class SYSMEL_COMPILER_LIB_EXPORT Int64 : public SubtypeOf<PrimitiveIntegerType, Int64>
 {
 public:
     typedef int64_t ValueType;

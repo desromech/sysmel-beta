@@ -11,7 +11,7 @@ namespace Frontend
 namespace SysmelSyntax
 {
 
-TokenListPtr scanSourceCollection(const SourceCollectionPtr &sourceCollection);
+SYSMEL_COMPILER_LIB_EXPORT TokenListPtr scanSourceCollection(const SourceCollectionPtr &sourceCollection);
 
 inline TokenListPtr scanString(const std::string &sourceString, const std::string &sourceName = "")
 {

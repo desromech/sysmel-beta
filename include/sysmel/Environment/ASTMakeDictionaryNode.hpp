@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an AST node whose job is to make a tuple.
  */
-class ASTMakeDictionaryNode : public SubtypeOf<ASTNode, ASTMakeDictionaryNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTMakeDictionaryNode : public SubtypeOf<ASTNode, ASTMakeDictionaryNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTMakeDictionaryNode";

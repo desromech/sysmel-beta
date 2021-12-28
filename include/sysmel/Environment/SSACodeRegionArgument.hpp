@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable)
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSACodeRegionArgument : public SubtypeOf<SSACodeRegionLocalValue, SSACodeRegionArgument>
+class SYSMEL_COMPILER_LIB_EXPORT SSACodeRegionArgument : public SubtypeOf<SSACodeRegionLocalValue, SSACodeRegionArgument>
 {
 public:
     static constexpr char const __typeName__[] = "SSACodeRegionArgument";

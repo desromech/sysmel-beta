@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ModuleReference);
 /**
  * I am a reference towards a particular module in the system
  */
-class ModuleReference : public SubtypeOf<CompilerObject, ModuleReference>
+class SYSMEL_COMPILER_LIB_EXPORT ModuleReference : public SubtypeOf<CompilerObject, ModuleReference>
 {
 public:
     static constexpr char const __typeName__[] = "ModuleReference";

@@ -14,7 +14,7 @@ typedef std::function<void (SSAInstructionPtr)> SSAInstructionIterationBlock;
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSABasicBlock : public SubtypeOf<SSAValue, SSABasicBlock>
+class SYSMEL_COMPILER_LIB_EXPORT SSABasicBlock : public SubtypeOf<SSAValue, SSABasicBlock>
 {
 public:
     static constexpr char const __typeName__[] = "SSABasicBlock";

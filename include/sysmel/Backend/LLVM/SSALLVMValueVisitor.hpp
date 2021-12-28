@@ -18,7 +18,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMCodeGenerationBackend)
 /**
  * I wrap a llvm value in an AnyValue
  */
-class SSALLVMValue : public SubtypeOf<CompilerObject, SSALLVMValue>
+class SYSMEL_COMPILER_LIB_EXPORT SSALLVMValue : public SubtypeOf<CompilerObject, SSALLVMValue>
 {
 public:
     static constexpr char const __typeName__[] = "SSALLVMValue";
@@ -37,8 +37,8 @@ public:
     llvm::Constant *value = nullptr;
 };
 
-AnyValuePtr wrapLLVMValue(llvm::Value *value);
-AnyValuePtr wrapLLVMConstant(llvm::Constant *value);
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr wrapLLVMValue(llvm::Value *value);
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr wrapLLVMConstant(llvm::Constant *value);
 
 struct IntrinsicGenerationContext
 {
@@ -54,7 +54,7 @@ struct IntrinsicGenerationContext
 /**
  * I visit SSA values for converting them into llvm SSA values.
  */
-class SSALLVMValueVisitor : public SubtypeOf<SSAValueVisitor, SSALLVMValueVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT SSALLVMValueVisitor : public SubtypeOf<SSAValueVisitor, SSALLVMValueVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "SSALLVMValueVisitor";

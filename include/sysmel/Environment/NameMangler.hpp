@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAProgramEntity);
 /**
  * I am the base interface for a meta-builder.
  */
-class NameMangler : public SubtypeOf<CompilerObject, NameMangler>
+class SYSMEL_COMPILER_LIB_EXPORT NameMangler : public SubtypeOf<CompilerObject, NameMangler>
 {
 public:
     static constexpr char const __typeName__[] = "NameMangler";

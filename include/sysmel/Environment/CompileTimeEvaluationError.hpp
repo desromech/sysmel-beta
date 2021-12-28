@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a collection of compilation errors.
  */
-class CompileTimeEvaluationError : public SubtypeOf<CompilationError, CompileTimeEvaluationError>
+class SYSMEL_COMPILER_LIB_EXPORT CompileTimeEvaluationError : public SubtypeOf<CompilationError, CompileTimeEvaluationError>
 {
 public:
     static constexpr char const __typeName__[] = "CompileTimeEvaluationError";

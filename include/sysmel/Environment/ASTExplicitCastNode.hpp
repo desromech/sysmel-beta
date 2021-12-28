@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node that is used for accessing a variable.
  */
-class ASTExplicitCastNode : public SubtypeOf<ASTCastNode, ASTExplicitCastNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTExplicitCastNode : public SubtypeOf<ASTCastNode, ASTExplicitCastNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTExplicitCastNode";

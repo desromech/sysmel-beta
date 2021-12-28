@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an instance of a function type object.
  */
-class LiteralToTargetTypeConversionRule : public SubtypeOf<TypeConversionRule, LiteralToTargetTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralToTargetTypeConversionRule : public SubtypeOf<TypeConversionRule, LiteralToTargetTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralToTargetTypeConversionRule";

@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a node that is used for declaring or defining a program entity.
  */
-class ASTFieldVariableNode : public SubtypeOf<ASTVariableNode, ASTFieldVariableNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTFieldVariableNode : public SubtypeOf<ASTVariableNode, ASTFieldVariableNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTFieldVariableNode";

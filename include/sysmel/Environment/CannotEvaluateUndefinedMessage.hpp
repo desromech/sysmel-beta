@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class CannotEvaluateUndefinedMessage : public SubtypeOf<CannotEvaluateMessage, CannotEvaluateUndefinedMessage>
+class SYSMEL_COMPILER_LIB_EXPORT CannotEvaluateUndefinedMessage : public SubtypeOf<CannotEvaluateMessage, CannotEvaluateUndefinedMessage>
 {
 public:
     static constexpr char const __typeName__[] = "CannotEvaluateUndefinedMessage";

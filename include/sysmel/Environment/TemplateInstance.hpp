@@ -17,7 +17,7 @@ struct TemplateDefinitionFragment;
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class TemplateInstance : public SubtypeOf<ModuleDefinedProgramEntity, TemplateInstance>
+class SYSMEL_COMPILER_LIB_EXPORT TemplateInstance : public SubtypeOf<ModuleDefinedProgramEntity, TemplateInstance>
 {
 public:
     static constexpr char const __typeName__[] = "TemplateInstance";

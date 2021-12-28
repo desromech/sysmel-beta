@@ -35,7 +35,7 @@ ASTQuasiQuotePatternExpansionNodePtr ASTQuasiQuoteAnalyzer::analyzeQuasiQuote(co
 AnyValuePtr ASTQuasiQuoteAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNodePtr &node)
 {
     auto argumentNode = basicMakeObject<ASTQuasiQuotePatternExpansionArgumentNode> ();
-    argumentNode->argumentIndex = patternExpansionArguments.size();
+    argumentNode->argumentIndex = uint32_t(patternExpansionArguments.size());
 
     auto expansionArgument = analyzer->analyzeNodeIfNeededWithExpectedType(node->expression, ASTNode::__staticType__());
     patternExpansionArguments.push_back(expansionArgument);

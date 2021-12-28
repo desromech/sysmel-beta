@@ -32,7 +32,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 /**
  * I represent an active runtime context in the object model environment.
  */
-class RuntimeContext : public SubtypeOf<ProgramEntity, RuntimeContext>
+class SYSMEL_COMPILER_LIB_EXPORT RuntimeContext : public SubtypeOf<ProgramEntity, RuntimeContext>
 {
 public:
     static constexpr char const __typeName__[] = "RuntimeContext";

@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClassTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class ClassType : public SubMetaTypeOf<AggregateTypeWithFields, ClassType>
+class SYSMEL_COMPILER_LIB_EXPORT ClassType : public SubMetaTypeOf<AggregateTypeWithFields, ClassType>
 {
 public:
     virtual bool isClassType() const override;
@@ -47,7 +47,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class ClassTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, ClassTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT ClassTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, ClassTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "ClassType";

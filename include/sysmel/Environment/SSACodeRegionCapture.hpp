@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSACodeRegionCapture : public SubtypeOf<SSACodeRegionLocalValue, SSACodeRegionCapture>
+class SYSMEL_COMPILER_LIB_EXPORT SSACodeRegionCapture : public SubtypeOf<SSACodeRegionLocalValue, SSACodeRegionCapture>
 {
 public:
     static constexpr char const __typeName__[] = "SSACodeRegionCapture";

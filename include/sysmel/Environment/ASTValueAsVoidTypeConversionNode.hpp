@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node that is used for declaring or defining a type program entity.
  */
-class ASTValueAsVoidTypeConversionNode : public SubtypeOf<ASTTypeConversionNode, ASTValueAsVoidTypeConversionNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTValueAsVoidTypeConversionNode : public SubtypeOf<ASTTypeConversionNode, ASTValueAsVoidTypeConversionNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTValueAsVoidTypeConversionNode";

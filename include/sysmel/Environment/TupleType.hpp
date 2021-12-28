@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(TupleTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class TupleType : public SubMetaTypeOf<AggregateType, TupleType>
+class SYSMEL_COMPILER_LIB_EXPORT TupleType : public SubMetaTypeOf<AggregateType, TupleType>
 {
 public:
     static TypePtr make(const TypePtrList &elementTypes);
@@ -49,7 +49,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class TupleTypeValue : public SubtypeOf<AggregateTypeValue, TupleTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT TupleTypeValue : public SubtypeOf<AggregateTypeValue, TupleTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "TupleType";

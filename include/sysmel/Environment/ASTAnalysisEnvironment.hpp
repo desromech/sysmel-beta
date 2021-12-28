@@ -19,7 +19,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SpecificMethod);
 /**
  * I specify an AST analysis environment.
  */
-class ASTAnalysisEnvironment : public SubtypeOf<CompilerObject, ASTAnalysisEnvironment>
+class SYSMEL_COMPILER_LIB_EXPORT ASTAnalysisEnvironment : public SubtypeOf<CompilerObject, ASTAnalysisEnvironment>
 {
 public:
     static constexpr char const __typeName__[] = "ASTAnalysisEnvironment";

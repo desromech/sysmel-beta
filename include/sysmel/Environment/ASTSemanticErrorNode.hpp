@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTSemanticErrorNode : public SubtypeOf<ASTErrorNode, ASTSemanticErrorNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTSemanticErrorNode : public SubtypeOf<ASTErrorNode, ASTSemanticErrorNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTSemanticErrorNode";

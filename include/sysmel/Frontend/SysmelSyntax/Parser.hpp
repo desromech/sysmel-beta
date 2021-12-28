@@ -12,8 +12,8 @@ namespace Frontend
 namespace SysmelSyntax
 {
 
-ASTNodePtr parseTokenList(const TokenListPtr &tokenList);
-ASTNodePtr parseTokenListWithLiteralArrayContent(const TokenListPtr &tokenList);
+SYSMEL_COMPILER_LIB_EXPORT ASTNodePtr parseTokenList(const TokenListPtr &tokenList);
+SYSMEL_COMPILER_LIB_EXPORT ASTNodePtr parseTokenListWithLiteralArrayContent(const TokenListPtr &tokenList);
 
 inline ASTNodePtr parseString(const std::string &sourceString, const std::string &sourceName = "")
 {

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
  */
-class BootstrapType : public SubMetaTypeOf<SimpleType, BootstrapType>
+class SYSMEL_COMPILER_LIB_EXPORT BootstrapType : public SubMetaTypeOf<SimpleType, BootstrapType>
 {
 public:
     static constexpr char const __typeName__[] = "BootstrapType";

@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DerivedTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class DerivedType : public SubMetaTypeOf<SimpleType, DerivedType>
+class SYSMEL_COMPILER_LIB_EXPORT DerivedType : public SubMetaTypeOf<SimpleType, DerivedType>
 {
 public:
     virtual bool isDerivedType() const override;
@@ -30,7 +30,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class DerivedTypeValue : public SubtypeOf<AnyValue, DerivedTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT DerivedTypeValue : public SubtypeOf<AnyValue, DerivedTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "DerivedType";

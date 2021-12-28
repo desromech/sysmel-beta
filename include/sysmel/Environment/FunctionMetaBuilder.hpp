@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class FunctionMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, FunctionMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT FunctionMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, FunctionMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "FunctionMetaBuilder";

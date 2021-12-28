@@ -17,7 +17,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSALLVMValueVisitor)
 /**
  * I am the base interface for a SSA based code generation backend
  */
-class LLVMTypeVisitor : public SubtypeOf<TypeVisitor, LLVMTypeVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT LLVMTypeVisitor : public SubtypeOf<TypeVisitor, LLVMTypeVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "LLVMTypeVisitor";

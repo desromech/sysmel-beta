@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SysmelLanguageSupport);
  * parsing a source language into the language independent AST, and to also define the base
  * environment for performing semantic analysis on them.
  */
-class SysmelLanguageSupport : public SubtypeOf<LanguageSupport, SysmelLanguageSupport>
+class SYSMEL_COMPILER_LIB_EXPORT SysmelLanguageSupport : public SubtypeOf<LanguageSupport, SysmelLanguageSupport>
 {
 public:
     static constexpr char const __typeName__[] = "SysmelLanguageSupport";

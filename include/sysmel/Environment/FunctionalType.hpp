@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionalTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class FunctionalType : public SubMetaTypeOf<SimpleType, FunctionalType>
+class SYSMEL_COMPILER_LIB_EXPORT FunctionalType : public SubMetaTypeOf<SimpleType, FunctionalType>
 {
 public:
     virtual bool isFunctionalType() const override;
@@ -47,7 +47,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class FunctionalTypeValue : public SubtypeOf<AnyValue, FunctionalTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT FunctionalTypeValue : public SubtypeOf<AnyValue, FunctionalTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "FunctionalType";

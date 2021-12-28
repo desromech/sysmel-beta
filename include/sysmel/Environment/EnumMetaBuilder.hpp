@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class EnumMetaBuilder : public SubtypeOf<TypeMetaBuilder, EnumMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT EnumMetaBuilder : public SubtypeOf<TypeMetaBuilder, EnumMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "EnumMetaBuilder";

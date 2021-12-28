@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumType);
 /**
  * I am the interface for the scope that is used for the identifier lookup.
  */
-class EnumRawValueLookupScope : public SubtypeOf<IdentifierLookupScope, EnumRawValueLookupScope>
+class SYSMEL_COMPILER_LIB_EXPORT EnumRawValueLookupScope : public SubtypeOf<IdentifierLookupScope, EnumRawValueLookupScope>
 {
 public:
     static constexpr char const __typeName__[] = "EnumRawValueLookupScope";

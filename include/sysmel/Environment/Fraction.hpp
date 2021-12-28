@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I represent a fraction
  */
-struct Fraction
+struct SYSMEL_COMPILER_LIB_EXPORT Fraction
 {
     LargeInteger numerator;
     LargeInteger denominator;

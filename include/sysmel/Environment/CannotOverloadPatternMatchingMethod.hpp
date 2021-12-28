@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class CannotOverloadPatternMatchingMethod : public SubtypeOf<Error, CannotOverloadPatternMatchingMethod>
+class SYSMEL_COMPILER_LIB_EXPORT CannotOverloadPatternMatchingMethod : public SubtypeOf<Error, CannotOverloadPatternMatchingMethod>
 {
 public:
     static constexpr char const __typeName__[] = "CannotOverloadPatternMatchingMethod";

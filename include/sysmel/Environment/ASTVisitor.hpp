@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTVisitor : public SubtypeOf<CompilerObject, ASTVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT ASTVisitor : public SubtypeOf<CompilerObject, ASTVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "ASTVisitor";

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include "../DLLInterface.hpp"
 
 namespace Sysmel
 {
@@ -18,12 +19,12 @@ enum class TargetMachineKind
     FPGA,
 };
 
-std::string getHostTargetTriple();
+SYSMEL_COMPILER_LIB_EXPORT std::string getHostTargetTriple();
 
 /**
  * I describe a target name and features.
  */
-struct TargetNameAndFeatures
+struct SYSMEL_COMPILER_LIB_EXPORT TargetNameAndFeatures
 {
     static TargetNameAndFeatures getForHost();
     static TargetNameAndFeatures getForCPU32();
@@ -58,7 +59,7 @@ struct TargetNameAndFeatures
 /**
  * I describe a specific compilation target that corresponds to a runtime context.
  */
-struct RuntimeContextTargetDescription
+struct SYSMEL_COMPILER_LIB_EXPORT RuntimeContextTargetDescription
 {
     static RuntimeContextTargetDescription makeForScripting();
     static RuntimeContextTargetDescription makeForHost();

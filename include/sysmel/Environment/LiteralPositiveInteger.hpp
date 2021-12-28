@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralPositiveInteger);
 /**
  * I am a literal positive integer value.
  */
-class LiteralPositiveInteger : public SubtypeOf<LiteralInteger, LiteralPositiveInteger>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralPositiveInteger : public SubtypeOf<LiteralInteger, LiteralPositiveInteger>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralPositiveInteger";

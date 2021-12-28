@@ -19,10 +19,10 @@ ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithLexicalScope(const Lex
     return result;
 }
 
-ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithCleanUpcope(const CleanUpScopePtr &cleanUpScope)
+ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithCleanUpcope(const CleanUpScopePtr &newCleanUpScope)
 {
     auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
-    result->cleanUpScope = cleanUpScope;
+    result->cleanUpScope = newCleanUpScope;
     return result;
 }
 

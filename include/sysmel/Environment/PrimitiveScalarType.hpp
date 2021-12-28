@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveScalarType);
 /**
  * I am a single scalar primitive type.
  */
-class PrimitiveScalarType : public SubtypeOf<PrimitiveTensorType, PrimitiveScalarType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveScalarType : public SubtypeOf<PrimitiveTensorType, PrimitiveScalarType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveScalarType";

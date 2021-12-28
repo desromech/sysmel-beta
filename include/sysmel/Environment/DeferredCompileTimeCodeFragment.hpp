@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumType);
 /**
  * I am a compile time code fragment whose semantic analysis and evaluation is deferred into different phases of the compile time process.
  */
-class DeferredCompileTimeCodeFragment : public SubtypeOf<CompilerObject, DeferredCompileTimeCodeFragment>
+class SYSMEL_COMPILER_LIB_EXPORT DeferredCompileTimeCodeFragment : public SubtypeOf<CompilerObject, DeferredCompileTimeCodeFragment>
 {
 public:
     static constexpr char const __typeName__[] = "DeferredCompileTimeCodeFragment";

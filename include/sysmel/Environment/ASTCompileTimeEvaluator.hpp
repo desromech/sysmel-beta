@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompileTimeCleanUpScope)
 /**
  * I am a compile time evaluator of a previously analyzed AST.
  */
-class ASTCompileTimeEvaluator : public SubtypeOf<ASTVisitor, ASTCompileTimeEvaluator>
+class SYSMEL_COMPILER_LIB_EXPORT ASTCompileTimeEvaluator : public SubtypeOf<ASTVisitor, ASTCompileTimeEvaluator>
 {
 public:
     static constexpr char const __typeName__[] = "ASTCompileTimeEvaluator";

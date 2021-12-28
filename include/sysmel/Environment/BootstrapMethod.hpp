@@ -19,7 +19,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAFunction);
 /**
  * I am the base interface for a type that is specifically defined by the bootstrap environment.
  */
-class BootstrapMethodBase : public SubtypeOf<SpecificMethod, BootstrapMethodBase>
+class SYSMEL_COMPILER_LIB_EXPORT BootstrapMethodBase : public SubtypeOf<SpecificMethod, BootstrapMethodBase>
 {
 public:
     static constexpr char const __typeName__[] = "BootstrapMethod";

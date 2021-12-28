@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class ClosureType : public SubMetaTypeOf<FunctionalType, ClosureType>
+class SYSMEL_COMPILER_LIB_EXPORT ClosureType : public SubMetaTypeOf<FunctionalType, ClosureType>
 {
 public:
     virtual bool isClosureType() const override;
@@ -32,9 +32,12 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class ClosureTypeValue : public SubtypeOf<FunctionalTypeValue, ClosureTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT ClosureTypeValue : public SubtypeOf<FunctionalTypeValue, ClosureTypeValue>
 {
 public:
+    static constexpr char const __typeName__[] = "ClosureType";
+    static constexpr char const __sysmelTypeName__[] = "_ClosureType";
+
     virtual bool isClosureTypeValue() const override;
 
     virtual TypePtr getType() const override;

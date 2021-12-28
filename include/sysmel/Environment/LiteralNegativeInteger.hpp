@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralNegativeInteger);
 /**
  * I am a literal negative integer value.
  */
-class LiteralNegativeInteger : public SubtypeOf<LiteralInteger, LiteralNegativeInteger>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralNegativeInteger : public SubtypeOf<LiteralInteger, LiteralNegativeInteger>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralNegativeInteger";

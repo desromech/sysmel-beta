@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeSequentialLayout);
 /**
  * I represent the layout of an aggregate type whose elements are laid on sequentially.
  */
-class AggregateTypeSequentialLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeSequentialLayout>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeSequentialLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeSequentialLayout>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateTypeSequentialLayout";

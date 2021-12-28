@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a literal symbol value.
  */
-class MessageChainReceiverName : public SubtypeOf<CompilerObject, MessageChainReceiverName>
+class SYSMEL_COMPILER_LIB_EXPORT MessageChainReceiverName : public SubtypeOf<CompilerObject, MessageChainReceiverName>
 {
 public:
     static constexpr char const __typeName__[] = "MessageChainReceiverName";

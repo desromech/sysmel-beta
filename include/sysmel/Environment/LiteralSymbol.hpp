@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 /**
  * I am a literal symbol value.
  */
-class LiteralSymbol : public SubtypeOf<LiteralString, LiteralSymbol>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralSymbol : public SubtypeOf<LiteralString, LiteralSymbol>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralSymbol";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Void);
 /**
  * I am literal number value.
  */
-class Void : public SubtypeOf<AnyValue, Void>
+class SYSMEL_COMPILER_LIB_EXPORT Void : public SubtypeOf<AnyValue, Void>
 {
 public:
     static constexpr char const __typeName__[] = "Void";

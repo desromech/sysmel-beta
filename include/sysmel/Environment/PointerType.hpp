@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class PointerType : public SubMetaTypeOf<PointerLikeType, PointerType>
+class SYSMEL_COMPILER_LIB_EXPORT PointerType : public SubMetaTypeOf<PointerLikeType, PointerType>
 {
 public:
     static PointerTypePtr make(const TypePtr &baseType);
@@ -35,7 +35,7 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class PointerTypeValue : public SubtypeOf<PointerLikeTypeValue, PointerTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT PointerTypeValue : public SubtypeOf<PointerLikeTypeValue, PointerTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "PointerType";

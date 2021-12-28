@@ -23,7 +23,7 @@ typedef std::function<ASTNodePtr ()> ASTNodeSemanticAnalysisBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTSemanticAnalyzer : public SubtypeOf<ASTVisitor, ASTSemanticAnalyzer>
+class SYSMEL_COMPILER_LIB_EXPORT ASTSemanticAnalyzer : public SubtypeOf<ASTVisitor, ASTSemanticAnalyzer>
 {
 public:
     static constexpr char const __typeName__[] = "ASTSemanticAnalyzer";

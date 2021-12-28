@@ -62,7 +62,7 @@ inline MethodFlags operator~(MethodFlags a)
     return MethodFlags(~uint32_t(a));
 }
 
-SExpression methodFlagsToSExpression(MethodFlags flags);
+SYSMEL_COMPILER_LIB_EXPORT SExpression methodFlagsToSExpression(MethodFlags flags);
 
 } // End of namespace Environment
 } // End of namespace Sysmel

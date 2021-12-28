@@ -15,7 +15,7 @@ namespace Environment
 {
 
 class RefCountedObject;
-class RefCountedObjectMemoryPool
+class SYSMEL_COMPILER_LIB_EXPORT RefCountedObjectMemoryPool
 {
 public:
     struct AllocationHeader
@@ -39,7 +39,7 @@ private:
     AllocationHeader *lastAllocation = nullptr;
 };
 
-class RefCountedObject
+class SYSMEL_COMPILER_LIB_EXPORT RefCountedObject
 {
 public:
     RefCountedObject() {}

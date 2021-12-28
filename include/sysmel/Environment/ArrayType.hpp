@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ArrayTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class ArrayType : public SubMetaTypeOf<AggregateType, ArrayType>
+class SYSMEL_COMPILER_LIB_EXPORT ArrayType : public SubMetaTypeOf<AggregateType, ArrayType>
 {
 public:
     static ArrayTypePtr make(const TypePtr &elementType, uint64_t size);
@@ -50,7 +50,7 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class ArrayTypeValue : public SubtypeOf<AggregateTypeValue, ArrayTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT ArrayTypeValue : public SubtypeOf<AggregateTypeValue, ArrayTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "ArrayType";

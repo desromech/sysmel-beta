@@ -15,7 +15,7 @@ typedef std::function<MethodCategories ()> BootstrapExtensionMethodsDescriptionF
 /**
  * I provide facilities for building a list of bootstrap extension methods
  */
-class BootstrapExtensionMethods
+class SYSMEL_COMPILER_LIB_EXPORT BootstrapExtensionMethods
 {
 public:
 
@@ -76,8 +76,8 @@ private:
 typedef std::pair<StaticBootstrapDefinedTypeMetadata*, BootstrapExtensionMethods> BootstrapTypeWithExtensionMethodsPair;
 typedef std::vector<BootstrapTypeWithExtensionMethodsPair> BootstrapExtensionMethodsList;
 
-const BootstrapExtensionMethodsList &getRegisteredBootstrapExtensionMethods();
-void registerBootstrapExtensionMethods(StaticBootstrapDefinedTypeMetadata *typeMetadata, const BootstrapExtensionMethods &extensionMethods);
+SYSMEL_COMPILER_LIB_EXPORT const BootstrapExtensionMethodsList &getRegisteredBootstrapExtensionMethods();
+SYSMEL_COMPILER_LIB_EXPORT void registerBootstrapExtensionMethods(StaticBootstrapDefinedTypeMetadata *typeMetadata, const BootstrapExtensionMethods &extensionMethods);
 
 template<typename T>
 class BootstrapExtensionMethodsFor

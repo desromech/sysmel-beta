@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I represent single message in a message chain.
  */
-class ASTMessageChainMessageNode : public SubtypeOf<ASTNode, ASTMessageChainMessageNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTMessageChainMessageNode : public SubtypeOf<ASTNode, ASTMessageChainMessageNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTMessageChainMessageNode";

@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralCharacter);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralInteger : public SubtypeOf<LiteralNumber, LiteralInteger>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralInteger : public SubtypeOf<LiteralNumber, LiteralInteger>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralInteger";

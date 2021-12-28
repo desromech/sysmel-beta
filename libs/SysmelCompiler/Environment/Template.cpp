@@ -44,11 +44,11 @@ SSAValuePtr Template::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
         ssaTemplate->setExternalLanguageMode(externalLanguageMode);
         ssaTemplate->setVisibility(visibility);
         ssaTemplate->setDllLinkageMode(dllLinkageMode);
-        auto parentProgramEntity = getParentProgramEntity()->asProgramEntitySSAValue();
-        if(parentProgramEntity)
+        auto ssaParent = getParentProgramEntity()->asProgramEntitySSAValue();
+        if(ssaParent)
         {
-            sysmelAssert(parentProgramEntity->isSSAProgramEntity());
-            parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplate);
+            sysmelAssert(ssaParent->isSSAProgramEntity());
+            ssaParent.staticAs<SSAProgramEntity>()->addChild(ssaTemplate);
         }
     }
 

@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a collection of compilation errors.
  */
-class SemanticError : public SubtypeOf<CompilationError, SemanticError>
+class SYSMEL_COMPILER_LIB_EXPORT SemanticError : public SubtypeOf<CompilationError, SemanticError>
 {
 public:
     static constexpr char const __typeName__[] = "SemanticError";

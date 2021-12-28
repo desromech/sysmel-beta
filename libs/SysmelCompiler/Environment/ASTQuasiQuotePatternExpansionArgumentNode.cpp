@@ -27,7 +27,7 @@ SExpression ASTQuasiQuotePatternExpansionArgumentNode::asSExpression() const
     return SExpressionList{{SExpressionIdentifier{{"quasiQuotePatternExpansionArgument"}},
         sourcePosition->asSExpression(),
         isSplice,
-        argumentIndex
+        LargeInteger{argumentIndex}
     }};
 }
 

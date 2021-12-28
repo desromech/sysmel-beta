@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment)
 /**
  * I am a compile time constant program entity.
  */
-class CompileTimeConstant : public SubtypeOf<ModuleDefinedProgramEntity, CompileTimeConstant>
+class SYSMEL_COMPILER_LIB_EXPORT CompileTimeConstant : public SubtypeOf<ModuleDefinedProgramEntity, CompileTimeConstant>
 {
 public:
     static constexpr char const __typeName__[] = "CompileTimeConstant";

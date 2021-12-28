@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class CannotEvaluateMessage : public SubtypeOf<Error, CannotEvaluateMessage>
+class SYSMEL_COMPILER_LIB_EXPORT CannotEvaluateMessage : public SubtypeOf<Error, CannotEvaluateMessage>
 {
 public:
     static constexpr char const __typeName__[] = "CannotEvaluateMessage";

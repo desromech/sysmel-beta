@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTQuasiQuoteExpander : public SubtypeOf<ASTTransformVisitor, ASTQuasiQuoteExpander>
+class SYSMEL_COMPILER_LIB_EXPORT ASTQuasiQuoteExpander : public SubtypeOf<ASTTransformVisitor, ASTQuasiQuoteExpander>
 {
 public:
     static constexpr char const __typeName__[] = "ASTQuasiQuoteExpander";

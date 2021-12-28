@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class NotMatchingPatternFound : public SubtypeOf<Error, NotMatchingPatternFound>
+class SYSMEL_COMPILER_LIB_EXPORT NotMatchingPatternFound : public SubtypeOf<Error, NotMatchingPatternFound>
 {
 public:
     static constexpr char const __typeName__[] = "NotMatchingPatternFound";

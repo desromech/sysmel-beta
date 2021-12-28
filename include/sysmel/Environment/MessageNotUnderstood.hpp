@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class MessageNotUnderstood : public SubtypeOf<Error, MessageNotUnderstood>
+class SYSMEL_COMPILER_LIB_EXPORT MessageNotUnderstood : public SubtypeOf<Error, MessageNotUnderstood>
 {
 public:
     static constexpr char const __typeName__[] = "MessageNotUnderstood";

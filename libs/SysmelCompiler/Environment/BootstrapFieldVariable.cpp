@@ -82,14 +82,14 @@ void BootstrapFieldVariableBase::storeFieldValueIn(const AnyValuePtr &, const An
     SysmelSelfSubclassResponsibility();
 }
 
-AnyValuePtr BootstrapFieldVariableBase::getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &referenceType)
+AnyValuePtr BootstrapFieldVariableBase::getBootstrapFieldReferenceForWithType(const AnyValuePtr &receiver, const TypePtr &expectedReferenceType)
 {
-    sysmelAssert(referenceType->isPointerLikeType());
+    sysmelAssert(expectedReferenceType->isPointerLikeType());
     auto accessor = basicMakeObject<BootstrapFieldReferenceAccessor> ();
     accessor->receiver = receiver;
     accessor->fieldVariable = selfFromThis();
 
-    return referenceType.staticAs<PointerLikeType>()->makeWithValue(accessor);
+    return expectedReferenceType.staticAs<PointerLikeType>()->makeWithValue(accessor);
 
 }
 

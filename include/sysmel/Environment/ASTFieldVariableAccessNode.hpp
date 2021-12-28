@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
 /**
  * I am a node that is used for accessing a variable.
  */
-class ASTFieldVariableAccessNode : public SubtypeOf<ASTNode, ASTFieldVariableAccessNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTFieldVariableAccessNode : public SubtypeOf<ASTNode, ASTFieldVariableAccessNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTFieldVariableAccessNode";

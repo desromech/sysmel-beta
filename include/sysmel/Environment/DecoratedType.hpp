@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DecoratedTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class DecoratedType : public SubMetaTypeOf<DerivedType, DecoratedType>
+class SYSMEL_COMPILER_LIB_EXPORT DecoratedType : public SubMetaTypeOf<DerivedType, DecoratedType>
 {
 public:
     static TypePtr make(const TypePtr &baseType, TypeDecorationFlags decorations);
@@ -63,7 +63,7 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class DecoratedTypeValue : public SubtypeOf<DerivedTypeValue, DecoratedTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT DecoratedTypeValue : public SubtypeOf<DerivedTypeValue, DecoratedTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "DecoratedType";

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an AST node that wraps a specific literal value with a type.
  */
-class ASTLiteralValueNode : public SubtypeOf<ASTNode, ASTLiteralValueNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTLiteralValueNode : public SubtypeOf<ASTNode, ASTLiteralValueNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTLiteralValueNode";

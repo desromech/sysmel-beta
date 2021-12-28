@@ -23,7 +23,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(FunctionVariable);
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class CompiledMethod : public SubtypeOf<SpecificMethod, CompiledMethod>
+class SYSMEL_COMPILER_LIB_EXPORT CompiledMethod : public SubtypeOf<SpecificMethod, CompiledMethod>
 {
 public:
     static constexpr char const __typeName__[] = "CompiledMethod";

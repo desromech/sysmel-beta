@@ -324,5 +324,9 @@ if(NOT HAVE_LLVM_BACKEND)
     set(LLVMBackend_Sources)
 endif()
 
+add_definitions(
+    -DBUILD_SYSMEL_COMPILER_LIB=1
+)
+
 add_library(SysmelCompiler SHARED ${SysmelSyntax_Sources} ${Environment_Sources} ${LLVMBackend_Sources})
 target_link_libraries(SysmelCompiler ${USED_LLVM_LIBS})

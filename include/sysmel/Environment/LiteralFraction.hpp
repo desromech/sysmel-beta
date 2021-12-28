@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralFraction);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralFraction : public SubtypeOf<LiteralNumber, LiteralFraction>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralFraction : public SubtypeOf<LiteralNumber, LiteralFraction>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralFraction";

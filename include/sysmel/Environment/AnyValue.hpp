@@ -63,7 +63,7 @@ typedef int32_t PatternMatchingRank;
  */
 struct StaticBootstrapDefinedTypeMetadata
 {
-    const StaticBootstrapDefinedTypeMetadata *supertype;
+    StaticBootstrapDefinedTypeMetadata *supertype;
     std::string typeName;
     MethodCategories (*instanceMethods)();
     FieldVariablePtrList (*fieldVariables)();
@@ -95,12 +95,12 @@ struct StaticBootstrapDefinedTypeMetadata
     size_t bootstrapTypeID;
 };
 
-TypePtr getBootstrapDefinedTypeWithID(size_t bootstrapTypeID);
+SYSMEL_COMPILER_LIB_EXPORT TypePtr getBootstrapDefinedTypeWithMetadata(StaticBootstrapDefinedTypeMetadata *metadata);
 
 /**
  * Retrieves the singleton nil constant.
  */
-AnyValuePtr getNilConstant();
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr getNilConstant();
 
 template<typename T>
 struct StaticBootstrapDefinedTypeMetadataFor
@@ -161,7 +161,7 @@ struct StaticBootstrapDefinedTypeFor
 {
     static TypePtr get()
     {
-        return getBootstrapDefinedTypeWithID(StaticBootstrapDefinedTypeMetadataFor<T>::get()->bootstrapTypeID);
+        return getBootstrapDefinedTypeWithMetadata(StaticBootstrapDefinedTypeMetadataFor<T>::get());
     }
 };
 
@@ -270,47 +270,47 @@ struct UnwrapValue;
 /**
  * Constructs a literal symbol from a string.
  */
-AnyValuePtr internSymbol(const std::string &symbolValue);
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr internSymbol(const std::string &symbolValue);
 
 /**
  * Retrieves the singleton void constant.
  */
-AnyValuePtr getVoidConstant();
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr getVoidConstant();
 
 /**
  * Retrieves the singleton true constant.
  */
-AnyValuePtr getTrueConstant();
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr getTrueConstant();
 
 /**
  * Retrieves the singleton false constant.
  */
-AnyValuePtr getFalseConstant();
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr getFalseConstant();
 
 /**
  * Retrieves the singleton compilation error value constant.
  */
-AnyValuePtr getCompilationErrorValueConstant();
+SYSMEL_COMPILER_LIB_EXPORT AnyValuePtr getCompilationErrorValueConstant();
 
 /**
  * Retrieves or create a new function type.
  */
-FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtrList &arguments);
+SYSMEL_COMPILER_LIB_EXPORT FunctionTypePtr getOrCreateFunctionType(const TypePtr &resultType, const TypePtrList &arguments);
 
 /**
  * Retrieves or create a new method type.
  */
-MethodTypePtr getOrCreateMethodType(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &arguments);
+SYSMEL_COMPILER_LIB_EXPORT MethodTypePtr getOrCreateMethodType(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &arguments);
 
 /**
  * Retrieves or create a new closure type.
  */
-ClosureTypePtr getOrCreateClosureType(const TypePtr &resultType, const TypePtrList &arguments);
+SYSMEL_COMPILER_LIB_EXPORT ClosureTypePtr getOrCreateClosureType(const TypePtr &resultType, const TypePtrList &arguments);
 
 /**
  * I am the base interface for any value that is passed through the interpreter.
  */
-class AnyValue : public RefCountedObject
+class SYSMEL_COMPILER_LIB_EXPORT AnyValue : public RefCountedObject
 {
 public:
     typedef void SuperType;

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class CannotUnwrap : public SubtypeOf<Error, CannotUnwrap>
+class SYSMEL_COMPILER_LIB_EXPORT CannotUnwrap : public SubtypeOf<Error, CannotUnwrap>
 {
 public:
     static constexpr char const __typeName__[] = "CannotUnwrap";

@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralDictionary);
 /**
  * I am literal dictionary value.
  */
-class LiteralDictionary : public SubtypeOf<LiteralValue, LiteralDictionary>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralDictionary : public SubtypeOf<LiteralValue, LiteralDictionary>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralDictionary";

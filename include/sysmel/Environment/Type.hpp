@@ -29,7 +29,7 @@ typedef std::function<void (TypePtr)> TypeIterationBlock;
 /**
  * I am the base interface for all of the types that are defined in the system.
  */
-class Type : public SubtypeOf<ModuleDefinedProgramEntity, Type>
+class SYSMEL_COMPILER_LIB_EXPORT Type : public SubtypeOf<ModuleDefinedProgramEntity, Type>
 {
 public:
     static constexpr char const __typeName__[] = "Type";

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTQuasiQuoteNode : public SubtypeOf<ASTNode, ASTQuasiQuoteNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTQuasiQuoteNode : public SubtypeOf<ASTNode, ASTQuasiQuoteNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTQuasiQuoteNode";

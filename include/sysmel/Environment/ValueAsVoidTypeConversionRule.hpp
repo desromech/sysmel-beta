@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an instance of a function type object.
  */
-class ValueAsVoidTypeConversionRule : public SubtypeOf<TypeConversionRule, ValueAsVoidTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT ValueAsVoidTypeConversionRule : public SubtypeOf<TypeConversionRule, ValueAsVoidTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "ValueAsVoidTypeConversionRule";

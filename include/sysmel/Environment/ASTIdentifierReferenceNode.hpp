@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node references a specific identifier.
  */
-class ASTIdentifierReferenceNode : public SubtypeOf<ASTNode, ASTIdentifierReferenceNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTIdentifierReferenceNode : public SubtypeOf<ASTNode, ASTIdentifierReferenceNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTIdentifierReferenceNode";

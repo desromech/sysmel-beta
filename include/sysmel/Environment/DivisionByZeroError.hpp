@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class DivisionByZeroError : public SubtypeOf<ArithmeticError, DivisionByZeroError>
+class SYSMEL_COMPILER_LIB_EXPORT DivisionByZeroError : public SubtypeOf<ArithmeticError, DivisionByZeroError>
 {
 public:
     static constexpr char const __typeName__[] = "DivisionByZeroError";

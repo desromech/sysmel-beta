@@ -13,7 +13,7 @@ namespace Environment
 /**
  * I am a node that is used for declaring or defining a variable.
  */
-class ASTVariableNode : public SubtypeOf<ASTProgramEntityNode, ASTVariableNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTVariableNode : public SubtypeOf<ASTProgramEntityNode, ASTVariableNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTVariableNode";

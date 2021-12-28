@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment)
 /**
  * I am a compile time constant program entity.
  */
-class EnumConstant : public SubtypeOf<ModuleDefinedProgramEntity, EnumConstant>
+class SYSMEL_COMPILER_LIB_EXPORT EnumConstant : public SubtypeOf<ModuleDefinedProgramEntity, EnumConstant>
 {
 public:
     static constexpr char const __typeName__[] = "EnumConstant";

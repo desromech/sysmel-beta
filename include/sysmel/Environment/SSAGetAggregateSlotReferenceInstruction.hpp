@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable)
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAGetAggregateSlotReferenceInstruction : public SubtypeOf<SSAInstruction, SSAGetAggregateSlotReferenceInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSAGetAggregateSlotReferenceInstruction : public SubtypeOf<SSAInstruction, SSAGetAggregateSlotReferenceInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAGetAggregateSlotReferenceInstruction";

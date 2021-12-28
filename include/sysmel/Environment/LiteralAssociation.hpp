@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralAssociation);
 /**
  * I am literal association value.
  */
-class LiteralAssociation : public SubtypeOf<LiteralValue, LiteralAssociation>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralAssociation : public SubtypeOf<LiteralValue, LiteralAssociation>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralAssociation";

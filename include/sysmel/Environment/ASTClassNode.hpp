@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a node that is used for declaring or defining a type program entity.
  */
-class ASTClassNode : public SubtypeOf<ASTTypeNode, ASTClassNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTClassNode : public SubtypeOf<ASTTypeNode, ASTClassNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTClassNode";

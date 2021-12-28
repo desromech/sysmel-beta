@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourceCodePosition);
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTSourceCodePosition : public SubtypeOf<ASTSourcePosition, ASTSourceCodePosition>
+class SYSMEL_COMPILER_LIB_EXPORT ASTSourceCodePosition : public SubtypeOf<ASTSourcePosition, ASTSourceCodePosition>
 {
 public:
     static constexpr char const __typeName__[] = "ASTSourceCodePosition";

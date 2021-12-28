@@ -18,7 +18,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ModuleDefinedProgramEntity);
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class ModuleDefinedProgramEntity : public SubtypeOf<ProgramEntity, ModuleDefinedProgramEntity>
+class SYSMEL_COMPILER_LIB_EXPORT ModuleDefinedProgramEntity : public SubtypeOf<ProgramEntity, ModuleDefinedProgramEntity>
 {
 public:
     static constexpr char const __typeName__[] = "ModuleDefinedProgramEntity";

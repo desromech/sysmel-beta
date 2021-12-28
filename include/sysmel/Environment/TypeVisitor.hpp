@@ -40,7 +40,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionType);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class TypeVisitor : public SubtypeOf<CompilerObject, TypeVisitor>
+class SYSMEL_COMPILER_LIB_EXPORT TypeVisitor : public SubtypeOf<CompilerObject, TypeVisitor>
 {
 public:
     static constexpr char const __typeName__[] = "TypeVisitor";

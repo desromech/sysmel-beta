@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateElementReference);
 /**
  * I am a value that describes a reference onto a specific aggregate type element.
  */
-class AggregateElementReference : public SubtypeOf<CompilerObject, AggregateElementReference>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateElementReference : public SubtypeOf<CompilerObject, AggregateElementReference>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateElementReference";

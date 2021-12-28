@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralValue);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralValue : public SubtypeOf<AnyValue, LiteralValue>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralValue : public SubtypeOf<AnyValue, LiteralValue>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralValue";

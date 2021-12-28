@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveType);
 /**
  * I am primitive type. I typically have direct support at the CPU level.
  */
-class PrimitiveType : public SubtypeOf<AnyValue, PrimitiveType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveType : public SubtypeOf<AnyValue, PrimitiveType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveType";

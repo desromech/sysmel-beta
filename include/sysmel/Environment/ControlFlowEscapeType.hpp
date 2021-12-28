@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ControlFlowEscapeType);
 /**
  * I am used for marking a control flow escape result type. (return, break, continue)
  */
-class ControlFlowEscapeType : public SubtypeOf<Void, ControlFlowEscapeType>
+class SYSMEL_COMPILER_LIB_EXPORT ControlFlowEscapeType : public SubtypeOf<Void, ControlFlowEscapeType>
 {
 public:
     static constexpr char const __typeName__[] = "ControlFlowEscapeType";

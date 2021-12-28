@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a box that is used for holding a value. I am typically used for storing mutable variable values.
  */
-class ValueBox : public SubtypeOf<CompilerObject, ValueBox>
+class SYSMEL_COMPILER_LIB_EXPORT ValueBox : public SubtypeOf<CompilerObject, ValueBox>
 {
 public:
     static constexpr char const __typeName__[] = "ValueBox";

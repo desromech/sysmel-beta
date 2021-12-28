@@ -18,7 +18,7 @@ struct SSACodeRegionLocalValueEnumerationState
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSACodeRegionLocalValue : public SubtypeOf<SSAValue, SSACodeRegionLocalValue>
+class SYSMEL_COMPILER_LIB_EXPORT SSACodeRegionLocalValue : public SubtypeOf<SSAValue, SSACodeRegionLocalValue>
 {
 public:
     static constexpr char const __typeName__[] = "SSACodeRegionLocalValue";

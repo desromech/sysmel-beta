@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
 /**
  * I am a variable program entity.
  */
-class FieldVariable : public SubtypeOf<Variable, FieldVariable>
+class SYSMEL_COMPILER_LIB_EXPORT FieldVariable : public SubtypeOf<Variable, FieldVariable>
 {
 public:
     static constexpr char const __typeName__[] = "FieldVariable";
@@ -46,7 +46,7 @@ protected:
 /**
  * I am a variable program entity.
  */
-class FieldVariableWithReceiverVariable : public SubtypeOf<CompilerObject, FieldVariableWithReceiverVariable>
+class SYSMEL_COMPILER_LIB_EXPORT FieldVariableWithReceiverVariable : public SubtypeOf<CompilerObject, FieldVariableWithReceiverVariable>
 {
 public:
     static constexpr char const __typeName__[] = "FieldVariableWithReceiverVariable";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(TemplateMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class TemplateMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, TemplateMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT TemplateMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, TemplateMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "TemplateMetaBuilder";

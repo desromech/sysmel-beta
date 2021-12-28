@@ -33,7 +33,7 @@ SSAValuePtr TemplateInstance::asSSAValueRequiredInPosition(const ASTSourcePositi
         ssaTemplateInstance->setExternalLanguageMode(externalLanguageMode);
         ssaTemplateInstance->setVisibility(visibility);
         ssaTemplateInstance->setDllLinkageMode(dllLinkageMode);
-        auto parentProgramEntity = getParentProgramEntity()->asProgramEntitySSAValue();
+        auto ssaParent = getParentProgramEntity()->asProgramEntitySSAValue();
 
         AnyValuePtrList arguments;
         arguments.reserve(argumentBindings.size());
@@ -41,10 +41,10 @@ SSAValuePtr TemplateInstance::asSSAValueRequiredInPosition(const ASTSourcePositi
             arguments.push_back(binding.second);
         ssaTemplateInstance->setArguments(arguments);
 
-        if(parentProgramEntity)
+        if(ssaParent)
         {
-            sysmelAssert(parentProgramEntity->isSSAProgramEntity());
-            parentProgramEntity.staticAs<SSAProgramEntity>()->addChild(ssaTemplateInstance);
+            sysmelAssert(ssaParent->isSSAProgramEntity());
+            ssaParent.staticAs<SSAProgramEntity>()->addChild(ssaTemplateInstance);
         }
     }
 
@@ -56,19 +56,19 @@ const AnyValuePtr &TemplateInstance::getValue() const
     return value;
 }
 
-void TemplateInstance::addArgumentBinding(const AnyValuePtr &name, const AnyValuePtr &value)
+void TemplateInstance::addArgumentBinding(const AnyValuePtr &name, const AnyValuePtr &argumentValue)
 {
     if(validAnyValue(name)->isAnonymousNameSymbol())
         return;
 
-    argumentBindings.push_back({name, value});
+    argumentBindings.push_back({name, argumentValue});
 }
 
 void TemplateInstance::evaluateDefinitionFragment(const TemplateDefinitionFragment &fragment)
 {
     auto scope = LexicalScope::makeWithParent(fragment.environment->lexicalScope);
-    for(auto &[key, value] : argumentBindings)
-        scope->setSymbolBinding(key, validAnyValue(value));
+    for(auto &[key, argumentValue] : argumentBindings)
+        scope->setSymbolBinding(key, validAnyValue(argumentValue));
 
     auto evaluationEnvironment = fragment.environment->copyWithLexicalScope(scope);
     evaluationEnvironment->programEntityForPublicDefinitions = selfFromThis();

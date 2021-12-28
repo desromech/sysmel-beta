@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralFloat);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class LiteralFloat : public SubtypeOf<LiteralNumber, LiteralFloat>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralFloat : public SubtypeOf<LiteralNumber, LiteralFloat>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralFloat";

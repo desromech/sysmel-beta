@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(BreakType);
 /**
  * I am literal number value.
  */
-class BreakType : public SubtypeOf<ControlFlowEscapeType, BreakType>
+class SYSMEL_COMPILER_LIB_EXPORT BreakType : public SubtypeOf<ControlFlowEscapeType, BreakType>
 {
 public:
     static constexpr char const __typeName__[] = "BreakType";

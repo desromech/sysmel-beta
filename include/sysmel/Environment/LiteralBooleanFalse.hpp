@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralBooleanFalse);
 /**
  * I am literal number value.
  */
-class LiteralBooleanFalse : public SubtypeOf<LiteralBoolean, LiteralBooleanFalse>
+class SYSMEL_COMPILER_LIB_EXPORT LiteralBooleanFalse : public SubtypeOf<LiteralBoolean, LiteralBooleanFalse>
 {
 public:
     static constexpr char const __typeName__[] = "LiteralBooleanFalse";

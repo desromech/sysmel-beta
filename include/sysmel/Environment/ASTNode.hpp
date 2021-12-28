@@ -88,7 +88,7 @@ typedef std::function<void (const ASTNodePtr &)> ASTIterationBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTNode : public SubtypeOf<CompilerObject, ASTNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTNode : public SubtypeOf<CompilerObject, ASTNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTNode";

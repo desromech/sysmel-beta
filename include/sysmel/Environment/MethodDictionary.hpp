@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class MethodDictionary : public SubtypeOf<CompilerObject, MethodDictionary>
+class SYSMEL_COMPILER_LIB_EXPORT MethodDictionary : public SubtypeOf<CompilerObject, MethodDictionary>
 {
 public:
     static constexpr char const __typeName__[] = "MethodDictionary";

@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSADoWithCleanupInstruction : public SubtypeOf<SSAInstruction, SSADoWithCleanupInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSADoWithCleanupInstruction : public SubtypeOf<SSAInstruction, SSADoWithCleanupInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSADoWithCleanupInstruction";

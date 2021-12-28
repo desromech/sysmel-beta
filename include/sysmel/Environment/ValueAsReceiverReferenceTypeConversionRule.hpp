@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am a type conversion rule used for converting structure constant values into their reference types.
  */
-class ValueAsReceiverReferenceTypeConversionRule : public SubtypeOf<TypeConversionRule, ValueAsReceiverReferenceTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT ValueAsReceiverReferenceTypeConversionRule : public SubtypeOf<TypeConversionRule, ValueAsReceiverReferenceTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "ValueAsReceiverReferenceTypeConversionRule";

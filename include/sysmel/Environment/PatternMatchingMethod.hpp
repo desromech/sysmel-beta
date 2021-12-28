@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base interface for most of the methods that are defined in the system.
  */
-class PatternMatchingMethod : public SubtypeOf<Method, PatternMatchingMethod>
+class SYSMEL_COMPILER_LIB_EXPORT PatternMatchingMethod : public SubtypeOf<Method, PatternMatchingMethod>
 {
 public:
     static constexpr char const __typeName__[] = "PatternMatchingMethod";

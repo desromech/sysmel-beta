@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the base interface for all of the types that are defined in the system.
  */
-class MetaType : public SubtypeOf<Type, MetaType>
+class SYSMEL_COMPILER_LIB_EXPORT MetaType : public SubtypeOf<Type, MetaType>
 {
 public:
     static constexpr char const __typeName__[] = "MetaType";

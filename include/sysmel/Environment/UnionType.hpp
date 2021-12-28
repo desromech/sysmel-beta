@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class UnionType : public SubMetaTypeOf<AggregateTypeWithFields, UnionType>
+class SYSMEL_COMPILER_LIB_EXPORT UnionType : public SubMetaTypeOf<AggregateTypeWithFields, UnionType>
 {
 public:
     virtual bool isUnionType() const override;
@@ -27,7 +27,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class UnionTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, UnionTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT UnionTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, UnionTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "UnionType";

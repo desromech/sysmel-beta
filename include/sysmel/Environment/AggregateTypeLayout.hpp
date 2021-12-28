@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeLayout);
 /**
  * I represent the layout of an aggregate type.
  */
-class AggregateTypeLayout : public SubtypeOf<CompilerObject, AggregateTypeLayout>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeLayout : public SubtypeOf<CompilerObject, AggregateTypeLayout>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateTypeLayout";

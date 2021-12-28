@@ -34,10 +34,10 @@ struct SExpressionList
     std::vector<SExpression> elements;
 };
 
-std::string sexpressionToString(const SExpression &sexpr);
-std::string sexpressionToPrettyString(const SExpression &sexpr);
-std::string sexpressionCanonicalizeString(const std::string &string);
-SExpression stripSExpressionFromPositions(const SExpression &sexpr);
+SYSMEL_COMPILER_LIB_EXPORT std::string sexpressionToString(const SExpression &sexpr);
+SYSMEL_COMPILER_LIB_EXPORT std::string sexpressionToPrettyString(const SExpression &sexpr);
+SYSMEL_COMPILER_LIB_EXPORT std::string sexpressionCanonicalizeString(const std::string &string);
+SYSMEL_COMPILER_LIB_EXPORT SExpression stripSExpressionFromPositions(const SExpression &sexpr);
 
 } // End of namespace Environment
 } // End of namespace Sysmel

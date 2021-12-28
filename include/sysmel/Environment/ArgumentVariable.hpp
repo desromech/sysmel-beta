@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTArgumentDefinitionNode);
 /**
  * I am a variable program entity.
  */
-class ArgumentVariable : public SubtypeOf<FunctionVariable, ArgumentVariable>
+class SYSMEL_COMPILER_LIB_EXPORT ArgumentVariable : public SubtypeOf<FunctionVariable, ArgumentVariable>
 {
 public:
     static constexpr char const __typeName__[] = "ArgumentVariable";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ReturnType);
 /**
  * I am literal number value.
  */
-class ReturnType : public SubtypeOf<ControlFlowEscapeType, ReturnType>
+class SYSMEL_COMPILER_LIB_EXPORT ReturnType : public SubtypeOf<ControlFlowEscapeType, ReturnType>
 {
 public:
     static constexpr char const __typeName__[] = "ReturnType";

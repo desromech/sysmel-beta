@@ -2,12 +2,14 @@
 #define SYSMEL_ENVIRONMENT_ASSERT_HPP
 #pragma once
 
+#include "../DLLInterface.hpp"
+
 namespace Sysmel
 {
 namespace Environment
 {
 
-[[noreturn]] void assertFailureWithMessage(const char *message);
+[[noreturn]] SYSMEL_COMPILER_LIB_EXPORT void assertFailureWithMessage(const char *message);
 
 #define sysmelSourceLineToString2(x) #x
 #define sysmelSourceLineToString(x) sysmelSourceLineToString2(x)

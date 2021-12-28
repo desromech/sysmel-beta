@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ModuleDefinedProgramEntity);
 /**
  * I am a particular module in the system.
  */
-class Module : public SubtypeOf<ProgramEntity, Module>
+class SYSMEL_COMPILER_LIB_EXPORT Module : public SubtypeOf<ProgramEntity, Module>
 {
 public:
     static constexpr char const __typeName__[] = "Module";

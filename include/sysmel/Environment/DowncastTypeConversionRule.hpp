@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an instance of a function type object.
  */
-class DowncastTypeConversionRule : public SubtypeOf<TypeConversionRule, DowncastTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT DowncastTypeConversionRule : public SubtypeOf<TypeConversionRule, DowncastTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "DowncastTypeConversionRule";

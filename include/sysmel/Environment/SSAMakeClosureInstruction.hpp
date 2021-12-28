@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAMakeClosureInstruction : public SubtypeOf<SSAInstruction, SSAMakeClosureInstruction>
+class SYSMEL_COMPILER_LIB_EXPORT SSAMakeClosureInstruction : public SubtypeOf<SSAInstruction, SSAMakeClosureInstruction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAMakeClosureInstruction";

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class SubclassResponsibility : public SubtypeOf<Error, SubclassResponsibility>
+class SYSMEL_COMPILER_LIB_EXPORT SubclassResponsibility : public SubtypeOf<Error, SubclassResponsibility>
 {
 public:
     static constexpr char const __typeName__[] = "SubclassResponsibility";

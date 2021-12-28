@@ -23,7 +23,7 @@ typedef std::function<void ()> ASTSSACodeRegionBuildingBlock;
 /**
  * I am a compile time evaluator of a previously analyzed AST.
  */
-class ASTSSACompiler : public SubtypeOf<ASTVisitor, ASTSSACompiler>
+class SYSMEL_COMPILER_LIB_EXPORT ASTSSACompiler : public SubtypeOf<ASTVisitor, ASTSSACompiler>
 {
 public:
     static constexpr char const __typeName__[] = "ASTSSACompiler";

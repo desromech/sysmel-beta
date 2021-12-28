@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Auto);
 /**
  * I am literal number value.
  */
-class Auto : public SubtypeOf<AnyValue, Auto>
+class SYSMEL_COMPILER_LIB_EXPORT Auto : public SubtypeOf<AnyValue, Auto>
 {
 public:
     static constexpr char const __typeName__[] = "Auto";

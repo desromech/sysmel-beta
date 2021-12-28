@@ -16,7 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 /**
  * I am the interface for the scope that is used for the identifier lookup.
  */
-class LexicalScope : public SubtypeOf<IdentifierLookupScope, LexicalScope>
+class SYSMEL_COMPILER_LIB_EXPORT LexicalScope : public SubtypeOf<IdentifierLookupScope, LexicalScope>
 {
 public:
     static constexpr char const __typeName__[] = "LexicalScope";

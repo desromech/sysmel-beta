@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class ArithmeticError : public SubtypeOf<Error, ArithmeticError>
+class SYSMEL_COMPILER_LIB_EXPORT ArithmeticError : public SubtypeOf<Error, ArithmeticError>
 {
 public:
     static constexpr char const __typeName__[] = "ArithmeticError";

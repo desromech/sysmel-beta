@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CVarArg);
 /**
  * I am literal number value.
  */
-class CVarArg : public SubtypeOf<PrimitiveType, CVarArg>
+class SYSMEL_COMPILER_LIB_EXPORT CVarArg : public SubtypeOf<PrimitiveType, CVarArg>
 {
 public:
     static constexpr char const __typeName__[] = "CVarArg";

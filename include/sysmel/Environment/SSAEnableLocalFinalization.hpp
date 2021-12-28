@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAEnableLocalFinalization : public SubtypeOf<SSAInstruction, SSAEnableLocalFinalization>
+class SYSMEL_COMPILER_LIB_EXPORT SSAEnableLocalFinalization : public SubtypeOf<SSAInstruction, SSAEnableLocalFinalization>
 {
 public:
     static constexpr char const __typeName__[] = "SSAEnableLocalFinalization";

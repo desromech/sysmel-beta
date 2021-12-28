@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am an instance of a function type object.
  */
-class IdentityTypeConversionRule : public SubtypeOf<TypeConversionRule, IdentityTypeConversionRule>
+class SYSMEL_COMPILER_LIB_EXPORT IdentityTypeConversionRule : public SubtypeOf<TypeConversionRule, IdentityTypeConversionRule>
 {
 public:
     static constexpr char const __typeName__[] = "IdentityTypeConversionRule";

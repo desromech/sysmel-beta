@@ -18,7 +18,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Char32);
 /**
  * I am a primitive character type.
  */
-class PrimitiveCharacterType : public SubtypeOf<PrimitiveIntegerType, PrimitiveCharacterType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveCharacterType : public SubtypeOf<PrimitiveIntegerType, PrimitiveCharacterType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveCharacterType";
@@ -31,7 +31,7 @@ public:
 /**
  * I am a 8-bit character code unit.
  */
-class Char8 : public SubtypeOf<PrimitiveCharacterType, Char8>
+class SYSMEL_COMPILER_LIB_EXPORT Char8 : public SubtypeOf<PrimitiveCharacterType, Char8>
 {
 public:
     typedef char ValueType;
@@ -62,7 +62,7 @@ public:
 /**
  * I am a 16-bit character code unit.
  */
-class Char16 : public SubtypeOf<PrimitiveCharacterType, Char16>
+class SYSMEL_COMPILER_LIB_EXPORT Char16 : public SubtypeOf<PrimitiveCharacterType, Char16>
 {
 public:
     typedef char16_t ValueType;
@@ -93,7 +93,7 @@ public:
 /**
  * I am a 32-bit character code unit.
  */
-class Char32 : public SubtypeOf<PrimitiveCharacterType, Char32>
+class SYSMEL_COMPILER_LIB_EXPORT Char32 : public SubtypeOf<PrimitiveCharacterType, Char32>
 {
 public:
     typedef char32_t ValueType;

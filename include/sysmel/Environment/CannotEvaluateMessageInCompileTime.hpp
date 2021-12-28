@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class CannotEvaluateMessageInCompileTime : public SubtypeOf<CannotEvaluateMessage, CannotEvaluateMessageInCompileTime>
+class SYSMEL_COMPILER_LIB_EXPORT CannotEvaluateMessageInCompileTime : public SubtypeOf<CannotEvaluateMessage, CannotEvaluateMessageInCompileTime>
 {
 public:
     static constexpr char const __typeName__[] = "CannotEvaluateMessageInCompileTime";

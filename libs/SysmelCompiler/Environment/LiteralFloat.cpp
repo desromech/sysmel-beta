@@ -198,7 +198,7 @@ float LiteralFloat::unwrapAsFloat32() const
 {
     if(float(value) != value)
         signalNewWithMessage<CannotUnwrap> ("Cannot unwrap float32 because of loss of precision.");
-    return value;
+    return float(value);
 }
 
 double LiteralFloat::unwrapAsFloat64() const

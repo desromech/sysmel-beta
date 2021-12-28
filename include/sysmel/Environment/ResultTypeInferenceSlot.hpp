@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ResultTypeInferenceSlot);
 /**
  * I am the interface for an expected type inference slot. I am used for bidirectional propagation of the result type.
  */
-class ResultTypeInferenceSlot : public SubtypeOf<CompilerObject, ResultTypeInferenceSlot>
+class SYSMEL_COMPILER_LIB_EXPORT ResultTypeInferenceSlot : public SubtypeOf<CompilerObject, ResultTypeInferenceSlot>
 {
 public:
     static constexpr char const __typeName__[] = "ResultTypeInferenceSlot";

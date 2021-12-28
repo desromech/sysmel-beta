@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(StructureTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class StructureType : public SubMetaTypeOf<AggregateTypeWithFields, StructureType>
+class SYSMEL_COMPILER_LIB_EXPORT StructureType : public SubMetaTypeOf<AggregateTypeWithFields, StructureType>
 {
 public:
     virtual bool isStructureType() const override;
@@ -30,7 +30,7 @@ protected:
 /**
  * I am an instance of a function type object.
  */
-class StructureTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, StructureTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT StructureTypeValue : public SubtypeOf<AggregateTypeWithFieldsValue, StructureTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "StructureType";

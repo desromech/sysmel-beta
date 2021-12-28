@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeTypeValue);
 /**
  * I am an instance of a function type object.
  */
-class PointerLikeType : public SubMetaTypeOf<DerivedType, PointerLikeType>
+class SYSMEL_COMPILER_LIB_EXPORT PointerLikeType : public SubMetaTypeOf<DerivedType, PointerLikeType>
 {
 public:
     virtual bool isPointerLikeType() const override;
@@ -44,7 +44,7 @@ public:
 /**
  * I am an instance of a function type object.
  */
-class PointerLikeTypeValue : public SubtypeOf<DerivedTypeValue, PointerLikeTypeValue>
+class SYSMEL_COMPILER_LIB_EXPORT PointerLikeTypeValue : public SubtypeOf<DerivedTypeValue, PointerLikeTypeValue>
 {
 public:
     static constexpr char const __typeName__[] = "PointerLikeType";

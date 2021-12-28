@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class ArgumentCountError : public SubtypeOf<Error, ArgumentCountError>
+class SYSMEL_COMPILER_LIB_EXPORT ArgumentCountError : public SubtypeOf<Error, ArgumentCountError>
 {
 public:
     static constexpr char const __typeName__[] = "ArgumentCountError";

@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveNumberType);
 /**
  * I am a single scalar number type.
  */
-class PrimitiveNumberType : public SubtypeOf<PrimitiveScalarType, PrimitiveNumberType>
+class SYSMEL_COMPILER_LIB_EXPORT PrimitiveNumberType : public SubtypeOf<PrimitiveScalarType, PrimitiveNumberType>
 {
 public:
     static constexpr char const __typeName__[] = "PrimitiveNumberType";

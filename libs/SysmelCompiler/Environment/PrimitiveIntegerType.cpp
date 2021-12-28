@@ -36,13 +36,13 @@ AnyValuePtr WrapValue<UIntPointerValue>::apply(UIntPointerValue value)
     if(RuntimeContext::getActive()->getTargetDescription().pointerSize == 4)
     {
         auto result = basicMakeObject<UInt32> ();
-        result->value = value.value;
+        result->value = uint32_t(value.value);
         return result;
     }
     else
     {
         auto result = basicMakeObject<UInt64> ();
-        result->value = value.value;
+        result->value = uint64_t(value.value);
         return result;
     }
 }

@@ -21,7 +21,7 @@ enum class ASTClosureNodeKind : uint8_t
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTClosureNode : public SubtypeOf<ASTProgramEntityNode, ASTClosureNode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTClosureNode : public SubtypeOf<ASTProgramEntityNode, ASTClosureNode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTClosureNode";

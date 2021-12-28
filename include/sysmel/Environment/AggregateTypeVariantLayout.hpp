@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeVariantLayout);
 /**
  * I represent the layout of an aggregate type with single discriminated element.
  */
-class AggregateTypeVariantLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeVariantLayout>
+class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeVariantLayout : public SubtypeOf<AggregateTypeLayout, AggregateTypeVariantLayout>
 {
 public:
     static constexpr char const __typeName__[] = "AggregateTypeVariantLayout";

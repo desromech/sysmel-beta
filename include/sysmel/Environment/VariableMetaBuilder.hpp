@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(VariableMetaBuilder);
 /**
  * I am the base interface for a meta-builder.
  */
-class VariableMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, VariableMetaBuilder>
+class SYSMEL_COMPILER_LIB_EXPORT VariableMetaBuilder : public SubtypeOf<NamedProgramEntityMetaBuilder, VariableMetaBuilder>
 {
 public:
     static constexpr char const __typeName__[] = "VariableMetaBuilder";

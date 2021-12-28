@@ -11,7 +11,7 @@ namespace Environment
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAGlobalValue : public SubtypeOf<SSAConstantValue, SSAGlobalValue>
+class SYSMEL_COMPILER_LIB_EXPORT SSAGlobalValue : public SubtypeOf<SSAConstantValue, SSAGlobalValue>
 {
 public:
     static constexpr char const __typeName__[] = "SSAGlobalValue";

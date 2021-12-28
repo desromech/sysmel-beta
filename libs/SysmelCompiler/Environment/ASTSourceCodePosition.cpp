@@ -48,12 +48,12 @@ std::string ASTSourceCodePosition::getSourceCodeFileName() const
 
 int ASTSourceCodePosition::getLine() const
 {
-    return startLine;
+    return int(startLine);
 }
 
 int ASTSourceCodePosition::getColumn() const
 {
-    return startColumn;
+    return int(startColumn);
 }
 
 SExpression ASTSourceCodePosition::asSExpression() const

@@ -66,11 +66,11 @@ SExpression ClosureType::asSExpression() const
 
 FunctionalTypeValuePtr ClosureType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation)
 {
-    auto result = basicMakeObject<ClosureTypeValue> ();
-    result->type = selfFromThis();
-    result->functionalImplementation = implementation;
-    result->environment = environment;
-    return result;
+    auto resultValue = basicMakeObject<ClosureTypeValue> ();
+    resultValue->type = selfFromThis();
+    resultValue->functionalImplementation = implementation;
+    resultValue->environment = environment;
+    return resultValue;
 }
 
 bool ClosureTypeValue::isClosureTypeValue() const

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * Basic error
  */
-class DomainError : public SubtypeOf<ArithmeticError, DomainError>
+class SYSMEL_COMPILER_LIB_EXPORT DomainError : public SubtypeOf<ArithmeticError, DomainError>
 {
 public:
     static constexpr char const __typeName__[] = "DomainError";

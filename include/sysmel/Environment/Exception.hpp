@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Exception);
 /**
  * I am the base interface for a Smalltalk style exception that is exposed in the bootstrap environment.
  */
-class Exception : public SubtypeOf<CompilerObject, Exception>
+class SYSMEL_COMPILER_LIB_EXPORT Exception : public SubtypeOf<CompilerObject, Exception>
 {
 public:
     static constexpr char const __typeName__[] = "Exception";
@@ -46,7 +46,12 @@ template<typename T>
     abort();
 }
 
-class ExceptionWrapper : public std::exception
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4275 )
+#endif
+
+class SYSMEL_COMPILER_LIB_EXPORT ExceptionWrapper : public std::exception
 {
 public:
     ExceptionWrapper(const ExceptionPtr &theException);
@@ -61,6 +66,10 @@ protected:
     mutable bool hasRetrievedDescription = false;
     mutable std::string description;
 };
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 } // End of namespace Environment
 } // End of namespace Sysmel

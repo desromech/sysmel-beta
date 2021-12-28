@@ -15,7 +15,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ItaniumNameMangler);
 /**
  * I am the base interface for a meta-builder.
  */
-class ItaniumNameMangler : public SubtypeOf<NameMangler, ItaniumNameMangler>
+class SYSMEL_COMPILER_LIB_EXPORT ItaniumNameMangler : public SubtypeOf<NameMangler, ItaniumNameMangler>
 {
 public:
     static constexpr char const __typeName__[] = "ItaniumNameMangler";

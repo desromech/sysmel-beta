@@ -19,7 +19,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MetaBuilderInstanceContext);
 /**
  * I am the base interface for compile time object that is passed through the interpreter.
  */
-class MetaBuilderInstanceContext : public SubtypeOf<CompilerObject, MetaBuilderInstanceContext>
+class SYSMEL_COMPILER_LIB_EXPORT MetaBuilderInstanceContext : public SubtypeOf<CompilerObject, MetaBuilderInstanceContext>
 {
 public:
     static constexpr char const __typeName__[] = "MetaBuilderInstanceContext";

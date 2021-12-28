@@ -239,7 +239,7 @@ static uint8_t bitsPerDigitInRadix(uint8_t radix)
     if(radix == 0)
         return 0;
 
-    return highBitOf(uint32_t(radix - 1)) + 1;
+    return uint8_t(highBitOf(uint32_t(radix - 1)) + 1);
 }
 
 static int8_t parseDigitInRadix(char digit, uint8_t radix)
@@ -305,40 +305,40 @@ LargeInteger::LargeInteger(const std::string &string, uint8_t radix)
 void LargeInteger::setValue(uint32_t value)
 {
     signBit = false;
-    uint32_t words[] = {
+    uint32_t newWords[] = {
         value,
     };
-    setUnnormalizedWords(words);
+    setUnnormalizedWords(newWords);
 }
 
 void LargeInteger::setValue(int32_t value)
 {
     signBit = value < 0;
-    uint32_t words[] = {
+    uint32_t newWords[] = {
         static_cast<uint32_t> (value < 0 ? -value : value),
     };
-    setUnnormalizedWords(words);
+    setUnnormalizedWords(newWords);
 }
 
 void LargeInteger::setValue(uint64_t value)
 {
     signBit = 0;
-    uint32_t words[] = {
+    uint32_t newWords[] = {
         static_cast<uint32_t> (value & 0xffffffff),
         static_cast<uint32_t> (value >> 32),
     };
-    setUnnormalizedWords(words);
+    setUnnormalizedWords(newWords);
 }
 
 void LargeInteger::setValue(int64_t value)
 {
     signBit = value < 0;
     uint64_t absValue = value < 0 ? -value : value;
-    uint32_t words[] = {
+    uint32_t newWords[] = {
         static_cast<uint32_t> (absValue & 0xffffffff),
         static_cast<uint32_t> (absValue >> 32),
     };
-    setUnnormalizedWords(words);
+    setUnnormalizedWords(newWords);
 }
 
 void LargeInteger::setValueByParsingFrom(const std::string &string, uint8_t radix)
@@ -698,7 +698,7 @@ double LargeInteger::asDouble() const
 
     auto mantissaPart = words[words.size() - 2] | (uint64_t(words[words.size() - 1]) << 32);
     auto remainingWordCount = words.size() - 2;
-    double mantissa = mantissaPart;
+    double mantissa = double(mantissaPart);
 
     // Add the third word which might have additional required bits.
     if(words.size() >= 3)
@@ -707,7 +707,7 @@ double LargeInteger::asDouble() const
         --remainingWordCount;
     }
 
-    return ldexp(signBit ? -mantissa : mantissa, remainingWordCount*32);
+    return ldexp(signBit ? -mantissa : mantissa, int(remainingWordCount*32));
 }
 
 void LargeInteger::divisionAndRemainder(const LargeInteger &divisor, LargeInteger &quotient, LargeInteger &remainder) const

@@ -12,7 +12,7 @@ namespace Environment
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTEmptySourcePosition : public SubtypeOf<ASTSourcePosition, ASTEmptySourcePosition>
+class SYSMEL_COMPILER_LIB_EXPORT ASTEmptySourcePosition : public SubtypeOf<ASTSourcePosition, ASTEmptySourcePosition>
 {
 public:
     static constexpr char const __typeName__[] = "ASTEmptySourcePosition";

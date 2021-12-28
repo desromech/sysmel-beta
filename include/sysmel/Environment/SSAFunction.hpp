@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
-class SSAFunction : public SubtypeOf<SSAProgramEntityWithChildren, SSAFunction>
+class SYSMEL_COMPILER_LIB_EXPORT SSAFunction : public SubtypeOf<SSAProgramEntityWithChildren, SSAFunction>
 {
 public:
     static constexpr char const __typeName__[] = "SSAFunction";

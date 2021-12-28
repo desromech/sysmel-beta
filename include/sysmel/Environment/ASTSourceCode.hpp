@@ -14,7 +14,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSourceCode);
 /**
  * I am the interface for all of the language independent AST nodes.
  */
-class ASTSourceCode : public SubtypeOf<CompilerObject, ASTSourceCode>
+class SYSMEL_COMPILER_LIB_EXPORT ASTSourceCode : public SubtypeOf<CompilerObject, ASTSourceCode>
 {
 public:
     static constexpr char const __typeName__[] = "ASTSourceCode";
