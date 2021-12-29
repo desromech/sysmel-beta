@@ -31,13 +31,15 @@ AnyValuePtr SSALLVMModuleVisitor::visitProgramEntityWithChildren(const SSAProgra
 
 AnyValuePtr SSALLVMModuleVisitor::visitGlobalVariable(const SSAGlobalVariablePtr &value)
 {
-    backend->translateGlobalValue(value);
+    if(!value->isCompileTime())
+        backend->translateGlobalValue(value);
     return nullptr;
 }
 
 AnyValuePtr SSALLVMModuleVisitor::visitFunction(const SSAFunctionPtr &value)
 {
-    backend->translateGlobalValue(value);
+    if(!value->isCompileTime())
+        backend->translateGlobalValue(value);
     return nullptr;
 }
 

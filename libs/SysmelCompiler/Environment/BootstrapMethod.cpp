@@ -32,6 +32,7 @@ SSAValuePtr BootstrapMethodBase::asSSAValueRequiredInPosition(const ASTSourcePos
         ssaCompiledFunction->setExternalLanguageMode(externalLanguageMode);
         ssaCompiledFunction->setVisibility(visibility);
         ssaCompiledFunction->setDllLinkageMode(dllLinkageMode);
+        ssaCompiledFunction->setCompileTime(isCompileTimeMethod());
     }
 
     return ssaCompiledFunction;

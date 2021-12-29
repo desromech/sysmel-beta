@@ -1,0 +1,40 @@
+
+##class Int32TestCase superclass: TestCase; definition: {
+TestCase extend: {
+    public compileTime constant ValueType := Int32.
+
+    public method equality => Void := {
+        self assert: ValueType(1) = ValueType(1).
+        self deny: ValueType(1) = ValueType(0).
+        self deny: ValueType(0) = ValueType(1).
+
+        self deny: ValueType(1) ~= ValueType(1).
+        self assert: ValueType(1) ~= ValueType(0).
+        self assert: ValueType(0) ~= ValueType(1).
+
+        let a type: ValueType := 1.
+        let b type: ValueType := 1.
+        let c type: ValueType := 0.
+
+        self assert: a = b.
+        self assert: a equals: b.
+
+        self assert: b = a.
+        self assert: b equals: a.
+    }.
+
+    public method comparisons => Void := {
+
+    }.
+
+    public method run => Void := {
+        self
+            equality;
+            comparisons
+    }.
+}.
+
+public externC function main() => Int32 := {
+    TestCase() run.
+    0
+}.

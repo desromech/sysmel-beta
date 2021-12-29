@@ -31,7 +31,24 @@ Boolean8Ptr Boolean8::make(bool value)
 
 MethodCategories Boolean8::__instanceMethods__()
 {
-    return MethodCategories{};
+    return MethodCategories{
+        {"logic", {
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr)> ("boolean.not", "pre-!", +[](const Boolean8Ptr &v) {
+                return make(!v->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr)> ("boolean.not", "not", +[](const Boolean8Ptr &v) {
+                return make(!v->value);
+            }, MethodFlags::Pure),
+
+
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr)> ("boolean.xor", "^", +[](const Boolean8Ptr &v) {
+                return make(!v->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr)> ("boolean.xor", "xor:", +[](const Boolean8Ptr &v) {
+                return make(!v->value);
+            }, MethodFlags::Pure),
+        }}
+    };
 }
 
 MethodCategories Boolean8::__typeMacroMethods__()

@@ -142,13 +142,14 @@ void CompiledMethod::createImplicitReceiverArgumentVariableWithType(const TypePt
 void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumentTypes)
 {
     arguments.reserve(argumentTypes.size());
+    size_t firstArgumentIndex = receiverArgument ? 1 : 0;
     for(size_t i = 0; i < argumentTypes.size(); ++i)
     {
         const auto &type = argumentTypes[i];
         auto argument = basicMakeObject<ArgumentVariable> ();
         recordChildProgramEntityDefinition(argument);
         argument->setType(type);
-        argument->argumentIndex = uint32_t(i);
+        argument->argumentIndex = uint32_t(i + firstArgumentIndex);
         arguments.push_back(argument);
     }
 }
@@ -241,6 +242,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
     ssaCompiledFunction->setIntrinsicName(getIntrinsicName());
     ssaCompiledFunction->setDeclarationPosition(declarationPosition);
     ssaCompiledFunction->setSourceProgramEntity(selfFromThis());
+    ssaCompiledFunction->setCompileTime(isCompileTimeMethod());
 
     ensureSemanticAnalysis();
 

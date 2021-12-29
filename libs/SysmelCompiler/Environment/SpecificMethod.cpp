@@ -335,5 +335,10 @@ void SpecificMethod::makeTrivial()
     methodFlags = methodFlags | MethodFlags::Trivial;
 }
 
+bool SpecificMethod::isCompileTimeMethod() const
+{
+    return isMacroMethod();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -91,5 +91,15 @@ void SSAProgramEntity::setExternalLanguageMode(ExternalLanguageMode newExternalL
     externalLanguageMode = newExternalLanguageMode;
 }
 
+bool SSAProgramEntity::isCompileTime() const
+{
+    return isCompileTime_;
+}
+
+void SSAProgramEntity::setCompileTime(bool flag)
+{
+    isCompileTime_ = flag;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

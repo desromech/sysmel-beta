@@ -32,7 +32,10 @@ public:
 
     virtual AnyValuePtr visitFunctionalType(const FunctionalTypePtr &type) override;
 
+    llvm::DIType *translateAggregateTypeWithFields(const AggregateTypeWithFieldsPtr &type, unsigned int tag);
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
+    virtual AnyValuePtr visitClassType(const ClassTypePtr &type) override;
+    virtual AnyValuePtr visitUnionType(const UnionTypePtr &type) override;
 
     llvm::DIType *translateFieldOf(const FieldVariablePtr &field, llvm::DIScope *parent);
     SSALLVMCodeGenerationBackend *backend = nullptr;

@@ -16,6 +16,11 @@ namespace Environment
 
 static BootstrapTypeRegistration<SSACodeRegion> SSACodeRegionTypeRegistration;
 
+SSACodeRegion::SSACodeRegion()
+{
+    sourcePosition = ASTSourcePosition::empty();
+}
+
 bool SSACodeRegion::isSSACodeRegion() const
 {
     return true;

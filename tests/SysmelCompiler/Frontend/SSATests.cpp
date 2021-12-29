@@ -45,9 +45,9 @@ R"(
   (functionType () #Int32)
   (region () () #Int32 ((basicBlock 0 (
     (doWithCleanUp 0 #Void
-      (region nil () () #Void ((basicBlock 1 ((returnFromFunction 1 #Void
+      (region () () #Void ((basicBlock 1 ((returnFromFunction 1 #Void
         (constantLiteralValue (int32 1) #Int32))))))
-      (region nil () () #Void ((basicBlock 2 ((returnFromRegion 2 #Void
+      (region () () #Void ((basicBlock 2 ((returnFromRegion 2 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 3 #Void))))))
 )"));
@@ -75,7 +75,7 @@ R"(
       #generic)
     ((basicBlock 0 (
       (doWithCleanUp 0 #Void
-        (region nil () () #Void ((basicBlock 1 ((returnFromFunction 1 #Void
+        (region () () #Void ((basicBlock 1 ((returnFromFunction 1 #Void
           (constantLiteralValue
             (pointerValue
               (pointerType
@@ -85,7 +85,7 @@ R"(
             (pointerType
               (decoratedType #Char8 const)
               #generic)))))))
-        (region nil () () #Void ((basicBlock 2 ((returnFromRegion 2 #Void
+        (region () () #Void ((basicBlock 2 ((returnFromRegion 2 #Void
           (constantLiteralValue void #Void)))))))
       (unreachable 3 #Void))))))
 )"));
@@ -110,7 +110,7 @@ R"(
     (argument 0 #Int32)
     (argument 1 #Int32)) () #Int32 ((basicBlock 0 (
     (doWithCleanUp 2 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (call 3 #Boolean8
             (function #< #"integer.less-than.signed")
@@ -118,10 +118,10 @@ R"(
             (local 1))
           (if 4 #Int32
             (local 3)
-            (region nil () () #Int32 ((basicBlock 2 ((returnFromRegion 5 #Void (local 0))))))
-            (region nil () () #Int32 ((basicBlock 3 ((returnFromRegion 6 #Void (local 1)))))))
+            (region () () #Int32 ((basicBlock 2 ((returnFromRegion 5 #Void (local 0))))))
+            (region () () #Int32 ((basicBlock 3 ((returnFromRegion 6 #Void (local 1)))))))
           (returnFromFunction 7 #Void (local 4))))))
-      (region nil () () #Void ((basicBlock 4 ((returnFromRegion 8 #Void
+      (region () () #Void ((basicBlock 4 ((returnFromRegion 8 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 9 #Void))))))
 )"));
@@ -142,7 +142,7 @@ R"(
   (functionType (#Int32) #Int32)
   (region ((argument 0 #Int32)) () #Int32 ((basicBlock 0 (
     (doWithCleanUp 1 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (localVariable 2
             (refType #Int32 #generic))
@@ -157,7 +157,7 @@ R"(
             (local 5))
           (declareLocalVariable 7 #Void (local 5))
           (while 8 #Void
-            (region nil () () #Boolean8 ((basicBlock 2
+            (region () () #Boolean8 ((basicBlock 2
               (
                 (call 9 #Int32
                   (function #conv #"reference.load")
@@ -167,9 +167,9 @@ R"(
                   (local 9)
                   (local 0))
                 (returnFromRegion 11 #Void (local 10))))))
-            (region nil () () #Void ((basicBlock 3 (
+            (region () () #Void ((basicBlock 3 (
               (doWithCleanUp 12 #Void
-                (region nil () () #Void ((basicBlock 4
+                (region () () #Void ((basicBlock 4
                   (
                     (call 13 #Int32
                       (function #conv #"reference.load")
@@ -188,11 +188,11 @@ R"(
                       (local 15))
                     (returnFromRegion 17 #Void
                       (constantLiteralValue void #Void))))))
-                (region nil () () #Void ((basicBlock 5 ((returnFromRegion 18 #Void
+                (region () () #Void ((basicBlock 5 ((returnFromRegion 18 #Void
                   (constantLiteralValue void #Void)))))))
               (returnFromRegion 19 #Void
                 (constantLiteralValue void #Void))))))
-            (region nil () () #Void ((basicBlock 6
+            (region () () #Void ((basicBlock 6
               (
                 (call 20 #Int32
                   (function #conv #"reference.load")
@@ -212,7 +212,7 @@ R"(
             (function #conv #"reference.load")
             (local 2))
           (returnFromFunction 25 #Void (local 24))))))
-      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
+      (region () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 27 #Void))))))
 )"));
@@ -234,7 +234,7 @@ R"(
   (functionType (#Int32) #Int32)
   (region ((argument 0 #Int32)) () #Int32 ((basicBlock 0 (
     (doWithCleanUp 1 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (localVariable 2
             (refType #Int32 #generic))
@@ -249,9 +249,9 @@ R"(
             (local 5))
           (declareLocalVariable 7 #Void (local 5))
           (doWhile 8 #Void
-            (region nil () () #Void ((basicBlock 2 (
+            (region () () #Void ((basicBlock 2 (
               (doWithCleanUp 9 #Void
-                (region nil () () #Void ((basicBlock 3
+                (region () () #Void ((basicBlock 3
                   (
                     (call 10 #Int32
                       (function #conv #"reference.load")
@@ -270,11 +270,11 @@ R"(
                       (local 12))
                     (returnFromRegion 14 #Void
                       (constantLiteralValue void #Void))))))
-                (region nil () () #Void ((basicBlock 4 ((returnFromRegion 15 #Void
+                (region () () #Void ((basicBlock 4 ((returnFromRegion 15 #Void
                   (constantLiteralValue void #Void)))))))
               (returnFromRegion 16 #Void
                 (constantLiteralValue void #Void))))))
-            (region nil () () #Boolean8 ((basicBlock 5
+            (region () () #Boolean8 ((basicBlock 5
               (
                 (call 17 #Int32
                   (function #conv #"reference.load")
@@ -284,7 +284,7 @@ R"(
                   (local 17)
                   (local 0))
                 (returnFromRegion 19 #Void (local 18))))))
-            (region nil () () #Void ((basicBlock 6
+            (region () () #Void ((basicBlock 6
               (
                 (call 20 #Int32
                   (function #conv #"reference.load")
@@ -304,7 +304,7 @@ R"(
             (function #conv #"reference.load")
             (local 2))
           (returnFromFunction 25 #Void (local 24))))))
-      (region nil () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
+      (region () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 27 #Void))))))
 )"));
@@ -337,7 +337,7 @@ R"(
     #Void
     ((basicBlock 0 (
       (doWithCleanUp 3 #Void
-        (region nil () () #Void ((basicBlock 1
+        (region () () #Void ((basicBlock 1
           (
             (localVariable 4
               (tempRefType (tupleType (#Int32 #Float32)) #generic))
@@ -353,7 +353,7 @@ R"(
             (store 10 #Void (local 9) (local 0))
             (returnFromFunction 11 #Void
               (constantLiteralValue void #Void))))))
-        (region nil () () #Void ((basicBlock 2 ((returnFromRegion 12 #Void
+        (region () () #Void ((basicBlock 2 ((returnFromRegion 12 #Void
           (constantLiteralValue void #Void)))))))
       (unreachable 13 #Void))))))
 )"));
@@ -386,7 +386,7 @@ public function getFirst(s: TestStruct) => Int8
   (region ((argument 0
     (refType #"Test::TestStruct" #generic))) () #Int8 ((basicBlock 0 (
     (doWithCleanUp 1 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (getAggregateField 2
             (refType #Int8 #generic)
@@ -395,7 +395,7 @@ public function getFirst(s: TestStruct) => Int8
             (function #conv #"reference.load")
             (local 2))
           (returnFromFunction 4 #Void (local 3))))))
-      (region nil () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void
+      (region () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 6 #Void))))))
 )"));
@@ -410,7 +410,7 @@ public function getSecond(s: TestStruct) => Int32
   (region ((argument 0
     (refType #"Test::TestStruct" #generic))) () #Int32 ((basicBlock 0 (
     (doWithCleanUp 1 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (getAggregateField 2
             (refType #Int32 #generic)
@@ -419,7 +419,7 @@ public function getSecond(s: TestStruct) => Int32
             (function #conv #"reference.load")
             (local 2))
           (returnFromFunction 4 #Void (local 3))))))
-      (region nil () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void
+      (region () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void
         (constantLiteralValue void #Void)))))))
     (unreachable 6 #Void))))))
 )"));
@@ -446,7 +446,7 @@ public function returnStruct(first: Int8, second: Int32) => TestStruct
     #Void
     ((basicBlock 0 (
       (doWithCleanUp 3 #Void
-        (region nil () () #Void ((basicBlock 1
+        (region () () #Void ((basicBlock 1
           (
             (localVariable 4
               (tempRefType #"Test::TestStruct" #generic))
@@ -479,7 +479,7 @@ public function returnStruct(first: Int8, second: Int32) => TestStruct
             (store 14 #Void (local 13) (local 0))
             (returnFromFunction 15 #Void
               (constantLiteralValue void #Void))))))
-        (region nil () () #Void ((basicBlock 2 ((returnFromRegion 16 #Void
+        (region () () #Void ((basicBlock 2 ((returnFromRegion 16 #Void
           (constantLiteralValue void #Void)))))))
       (unreachable 17 #Void))))))
 )"));
@@ -503,7 +503,7 @@ public function returnEmptyStruct(first: Int8, second: Int32) => TestStruct
     #Void
     ((basicBlock 0 (
       (doWithCleanUp 3 #Void
-        (region nil () () #Void ((basicBlock 1
+        (region () () #Void ((basicBlock 1
           (
             (localVariable 4
               (tempRefType #"Test::TestStruct" #generic))
@@ -516,7 +516,7 @@ public function returnEmptyStruct(first: Int8, second: Int32) => TestStruct
             (store 7 #Void (local 6) (local 0))
             (returnFromFunction 8 #Void
               (constantLiteralValue void #Void))))))
-        (region nil () () #Void ((basicBlock 2 ((returnFromRegion 9 #Void
+        (region () () #Void ((basicBlock 2 ((returnFromRegion 9 #Void
           (constantLiteralValue void #Void)))))))
       (unreachable 10 #Void))))))
 )"));
@@ -555,7 +555,7 @@ R"(
   (functionType () #Void)
   (region () () #Void ((basicBlock 0 (
     (doWithCleanUp 0 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (localVariable 1
             (refType #"Test::Mutex" #generic))
@@ -568,10 +568,10 @@ R"(
           (declareLocalVariable 4 #Void (local 1))
           (returnFromFunction 5 #Void
             (constantLiteralValue void #Void))))))
-      (region nil () () #Void ((basicBlock 2 (
+      (region () () #Void ((basicBlock 2 (
         (localFinalization 6 #Void
           (local 1)
-          (region nil () () #Void ((basicBlock 3 (
+          (region () () #Void ((basicBlock 3 (
             (call 7 #Void
               (function #finalize nil)
               (local 1))
@@ -593,7 +593,7 @@ R"(
   (functionType () #Void)
   (region () () #Void ((basicBlock 0 (
     (doWithCleanUp 0 #Void
-      (region nil () () #Void ((basicBlock 1
+      (region () () #Void ((basicBlock 1
         (
           (localVariable 1
             (tempRefType #"Test::Mutex" #generic))
@@ -606,10 +606,10 @@ R"(
           (declareLocalVariable 4 #Void (local 1))
           (returnFromFunction 5 #Void
             (constantLiteralValue void #Void))))))
-      (region nil () () #Void ((basicBlock 2 (
+      (region () () #Void ((basicBlock 2 (
         (localFinalization 6 #Void
           (local 1)
-          (region nil () () #Void ((basicBlock 3 (
+          (region () () #Void ((basicBlock 3 (
             (call 7 #Void
               (function #finalize nil)
               (local 1))

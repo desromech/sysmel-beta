@@ -56,6 +56,14 @@ static BootstrapTypeRegistration<SSALLVMValue> SSALLVMValueTypeRegistration;
 static BootstrapTypeRegistration<SSALLVMConstant> SSALLVMConstantTypeRegistration;
 
 std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext &)>> SSALLVMValueVisitor::intrinsicGenerators = {
+    {"boolean.not", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateNot(context.arguments.back());
+    }},
+    {"boolean.xor", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateXor(context.arguments[0], context.arguments[1]);
+    }},
 
     {"integer.conversion.sign-extend", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() <= 2);
@@ -72,6 +80,16 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     {"integer.conversion.truncate", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateTrunc(context.arguments.back(), context.resultType);
+    }},
+
+    {"integer.equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpEQ(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.not-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpNE(context.arguments[0], context.arguments[1]));
     }},
 
     {"integer.less-than.signed", +[](const IntrinsicGenerationContext &context) {

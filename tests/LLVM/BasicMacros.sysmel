@@ -1,0 +1,13 @@
+Boolean8 extend: {
+    public macro method ifTrue: trueBlock ifFalse: falseBlock
+        := ``(if: `,self then: `,trueBlock else: `,falseBlock).
+
+    public macro method ifFalse: falseBlock ifTrue: trueBlock
+        := ``(if: `,self then: `,trueBlock else: `,falseBlock).
+
+    public macro method ifTrue: trueBlock
+        := ``(if: `,self then: `,trueBlock).
+
+    public macro method ifFalse: falseBlock
+        := ``(if: `,self not then: `,falseBlock).
+}.

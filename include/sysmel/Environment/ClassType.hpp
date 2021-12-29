@@ -26,6 +26,7 @@ public:
     virtual void enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
     virtual AnyValuePtr basicNewValue() override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
 protected:
     /// This method evaluates all of the pending code fragments.

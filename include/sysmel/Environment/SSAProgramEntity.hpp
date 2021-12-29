@@ -42,12 +42,16 @@ public:
     ExternalLanguageMode getExternalLanguageMode() const;
     void setExternalLanguageMode(ExternalLanguageMode newExternalLanguageMode);
 
+    bool isCompileTime() const;
+    void setCompileTime(bool flag);
+
 protected:
     AnyValuePtr name;
     SSAProgramEntityWeakPtr parent;
     ProgramEntityVisibility visibility = ProgramEntityVisibility::Default;
     DllLinkageMode dllLinkageMode = DllLinkageMode::None;
     ExternalLanguageMode externalLanguageMode = ExternalLanguageMode::None;
+    bool isCompileTime_ = false;
 };
 
 } // End of namespace Environment

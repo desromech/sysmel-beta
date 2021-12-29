@@ -20,6 +20,8 @@ class SYSMEL_COMPILER_LIB_EXPORT Variable : public SubtypeOf<ModuleDefinedProgra
 public:
     static constexpr char const __typeName__[] = "Variable";
 
+    Variable();
+
     virtual bool isVariable() const override;
 
     virtual void setDefinitionParameters(const AnyValuePtr &definitionName, const TypePtr &definitionValueType, bool definitionMutability, uint64_t definitionMinimalAlignment = 0);

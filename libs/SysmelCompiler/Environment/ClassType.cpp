@@ -7,6 +7,7 @@
 #include "Environment/CompilationError.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
 namespace Sysmel
@@ -116,6 +117,11 @@ AnyValuePtr ClassType::basicNewValue()
     // TODO: Set the vtable/typeinfo values.
 
     return result;
+}
+
+AnyValuePtr ClassType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitClassType(selfFromThis());
 }
 
 bool ClassTypeValue::isClassTypeValue() const

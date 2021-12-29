@@ -69,6 +69,8 @@ public:
     bool isTrivial() const;
     void makeTrivial();
 
+    bool isCompileTimeMethod() const;
+
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;

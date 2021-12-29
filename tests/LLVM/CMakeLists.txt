@@ -12,6 +12,8 @@ function(sysmel_llvm_codegen_unittest TestName)
                 -o ${CMAKE_CURRENT_BINARY_DIR}/${TestName}${ObjExtension}
 
                 ${CMAKE_CURRENT_SOURCE_DIR}/Printf.sysmel
+                ${CMAKE_CURRENT_SOURCE_DIR}/BasicMacros.sysmel
+                ${CMAKE_CURRENT_SOURCE_DIR}/UnitTesting.sysmel
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TestName}.sysmel
         DEPENDS
             sysmelc
@@ -27,3 +29,4 @@ function(sysmel_llvm_codegen_unittest TestName)
 endfunction()
 
 sysmel_llvm_codegen_unittest(HelloWorld PASS_REGULAR_EXPRESSION "Hello World")
+sysmel_llvm_codegen_unittest(PrimitiveScalars FAIL_REGULAR_EXPRESSION "Failure")

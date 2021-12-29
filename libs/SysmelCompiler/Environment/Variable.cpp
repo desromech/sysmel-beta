@@ -1,4 +1,5 @@
 #include "Environment/Variable.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -13,6 +14,12 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<Variable> variableTypeRegistration;
+
+Variable::Variable()
+{
+    declarationPosition = ASTSourcePosition::empty();
+    definitionPosition = ASTSourcePosition::empty();
+}
 
 bool Variable::isVariable() const
 {

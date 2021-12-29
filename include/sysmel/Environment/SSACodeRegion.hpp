@@ -17,6 +17,8 @@ class SYSMEL_COMPILER_LIB_EXPORT SSACodeRegion : public SubtypeOf<SSAValue, SSAC
 public:
     static constexpr char const __typeName__[] = "SSACodeRegion";
 
+    SSACodeRegion();
+
     virtual bool isSSACodeRegion() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;

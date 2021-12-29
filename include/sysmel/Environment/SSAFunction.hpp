@@ -19,6 +19,8 @@ class SYSMEL_COMPILER_LIB_EXPORT SSAFunction : public SubtypeOf<SSAProgramEntity
 public:
     static constexpr char const __typeName__[] = "SSAFunction";
 
+    SSAFunction();
+
     virtual bool isSSAFunction() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;

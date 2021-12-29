@@ -34,6 +34,10 @@ public:
     virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value) override;
 
     virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value) override;
+
+    llvm::Constant *translateSequentialStructAggregateTypeValue(const AggregateTypeValuePtr &value);
+    virtual AnyValuePtr visitTupleTypeValue(const TupleTypeValuePtr &value) override;
+    virtual AnyValuePtr visitClassTypeValue(const ClassTypeValuePtr &value) override;
     virtual AnyValuePtr visitStructureTypeValue(const StructureTypeValuePtr &value) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;

@@ -104,7 +104,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &fie
     );
 }
 
-AnyValuePtr LLVMDebugTypeVisitor::visitStructureType(const StructureTypePtr &type)
+llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const AggregateTypeWithFieldsPtr &type, unsigned int tag)
 {
     auto sourcePosition = type->getSourceDefinitionPosition();
     auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
@@ -115,7 +115,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitStructureType(const StructureTypePtr &typ
     auto line = sourcePosition->getLine();
     auto size = type->getMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
-    auto declaration = builder->createReplaceableCompositeType(llvm::dwarf::DW_TAG_structure_type,
+    auto declaration = builder->createReplaceableCompositeType(tag,
         name, scope, file, line, 0,
         size, alignment);
     backend->setDebugTypeTranslation(type, declaration);
@@ -130,19 +130,61 @@ AnyValuePtr LLVMDebugTypeVisitor::visitStructureType(const StructureTypePtr &typ
         elements.push_back(translateFieldOf(field, declaration));
     }
 
-    auto definition = builder->createStructType(
-        scope, name, file, line,
-        size, alignment,
-        llvm::DINode::FlagZero, nullptr, 
-        builder->getOrCreateArray(elements),
-        0, nullptr,
-        backend->getNameMangler()->mangleTypeInfo(type)
-    );
+    llvm::DICompositeType *definition = nullptr;
+    
+    if(type->isStructureType())
+    {
+        definition = builder->createStructType(
+            scope, name, file, line,
+            size, alignment,
+            llvm::DINode::FlagZero, nullptr, 
+            builder->getOrCreateArray(elements),
+            0, nullptr,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
+    else if(type->isClassType())
+    {
+        definition = builder->createClassType(
+            scope, name, file, line,
+            size, alignment, 0,
+            llvm::DINode::FlagZero, nullptr,
+            builder->getOrCreateArray(elements),
+            nullptr, nullptr,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
+    else if(type->isUnionType())
+    {
+        definition = builder->createUnionType(
+            scope, name, file, line,
+            size, alignment,
+            llvm::DINode::FlagZero,
+            builder->getOrCreateArray(elements),
+            0,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
     
     auto result = builder->replaceTemporary(llvm::TempDINode(declaration), definition);
     backend->setDebugTypeTranslation(type, result);
     builder->retainType(result);
-    return wrapLLVMDebugType(result);
+    return result;
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitStructureType(const StructureTypePtr &type)
+{
+    return wrapLLVMDebugType(translateAggregateTypeWithFields(type, llvm::dwarf::DW_TAG_structure_type));
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitClassType(const ClassTypePtr &type)
+{
+    return wrapLLVMDebugType(translateAggregateTypeWithFields(type, llvm::dwarf::DW_TAG_class_type));
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitUnionType(const UnionTypePtr &type)
+{
+    return wrapLLVMDebugType(translateAggregateTypeWithFields(type, llvm::dwarf::DW_TAG_union_type));
 }
 
 } // End of namespace Environment

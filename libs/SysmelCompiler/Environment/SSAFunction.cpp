@@ -1,4 +1,5 @@
 #include "Environment/SSAFunction.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 #include "Environment/SSACodeRegion.hpp"
 #include "Environment/SSACodeRegionLocalValue.hpp"
 #include "Environment/SSAValueVisitor.hpp"
@@ -12,6 +13,11 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<SSAFunction> SSAFunctionTypeRegistration;
+
+SSAFunction::SSAFunction()
+{
+    sourcePosition = ASTSourcePosition::empty();
+}
 
 bool SSAFunction::isSSAFunction() const
 {

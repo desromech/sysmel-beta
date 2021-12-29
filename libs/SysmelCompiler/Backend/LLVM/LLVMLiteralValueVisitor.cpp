@@ -9,7 +9,9 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
+#include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
+#include "Environment/TupleType.hpp"
 
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
@@ -99,13 +101,13 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLike
     sysmelAssert("unsupported pointer type value constant" && false);
 }
 
-AnyValuePtr LLVMLiteralValueVisitor::visitStructureTypeValue(const StructureTypeValuePtr &value)
+llvm::Constant *LLVMLiteralValueVisitor::translateSequentialStructAggregateTypeValue(const AggregateTypeValuePtr &value)
 {
     sysmelAssert(value->getType());
-    auto structureType = value->getType().staticAs<StructureType> ();
+    auto aggregateType = value->getType().staticAs<AggregateType> ();
     auto resultType = llvm::cast<llvm::StructType> (backend->translateType(value->getType()));
     
-    const auto &slotTypes = structureType->getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes();
+    const auto &slotTypes = aggregateType->getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes();
     auto slotCount = value->slots.size();
     sysmelAssert(slotCount == slotTypes.size());
 
@@ -114,7 +116,22 @@ AnyValuePtr LLVMLiteralValueVisitor::visitStructureTypeValue(const StructureType
     for(size_t i = 0; i < slotCount; ++i)
         slots.push_back(backend->translateLiteralValueWithExpectedType(value->slots[i], slotTypes[i]));
 
-    return wrapLLVMConstant(llvm::ConstantStruct::get(resultType, slots));
+    return llvm::ConstantStruct::get(resultType, slots);
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitTupleTypeValue(const TupleTypeValuePtr &value)
+{
+    return wrapLLVMConstant(translateSequentialStructAggregateTypeValue(value));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitClassTypeValue(const ClassTypeValuePtr &value)
+{
+    return wrapLLVMConstant(translateSequentialStructAggregateTypeValue(value));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitStructureTypeValue(const StructureTypeValuePtr &value)
+{
+    return wrapLLVMConstant(translateSequentialStructAggregateTypeValue(value));
 }
 
 } // End of namespace Environment
