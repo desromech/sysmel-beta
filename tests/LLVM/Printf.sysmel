@@ -1,0 +1,1 @@
+public externC function printf(format: Char8 const pointer, args: CVarArg params) => Int32.

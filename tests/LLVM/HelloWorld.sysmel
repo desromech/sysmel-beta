@@ -1,0 +1,4 @@
+public externC function main() => Int32 := {
+    printf("Hello World\n").
+    0
+}

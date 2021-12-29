@@ -4,3 +4,7 @@ if(NOT WIN32)
 endif()
 
 add_subdirectory(SysmelCompiler)
+
+if(HAVE_LLVM_BACKEND)
+    add_subdirectory(LLVM)
+endif()

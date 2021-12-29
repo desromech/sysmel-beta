@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(Sysmel)
 
+option(BUILD_SYSMEL_TESTS "Build Sysmel Tests" ON)
+
 # Check the build type
 if (CMAKE_BUILD_TYPE STREQUAL "")
 	# CMake defaults to leaving CMAKE_BUILD_TYPE empty. This screws up
@@ -88,5 +90,7 @@ add_subdirectory(libs)
 add_subdirectory(apps)
 
 # Build the tests
-enable_testing()
-add_subdirectory(tests)
+if(BUILD_SYSMEL_TESTS)
+	enable_testing()
+	add_subdirectory(tests)
+endif()

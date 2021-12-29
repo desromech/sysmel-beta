@@ -82,6 +82,8 @@ int main(int argc, const char *argv[])
                 parameters.emitSExpression = true;
             else if(arg == "-emit-ssa-sexpr")
                 parameters.emitSSASExpression = true;
+            else if(arg == "-module")
+                parameters.moduleName = argv[++i];
             else if(arg == "-o")
                 parameters.outputFileName = argv[++i];
             else if(arg == "-g")
