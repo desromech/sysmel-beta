@@ -2,6 +2,11 @@
 #include <iomanip>
 #include <sstream>
 
+#ifndef _WIN32
+#include <limits.h>
+#include <unistd.h>
+#endif
+
 namespace Sysmel
 {
 namespace Environment
@@ -228,10 +233,10 @@ std::string basename(const std::string &path)
     {
         auto c = path[i];
         if(c == '/' || c == '\\')
-            pos = i;
+            pos = i + 1;
     }
 
-    return pos != std::string::npos ? path.substr(0, pos) : path;
+    return pos != std::string::npos ? path.substr(pos) : path;
 }
 
 std::string basenameWithoutExtension(const std::string &path)
@@ -252,7 +257,20 @@ std::string dirname(const std::string &path)
             pos = i;
     }
 
-    return pos != std::string::npos ? path.substr(pos) : std::string();
+    return pos != std::string::npos ? path.substr(0, pos) : std::string();
+}
+
+std::string makeAbsolutePath(const std::string &path)
+{
+#ifdef _WIN32
+    // TODO: Use GetFullPathName
+#else
+    std::unique_ptr<char[]> buffer(new char[PATH_MAX+1]);
+    auto result = realpath(path.c_str(), buffer.get());
+    return result ? result : path;
+#endif
+
+    return path;
 }
 
 std::vector<std::string> split(const std::string &string, char delim)

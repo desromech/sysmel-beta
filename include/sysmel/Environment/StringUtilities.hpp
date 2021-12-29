@@ -24,6 +24,7 @@ SYSMEL_COMPILER_LIB_EXPORT std::string formatString(const std::string &format, c
 SYSMEL_COMPILER_LIB_EXPORT std::string basename(const std::string &path);
 SYSMEL_COMPILER_LIB_EXPORT std::string basenameWithoutExtension(const std::string &path);
 SYSMEL_COMPILER_LIB_EXPORT std::string dirname(const std::string &path);
+SYSMEL_COMPILER_LIB_EXPORT std::string makeAbsolutePath(const std::string &path);
 SYSMEL_COMPILER_LIB_EXPORT bool stringBeginsWith(const std::string &string, const std::string &prefix);
 SYSMEL_COMPILER_LIB_EXPORT std::vector<std::string> split(const std::string &string, char delim = ' ');
 

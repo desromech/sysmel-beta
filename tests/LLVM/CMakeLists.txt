@@ -20,7 +20,7 @@ function(sysmel_llvm_codegen_unittest TestName)
     )
 
     add_executable(LLVMCodegenTest${TestName} ${TestName}${ObjExtension})
-    set_target_properties(LLVMCodegenTest${TestName} PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(LLVMCodegenTest${TestName} PROPERTIES LINKER_LANGUAGE CXX OUTPUT_NAME "${TestName}")
 
     add_test(NAME RunLLVMCodegenTest${TestName} COMMAND LLVMCodegenTest${TestName})
     set_tests_properties(RunLLVMCodegenTest${TestName} PROPERTIES ${ARGN})

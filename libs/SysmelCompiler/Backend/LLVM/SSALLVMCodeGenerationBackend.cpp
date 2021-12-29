@@ -235,13 +235,23 @@ llvm::DIFile *SSALLVMCodeGenerationBackend::getOrCreateDIFileFor(const std::stri
     if(it != debugFileMap.end())
         return it->second;
 
-    auto name = basename(filename);
-    auto dir = dirname(filename);
+    auto absoluteFileName = makeAbsolutePath(filename);
+    if(filename != absoluteFileName)
+    {
+        it = debugFileMap.find(absoluteFileName);
+        if(it != debugFileMap.end())
+            return it->second;
+    }
+
+    auto name = basename(absoluteFileName);
+    auto dir = dirname(absoluteFileName);
     if(dir.empty())
         dir = ".";
 
     auto diFile = diBuilder->createFile(name, dir);
     debugFileMap.insert({filename, diFile});
+    if(filename != absoluteFileName)
+        debugFileMap.insert({absoluteFileName, diFile});
     return diFile;
 }
 
