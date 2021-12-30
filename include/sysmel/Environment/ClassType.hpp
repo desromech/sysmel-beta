@@ -39,7 +39,9 @@ protected:
     virtual void evaluatePendingSuperclassDefinitions() const;
 
     virtual void computeObjectLifetimeTriviality() override;
+
     virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
+    virtual void buildLayout() override;
 
     mutable DeferredCompileTimeCodeFragmentPtrList pendingSuperclassCodeFragments;
     mutable bool hasEvaluatedSuperclassCodeFragment = false;

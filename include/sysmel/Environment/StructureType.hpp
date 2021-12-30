@@ -23,8 +23,13 @@ public:
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
+    bool isPacked() const;
+    void setPacked(bool newPacked);
+
 protected:
     virtual AggregateTypeLayoutPtr makeLayoutInstance() override;
+
+    bool isPacked_ = false;
 };
 
 /**

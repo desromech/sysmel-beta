@@ -1225,6 +1225,24 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(PackedStructNoPadding)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDefinition = evaluateString("public struct TestStruct packed definition: {public field first type: Int8. public field second type: Int32}.");
+                CHECK(structDefinition->isStructureType());
+
+                auto structType = staticObjectCast<Type> (structDefinition);
+                CHECK_EQUAL(2u, structType->getFieldCount());
+
+                CHECK_EQUAL(5u, structType->getMemorySize());
+                CHECK_EQUAL(1u, structType->getMemoryAlignment());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
     TEST(StructMethod)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){
@@ -1390,6 +1408,62 @@ SUITE(SysmelCompileTimeEvaluation)
             });
         });
     }
+
+    TEST(InheritedMethod)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto superClass = evaluateString(R"(
+public class SuperClass definition: {
+    public method one => Int32 := 1.
+}.
+)");
+                CHECK(superClass->isClassType());
+
+                auto subClass = evaluateString("public class SubClass superclass: SuperClass; definition: {}.");
+                CHECK(subClass->isClassType());
+
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("SuperClass() one"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("SubClass() one"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
+    TEST(InheritedField)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto superClass = evaluateString(R"(
+public class SuperClass definition: {
+    public field x type: Int32.
+}.
+)");
+                CHECK(superClass->isClassType());
+
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("SuperClass memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("SuperClass memoryAlignment"));
+
+                auto subClass = evaluateString(R"(
+public class SubClass superclass: SuperClass; definition: {
+    public field y type: Int32.
+}.
+)");
+                CHECK(subClass->isClassType());
+
+                CHECK_EQUAL(8u, evaluateStringWithValueOfType<uint64_t> ("SubClass memorySize"));
+                CHECK_EQUAL(4u, evaluateStringWithValueOfType<uint64_t> ("SubClass memoryAlignment"));
+
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("SuperClass() x: 2; x"));
+                CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("SubClass() x: 2; y: 4; x"));
+                CHECK_EQUAL(4, evaluateStringWithValueOfType<int32_t> ("SubClass() x: 2; y: 4; y"));
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
     TEST(TemplateStructure)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){

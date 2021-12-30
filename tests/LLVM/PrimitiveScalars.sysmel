@@ -1,7 +1,7 @@
 
-##class Int32TestCase superclass: TestCase; definition: {
-TestCase extend: {
-    public compileTime constant ValueType := Int32.
+public template PrimitiveIntegerTestCase(VT: Type)
+    := class superclass: TestCase; definition: {
+    public compileTime constant ValueType := VT.
 
     public method equality => Void := {
         self assert: ValueType(1) = ValueType(1).
@@ -27,14 +27,27 @@ TestCase extend: {
 
     }.
 
+    public method arithmetic => Void := {
+
+    }.
+
     public method run => Void := {
         self
             equality;
-            comparisons
+            comparisons;
+            arithmetic
     }.
 }.
 
+compileTime constant Int32TestCase := PrimitiveIntegerTestCase(Int32).
+compileTime constant Int64TestCase := PrimitiveIntegerTestCase(Int64).
+compileTime constant UInt32TestCase := PrimitiveIntegerTestCase(UInt32).
+compileTime constant UInt64TestCase := PrimitiveIntegerTestCase(UInt64).
+
 public externC function main() => Int32 := {
-    TestCase() run.
+    Int32TestCase() run.
+    Int64TestCase() run.
+    UInt32TestCase() run.
+    UInt64TestCase() run.
     0
 }.

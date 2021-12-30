@@ -125,12 +125,6 @@ PointerLikeTypeValuePtr ReferenceType::makeWithValue(const AnyValuePtr &value)
     return reference;
 }
 
-void ReferenceType::addDefaultTypeConversionRules()
-{
-    addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
-    addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
-}
-
 void ReferenceType::addSpecializedInstanceMethods()
 {
     auto pointerType = baseType->pointerFor(addressSpace);

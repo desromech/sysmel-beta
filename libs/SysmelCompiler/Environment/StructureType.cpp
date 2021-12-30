@@ -45,7 +45,19 @@ AnyValuePtr StructureType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
 
 AggregateTypeLayoutPtr StructureType::makeLayoutInstance()
 {
-    return basicMakeObject<AggregateTypeSequentialLayout> ();
+    auto result = basicMakeObject<AggregateTypeSequentialLayout> ();
+    result->setPacked(isPacked_);
+    return result;
+}
+
+bool StructureType::isPacked() const
+{
+    return isPacked_;
+}
+
+void StructureType::setPacked(bool newPacked)
+{
+    isPacked_ = newPacked;
 }
 
 bool StructureTypeValue::isStructureTypeValue() const

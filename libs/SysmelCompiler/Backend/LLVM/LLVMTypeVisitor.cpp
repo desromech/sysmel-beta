@@ -124,10 +124,10 @@ AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type
 
 AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix)
 {
-    auto translatedType = llvm::StructType::create(*backend->getContext(), prefix + type->getQualifiedName());
+    auto layout = type->getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    auto translatedType = llvm::StructType::create(*backend->getContext(), {}, prefix + type->getQualifiedName(), layout->isPacked());
     backend->setTypeTranslation(type, translatedType);
 
-    auto layout = type->getLayout().staticAs<AggregateTypeSequentialLayout> ();
     const auto &slotTypes = layout->getSlotTypes();
     std::vector<llvm::Type*> translatedSlotTypes;
     translatedSlotTypes.reserve(slotTypes.size());

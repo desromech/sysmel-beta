@@ -5,6 +5,8 @@
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/LiteralString.hpp"
+#include "Environment/IdentityTypeConversionRule.hpp"
+#include "Environment/ValueAsVoidTypeConversionRule.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 

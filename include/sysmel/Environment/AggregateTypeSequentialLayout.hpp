@@ -30,6 +30,8 @@ public:
     virtual bool hasTrivialAssignCopyingFrom() override;
     virtual bool hasTrivialAssignMovingFrom() override;
 
+    virtual void addInheritance(const AggregateTypeSequentialLayoutPtr &parentLayout);
+
     virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
     virtual void finishGroup() override;
 
@@ -45,6 +47,16 @@ public:
         return offsets;
     }
 
+    bool isPacked() const
+    {
+        return isPacked_;
+    }
+
+    void setPacked(bool newPacked)
+    {
+        isPacked_ = newPacked;
+    }
+
 protected:
     uint64_t memorySize = 0;
     uint64_t memoryAlignment = 1;
@@ -55,6 +67,8 @@ protected:
     bool hasTrivialFinalization_ = true;
     bool hasTrivialAssignCopyingFrom_ = true;
     bool hasTrivialAssignMovingFrom_ = true;
+
+    bool isPacked_ = false;
 
     TypePtrList slotTypes;
     std::vector<uint64_t> offsets;

@@ -95,6 +95,27 @@ void ClassType::computeObjectLifetimeTriviality()
     SuperType::computeObjectLifetimeTriviality();
 }
 
+void ClassType::buildLayout()
+{
+    evaluateAllPendingBodyBlockCodeFragments();
+
+    layout = makeLayoutInstance();
+
+    // Add the super class layout.
+    auto st = getSupertype();
+    if(st->isClassType() || st->isStructureType())
+    {
+        auto supertypeLayout = st.staticAs<AggregateTypeWithFields> ()->getLayout();
+        layout.staticAs<AggregateTypeSequentialLayout> ()->addInheritance(staticObjectCast<AggregateTypeSequentialLayout> (supertypeLayout));
+    }
+
+    // Add my layout.
+    layout->beginGroup();
+    for(auto &field : fields)
+        layout->addFieldVariable(field);
+    layout->finishGroup();
+}
+
 AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
 {
     return basicMakeObject<AggregateTypeSequentialLayout> ();

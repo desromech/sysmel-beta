@@ -110,13 +110,6 @@ PointerLikeTypeValuePtr TemporaryReferenceType::makeWithValue(const AnyValuePtr 
     return temporaryReference;
 }
 
-void TemporaryReferenceType::addDefaultTypeConversionRules()
-{
-    addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
-    addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
-
-}
-
 void TemporaryReferenceType::addSpecializedInstanceMethods()
 {
     auto pointerType = baseType->pointerFor(addressSpace);

@@ -27,6 +27,7 @@ SExpression ASTStructNode::asSExpression() const
         SExpressionIdentifier{{programEntityVisibilityToString(visibility)}},
         SExpressionIdentifier{{dllLinkageModeToString(dllLinkageMode)}},
         SExpressionIdentifier{{externalLanguageModeToString(externalLanguageMode)}},
+        isPacked,
         name ? name->asSExpression() : nullptr,
         body ? body->asSExpression() : nullptr,
     }};

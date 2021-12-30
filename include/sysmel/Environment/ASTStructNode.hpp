@@ -20,6 +20,8 @@ public:
     virtual bool isASTStructNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+
+    bool isPacked = false;
 };
 
 } // End of namespace Environment

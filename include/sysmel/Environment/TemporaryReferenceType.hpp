@@ -40,7 +40,6 @@ public:
 
     virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     
-    virtual void addDefaultTypeConversionRules() override;
     void addSpecializedInstanceMethods();
 };
 

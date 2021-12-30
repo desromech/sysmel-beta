@@ -2218,6 +2218,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
         structureType->setVisibility(node->visibility);
         structureType->setExternalLanguageMode(node->externalLanguageMode);
         structureType->setDllLinkageMode(node->dllLinkageMode);
+        structureType->setPacked(node->isPacked);
         ownerEntity->recordChildProgramEntityDefinition(structureType);
         if(name)
             ownerEntity->bindProgramEntityWithVisibility(structureType, analyzedNode->visibility);

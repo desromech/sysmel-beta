@@ -19,6 +19,17 @@ TypeConversionRulePtr DowncastTypeConversionRule::uniqueInstance()
 bool DowncastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    auto undecoratedSourceType = sourceType->asUndecoratedType();
+    auto undecoratedTargetType = targetType->asUndecoratedType();
+
+    // Pointers and references.
+    if(undecoratedSourceType->isPointerType() && undecoratedTargetType->isPointerType())
+        return true;
+    else if(undecoratedSourceType->isReferenceLikeType() && undecoratedTargetType->isReferenceLikeType())
+        return true;
+    else if(undecoratedSourceType->isReferenceLikeType() || undecoratedTargetType->isReferenceLikeType())
+        return false;
+
     return targetType->isSubtypeOf(sourceType);
 }
 

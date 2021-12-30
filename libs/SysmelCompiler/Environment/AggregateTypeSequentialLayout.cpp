@@ -52,6 +52,42 @@ bool AggregateTypeSequentialLayout::hasTrivialAssignMovingFrom()
     return hasTrivialAssignMovingFrom_;
 }
 
+void AggregateTypeSequentialLayout::addInheritance(const AggregateTypeSequentialLayoutPtr &parentLayout)
+{
+    if(!parentLayout)
+        return;
+
+    // Inherit the triviality.
+    hasTrivialInitialization_ = hasTrivialInitialization_ && parentLayout->hasTrivialInitialization();
+    hasTrivialInitializationCopyingFrom_ = hasTrivialInitializationCopyingFrom_ && parentLayout->hasTrivialInitializationCopyingFrom();
+    hasTrivialInitializationMovingFrom_ = hasTrivialInitializationMovingFrom_ && parentLayout->hasTrivialInitializationMovingFrom();
+    hasTrivialFinalization_ = hasTrivialFinalization_ && parentLayout->hasTrivialFinalization();
+    hasTrivialAssignCopyingFrom_ = hasTrivialAssignCopyingFrom_ && parentLayout->hasTrivialAssignCopyingFrom();
+    hasTrivialAssignMovingFrom_ = hasTrivialAssignMovingFrom_ && parentLayout->hasTrivialAssignMovingFrom();
+
+    // Append the parent layout slot types and offsets.
+    const auto &parentSlotTypes = parentLayout->getSlotTypes();
+    const auto &parentOffsets = parentLayout->getOffsets();
+
+    slotTypes.insert(slotTypes.end(), parentSlotTypes.begin(), parentSlotTypes.end());
+    offsets.reserve(parentOffsets.size());
+    auto parentAlignment = parentLayout->getMemoryAlignment();
+    if(memoryAlignment != 0 && parentAlignment)
+    {
+        memorySize = alignedTo(memorySize, parentAlignment);
+        memoryAlignment = std::max(memoryAlignment, parentAlignment);
+        auto extraOffset = memorySize;
+        for(auto &parentSlotOffset : parentOffsets)
+            offsets.push_back(parentSlotOffset + extraOffset);
+
+        memorySize += parentLayout->getMemorySize();
+    }
+    else
+    {
+        offsets.insert(offsets.end(), parentOffsets.begin(), parentOffsets.end());
+    }
+}
+
 uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
 {
     hasTrivialInitialization_ = hasTrivialInitialization_ && slotType->hasTrivialInitialization();
@@ -74,9 +110,17 @@ uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
         }
         else
         {
-            offset = alignedTo(memorySize, slotAlignment);
-            memorySize = offset + slotSize;
-            memoryAlignment = std::max(memoryAlignment, slotAlignment);
+            if(isPacked_)
+            {
+                offset = memorySize;
+                memorySize = offset + slotSize;
+            }
+            else
+            {
+                offset = alignedTo(memorySize, slotAlignment);
+                memorySize = offset + slotSize;
+                memoryAlignment = std::max(memoryAlignment, slotAlignment);
+            }
         }
     }
 
