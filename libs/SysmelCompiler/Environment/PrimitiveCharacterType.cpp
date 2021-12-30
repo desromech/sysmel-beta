@@ -54,6 +54,16 @@ char Char8::unwrapAsChar8() const
     return value;
 }
 
+char32_t Char8::unwrapAsChar32() const
+{
+    return value;
+}
+
+LargeInteger Char8::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string Char8::asString() const
 {
     return castToString(value);
@@ -102,6 +112,16 @@ char16_t Char16::unwrapAsChar16() const
     return value;
 }
 
+char32_t Char16::unwrapAsChar32() const
+{
+    return value;
+}
+
+LargeInteger Char16::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
+}
+
 std::string Char16::asString() const
 {
     return castToString(value);
@@ -148,6 +168,11 @@ AnyValuePtr Char32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 char32_t Char32::unwrapAsChar32() const
 {
     return value;
+}
+
+LargeInteger Char32::unwrapAsLargeInteger() const
+{
+    return LargeInteger{value};
 }
 
 std::string Char32::asString() const

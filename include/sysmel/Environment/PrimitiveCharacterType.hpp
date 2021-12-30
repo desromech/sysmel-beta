@@ -51,6 +51,8 @@ public:
     }
 
     virtual char unwrapAsChar8() const override;
+    virtual char32_t unwrapAsChar32() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -82,6 +84,8 @@ public:
     }
 
     virtual char16_t unwrapAsChar16() const override;
+    virtual char32_t unwrapAsChar32() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;
@@ -113,6 +117,7 @@ public:
     }
 
     virtual char32_t unwrapAsChar32() const override;
+    virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;

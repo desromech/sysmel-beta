@@ -1,3 +1,8 @@
+public class Boolean8TestCase superclass: TestCase; definition: {
+    public method run => Void := {
+
+    }.
+}.
 
 public template PrimitiveIntegerTestCase(VT: Type)
     := class superclass: TestCase; definition: {
@@ -39,15 +44,35 @@ public template PrimitiveIntegerTestCase(VT: Type)
     }.
 }.
 
+compileTime constant Int8TestCase := PrimitiveIntegerTestCase(Int8).
+compileTime constant Int16TestCase := PrimitiveIntegerTestCase(Int16).
 compileTime constant Int32TestCase := PrimitiveIntegerTestCase(Int32).
 compileTime constant Int64TestCase := PrimitiveIntegerTestCase(Int64).
+
+compileTime constant UInt8TestCase := PrimitiveIntegerTestCase(UInt8).
+compileTime constant UInt16TestCase := PrimitiveIntegerTestCase(UInt16).
 compileTime constant UInt32TestCase := PrimitiveIntegerTestCase(UInt32).
 compileTime constant UInt64TestCase := PrimitiveIntegerTestCase(UInt64).
 
+compileTime constant Char8TestCase := PrimitiveIntegerTestCase(Char8).
+compileTime constant Char16TestCase := PrimitiveIntegerTestCase(Char16).
+compileTime constant Char32TestCase := PrimitiveIntegerTestCase(Char32).
+
 public externC function main() => Int32 := {
+    Boolean8TestCase() run.
+
+    Int8TestCase() run.
+    Int16TestCase() run.
     Int32TestCase() run.
     Int64TestCase() run.
+
+    UInt8TestCase() run.
+    UInt16TestCase() run.
     UInt32TestCase() run.
     UInt64TestCase() run.
+
+    Char8TestCase() run.
+    Char16TestCase() run.
+    Char32TestCase() run.
     0
 }.

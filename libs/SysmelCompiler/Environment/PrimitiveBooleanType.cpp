@@ -32,6 +32,33 @@ Boolean8Ptr Boolean8::make(bool value)
 MethodCategories Boolean8::__instanceMethods__()
 {
     return MethodCategories{
+        {"comparisons", {
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.equals", "=", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value == b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.equals", "==", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value == b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.not-equals", "~=", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value != b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.not-equals", "~~", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value != b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.less-than", "<", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value < b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.less-equals", "<=", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value <= b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.greater-than", ">", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value > b->value);
+            }, MethodFlags::Pure),
+            makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr, Boolean8Ptr)> ("boolean.greater-equals", ">=", +[](const Boolean8Ptr &a, const Boolean8Ptr &b) {
+                return Boolean8::make(a->value >= b->value);
+            }, MethodFlags::Pure),
+        }},
+
         {"logic", {
             makeIntrinsicMethodBinding<Boolean8Ptr (Boolean8Ptr)> ("boolean.not", "pre-!", +[](const Boolean8Ptr &v) {
                 return make(!v->value);

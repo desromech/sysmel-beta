@@ -318,7 +318,10 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 
     // Verify the function.
     if(llvm::verifyFunction(*currentFunction, &llvm::errs()))
+    {
+        currentFunction->print(llvm::errs());
         abort();
+    }
 
     return wrapLLVMValue(currentFunction);
 }
@@ -442,7 +445,7 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
 
     // Create the code region basic blocks.
     const auto &sourceBasicBlocks = codeRegion->getBasicBlocks();
-    const auto basicBlockCount = codeRegion->getBasicBlocks().size();
+    const auto basicBlockCount = sourceBasicBlocks.size();
     std::vector<llvm::BasicBlock*> translatedBlocks;
     translatedBlocks.reserve(basicBlockCount);
     for(auto &sourceBB : sourceBasicBlocks)
@@ -453,7 +456,7 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
     }
 
     // Enter into the code region.
-    builder->CreateBr(translatedBlocks.back());
+    builder->CreateBr(translatedBlocks.front());
 
     // Keep track of the code region context.
     auto oldCodeRegion = currentCodeRegion;
@@ -547,6 +550,7 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
     sourceBasicBlock->instructionsDo([&](const SSAInstructionPtr &instruction){
         translateInstruction(instruction);
     });
+    sysmelAssert(isLastTerminator());
 }
 
 void SSALLVMValueVisitor::declareDebugArgument(const SSACodeRegionArgumentPtr &argument)
@@ -1167,7 +1171,8 @@ llvm::Value *SSALLVMValueVisitor::simplifyDegeneratePhi(llvm::PHINode *phi)
 
 bool SSALLVMValueVisitor::isLastTerminator() const
 {
-    return builder->GetInsertBlock()->back().isTerminator();
+    auto block = builder->GetInsertBlock();
+    return !block->empty() && block->back().isTerminator();
 }
 
 llvm::Value *SSALLVMValueVisitor::createLocalFinalizationFlagFor(const SSAValuePtr &localVariable)
