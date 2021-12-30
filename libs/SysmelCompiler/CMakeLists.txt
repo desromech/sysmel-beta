@@ -190,6 +190,7 @@ set(Environment_Sources
     NameMangler.cpp
     Namespace.cpp
     NamespaceMetaBuilder.cpp
+    NotInCompileTimeError.cpp
     NotMatchingPatternFound.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp

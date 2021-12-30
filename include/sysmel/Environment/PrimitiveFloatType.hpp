@@ -69,6 +69,7 @@ public:
     }
 
     virtual float unwrapAsFloat32() const override;
+    virtual double unwrapAsFloat64() const override;
 
     virtual std::string asString() const override;
     virtual std::string printString() const override;

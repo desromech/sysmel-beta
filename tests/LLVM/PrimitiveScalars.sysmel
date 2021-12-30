@@ -1,6 +1,65 @@
 public class Boolean8TestCase superclass: TestCase; definition: {
-    public method run => Void := {
+    public method equality => Void := {
+        let a type: Boolean8 := false.
+        let b type: Boolean8 := true.
 
+        self assert: a = a.
+        self assert: a == a.
+        self assert: b = b.
+        self assert: b == b.
+
+        self deny: a ~= a.
+        self deny: a ~~ a.
+        self deny: b ~= b.
+        self deny: b ~~ b.
+
+        self deny: a = b.
+        self deny: a == b.
+        self deny: b = a.
+        self deny: b == a.
+
+        self assert: a ~= b.
+        self assert: a ~~ b.
+        self assert: b ~= a.
+        self assert: b ~~ a.
+    }.
+
+    public method comparisons => Void := {
+        let a type: Boolean8 := false.
+        let b type: Boolean8 := true.
+
+        self assert: a <= a.
+        self assert: b <= b.
+        self assert: a >= a.
+        self assert: b >= b.
+
+        self assert: a < b.
+        self assert: a <= b.
+        self deny: a >= b.
+        self deny: a > b.
+
+        self deny: b < a.
+        self deny: b <= a.
+        self assert: b >= a.
+        self assert: b > a.
+    }.
+
+    public method logical => Void := {
+        let a type: Boolean8 := false.
+        let b type: Boolean8 := true.
+
+        self assert: a not equals: b.
+        self assert: !a equals: b.
+
+        self assert: b not equals: a.
+        self assert: !b equals: a.
+    }.
+
+    public method run => Void := {
+        self
+            equality;
+            comparisons;
+            logical
     }.
 }.
 
@@ -17,23 +76,392 @@ public template PrimitiveIntegerTestCase(VT: Type)
         self assert: ValueType(1) ~= ValueType(0).
         self assert: ValueType(0) ~= ValueType(1).
 
+        self assert: ValueType(1) == ValueType(1).
+        self deny: ValueType(1) == ValueType(0).
+        self deny: ValueType(0) == ValueType(1).
+
+        self deny: ValueType(1) ~~ ValueType(1).
+        self assert: ValueType(1) ~~ ValueType(0).
+        self assert: ValueType(0) ~~ ValueType(1).
+
         let a type: ValueType := 1.
         let b type: ValueType := 1.
         let c type: ValueType := 0.
 
         self assert: a = b.
+        self assert: a == b.
         self assert: a equals: b.
 
         self assert: b = a.
+        self assert: b == a.
         self assert: b equals: a.
     }.
 
     public method comparisons => Void := {
+        let zero type: ValueType := 0.
+        let one type: ValueType := 1.
 
+        self deny: zero < zero.
+        self assert: zero <= zero.
+        self deny: zero > zero.
+        self assert: zero >= zero.
+
+        self assert: zero < one.
+        self assert: zero <= one.
+        self deny: zero >= one.
+        self deny: zero > one.
+
+        self deny: one < zero.
+        self deny: one <= zero.
+        self assert: one >= zero.
+        self assert: one > zero.
     }.
 
     public method arithmetic => Void := {
+        let zero type: ValueType := 0.
+        let one type: ValueType := 1.
+        let two type: ValueType := 2.
+        let three type: ValueType := 3.
+        let four type: ValueType := 4.
+        let five type: ValueType := 5.
+        let six type: ValueType := 6.
 
+        ## Negation
+        let minusOne := ValueType(-1).
+        self assert: one negated equals: minusOne.
+        self assert: -one equals: minusOne.
+        self assert: minusOne negated equals: one.
+        self assert: -minusOne equals: one.
+
+        self assert: zero bitInvert equals: minusOne.
+        self assert: ~zero equals: minusOne.
+
+        ## Addition
+        self assert: zero + zero equals: zero.
+        self assert: one + zero equals: one.
+        self assert: zero + one equals: one.
+        self assert: one + one equals: two.
+        self assert: two + three equals: five.
+        self assert: three + two equals: five.
+
+        ## Subtraction
+        self assert: zero - zero equals: zero.
+        self assert: one - zero equals: one.
+        self assert: one - one equals: zero.
+        self assert: two - two equals: zero.
+        self assert: three - two equals: one.
+        self assert: five - two equals: three.
+
+        ## Multiplication
+        self assert: zero * zero equals: zero.
+        self assert: one * zero equals: zero.
+        self assert: zero * one equals: zero.
+        self assert: one * one equals: one.
+        self assert: two * one equals: two.
+        self assert: one * two equals: two.
+        self assert: two * two equals: four.
+        self assert: three * two equals: six.
+        self assert: two * three equals: six.
+
+        ## Division
+        self assert: zero / one equals: zero.
+        self assert: one / one equals: one.
+        self assert: two / one equals: two.
+        self assert: three / one equals: three.
+        self assert: four / one equals: four.
+
+        self assert: zero / two equals: zero.
+        self assert: one / two equals: zero.
+        self assert: two / two equals: one.
+        self assert: three / two equals: one.
+        self assert: four / two equals: two.
+
+        self assert: zero / three equals: zero.
+        self assert: one / three equals: zero.
+        self assert: two / three equals: zero.
+        self assert: three / three equals: one.
+        self assert: four / three equals: one.
+        self assert: five / three equals: one.
+        self assert: six / three equals: two.
+
+        self assert: zero // one equals: zero.
+        self assert: one // one equals: one.
+        self assert: two // one equals: two.
+        self assert: three // one equals: three.
+        self assert: four // one equals: four.
+
+        self assert: zero // two equals: zero.
+        self assert: one // two equals: zero.
+        self assert: two // two equals: one.
+        self assert: three // two equals: one.
+        self assert: four // two equals: two.
+
+        self assert: zero // three equals: zero.
+        self assert: one // three equals: zero.
+        self assert: two // three equals: zero.
+        self assert: three // three equals: one.
+        self assert: four // three equals: one.
+        self assert: five // three equals: one.
+        self assert: six // three equals: two.
+        ## Module
+        self assert: zero % one equals: zero.
+        self assert: one % one equals: zero.
+        self assert: two % one equals: zero.
+        self assert: three % one equals: zero.
+        self assert: four % one equals: zero.
+
+        self assert: zero % two equals: zero.
+        self assert: one % two equals: one.
+        self assert: two % two equals: zero.
+        self assert: three % two equals: one.
+        self assert: four % two equals: zero.
+
+        self assert: zero % three equals: zero.
+        self assert: one % three equals: one.
+        self assert: two % three equals: two.
+        self assert: three % three equals: zero.
+        self assert: four % three equals: one.
+        self assert: five % three equals: two.
+        self assert: six % three equals: zero.
+
+        self assert: zero \\ one equals: zero.
+        self assert: one \\ one equals: zero.
+        self assert: two \\ one equals: zero.
+        self assert: three \\ one equals: zero.
+        self assert: four \\ one equals: zero.
+
+        self assert: zero \\ two equals: zero.
+        self assert: one \\ two equals: one.
+        self assert: two \\ two equals: zero.
+        self assert: three \\ two equals: one.
+        self assert: four \\ two equals: zero.
+
+        self assert: zero \\ three equals: zero.
+        self assert: one \\ three equals: one.
+        self assert: two \\ three equals: two.
+        self assert: three \\ three equals: zero.
+        self assert: four \\ three equals: one.
+        self assert: five \\ three equals: two.
+        self assert: six \\ three equals: zero.
+    }.
+
+    public method bitwise => Void := {
+        let zero type: ValueType := 0.
+        let one type: ValueType := 1.
+        let two type: ValueType := 2.
+        let three type: ValueType := 3.
+        let four type: ValueType := 4.
+
+        self assert: one | two equals: three.
+        self assert: (one bitOr: two) equals: three.
+        self assert: three | two equals: three.
+        self assert: (three bitOr: two) equals: three.
+
+        self assert: one & two equals: zero.
+        self assert: (one bitAnd: two) equals: zero.
+        self assert: three & two equals: two.
+        self assert: (three bitAnd: two) equals: two.
+
+        self assert: three ^ three equals: zero.
+        self assert: (three bitXor: three) equals: zero.
+        self assert: three ^ one equals: two.
+        self assert: (three bitXor: one) equals: two.
+
+        self assert: (one << zero) equals: one.
+        self assert: (one << one) equals: two.
+        self assert: (one << two) equals: four.
+
+        self assert: (three >> zero) equals: three.
+        self assert: (three >> one) equals: one.
+    }.
+
+    public method run => Void := {
+        self
+            equality;
+            comparisons;
+            arithmetic;
+            bitwise
+    }.
+}.
+
+public template PrimitiveFloatTestCase(VT: Type)
+    := class superclass: TestCase; definition: {
+    public compileTime constant ValueType := VT.
+
+    public method equality => Void := {
+        self assert: ValueType(1) = ValueType(1).
+        self deny: ValueType(1) = ValueType(0).
+        self deny: ValueType(0) = ValueType(1).
+
+        self deny: ValueType(1) ~= ValueType(1).
+        self assert: ValueType(1) ~= ValueType(0).
+        self assert: ValueType(0) ~= ValueType(1).
+
+        self assert: ValueType(1) == ValueType(1).
+        self deny: ValueType(1) == ValueType(0).
+        self deny: ValueType(0) == ValueType(1).
+
+        self deny: ValueType(1) ~~ ValueType(1).
+        self assert: ValueType(1) ~~ ValueType(0).
+        self assert: ValueType(0) ~~ ValueType(1).
+
+        let a type: ValueType := 1.
+        let b type: ValueType := 1.
+        let c type: ValueType := 0.
+
+        self assert: a = b.
+        self assert: a == b.
+        self assert: a equals: b.
+
+        self assert: b = a.
+        self assert: b == a.
+        self assert: b equals: a.
+    }.
+
+    public method comparisons => Void := {
+        let zero type: ValueType := 0.0.
+        let one type: ValueType := 1.0.
+
+        self deny: zero < zero.
+        self assert: zero <= zero.
+        self deny: zero > zero.
+        self assert: zero >= zero.
+
+        self assert: zero < one.
+        self assert: zero <= one.
+        self deny: zero >= one.
+        self deny: zero > one.
+
+        self deny: one < zero.
+        self deny: one <= zero.
+        self assert: one >= zero.
+        self assert: one > zero.
+    }.
+
+    public method arithmetic => Void := {
+        let zero type: ValueType := 0.0.
+        let one type: ValueType := 1.0.
+        let two type: ValueType := 2.0.
+        let three type: ValueType := 3.0.
+        let four type: ValueType := 4.0.
+        let five type: ValueType := 5.0.
+        let six type: ValueType := 6.0.
+        let minusOne type: ValueType := -1.0.
+
+        ## Negation
+        self assert: one negated equals: minusOne.
+        self assert: -one equals: minusOne.
+        self assert: minusOne negated equals: one.
+        self assert: -minusOne equals: one.
+
+        ## Addition
+        self assert: zero + zero equals: zero.
+        self assert: one + zero equals: one.
+        self assert: zero + one equals: one.
+        self assert: one + one equals: two.
+        self assert: two + three equals: five.
+        self assert: three + two equals: five.
+
+        ## Subtraction
+        self assert: zero - zero equals: zero.
+        self assert: one - zero equals: one.
+        self assert: one - one equals: zero.
+        self assert: two - two equals: zero.
+        self assert: three - two equals: one.
+        self assert: five - two equals: three.
+
+        ## Multiplication
+        self assert: zero * zero equals: zero.
+        self assert: one * zero equals: zero.
+        self assert: zero * one equals: zero.
+        self assert: one * one equals: one.
+        self assert: two * one equals: two.
+        self assert: one * two equals: two.
+        self assert: two * two equals: four.
+        self assert: three * two equals: six.
+        self assert: two * three equals: six.
+
+        ## Division
+        self assert: zero / one equals: zero.
+        self assert: one / one equals: one.
+        self assert: two / one equals: two.
+        self assert: three / one equals: three.
+        self assert: four / one equals: four.
+
+        self assert: zero / two equals: zero.
+        self assert: one / two equals: ValueType(0.5).
+        self assert: two / two equals: one.
+        self assert: three / two equals: ValueType(1.5).
+        self assert: four / two equals: two.
+
+        self assert: zero / four equals: zero.
+        self assert: one / four equals: ValueType(0.25).
+        self assert: two / four equals: ValueType(0.5).
+        self assert: three / four equals: ValueType(0.75).
+        self assert: four / four equals: one.
+        self assert: five / four equals: ValueType(1.25).
+        self assert: six / four equals: ValueType(1.5).
+
+        self assert: zero // one equals: zero.
+        self assert: one // one equals: one.
+        self assert: two // one equals: two.
+        self assert: three // one equals: three.
+        self assert: four // one equals: four.
+
+        self assert: zero // two equals: zero.
+        self assert: one // two equals: zero.
+        self assert: two // two equals: one.
+        self assert: three // two equals: one.
+        self assert: four // two equals: two.
+
+        self assert: zero // four equals: zero.
+        self assert: one // four equals: zero.
+        self assert: two // four equals: zero.
+        self assert: three // four equals: zero.
+        self assert: four // four equals: one.
+        self assert: five // four equals: one.
+        self assert: six // four equals: one.
+
+        ## Module
+        self assert: zero % one equals: zero.
+        self assert: one % one equals: zero.
+        self assert: two % one equals: zero.
+        self assert: three % one equals: zero.
+        self assert: four % one equals: zero.
+
+        self assert: zero % two equals: zero.
+        self assert: one % two equals: one.
+        self assert: two % two equals: zero.
+        self assert: three % two equals: one.
+        self assert: four % two equals: zero.
+
+        self assert: zero % three equals: zero.
+        self assert: one % three equals: one.
+        self assert: two % three equals: two.
+        self assert: three % three equals: zero.
+        self assert: four % three equals: one.
+        self assert: five % three equals: two.
+        self assert: six % three equals: zero.
+
+        self assert: zero \\ one equals: zero.
+        self assert: one \\ one equals: zero.
+        self assert: two \\ one equals: zero.
+        self assert: three \\ one equals: zero.
+        self assert: four \\ one equals: zero.
+
+        self assert: zero \\ two equals: zero.
+        self assert: one \\ two equals: one.
+        self assert: two \\ two equals: zero.
+        self assert: three \\ two equals: one.
+        self assert: four \\ two equals: zero.
+
+        self assert: zero \\ three equals: zero.
+        self assert: one \\ three equals: one.
+        self assert: two \\ three equals: two.
+        self assert: three \\ three equals: zero.
+        self assert: four \\ three equals: one.
+        self assert: five \\ three equals: two.
+        self assert: six \\ three equals: zero.
     }.
 
     public method run => Void := {
@@ -58,6 +486,9 @@ compileTime constant Char8TestCase := PrimitiveIntegerTestCase(Char8).
 compileTime constant Char16TestCase := PrimitiveIntegerTestCase(Char16).
 compileTime constant Char32TestCase := PrimitiveIntegerTestCase(Char32).
 
+compileTime constant Float32TestCase := PrimitiveFloatTestCase(Float32).
+compileTime constant Float64TestCase := PrimitiveFloatTestCase(Float64).
+
 public externC function main() => Int32 := {
     Boolean8TestCase() run.
 
@@ -74,5 +505,9 @@ public externC function main() => Int32 := {
     Char8TestCase() run.
     Char16TestCase() run.
     Char32TestCase() run.
+    
+    Float32TestCase() run.
+    Float64TestCase() run.
+    
     0
 }.

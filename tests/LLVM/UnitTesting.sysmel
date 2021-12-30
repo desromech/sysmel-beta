@@ -1,23 +1,29 @@
 public class TestCase definition: {
     public macro method assert: expression := ``{
         `,expression ifFalse: {
-            self failWithMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion:"
         }
     }.
 
     public macro method deny: expression := ``{
         `,expression ifTrue: {
-            self failWithMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
         }
     }.
 
     public macro method assert: expression equals: expected := ``{
         (`,expression = `,expected) ifFalse: {
-            self failWithMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
         }
     }.
 
-    public method failWithMessage: (message: Char8 const pointer) ::=> Void := {
-        printf("Failure: %s\n")
+    public macro method assert: expression notEquals: expected := ``{
+        (`,expression ~= `,expected) ifFalse: {
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
+        }
+    }.
+
+    public method failInLine: (line: Char8 const pointer) withMessage: (message: Char8 const pointer) ::=> Void := {
+        printf("%s Failure: %s\n", line, message)
     }.
 }.

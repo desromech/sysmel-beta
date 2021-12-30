@@ -12,6 +12,7 @@
 #include "Environment/Module.hpp"
 #include "Environment/Namespace.hpp"
 #include "Environment/Type.hpp"
+#include "Environment/StringUtilities.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -90,7 +91,8 @@ ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceStri
 
 ASTNodePtr LanguageSupport::parseFileNamed(const std::string &fileName)
 {
-    return parseSourceStringNamed(readContentFromFileNamed(fileName), fileName);
+    auto absoluteFileName = makeAbsolutePath(fileName);
+    return parseSourceStringNamed(readContentFromFileNamed(absoluteFileName), absoluteFileName);
 }
 
 CompiledMethodPtr LanguageSupport::analyzeASTInEnvironment(const ASTNodePtr &ast, const ASTAnalysisEnvironmentPtr &environment)

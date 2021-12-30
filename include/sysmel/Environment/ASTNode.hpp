@@ -95,6 +95,9 @@ public:
 
     ASTNode();
 
+    static AnyValuePtrList __constructors__();
+    static MethodCategories __instanceMethods__();
+
     virtual bool isASTNode() const override;
     virtual bool isASTLiteralSymbolValue() const;
     virtual bool isASTIdentifierSymbolValue() const;

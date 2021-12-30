@@ -262,7 +262,13 @@ struct IntrinsicPrimitiveIntegerMethods
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.div" + signSuffix, "/", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value / b->value);
                 }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.div" + signSuffix, "//", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                    return makeValue(a->value / b->value);
+                }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod" + signSuffix, "%", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                    return makeValue(a->value % b->value);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod" + signSuffix, "\\\\", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value % b->value);
                 }, MethodFlags::Pure),
             }},
@@ -294,7 +300,7 @@ struct IntrinsicPrimitiveIntegerMethods
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.shift-left", "<<", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value << b->value);
                 }, MethodFlags::Pure),
-                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.shift-right", ">>", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.shift-right" + signSuffix, ">>", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value >> b->value);
                 }, MethodFlags::Pure),
             }}

@@ -3,10 +3,12 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/LiteralString.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
+#include "Environment/NotInCompileTimeError.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -83,7 +85,38 @@ void PointerType::addSpecializedInstanceMethods()
         }
     }
 
+    auto booleanType = Boolean8::__staticType__();
     addMethodCategories(MethodCategories{
+            {"comparisons", {
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.equals", "=", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.equals", "==", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.not-equals", "~=", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.not-equals", "~~", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.less-than", "<", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.less-equals", "<=", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.greater-than", ">", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+                makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (PointerTypeValuePtr, PointerTypeValuePtr)> ("pointer.greater-equals", ">=", selfFromThis(), booleanType, {selfFromThis()}, [=](const PointerTypeValuePtr &, const PointerTypeValuePtr &) -> Boolean8Ptr {
+                    SysmelSelfNotInCompileTimeError();
+                }, MethodFlags::NotInCompileTime),
+
+            }},
+
             {"accessing", {
                 // value/_
                 makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (PointerTypeValuePtr)> ("pointer.to.reference", "value", selfFromThis(), referenceType, {}, [=](const PointerTypeValuePtr &value) {

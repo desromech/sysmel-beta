@@ -262,6 +262,9 @@ std::string dirname(const std::string &path)
 
 std::string makeAbsolutePath(const std::string &path)
 {
+    if(path == "-")
+        return path;
+
 #ifdef _WIN32
     // TODO: Use GetFullPathName
 #else

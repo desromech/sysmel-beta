@@ -56,15 +56,77 @@ static BootstrapTypeRegistration<SSALLVMValue> SSALLVMValueTypeRegistration;
 static BootstrapTypeRegistration<SSALLVMConstant> SSALLVMConstantTypeRegistration;
 
 std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext &)>> SSALLVMValueVisitor::intrinsicGenerators = {
+    // Boolean
     {"boolean.not", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
-        return context.builder->CreateNot(context.arguments.back());
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateNot(
+            context.self->coerceBooleanIntoI1(context.arguments.back())
+            ));
     }},
     {"boolean.xor", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
-        return context.builder->CreateXor(context.arguments[0], context.arguments[1]);
+        return context.self->coerceI1IntoBoolean8(
+                context.builder->CreateXor(
+                    context.self->coerceBooleanIntoI1(context.arguments[0]),
+                    context.self->coerceBooleanIntoI1(context.arguments[1]))
+        );
     }},
 
+    {"boolean.equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpEQ(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    {"boolean.not-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpNE(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    {"boolean.less-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpULT(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    {"boolean.less-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpULE(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    {"boolean.greater-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpUGT(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    {"boolean.greater-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateICmpUGE(
+                context.self->coerceBooleanIntoI1(context.arguments[0]),
+                context.self->coerceBooleanIntoI1(context.arguments[1])
+            ));
+    }},
+
+    // Integer
     {"integer.conversion.sign-extend", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateSExt(context.arguments.back(), context.resultType);
@@ -102,20 +164,196 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULT(context.arguments[0], context.arguments[1]));
     }},
 
+    {"integer.less-equals.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpSLE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.less-equals.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.greater-than.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpSGT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.greater-than.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpUGT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.greater-equals.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpSGE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.greater-equals.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpUGE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"integer.neg", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateNeg(context.arguments[0]);
+    }},
+
     {"integer.add", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateAdd(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.sub", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSub(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.mul.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateMul(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.mul.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateMul(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.div.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSDiv(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.div.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateUDiv(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.mod.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSRem(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.mod.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateURem(context.arguments[0], context.arguments[1]);
+    }},
+
+    {"integer.bitnot", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateNot(context.arguments[0]);
+    }},
+    {"integer.bitor", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateOr(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.bitand", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateAnd(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.bitxor", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateXor(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.shift-left", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateShl(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.shift-right.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateLShr(context.arguments[0], context.arguments[1]);
+    }},
+    {"integer.shift-right.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateAShr(context.arguments[0], context.arguments[1]);
+    }},
+
+    // Floats
+    {"float.equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpUEQ(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.not-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpUNE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.less-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpULT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.less-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpULE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.greater-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpUGT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.greater-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpUGE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"float.neg", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateFNeg(context.arguments[0]);
     }},
 
     {"float.add", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateFAdd(context.arguments[0], context.arguments[1]);
     }},
+    {"float.sub", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateFSub(context.arguments[0], context.arguments[1]);
+    }},
     {"float.mul", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateFMul(context.arguments[0], context.arguments[1]);
     }},
+    {"float.div", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateFDiv(context.arguments[0], context.arguments[1]);
+    }},
+    {"float.idiv", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        auto rem = context.builder->CreateFRem(context.arguments[0], context.arguments[1]);
+        auto dividend = context.builder->CreateFSub(context.arguments[0], rem);
+        return context.builder->CreateFDiv(dividend, context.arguments[1]);
+    }},
+    {"float.mod", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateFRem(context.arguments[0], context.arguments[1]);
+    }},
 
+    // Pointer
+    {"pointer.equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpEQ(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"pointer.not-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpNE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"pointer.less-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"pointer.less-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpULE(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"pointer.greater-than", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpUGT(context.arguments[0], context.arguments[1]));
+    }},
+
+    {"pointer.greater-equals", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(context.builder->CreateICmpUGE(context.arguments[0], context.arguments[1]));
+    }},
 
     {"pointer.to.reference", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
@@ -127,6 +365,7 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateGEP(context.arguments[0], context.arguments[1]);
     }},
 
+    // Reference
     {"reference.load", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateLoad(context.arguments[0]);
@@ -144,6 +383,7 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateStore(context.arguments[1], context.arguments[0]);
     }},
 
+    // CVarArg
     {"cvar.arg.identity", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() <= 2);
         return context.arguments.back();

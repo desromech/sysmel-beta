@@ -12,6 +12,7 @@
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include <string.h>
+#include <math.h>
 #include <algorithm>
 
 namespace Sysmel
@@ -122,6 +123,15 @@ struct IntrinsicPrimitiveFloatMethods
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.div", "/", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return makeValue(a->value / b->value);
                 }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.idiv", "//", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                    return makeValue(trunc(a->value / b->value));
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.mod", "%", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                    return makeValue(fmod(a->value, b->value));
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.mod", "\\\\", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                    return makeValue(fmod(a->value, b->value));
+                }, MethodFlags::Pure),
             }}
         };
     }
@@ -231,6 +241,11 @@ AnyValuePtr Float32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 }
 
 float Float32::unwrapAsFloat32() const
+{
+    return value;
+}
+
+double Float32::unwrapAsFloat64() const
 {
     return value;
 }

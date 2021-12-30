@@ -17,7 +17,7 @@ bool FunctionVariable::isFunctionVariable() const
 
 AnyValuePtr FunctionVariable::findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope)
 {
-    return compileTimeCleanUpScope->lookupStoreBindingRecursively(selfFromThis());
+    return compileTimeCleanUpScope ? compileTimeCleanUpScope->lookupStoreBindingRecursively(selfFromThis()) : nullptr;
 }
 
 } // End of namespace Environment

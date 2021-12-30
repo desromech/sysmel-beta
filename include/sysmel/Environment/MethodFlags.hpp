@@ -45,6 +45,10 @@ enum class MethodFlags : uint32_t
 
     // Special semantics.
     Trivial = 1<<15,
+
+    // Compile time availability.
+    NotInCompileTime = 1<<16,
+    CompileTime = 1<<17,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)

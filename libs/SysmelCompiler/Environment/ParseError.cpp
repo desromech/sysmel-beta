@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<ParseError> ParseErrorTypeRegistration;
 
 std::string ParseError::getDescription() const
 {
-    return parseErrorNode->sourcePosition->printString() + ": " + parseErrorNode->errorMessage;
+    return parseErrorNode->sourcePosition->printString() + ": Parse Error: " + parseErrorNode->errorMessage;
 }
 
 } // End of namespace Environment

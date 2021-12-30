@@ -278,8 +278,13 @@ AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr
 {
     if(node->isKindOf(expectedType))
         return node;
-    
-    sysmelAssert("TODO: Support non-node macro parameters" && false);
+
+    auto analyzedNode = analyzeNodeIfNeededWithExpectedType(node, expectedType);
+    if(analyzedNode->isASTErrorNode())
+        return analyzedNode;
+
+    // TODO: Guard this compile time evaluation.
+    return evaluateInCompileTime(analyzedNode);
 }
 
 PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType)

@@ -337,7 +337,10 @@ void SpecificMethod::makeTrivial()
 
 bool SpecificMethod::isCompileTimeMethod() const
 {
-    return isMacroMethod();
+    if((methodFlags & MethodFlags::NotInCompileTime) != MethodFlags::None)
+        return false;
+
+    return (methodFlags & MethodFlags::CompileTime) != MethodFlags::None || isMacroMethod();
 }
 
 } // End of namespace Environment

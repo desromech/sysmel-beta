@@ -1,7 +1,10 @@
 #include "Environment/ASTNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/ASTSourcePosition.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/LiteralString.hpp"
 #include "Environment/SubclassResponsibility.hpp"
+#include "Environment/MacroInvocationContext.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -11,6 +14,27 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<ASTNode> ASTNodeTypeRegistration;
+
+// FIXME: Move onto the ASTLiteralNode
+AnyValuePtrList ASTNode::__constructors__()
+{
+    return AnyValuePtrList{
+        makeConstructor<ASTNodePtr (TypePtr, LiteralStringPtr)> (+[](const TypePtr &, const LiteralStringPtr &value){
+            return value->asASTNodeRequiredInPosition(ASTSourcePosition::empty());
+        }, MethodFlags::Pure),        
+    };
+}
+
+MethodCategories ASTNode::__instanceMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTSourcePositionPtr (ASTNodePtr)> ("sourcePosition", [](const ASTNodePtr &self) {
+                return self->sourcePosition;
+            }, MethodFlags::Pure),
+        }},
+    };
+}
 
 ASTNode::ASTNode()
 {
