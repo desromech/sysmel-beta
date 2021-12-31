@@ -5,9 +5,12 @@
 #include "../../Environment/SSACodeGenerationBackend.hpp"
 
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4100 4127 4146 4244 4247 4245 4456 4458 4459 4267 4310 4324 4624 4996)
 #endif
 
 #include "llvm/IR/BasicBlock.h"
@@ -35,8 +38,10 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/Bitcode/BitcodeWriter.h"
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 #pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 #include <unordered_map>

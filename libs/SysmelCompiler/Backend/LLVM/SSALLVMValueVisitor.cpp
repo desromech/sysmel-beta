@@ -521,9 +521,9 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
         auto argType = mainCodeRegion->getArgument(i)->getValueType();
         auto paramIndex = isClosure ? i + 1 : i;
         if(backend->isSignedIntegerType(argType))
-            currentFunction->addParamAttr(paramIndex, llvm::Attribute::SExt);
+            currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::SExt);
         else if(backend->isUnsignedIntegerType(argType))
-            currentFunction->addParamAttr(paramIndex, llvm::Attribute::ZExt);
+            currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::ZExt);
     }
 
     // Make the debug information
@@ -640,7 +640,7 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
     for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
     {
         auto sourceArgument = codeRegion->getArgument(i);
-        auto targetArgument = currentFunction->getArg(i + (isClosure ? 1 : 0));
+        auto targetArgument = currentFunction->getArg(uint32_t(i + (isClosure ? 1 : 0)));
         localTranslatedValueMap.insert({sourceArgument, targetArgument});
     }
 
@@ -763,7 +763,7 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
             {
                 const auto &capture = currentCodeRegion->getCapture(i);
                 auto captureType = capture->getValueType();
-                auto capturePointer = builder->CreateConstInBoundsGEP2_32(nullptr, contextPointer, 0, i + 1);
+                auto capturePointer = builder->CreateConstInBoundsGEP2_32(nullptr, contextPointer, 0, uint32_t(i + 1));
                 auto captureValue = capturePointer;
                 if(!captureType->isPassedByReference())
                     captureValue = builder->CreateLoad(capturePointer);
@@ -1211,7 +1211,7 @@ AnyValuePtr SSALLVMValueVisitor::visitMakeClosureInstruction(const SSAMakeClosur
     for(size_t i = 0; i < rawCapturedValues.size(); ++i)
     {
         auto capture = translateValue(rawCapturedValues[i]);
-        builder->CreateStore(capture, builder->CreateConstInBoundsGEP2_32(nullptr, closureStruct, 0, i + 1));
+        builder->CreateStore(capture, builder->CreateConstInBoundsGEP2_32(nullptr, closureStruct, 0, uint32_t(i + 1)));
     }
 
     // Cast and return the closure.
