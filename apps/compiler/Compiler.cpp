@@ -18,6 +18,7 @@ struct CompilerParameters
     bool emitTargetIR = false;
     bool emitSExpression = false;
     bool emitSSASExpression = false;
+    bool semanticAnalysisOnly = false;
     TargetNameAndFeatures targetName = TargetNameAndFeatures::getForHost();
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
     DebugInformationType debugInformationType = DebugInformationType::None;
@@ -122,6 +123,8 @@ int main(int argc, const char *argv[])
                 parameters.picMode = PICMode::PIC;
             else if(arg == "-fPIE")
                 parameters.picMode = PICMode::PIE;
+            else if(arg == "-semantic-analysis-only")
+                parameters.semanticAnalysisOnly = true;
             else
             {
                 std::cout << "Unsupported command line parameter " << arg << std::endl;
@@ -160,7 +163,7 @@ int main(int argc, const char *argv[])
             }
         });
 
-        if(exitCode != 0)
+        if(exitCode != 0 || parameters.semanticAnalysisOnly)
             return;
 
         if(parameters.emitSExpression)

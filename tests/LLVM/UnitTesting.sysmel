@@ -1,25 +1,25 @@
 public class TestCase definition: {
     public macro method assert: expression := ``{
         `,expression ifFalse: {
-            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion:"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion (" -- `,(expression sourcePosition sourceText) -- ") is not true"
         }
     }.
 
     public macro method deny: expression := ``{
         `,expression ifTrue: {
-            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion (" -- `,(expression sourcePosition sourceText) -- ") is not false"
         }
     }.
 
     public macro method assert: expression equals: expected := ``{
         (`,expression = `,expected) ifFalse: {
-            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "(" -- `,(expression sourcePosition sourceText) -- ") is not equals to " -- `,(expected sourcePosition sourceText)
         }
     }.
 
     public macro method assert: expression notEquals: expected := ``{
         (`,expression ~= `,expected) ifFalse: {
-            self failInLine: `,(expression sourcePosition asString) withMessage: "Assertion"
+            self failInLine: `,(expression sourcePosition asString) withMessage: "(" -- `,(expression sourcePosition sourceText) -- ") is equals to " -- `,(expected sourcePosition sourceText)
         }
     }.
 

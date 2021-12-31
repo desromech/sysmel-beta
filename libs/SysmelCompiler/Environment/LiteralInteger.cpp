@@ -3,6 +3,10 @@
 #include "Environment/LiteralPositiveInteger.hpp"
 #include "Environment/LiteralCharacter.hpp"
 
+#include "Environment/ASTAnalysisEnvironment.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/PrimitiveIntegerType.hpp"
+
 #include "Environment/LiteralSymbol.hpp"
 #include "Environment/LiteralFraction.hpp"
 #include "Environment/DivisionByZeroError.hpp"
@@ -222,6 +226,24 @@ MethodCategories LiteralInteger::__instanceMethods__()
             }, MethodFlags::Pure)
         }}
     };
+}
+
+TypePtr LiteralInteger::__asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
+{
+    if(concreteLiterals && node->isASTLiteralValueNode() && !environment->hasValidLiteralValueInferrenceType())
+    {
+        auto literalValue = node.staticAs<ASTLiteralValueNode> ()->value->unwrapAsLargeInteger();
+        if(LargeInteger{std::numeric_limits<int32_t>::min()} <= literalValue && literalValue <= LargeInteger{std::numeric_limits<int32_t>::max()})
+            return Int32::__staticType__();
+
+        if(literalValue > LargeInteger{std::numeric_limits<int64_t>::max()})
+            return UInt64::__staticType__();
+
+        return Int64::__staticType__();
+    }
+
+    return SuperType::__asInferredTypeForWithModeInEnvironment__(selfType, node, mode, isMutable, concreteLiterals, environment);
+
 }
 
 LiteralIntegerPtr LiteralInteger::makeFor(const LargeInteger &value)

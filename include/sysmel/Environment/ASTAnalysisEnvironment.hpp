@@ -29,6 +29,8 @@ public:
     ASTAnalysisEnvironmentPtr copyForPublicProgramEntityBody(const ProgramEntityPtr &publicProgramEntity);
     ASTAnalysisEnvironmentPtr copyWithBreakAndContinueLevel(uint32_t newBreakLevelCount, uint32_t newContinueLevelCount);
 
+    bool hasValidLiteralValueInferrenceType() const;
+
     LexicalScopePtr lexicalScope;
     CleanUpScopePtr cleanUpScope;
     LanguageSupportPtr languageSupport;

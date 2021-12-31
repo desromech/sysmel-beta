@@ -21,7 +21,10 @@ public:
     static constexpr char const __typeName__[] = "LiteralNumber";
     static constexpr char const __sysmelTypeName__[] = "LiteralNumber";
 
+    static MethodCategories __instanceMacroMethods__();
     static MethodCategories __instanceMethods__();
+
+    static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
 
     virtual bool isLiteralNumber() const override;
 

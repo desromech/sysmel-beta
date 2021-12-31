@@ -15,6 +15,25 @@ TypePtr WrapperTypeFor<std::string>::apply()
     return LiteralString::__staticType__();
 }
 
+MethodCategories LiteralString::__instanceMethods__()
+{
+    return MethodCategories{
+        {"string operations", {
+            makeMethodBinding<std::string (std::string, std::string)> ("--", [](const std::string &a, const std::string &b) {
+                return a + b;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<std::string (std::string, uint64_t)> ("first:", [](const std::string &s, uint64_t count) {
+                return s.substr(0, count);
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<std::string (std::string, uint64_t)> ("allButFirst:", [](const std::string &s, uint64_t count) {
+                return s.substr(count);
+            }, MethodFlags::Pure),
+        }}
+    };
+}
+
 LiteralStringPtr LiteralString::makeFor(const std::string &value)
 {
     auto result = basicMakeObject<LiteralString> ();

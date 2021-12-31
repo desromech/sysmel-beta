@@ -745,6 +745,49 @@ SUITE(SysmelCompileTimeEvaluation)
 
                 CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("Float64(42)"));
                 CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("Float64(42.5)"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int8_t> ("-1i8"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int8_t> ("0i8"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int8_t> ("1i8"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int16_t> ("-1i16"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int16_t> ("0i16"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int16_t> ("1i16"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int32_t> ("-1i32"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int32_t> ("0i32"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("1i32"));
+
+                CHECK_EQUAL(-1, evaluateStringWithValueOfType<int64_t> ("-1i64"));
+                CHECK_EQUAL(0, evaluateStringWithValueOfType<int64_t> ("0i64"));
+                CHECK_EQUAL(1, evaluateStringWithValueOfType<int64_t> ("1i64"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint8_t> ("0u8"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("1u8"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint16_t> ("0u16"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint16_t> ("1u16"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint32_t> ("0u32"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("1u32"));
+
+                CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint64_t> ("0u64"));
+                CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint64_t> ("1u64"));
+
+                CHECK_EQUAL(char(0), evaluateStringWithValueOfType<char> ("0c8"));
+                CHECK_EQUAL(char(1), evaluateStringWithValueOfType<char> ("1c8"));
+
+                CHECK_EQUAL(char16_t(0), evaluateStringWithValueOfType<char16_t> ("0c16"));
+                CHECK_EQUAL(char16_t(1), evaluateStringWithValueOfType<char16_t> ("1c16"));
+
+                CHECK_EQUAL(char32_t(0), evaluateStringWithValueOfType<char32_t> ("0c32"));
+                CHECK_EQUAL(char32_t(1), evaluateStringWithValueOfType<char32_t> ("1c32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<float> ("42f32"));
+                CHECK_EQUAL(42.5f, evaluateStringWithValueOfType<float> ("42.5f32"));
+
+                CHECK_EQUAL(42, evaluateStringWithValueOfType<double> ("42f64"));
+                CHECK_EQUAL(42.5, evaluateStringWithValueOfType<double> ("42.5f64"));
             });
         });
     }

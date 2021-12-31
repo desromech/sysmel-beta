@@ -46,6 +46,14 @@ std::string ASTSourceCodePosition::getSourceCodeFileName() const
     return sourceCode->name;
 }
 
+std::string ASTSourceCodePosition::getSourceText() const
+{
+    if(startPosition > endPosition)
+        return std::string();
+
+    return sourceCode->contents.substr(startPosition, endPosition - startPosition);
+}
+
 int ASTSourceCodePosition::getLine() const
 {
     return int(startLine);
@@ -54,6 +62,15 @@ int ASTSourceCodePosition::getLine() const
 int ASTSourceCodePosition::getColumn() const
 {
     return int(startColumn);
+}
+
+int ASTSourceCodePosition::getEndLine() const
+{
+    return int(endLine);
+}
+int ASTSourceCodePosition::getEndColumn() const
+{
+    return int(endColumn);
 }
 
 SExpression ASTSourceCodePosition::asSExpression() const

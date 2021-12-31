@@ -19,6 +19,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "LiteralCharacter";
 
     static MethodCategories __instanceMethods__();
+    static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
     
     virtual bool isLiteralCharacter() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;

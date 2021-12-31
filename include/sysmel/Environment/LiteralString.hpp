@@ -21,6 +21,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "LiteralString";
 
     static LiteralStringPtr makeFor(const std::string &value);
+    static MethodCategories __instanceMethods__();
         
     virtual bool isLiteralString() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;

@@ -1013,7 +1013,7 @@ static ASTNodePtr parseBinaryExpressionWithPrecedence(ASTNodePtr leftOperand, To
 
         // Make the node.
         auto messageSend = std::make_shared<ASTMessageSendNode> ();
-        messageSend->setTokenRange(leftOperand->tokens.until(rightOperand->tokens));
+        messageSend->setTokenRange(leftOperand->tokens.untilEndOf(rightOperand->tokens));
         messageSend->selector = selectorNode;
         messageSend->receiver = leftOperand;
         messageSend->arguments.push_back(rightOperand);

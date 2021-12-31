@@ -21,11 +21,16 @@ public:
 
     static ASTSourcePositionPtr empty();
     
+    static MethodCategories __instanceMethods__();
+
     virtual bool isASTSourcePosition() const override;
 
     virtual std::string getSourceCodeFileName() const;
+    virtual std::string getSourceText() const;
     virtual int getLine() const;
     virtual int getColumn() const;
+    virtual int getEndLine() const;
+    virtual int getEndColumn() const;
 };
 
 } // End of namespace Environment

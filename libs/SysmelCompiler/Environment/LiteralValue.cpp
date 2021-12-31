@@ -25,12 +25,8 @@ void LiteralValue::__addTypeConversionRules__(const TypePtr &type)
 
 TypePtr LiteralValue::__asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
 {
-    if(concreteLiterals && node->isASTLiteralValueNode())
-    {
-        auto result = environment->literalValueInferrenceType;
-        if(result && !result->isVoidType())
-            return result;
-    }
+    if(concreteLiterals && node->isASTLiteralValueNode() && environment->hasValidLiteralValueInferrenceType())
+        return environment->literalValueInferrenceType;
 
     return SuperType::__asInferredTypeForWithModeInEnvironment__(selfType, node, mode, isMutable, concreteLiterals, environment);
 }

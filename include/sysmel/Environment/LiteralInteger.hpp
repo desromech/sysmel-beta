@@ -23,6 +23,7 @@ public:
     static constexpr char const __sysmelTypeName__[] = "LiteralInteger";
 
     static MethodCategories __instanceMethods__();
+    static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
 
     static LiteralIntegerPtr makeFor(const LargeInteger &value);
     static LiteralIntegerPtr makeFor(LargeInteger &&value);

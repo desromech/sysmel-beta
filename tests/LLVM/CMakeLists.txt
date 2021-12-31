@@ -18,6 +18,8 @@ function(sysmel_llvm_codegen_unittest TestName)
         DEPENDS
             sysmelc
             ${CMAKE_CURRENT_SOURCE_DIR}/Printf.sysmel
+            ${CMAKE_CURRENT_SOURCE_DIR}/BasicMacros.sysmel
+            ${CMAKE_CURRENT_SOURCE_DIR}/UnitTesting.sysmel
             ${TestName}.sysmel   # Treated as relative to CMAKE_CURRENT_SOURCE_DIR
     )
 

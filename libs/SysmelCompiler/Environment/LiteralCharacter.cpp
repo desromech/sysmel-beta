@@ -1,5 +1,10 @@
 #include "Environment/LiteralCharacter.hpp"
 #include "Environment/StringUtilities.hpp"
+
+#include "Environment/ASTAnalysisEnvironment.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/PrimitiveCharacterType.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
@@ -33,6 +38,14 @@ MethodCategories LiteralCharacter::__instanceMethods__()
     return MethodCategories{ };
 }
 
+TypePtr LiteralCharacter::__asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)
+{
+    if(concreteLiterals && node->isASTLiteralValueNode() && !environment->hasValidLiteralValueInferrenceType())
+        return Char32::__staticType__();
+
+    return SuperType::__asInferredTypeForWithModeInEnvironment__(selfType, node, mode, isMutable, concreteLiterals, environment);
+
+}
 std::string LiteralCharacter::asString() const
 {
     std::string result;

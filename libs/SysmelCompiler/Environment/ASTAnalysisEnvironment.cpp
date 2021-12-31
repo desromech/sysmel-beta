@@ -45,5 +45,10 @@ ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithBreakAndContinueLevel(
     return result;
 }
 
+bool ASTAnalysisEnvironment::hasValidLiteralValueInferrenceType() const
+{
+    return literalValueInferrenceType && !literalValueInferrenceType->isVoidType();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel
