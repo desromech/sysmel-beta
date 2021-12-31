@@ -1,8 +1,11 @@
 #include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/Type.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/Error.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
 #include "Environment/Utilities.hpp"
 #include <algorithm>
 #include <sstream>
@@ -130,6 +133,20 @@ AnyValuePtr PrimitiveVectorType::basicNewValue()
 
 void PrimitiveVectorType::addSpecializedInstanceMethods()
 {
+    auto accessElement = [](const PrimitiveVectorTypeValuePtr &self, const AnyValuePtr &index) {
+        auto indexValue = index->unwrapAsInt64();
+        if(indexValue < 0 || size_t(indexValue) > self->elements.size())
+            signalNewWithMessage<Error> ("Vector element index is out of range.");
+
+        return self->elements[indexValue];
+    };
+
+    addMethodCategories(MethodCategories{
+        {"accessing", {
+            // []
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, AnyValuePtr)> ("vector.element", "[]", selfFromThis(), elementType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
+        }},
+    });
 }
 
 

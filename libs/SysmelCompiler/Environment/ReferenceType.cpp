@@ -17,21 +17,24 @@ static BootstrapTypeRegistration<ReferenceTypeValue> ReferenceTypeValueTypeRegis
 
 ReferenceTypePtr ReferenceType::make(const TypePtr &baseType)
 {
-    return makeWithAddressSpace(baseType, internSymbol("generic"));
+    return makeWithAddressSpace(baseType, nullptr);
 }
 
 ReferenceTypePtr ReferenceType::makeWithAddressSpace(const TypePtr &baseType, const AnyValuePtr &addressSpace)
 {
+    auto canonicalAddressSpace = addressSpace;
+    if(validAnyValue(addressSpace)->isUndefined())
+        canonicalAddressSpace = internSymbol("generic");
     auto &cache = RuntimeContext::getActive()->referenceTypeCache;
-    auto it = cache.find({baseType, addressSpace});
+    auto it = cache.find({baseType, canonicalAddressSpace});
     if(it != cache.end())
         return it->second;
 
     auto result = basicMakeObject<ReferenceType> ();
     result->setSupertypeAndImplicitMetaType(ReferenceTypeValue::__staticType__());
     result->baseType = baseType;
-    result->addressSpace = addressSpace;
-    cache.insert({{baseType, addressSpace}, result});
+    result->addressSpace = canonicalAddressSpace;
+    cache.insert({{baseType, canonicalAddressSpace}, result});
     result->addSpecializedInstanceMethods();
     return result;
 }

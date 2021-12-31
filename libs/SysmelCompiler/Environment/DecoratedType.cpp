@@ -66,6 +66,11 @@ bool DecoratedType::isParamsDecoratedType() const
     return (decorations & TypeDecorationFlags::Params) != TypeDecorationFlags::None;
 }
 
+TypeDecorationFlags DecoratedType::getDecorationFlags() const
+{
+    return decorations;
+}
+
 bool DecoratedType::supportsDynamicCompileTimeMessageSend() const
 {
     return baseType->supportsDynamicCompileTimeMessageSend();

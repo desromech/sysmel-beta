@@ -356,6 +356,9 @@ public:
     /// Makes a reference type where I am the base type with the specified address space.
     virtual ReferenceTypePtr refFor(const AnyValuePtr &addressSpace);
 
+    /// Makes a reference type where I am the base type, and I have the same qualifications as another reference type.
+    virtual ReferenceTypePtr refForMemberOfReceiverWithType(const TypePtr &receiverType);
+
     /// Makes a temporary reference type where I am the base type.
     virtual PointerLikeTypePtr tempRef();
 
@@ -404,13 +407,16 @@ public:
     /// Removes the decorations of this that are omitted from a result type.
     virtual TypePtr asCanonicalResultType();
 
-    // Is this T const or T const ref?
+    /// Is this T const or T const ref?
     virtual bool isConstOrConstReferenceType() const;
 
-    // T => T const, T ref => T const ref
+    /// T => T const, T ref => T const ref
     virtual TypePtr asConstOrConstReferenceType();
 
-    // The type SSA value.
+    /// Gets the decoration flags
+    virtual TypeDecorationFlags getDecorationFlags() const;
+
+    /// The type SSA value.
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
     const ASTSourcePositionPtr &getSourceDefinitionPosition() const;

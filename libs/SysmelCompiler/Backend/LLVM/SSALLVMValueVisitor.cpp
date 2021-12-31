@@ -324,6 +324,15 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateFRem(context.arguments[0], context.arguments[1]);
     }},
 
+    // Array
+    {"array.element", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateGEP(context.arguments[0], {
+            llvm::ConstantInt::get(context.self->backend->translateType(Type::getIntPointerType()), 0),
+            context.arguments[1]
+        });
+    }},
+
     // Pointer
     {"pointer.equals", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);

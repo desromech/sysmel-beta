@@ -4,6 +4,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/ReferenceType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 
 namespace Sysmel
@@ -126,6 +127,32 @@ AnyValuePtr ArrayType::basicNewValue()
 
 void ArrayType::addSpecializedInstanceMethods()
 {
+    auto receiverType = asReceiverType();
+    auto constReceiverType = asConstReceiverType();
+
+    auto elementRefType = elementType->ref();
+    auto elementConstRefType = elementType->withConst()->ref();
+
+    auto accessElement = +[](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
+        auto indexValue = index->unwrapAsInt64();
+        sysmelAssert(self->baseValue && self->baseValue->isArrayTypeValue());
+        auto array = self->baseValue.staticAs<ArrayTypeValue> ();
+        auto elementType = array->getType().staticAs<ArrayType>()->elementType;
+
+        auto offset = indexValue * elementType->getAlignedMemorySize();
+        auto resultRefType = elementType->refForMemberOfReceiverWithType(self->getType());
+        return array->getReferenceToSlotWithType(indexValue, offset, resultRefType);
+    };
+
+    addMethodCategories(MethodCategories{
+        {"accessing", {
+            // []
+            makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
+            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
+            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
+            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
+        }},
+    });
 }
 
 bool ArrayTypeValue::isArrayTypeValue() const

@@ -29,6 +29,7 @@ public:
     virtual bool isVolatileDecoratedType() const override;
     virtual bool isRestrictDecoratedType() const override;
     virtual bool isParamsDecoratedType() const override;
+    virtual TypeDecorationFlags getDecorationFlags() const override;
 
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
 

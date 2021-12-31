@@ -1085,6 +1085,16 @@ ReferenceTypePtr Type::refFor(const AnyValuePtr &addressSpace)
     return ReferenceType::makeWithAddressSpace(selfFromThis(), addressSpace);
 }
 
+ReferenceTypePtr Type::refForMemberOfReceiverWithType(const TypePtr &receiverType)
+{
+    AnyValuePtr receiverAddressSpace;
+    TypeDecorationFlags receiverDecorations = receiverType->getDecorationFlags();
+    if(receiverType->isPointerLikeType())
+        receiverDecorations = receiverType.staticAs<PointerLikeType> ()->getBaseType()->getDecorationFlags();
+
+    return selfFromThis()->withDecorations(receiverDecorations)->refFor(receiverAddressSpace);
+}
+
 PointerLikeTypePtr Type::tempRef()
 {
     return TemporaryReferenceType::make(selfFromThis());
@@ -1202,6 +1212,11 @@ bool Type::isConstOrConstReferenceType() const
 TypePtr Type::asConstOrConstReferenceType()
 {
     return withConst();
+}
+
+TypeDecorationFlags Type::getDecorationFlags() const
+{
+    return TypeDecorationFlags::None;
 }
 
 SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
