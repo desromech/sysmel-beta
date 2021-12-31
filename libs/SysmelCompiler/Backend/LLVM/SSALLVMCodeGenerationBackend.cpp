@@ -22,6 +22,7 @@
 #include "Environment/StringUtilities.hpp"
 
 #include <mutex>
+#include <fstream>
 #include <iostream>
 
 namespace Sysmel
@@ -53,6 +54,8 @@ SSACodeGenerationBackendPtr SSACodeGenerationBackend::makeNativeBackend()
 namespace LLVM
 {
 
+static BootstrapTypeRegistration<SSALLVMCodeGenerationBackend> SSALLVMCodeGenerationBackendTypeRegistration;
+
 static llvm::CodeGenOpt::Level optimizationLevelToCodeGen(OptimizationLevel level)
 {
     switch(level)
@@ -76,7 +79,24 @@ static llvm::PassBuilder::OptimizationLevel convertOptimizationLevel(Optimizatio
     }
 }
 
-static BootstrapTypeRegistration<SSALLVMCodeGenerationBackend> SSALLVMCodeGenerationBackendTypeRegistration;
+typedef llvm::Optional<llvm::DIFile::ChecksumInfo<llvm::StringRef>> DIFileChecksum;
+static DIFileChecksum computeChecksumForFileNamed(const std::string &filename)
+{
+    std::ifstream in(filename);
+    if(!in.good())
+        return llvm::None;
+
+    auto content = std::string(std::istreambuf_iterator<char> (in), std::istreambuf_iterator<char> ());
+    llvm::MD5 hash;
+    hash.update(content);
+    llvm::MD5::MD5Result hashResult;
+    hash.final(hashResult);
+
+    llvm::SmallString<32u> hashResultString;
+    llvm::MD5::stringifyResult(hashResult, hashResultString);
+    
+    return llvm::DIFile::ChecksumInfo<llvm::StringRef>(llvm::DIFile::CSK_MD5, hashResultString);
+}
 
 void SSALLVMCodeGenerationBackend::initializePrimitiveTypeMap()
 {
@@ -248,7 +268,11 @@ llvm::DIFile *SSALLVMCodeGenerationBackend::getOrCreateDIFileFor(const std::stri
     if(dir.empty())
         dir = ".";
 
-    auto diFile = diBuilder->createFile(name, dir);
+    DIFileChecksum checksum = llvm::None;
+    if(debugInformationType == DebugInformationType::CodeView)
+        checksum = computeChecksumForFileNamed(absoluteFileName);
+
+    auto diFile = diBuilder->createFile(name, dir, checksum);
     debugFileMap.insert({filename, diFile});
     if(filename != absoluteFileName)
         debugFileMap.insert({absoluteFileName, diFile});
@@ -420,6 +444,13 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     auto &currentTargetNameAndFeatures = currentTargetDescription.nameAndFeatures;
     auto &triple = currentTargetNameAndFeatures.triple;
     targetModule->setTargetTriple(triple);
+
+    // Use codeview for the default debug information type on windows.
+    if(currentTargetNameAndFeatures.isWindows())
+    {
+        if(debugInformationType == DebugInformationType::Default)
+            debugInformationType = DebugInformationType::CodeView;
+    }
 
     // Lookup the LLVM target.
     {

@@ -96,6 +96,8 @@ int main(int argc, const char *argv[])
                 parameters.debugInformationType = DebugInformationType::Dwarf3;
             else if(arg == "-gdwarf4")
                 parameters.debugInformationType = DebugInformationType::Dwarf4;
+            else if(arg == "-gcodeview")
+                parameters.debugInformationType = DebugInformationType::CodeView;
             else if(arg == "-target")
                 parameters.targetName.setTriple(argv[++i]);
             else if(arg == "-mcpu")
