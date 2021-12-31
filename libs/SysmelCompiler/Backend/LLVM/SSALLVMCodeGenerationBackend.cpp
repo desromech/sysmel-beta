@@ -92,8 +92,20 @@ static DIFileChecksum computeChecksumForFileNamed(const std::string &filename)
     llvm::MD5::MD5Result hashResult;
     hash.final(hashResult);
 
-    llvm::SmallString<32u> hashResultString;
-    llvm::MD5::stringifyResult(hashResult, hashResultString);
+    auto hexDigitFor = [](uint8_t v) {
+        if(v <= 9)
+            return char('0' + v);
+        else
+            return char('A' + v - 10);
+    };
+
+    std::string hashResultString;
+    hashResultString.reserve(32);
+    for(auto b : hashResult.Bytes)
+    {
+        hashResultString.push_back(hexDigitFor(b >> 4));
+        hashResultString.push_back(hexDigitFor(b & 0xf));
+    }
     
     return llvm::DIFile::ChecksumInfo<llvm::StringRef>(llvm::DIFile::CSK_MD5, hashResultString);
 }

@@ -69,19 +69,19 @@ AnyValuePtr LLVMDebugTypeVisitor::visitDecoratedType(const DecoratedTypePtr &typ
 AnyValuePtr LLVMDebugTypeVisitor::visitPointerType(const PointerTypePtr &type)
 {
     auto baseType = backend->translateDIType(type->getBaseType());
-    return wrapLLVMDebugType(backend->getDIBuilder()->createPointerType(baseType, type->getMemorySize()*8, type->getMemoryAlignment()*8));
+    return wrapLLVMDebugType(backend->getDIBuilder()->createPointerType(baseType, uint32_t(type->getMemorySize()*8), uint32_t(type->getMemoryAlignment()*8)));
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitReferenceType(const ReferenceTypePtr &type)
 {
     auto baseType = backend->translateDIType(type->getBaseType());
-    return wrapLLVMDebugType(backend->getDIBuilder()->createReferenceType(llvm::dwarf::DW_TAG_reference_type, baseType, type->getMemorySize()*8, type->getMemoryAlignment()*8));
+    return wrapLLVMDebugType(backend->getDIBuilder()->createReferenceType(llvm::dwarf::DW_TAG_reference_type, baseType, uint32_t(type->getMemorySize()*8), uint32_t(type->getMemoryAlignment()*8)));
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitTemporaryReferenceType(const TemporaryReferenceTypePtr &type)
 {
     auto baseType = backend->translateDIType(type->getBaseType());
-    return wrapLLVMDebugType(backend->getDIBuilder()->createReferenceType(llvm::dwarf::DW_TAG_rvalue_reference_type, baseType, type->getMemorySize()*8, type->getMemoryAlignment()*8));
+    return wrapLLVMDebugType(backend->getDIBuilder()->createReferenceType(llvm::dwarf::DW_TAG_rvalue_reference_type, baseType, uint32_t(type->getMemorySize()*8), uint32_t(type->getMemoryAlignment()*8)));
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
@@ -97,8 +97,8 @@ llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &fie
     const auto &valueType = field->getValueType();
     return backend->getDIBuilder()->createMemberType(
         nullptr, name, file, sourcePosition->getLine(),
-        valueType->getMemorySize()*8,
-        valueType->getMemoryAlignment()*8,
+        uint32_t(valueType->getMemorySize()*8),
+        uint32_t(valueType->getMemoryAlignment()*8),
         field->getOffset()*8, llvm::DINode::FlagPublic,
         backend->translateDIType(valueType)
     );
@@ -117,7 +117,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     auto alignment = type->getMemoryAlignment()*8;
     auto declaration = builder->createReplaceableCompositeType(tag,
         name, scope, file, line, 0,
-        size, alignment);
+        uint32_t(size), uint32_t(alignment));
     backend->setDebugTypeTranslation(type, declaration);
 
     std::vector<llvm::Metadata*> elements;
@@ -136,7 +136,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createStructType(
             scope, name, file, line,
-            size, alignment,
+            uint32_t(size), uint32_t(alignment),
             llvm::DINode::FlagZero, nullptr, 
             builder->getOrCreateArray(elements),
             0, nullptr,
@@ -147,7 +147,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createClassType(
             scope, name, file, line,
-            size, alignment, 0,
+            uint32_t(size), uint32_t(alignment), 0,
             llvm::DINode::FlagZero, nullptr,
             builder->getOrCreateArray(elements),
             nullptr, nullptr,
@@ -158,7 +158,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createUnionType(
             scope, name, file, line,
-            size, alignment,
+            uint32_t(size), uint32_t(alignment),
             llvm::DINode::FlagZero,
             builder->getOrCreateArray(elements),
             0,

@@ -21,8 +21,8 @@ function(sysmel_llvm_codegen_unittest TestName)
             ${TestName}.sysmel   # Treated as relative to CMAKE_CURRENT_SOURCE_DIR
     )
 
-    add_executable(LLVMCodegenTest${TestName} ${TestName}${ObjExtension})
-    set_target_properties(LLVMCodegenTest${TestName} PROPERTIES LINKER_LANGUAGE CXX OUTPUT_NAME "${TestName}")
+    add_executable(LLVMCodegenTest${TestName} TestHelper.c ${TestName}${ObjExtension})
+    set_target_properties(LLVMCodegenTest${TestName} PROPERTIES OUTPUT_NAME "${TestName}")
 
     add_test(NAME RunLLVMCodegenTest${TestName} COMMAND LLVMCodegenTest${TestName})
     set_tests_properties(RunLLVMCodegenTest${TestName} PROPERTIES ${ARGN})
