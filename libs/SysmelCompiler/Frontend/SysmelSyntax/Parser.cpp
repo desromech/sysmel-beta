@@ -886,15 +886,23 @@ static ASTNodePtr parseUnaryPostfixExpression(TokenRange &currentPosition)
             {
                 // Parse the delimited index.
                 currentPosition.advance();
-                auto index = parseExpression(currentPosition);
+                ASTNodePtr index;
                 if(currentPosition.peek().type == TokenType::RightBracket)
                 {
                     currentPosition.next();
                 }
                 else
                 {
-                    if(!index->isParseErrorNode())
-                        index = makeParseErrorNodeAtToken(currentPosition, "Expected a right bracket ']'");
+                    index = parseExpression(currentPosition);
+                    if(currentPosition.peek().type == TokenType::RightBracket)
+                    {
+                        currentPosition.next();
+                    }
+                    else
+                    {
+                        if(!index->isParseErrorNode())
+                            index = makeParseErrorNodeAtToken(currentPosition, "Expected a right bracket ']'");
+                    }
                 }
 
                 auto subscript = std::make_shared<ASTSubscriptNode> ();

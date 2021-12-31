@@ -33,6 +33,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveBooleanType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveCharacterType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveIntegerType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveFloatType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveMatrixTypeValue);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(DecoratedTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumTypeValue);
@@ -79,6 +81,7 @@ public:
 
     virtual AnyValuePtr visitPrimitiveTensorType(const PrimitiveTensorTypePtr &value);
     virtual AnyValuePtr visitPrimitiveScalarType(const PrimitiveScalarTypePtr &value);
+    virtual AnyValuePtr visitPrimitiveVectorTypeValue(const PrimitiveVectorTypeValuePtr &value);
     virtual AnyValuePtr visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value);
     virtual AnyValuePtr visitPrimitiveCharacterType(const PrimitiveCharacterTypePtr &value);
     virtual AnyValuePtr visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value);

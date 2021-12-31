@@ -37,6 +37,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(StructureType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClassType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionType);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorType);
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -73,6 +75,8 @@ public:
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type);
     virtual AnyValuePtr visitClassType(const ClassTypePtr &type);
     virtual AnyValuePtr visitUnionType(const UnionTypePtr &type);
+
+    virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type);
 };
 
 } // End of namespace Environment

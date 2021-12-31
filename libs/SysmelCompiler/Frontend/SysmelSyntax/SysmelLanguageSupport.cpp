@@ -338,8 +338,12 @@ public:
         convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.array));
         convertedNode->selector = selector;
 
-        convertedNode->arguments.reserve(1);
-        convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*node.index)));
+        // Pass the optional index.
+        if(node.index)
+        {
+            convertedNode->arguments.reserve(1);
+            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*node.index)));
+        }
 
         return ResultType(convertedNode);
     }

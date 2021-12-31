@@ -45,6 +45,8 @@ public:
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
 
 private:
+    void initializePrimitiveVectorTypes();
+    
     std::vector<TypePtr> bootstrapDefinedTypeTable;
     std::unordered_map<std::string, TypePtr> bootstrapDefinedTypeNameMap;
     std::unordered_map<std::string, size_t> bootstrapDefinedTypeIndexMap;

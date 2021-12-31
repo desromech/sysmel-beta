@@ -854,6 +854,16 @@ bool AnyValue::isPrimitiveScalarTypeValue() const
     return false;
 }
 
+bool AnyValue::isPrimitiveVectorType() const
+{
+    return false;
+}
+
+bool AnyValue::isPrimitiveVectorTypeValue() const
+{
+    return false;
+}
+
 bool AnyValue::isPrimitiveBooleanTypeValue() const
 {
     return false;

@@ -77,7 +77,7 @@ int main(int argc, const char *argv[])
                 parameters.outputMode = SSACodeGenerationOutputMode::Assembly;
             else if(arg == "-shared")
                 parameters.outputMode = SSACodeGenerationOutputMode::SharedLibrary;
-            else if(arg == "-emit-target-ir")
+            else if(arg == "-emit-target-ir" || arg == "-emit-llvm")
                 parameters.emitTargetIR = true;
             else if(arg == "-emit-sexpr")
                 parameters.emitSExpression = true;
@@ -87,6 +87,8 @@ int main(int argc, const char *argv[])
                 parameters.moduleName = argv[++i];
             else if(arg == "-o")
                 parameters.outputFileName = argv[++i];
+            else if(stringBeginsWith(arg, "-o") && arg.size() > 2)
+                parameters.outputFileName = arg.substr(2);
             else if(arg == "-g")
                 parameters.debugInformationType = DebugInformationType::Default;
             else if(arg == "-gdwarf")

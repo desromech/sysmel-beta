@@ -15,6 +15,7 @@
 #include "Environment/TupleType.hpp"
 #include "Environment/UnionType.hpp"
 #include "Environment/VariantType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/BootstrapType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -138,6 +139,11 @@ AnyValuePtr TypeVisitor::visitClassType(const ClassTypePtr &type)
 AnyValuePtr TypeVisitor::visitUnionType(const UnionTypePtr &type)
 {
     return visitAggregateTypeWithFields(type);
+}
+
+AnyValuePtr TypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
+{
+    return visitSimpleType(type);
 }
 
 } // End of namespace Environment

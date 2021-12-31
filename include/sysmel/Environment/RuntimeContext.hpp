@@ -28,6 +28,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorType);
 
 /**
  * I represent an active runtime context in the object model environment.
@@ -109,6 +110,7 @@ protected:
     friend class TupleType;
     friend class VariantType;
     friend class LiteralSymbol;
+    friend class PrimitiveVectorType;
     
     RefCountedObjectMemoryPool memoryPool;
     RuntimeContextTargetDescription target;
@@ -121,6 +123,7 @@ protected:
     std::map<std::pair<TypePtr, AnyValuePtr>, ReferenceTypePtr> referenceTypeCache;
     std::map<std::pair<TypePtr, AnyValuePtr>, TemporaryReferenceTypePtr> temporaryReferenceTypeCache;
     std::map<std::pair<TypePtr, uint64_t>, ArrayTypePtr> arrayTypeCache;
+    std::map<std::pair<TypePtr, uint32_t>, PrimitiveVectorTypePtr> primitiveVectorTypeCache;
     std::map<TypePtrList, TupleTypePtr> tupleTypeCache;
     std::map<TypePtrList, VariantTypePtr> variantTypeCache;
 

@@ -792,6 +792,12 @@ public:
     // Is this a primitive scalar type?
     virtual bool isPrimitiveScalarTypeValue() const;
 
+    // Is this a primitive vector type?
+    virtual bool isPrimitiveVectorType() const;
+
+    // Is this a primitive vector type value?
+    virtual bool isPrimitiveVectorTypeValue() const;
+
     // Is this a primitive boolean type?
     virtual bool isPrimitiveBooleanTypeValue() const;
 

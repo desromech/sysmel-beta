@@ -4,8 +4,14 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapType.hpp"
 #include "Environment/BootstrapExtensionMethods.hpp"
+#include "Environment/PrimitiveBooleanType.hpp"
+#include "Environment/PrimitiveCharacterType.hpp"
+#include "Environment/PrimitiveIntegerType.hpp"
+#include "Environment/PrimitiveFloatType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/Namespace.hpp"
 #include "Environment/SSAModule.hpp"
+#include <sstream>
 
 namespace Sysmel
 {
@@ -98,6 +104,56 @@ void BootstrapModule::initialize()
 
     bootstrapEnvironmentNamespace->bindSymbolWithVisibility(internSymbol("UIntPointer"), ProgramEntityVisibility::Public, Type::getUIntPointerType());
     bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(internSymbol("UIntPointer"), ProgramEntityVisibility::Public, Type::getUIntPointerType());
+
+    // Make the primitive vector types.
+    initializePrimitiveVectorTypes();
+}
+
+void BootstrapModule::initializePrimitiveVectorTypes()
+{
+    TypePtr primitiveTypes[] = {
+        Boolean8::__staticType__(),
+
+        Int8::__staticType__(),
+        Int16::__staticType__(),
+        Int32::__staticType__(),
+        Int64::__staticType__(),
+
+        UInt8::__staticType__(),
+        UInt16::__staticType__(),
+        UInt32::__staticType__(),
+        UInt64::__staticType__(),
+
+        Char8::__staticType__(),
+        Char16::__staticType__(),
+        Char32::__staticType__(),
+
+        Float16::__staticType__(),
+        Float32::__staticType__(),
+        Float64::__staticType__(),
+    };
+    uint32_t primitiveVectorTypeElements[] = {
+        2, 3, 4
+    };
+
+    // Synthethize the basic primitive vector types.
+    for(const auto &elementType : primitiveTypes)
+    {
+        for(auto elements : primitiveVectorTypeElements)
+        {
+            std::ostringstream out;
+            out << elementType->getValidNameString() << "x" << elements;
+            auto name = out.str();
+            auto nameSymbol = internSymbol(name);
+
+            auto vectorType = PrimitiveVectorType::make(elementType, elements);
+            vectorType->setName(nameSymbol);
+
+            bootstrapEnvironmentNamespace->recordChildProgramEntityDefinition(vectorType);
+            bootstrapEnvironmentNamespace->bindProgramEntityWithVisibility(vectorType, ProgramEntityVisibility::Public);
+            bootstrapEnvironmentSysmelLanguageNamespace->bindSymbolWithVisibility(nameSymbol, ProgramEntityVisibility::Public, vectorType);
+        }
+    }
 }
 
 bool BootstrapModule::isBootstrapModule() const

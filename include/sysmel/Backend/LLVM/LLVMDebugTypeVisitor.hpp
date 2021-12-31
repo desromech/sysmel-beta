@@ -32,6 +32,9 @@ public:
 
     virtual AnyValuePtr visitFunctionalType(const FunctionalTypePtr &type) override;
 
+    virtual AnyValuePtr visitArrayType(const ArrayTypePtr &type) override;
+    virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type) override;
+
     llvm::DIType *translateAggregateTypeWithFields(const AggregateTypeWithFieldsPtr &type, unsigned int tag);
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
     virtual AnyValuePtr visitClassType(const ClassTypePtr &type) override;

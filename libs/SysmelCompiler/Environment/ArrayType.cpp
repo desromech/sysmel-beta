@@ -97,12 +97,11 @@ uint64_t ArrayType::getMemoryAlignment()
 std::string ArrayType::printString() const
 {
     if(size == 0)
-        return elementType->printString() + " array";
+        return elementType->printString() + "[]";
     
     std::ostringstream out;
-    out << '(';
     out << elementType->printString();
-    out << " array: " << size << ')';
+    out << "[" << size << ']';
     return out.str();
 }
 

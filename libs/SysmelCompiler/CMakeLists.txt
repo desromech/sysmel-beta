@@ -205,6 +205,7 @@ set(Environment_Sources
     PrimitiveScalarType.cpp
     PrimitiveTensorType.cpp
     PrimitiveType.cpp
+    PrimitiveVectorType.cpp
     PrivateMetaBuilder.cpp
     ProgramEntity.cpp
     ProgramEntityScope.cpp

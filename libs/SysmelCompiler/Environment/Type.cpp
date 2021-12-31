@@ -87,6 +87,8 @@ MethodCategories Type::__instanceMethods__()
         {"type composition", {
             makeMethodBinding("array", &Type::arrayWithoutSize, MethodFlags::Pure),
             makeMethodBinding("array:", &Type::arrayWithSize, MethodFlags::Pure),
+            makeMethodBinding("[]", &Type::arrayWithoutSize, MethodFlags::Pure),
+            makeMethodBinding("[]", &Type::arrayWithSize, MethodFlags::Pure),
 
             makeMethodBinding("pointer", &Type::pointer, MethodFlags::Pure),
             makeMethodBinding("pointerFor:", &Type::pointerFor, MethodFlags::Pure),

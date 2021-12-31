@@ -385,6 +385,22 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isArrayType());
                     CHECK_EQUAL(a, b);
                 }
+
+                {
+                    auto a = evaluateString("Int32[]");
+                    auto b = evaluateString("Int32[]");
+                    CHECK(a->isArrayType());
+                    CHECK(b->isArrayType());
+                    CHECK_EQUAL(a, b);
+                }
+
+                {
+                    auto a = evaluateString("Int32[]");
+                    auto b = evaluateString("Int32 const[]");
+                    CHECK(a->isArrayType());
+                    CHECK(b->isArrayType());
+                    CHECK_EQUAL(a, b);
+                }
             });
         });
     }

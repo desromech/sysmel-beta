@@ -7,10 +7,14 @@
 
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
+#include "Environment/ArrayType.hpp"
+
 #include "Environment/StructureType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/UnionType.hpp"
 #include "Environment/TupleType.hpp"
+
+#include "Environment/PrimitiveVectorType.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -120,6 +124,18 @@ AnyValuePtr LLVMTypeVisitor::visitPointerLikeType(const PointerLikeTypePtr &type
     auto translatedBaseType = backend->translateType(baseType);
 
     return wrapLLVMType(llvm::PointerType::getUnqual(translatedBaseType));
+}
+
+AnyValuePtr LLVMTypeVisitor::visitArrayType(const ArrayTypePtr &type)
+{
+    auto elementType = backend->translateType(type->elementType);
+    return wrapLLVMType(llvm::ArrayType::get(elementType, type->size));
+}
+
+AnyValuePtr LLVMTypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
+{
+    auto elementType = backend->translateType(type->elementType);
+    return wrapLLVMType(llvm::VectorType::get(elementType, type->elements, false));
 }
 
 AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix)

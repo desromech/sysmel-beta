@@ -32,10 +32,14 @@ public:
     virtual AnyValuePtr visitFunctionalType(const FunctionalTypePtr &type) override;
     virtual AnyValuePtr visitPointerLikeType(const PointerLikeTypePtr &type) override;
 
+    virtual AnyValuePtr visitArrayType(const ArrayTypePtr &type) override;
+    virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type) override;
+
     AnyValuePtr translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix=std::string());
     virtual AnyValuePtr visitClassType(const ClassTypePtr &type) override;
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
     virtual AnyValuePtr visitTupleType(const TupleTypePtr &type) override;
+
 
     llvm::Type *translateArgumentType(const TypePtr &type);
     

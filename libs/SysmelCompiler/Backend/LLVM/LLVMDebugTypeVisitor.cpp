@@ -12,6 +12,9 @@
 #include "Environment/ReferenceType.hpp"
 #include "Environment/TemporaryReferenceType.hpp"
 
+#include "Environment/ArrayType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
+
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
 #include "Environment/StructureType.hpp"
@@ -89,6 +92,34 @@ AnyValuePtr LLVMDebugTypeVisitor::visitFunctionalType(const FunctionalTypePtr &t
     return wrapLLVMDebugType(backend->getOrCreateDIFunctionType(type));
 }
 
+AnyValuePtr LLVMDebugTypeVisitor::visitArrayType(const ArrayTypePtr &type)
+{
+    auto builder = backend->getDIBuilder();
+    auto elementType = backend->translateDIType(type->elementType);
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+
+    llvm::Metadata* subscripts[] = {
+        builder->getOrCreateSubrange(0, type->size)
+    };
+    
+    return wrapLLVMDebugType(builder->createVectorType(size, uint32_t(alignment), elementType, builder->getOrCreateArray(subscripts)));
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
+{
+    auto builder = backend->getDIBuilder();
+    auto elementType = backend->translateDIType(type->elementType);
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+
+    llvm::Metadata* subscripts[] = {
+        builder->getOrCreateSubrange(0, type->elements)
+    };
+    
+    return wrapLLVMDebugType(builder->createVectorType(size, uint32_t(alignment), elementType, builder->getOrCreateArray(subscripts)));
+}
+
 llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &field, llvm::DIScope *parent)
 {
     auto name = field->getValidNameString();
@@ -117,7 +148,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     auto alignment = type->getMemoryAlignment()*8;
     auto declaration = builder->createReplaceableCompositeType(tag,
         name, scope, file, line, 0,
-        uint32_t(size), uint32_t(alignment));
+        size, uint32_t(alignment));
     backend->setDebugTypeTranslation(type, declaration);
 
     std::vector<llvm::Metadata*> elements;
@@ -136,7 +167,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createStructType(
             scope, name, file, line,
-            uint32_t(size), uint32_t(alignment),
+            size, uint32_t(alignment),
             llvm::DINode::FlagZero, nullptr, 
             builder->getOrCreateArray(elements),
             0, nullptr,
@@ -147,7 +178,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createClassType(
             scope, name, file, line,
-            uint32_t(size), uint32_t(alignment), 0,
+            size, uint32_t(alignment), 0,
             llvm::DINode::FlagZero, nullptr,
             builder->getOrCreateArray(elements),
             nullptr, nullptr,
@@ -158,7 +189,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     {
         definition = builder->createUnionType(
             scope, name, file, line,
-            uint32_t(size), uint32_t(alignment),
+            size, uint32_t(alignment),
             llvm::DINode::FlagZero,
             builder->getOrCreateArray(elements),
             0,
