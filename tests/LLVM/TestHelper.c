@@ -3,6 +3,6 @@
 // On windows, some std library functions are actually inlined.
 int ensureFunctionsAreImported()
 {
-    printf("");
+    printf(" ");
     return 0;
 }
