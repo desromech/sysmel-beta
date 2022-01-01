@@ -4,6 +4,7 @@
 #include "Environment/Type.hpp"
 #include "Environment/FunctionalType.hpp"
 #include "Environment/FieldVariable.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/NameMangler.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 
@@ -335,6 +336,62 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     }},
 
     // Vector
+    {"vector.equals.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateAndReduce(
+                context.builder->CreateFCmpUEQ(context.arguments[0], context.arguments[1])
+            )
+        );
+    }},
+    {"vector.equals.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateAndReduce(
+                context.builder->CreateICmpEQ(context.arguments[0], context.arguments[1])
+            )
+        );
+    }},
+
+    {"vector.not-equals.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateAndReduce(
+                context.builder->CreateFCmpUNE(context.arguments[0], context.arguments[1])
+            )
+        );
+    }},
+    {"vector.not-equals.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateOrReduce(
+                context.builder->CreateICmpNE(context.arguments[0], context.arguments[1])
+            )
+        );
+    }},
+    {"vector.any", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateOrReduce(context.arguments[0])
+        );
+    }},
+    {"vector.all", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.self->coerceI1IntoBoolean8(
+            context.builder->CreateAndReduce(context.arguments[0])
+        );
+    }},
+
+    {"vector.make.with-all", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        auto elementCount = context.originalResultType.staticAs<PrimitiveVectorType> ()->elements;
+        auto value = context.arguments.back();
+        llvm::Value *result = llvm::UndefValue::get(context.resultType);
+        for(uint32_t i = 0; i < elementCount; ++i)
+            result = context.builder->CreateInsertElement(result, value, i);
+        return result;
+    }},
+
     {"vector.element", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateExtractElement(context.arguments[0], context.arguments[1]);
@@ -354,6 +411,60 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     {"vector.element.fourth", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateExtractElement(context.arguments[0], 3);
+    }},
+
+    {"vector.sum.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateAddReduce(context.arguments[0]);
+    }},
+    {"vector.sum.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto scalarType = context.arguments[0]->getType()->getScalarType();
+        return context.builder->CreateFAddReduce(
+            llvm::ConstantFP::get(scalarType, -0.0),
+            context.arguments[0]
+        );
+    }},
+
+    {"vector.product.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateMulReduce(context.arguments[0]);
+    }},
+    {"vector.product.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto scalarType = context.arguments[0]->getType()->getScalarType();
+        return context.builder->CreateFMulReduce(
+            llvm::ConstantFP::get(scalarType, 1.0),
+            context.arguments[0]
+        );
+    }},
+
+    {"vector.reduce.and", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateAndReduce(context.arguments[0]);
+    }},
+    {"vector.reduce.or", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateOrReduce(context.arguments[0]);
+    }},
+    {"vector.reduce.xor", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateXorReduce(context.arguments[0]);
+    }},
+
+    {"vector.dot.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateAddReduce(
+            context.builder->CreateMul(context.arguments[0], context.arguments[1])
+        );
+    }},
+    {"vector.dot.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        auto scalarType = context.arguments[0]->getType()->getScalarType();
+        return context.builder->CreateFAddReduce(
+            llvm::ConstantFP::get(scalarType, -0.0),
+            context.builder->CreateFMul(context.arguments[0], context.arguments[1])
+        );
     }},
 
     // Pointer
@@ -1169,7 +1280,6 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     else
         return wrapLLVMValue(makeVoidValue());
 }
-
 
 AnyValuePtr SSALLVMValueVisitor::visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction)
 {

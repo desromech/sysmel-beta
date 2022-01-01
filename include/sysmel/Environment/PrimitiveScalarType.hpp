@@ -20,7 +20,10 @@ public:
     static constexpr char const __typeName__[] = "PrimitiveScalarType";
     static constexpr char const __sysmelTypeName__[] = "_PrimitiveScalarType";
 
+    static MethodCategories __typeMethods__();
+    
     virtual bool isPrimitiveScalarTypeValue() const override;
+    
 };
 
 } // End of namespace Environment

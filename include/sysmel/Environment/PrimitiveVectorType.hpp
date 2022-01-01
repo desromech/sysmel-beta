@@ -69,6 +69,9 @@ public:
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
 
+    AnyValuePtr reduce(const AnyValuePtr &selector);
+    AnyValuePtr reduce(const std::string &selector);
+
     PrimitiveVectorTypePtr type;
     AnyValuePtrList elements;
 };

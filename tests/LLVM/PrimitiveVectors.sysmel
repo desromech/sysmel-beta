@@ -1,0 +1,104 @@
+public template PrimitiveVectorTestCase(ST: Type)
+    := class superclass: TestCase; definition: {
+    compileTime constant Scalar := ST.
+    compileTime constant Vector2 := Scalar primitiveVectorWithElements: 2.
+    compileTime constant Vector3 := Scalar primitiveVectorWithElements: 3.
+    compileTime constant Vector4 := Scalar primitiveVectorWithElements: 4.
+
+    public method construction => Void := {
+        ## with all. Compile time evaluation.
+        {
+            let v := Vector2(3).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+        }.
+
+        {
+            let v := Vector3(3).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+            self assert: v z equals: 3.
+        }.
+
+        {
+            let v := Vector4(3).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+            self assert: v z equals: 3.
+            self assert: v w equals: 3.
+        }.
+
+        ## With all. Backend generation.
+        {
+            let x type: Scalar := 3.
+            let v := Vector2(x).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+        }.
+
+        {
+            let x := Scalar(3).
+            let v := Vector3(x).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+            self assert: v z equals: 3.
+        }.
+
+        {
+            let x := Scalar(3).
+            let v := Vector4(x).
+            self assert: v x equals: 3.
+            self assert: v y equals: 3.
+            self assert: v z equals: 3.
+            self assert: v w equals: 3.
+        }.
+
+        ## Per element construction
+        {
+            let v := Vector2(1, 2).
+            self assert: v x equals: 1.
+            self assert: v y equals: 2.
+        }.
+
+        {
+            let v := Vector3(3, 4, 5).
+            self assert: v x equals: 3.
+            self assert: v y equals: 4.
+            self assert: v z equals: 5.
+        }.
+
+        {
+            let v := Vector4(6, 7, 8, 9).
+            self assert: v x equals: 6.
+            self assert: v y equals: 7.
+            self assert: v z equals: 8.
+            self assert: v w equals: 9.
+        }.
+    }.
+    
+    public method arithmetic => Void := {
+        {
+            let a := Vector2(1, 2).
+            let b := Vector2(4, 6).
+            
+            self assert: a + b equals: Vector2(5, 8).
+            self assert: b - a equals: Vector2(3, 4).
+            self assert: a * b equals: Vector2(4, 12).
+            self assert: b / a equals: Vector2(4, 3).
+        }
+    }.
+
+    public method run => Void := {
+        self
+            construction;
+            arithmetic
+    }.
+}.
+
+compileTime constant Float32TestCase := PrimitiveVectorTestCase(Float32).
+
+public externC function main() => Int32 := {
+    Float32TestCase() run.
+    
+    0
+}.

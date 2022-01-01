@@ -1,4 +1,7 @@
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/PrimitiveBooleanType.hpp"
+#include "Environment/PrimitiveIntegerType.hpp"
+#include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/TypeVisitor.hpp"
@@ -253,6 +256,195 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             }},
         });
     }
+
+    // Comparisons.
+    auto equals = [](const PrimitiveVectorTypeValuePtr &self, const PrimitiveVectorTypeValuePtr &other){
+        auto result = true;
+        for(uint32_t i = 0; i < self->elements.size(); ++i)
+        {
+            if(!self->elements[i]->perform<bool> ("=", other->elements[i]))
+            {
+                result = false;
+                break;
+            }
+        }
+        return Boolean8::make(result);
+    };
+    auto notEquals = [](const PrimitiveVectorTypeValuePtr &self, const PrimitiveVectorTypeValuePtr &other){
+        auto result = false;
+        for(uint32_t i = 0; i < self->elements.size(); ++i)
+        {
+            if(self->elements[i]->perform<bool> ("~=", other->elements[i]))
+            {
+                result = true;
+                break;
+            }
+        }
+        return Boolean8::make(result);
+    };
+
+    auto isFloatingPoint = elementType->isSubtypeOf(PrimitiveFloatType::__staticType__());
+    auto isBoolean = elementType == Boolean8::__staticType__();
+    auto isSigned = elementType == Int8::__staticType__() ||
+                elementType == Int16::__staticType__() ||
+                elementType == Int32::__staticType__() ||
+                elementType == Int64::__staticType__();
+
+    std::string equalitySuffix = isFloatingPoint ? ".float" : ".integer";
+    std::string comparisonSuffix;
+    if(isBoolean)
+        comparisonSuffix = ".boolean";
+    else if(isFloatingPoint)
+        comparisonSuffix = ".float";
+    else
+        comparisonSuffix = isSigned ? ".integer.signed" : ".integer.unsigned";
+
+    addMethodCategories(MethodCategories{
+        {"comparisons", {
+            // =
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.equals" + equalitySuffix, "=", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, equals, MethodFlags::Pure),
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.equals" + equalitySuffix, "==", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, equals, MethodFlags::Pure),
+            // ~=
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.not-equals" + equalitySuffix, "~=", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, notEquals, MethodFlags::Pure),
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.not-equals" + equalitySuffix, "~~", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, notEquals, MethodFlags::Pure),
+        }},
+    });
+
+    // Reduction.
+    if(isBoolean)
+    {
+        addMethodCategories(MethodCategories{
+            {"reductions", {
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.any", "isAnySet", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("|");
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.all", "isAllSet", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("&");
+                }, MethodFlags::Pure),
+            }}
+        });
+    }
+    else
+    {
+        if(!isFloatingPoint)
+        {
+            addMethodCategories(MethodCategories{
+                {"reductions", {
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.reduce.or", "reduceWithOr", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                        return self->reduce("|");
+                    }, MethodFlags::Pure),
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.reduce.and" + equalitySuffix, "reduceWithAnd", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                        return self->reduce("&");
+                    }, MethodFlags::Pure),
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.reduce.xor" + equalitySuffix, "reduceWithXor", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                        return self->reduce("^");
+                    }, MethodFlags::Pure),
+                }},
+            });
+        }
+
+        addMethodCategories(MethodCategories{
+            {"reductions", {
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.sum" + equalitySuffix, "sum", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("+");
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.product" + equalitySuffix, "product", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("*");
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.max" + comparisonSuffix, "max", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("max:");
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.min" + comparisonSuffix, "min", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->reduce("min:");
+                }, MethodFlags::Pure),
+            }},
+        });
+    }
+
+    // Linear algebra.
+    addMethodCategories(MethodCategories{
+        {"linear algebra", {
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.dot" + equalitySuffix, "dot:", selfFromThis(), elementType, {selfFromThis()}, [](const PrimitiveVectorTypeValuePtr &self, const PrimitiveVectorTypeValuePtr &other){
+                return self->perform<PrimitiveVectorTypeValuePtr> ("*", other)->reduce("+");
+            }, MethodFlags::Pure),
+        }}
+    });
+
+    // Unary intrinsics.
+    {
+        std::string scalarSelectors[] = {
+            "negated", "pre--", "bitInvert", "pre-~", "sqrt",
+            "abs", "sign", "floor", "ceiling"
+        };
+
+        for(const auto &scalarSelector : scalarSelectors)
+        {
+            auto scalarSelectorSymbol = internSymbol(scalarSelector);
+            auto scalarMethod = elementType->lookupSelector(scalarSelectorSymbol);
+            if(!validAnyValue(scalarMethod)->isSpecificMethod())
+                continue;
+            
+            auto intrinsicName = scalarMethod.staticAs<SpecificMethod> ()->getIntrinsicName();
+            if(validAnyValue(intrinsicName)->isUndefined())
+                continue;
+
+            auto scalarResultType = scalarMethod.staticAs<SpecificMethod> ()->getFunctionalType()->getResultType();
+            auto resultType = staticObjectCast<PrimitiveVectorType> (make(scalarResultType, elements));
+
+            addMethodCategories({
+                {"arithmetic", {
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const PrimitiveVectorTypeValuePtr &self){
+                        auto result = basicMakeObject<PrimitiveVectorTypeValue> ();
+                        result->type = resultType;
+                        result->elements.reserve(elements);
+
+                        for(uint32_t i = 0; i < elements; ++i)
+                            result->elements.push_back(self->elements[i]->performWithArguments(scalarSelectorSymbol, {}));
+                        return result;
+                    }, MethodFlags::Pure),
+                }}
+            });
+        }
+    }
+
+    // Binary intrinsics.
+    {
+        std::string scalarSelectors[] = {
+            "+", "-", "*", "/", "//", "%", "\\\\",
+            "|", "bitOr:", "&", "bitAnd:", "^", "bitXor:", "<<", ">>",
+
+            "min:", "max:",
+        };
+
+        for(const auto &scalarSelector : scalarSelectors)
+        {
+            auto scalarSelectorSymbol = internSymbol(scalarSelector);
+            auto scalarMethod = elementType->lookupSelector(scalarSelectorSymbol);
+            if(!validAnyValue(scalarMethod)->isSpecificMethod())
+                continue;
+            
+            auto intrinsicName = scalarMethod.staticAs<SpecificMethod> ()->getIntrinsicName();
+            if(validAnyValue(intrinsicName)->isUndefined())
+                continue;
+
+            auto scalarResultType = scalarMethod.staticAs<SpecificMethod> ()->getFunctionalType()->getResultType();
+            auto resultType = staticObjectCast<PrimitiveVectorType> (make(scalarResultType, elements));
+
+            addMethodCategories({
+                {"arithmetic", {
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const PrimitiveVectorTypeValuePtr &self, const PrimitiveVectorTypeValuePtr &other){
+                        auto result = basicMakeObject<PrimitiveVectorTypeValue> ();
+                        result->type = resultType;
+                        result->elements.reserve(elements);
+
+                        for(uint32_t i = 0; i < elements; ++i)
+                            result->elements.push_back(self->elements[i]->performWithArguments(scalarSelectorSymbol, {other->elements[i]}));
+                        return result;
+                    }, MethodFlags::Pure),
+                }}
+            });
+        }
+    }
 }
 
 
@@ -302,6 +494,19 @@ SExpression PrimitiveVectorTypeValue::asSExpression() const
         type->asSExpression(),
         elementsSExpr
     }};
+}
+
+AnyValuePtr PrimitiveVectorTypeValue::reduce(const AnyValuePtr &selector)
+{
+    auto result = elements[0];
+    for(size_t i = 1; i < elements.size(); ++i)
+        result = result->perform<AnyValuePtr> (selector, elements[i]);
+    return result;
+}
+
+AnyValuePtr PrimitiveVectorTypeValue::reduce(const std::string &selector)
+{
+    return reduce(internSymbol(selector));
 }
 
 } // End of namespace Environment

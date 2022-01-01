@@ -24,6 +24,7 @@ public:
 
     llvm::DIType *visitType(const TypePtr &type);
 
+    virtual AnyValuePtr visitMetaType(const MetaTypePtr &type) override;
     virtual AnyValuePtr visitDecoratedType(const DecoratedTypePtr &type) override;
 
     virtual AnyValuePtr visitPointerType(const PointerTypePtr &type) override;

@@ -5,6 +5,8 @@
 #include "Environment/FieldVariable.hpp"
 #include "Environment/NameMangler.hpp"
 
+#include "Environment/MetaType.hpp"
+
 #include "Environment/DecoratedType.hpp"
 #include "Environment/EnumType.hpp"
 #include "Environment/FunctionalType.hpp"
@@ -53,6 +55,11 @@ static AnyValuePtr wrapLLVMDebugType(llvm::DIType *type)
 llvm::DIType *LLVMDebugTypeVisitor::visitType(const TypePtr &type)
 {
     return type->acceptTypeVisitor(selfFromThis()).staticAs<LLVMDebugType> ()->type;
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitMetaType(const MetaTypePtr &type)
+{    
+    return wrapLLVMDebugType(backend->getDIBuilder()->createPointerType(nullptr, 0, 0, llvm::None, type->getQualifiedName()));
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitDecoratedType(const DecoratedTypePtr &type)

@@ -9,6 +9,7 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
 #include "Environment/TupleType.hpp"
@@ -70,6 +71,20 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveFloatType(const PrimitiveFloa
 {
     auto data = value->unwrapAsFloat64();
     return wrapLLVMConstant(llvm::ConstantFP::get(translatedExpectedType, data));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveVectorTypeValue(const PrimitiveVectorTypeValuePtr &value)
+{
+    auto elementCount = value->elements.size();
+    auto vectorType = value->getType();
+    auto expectedElementType = vectorType.staticAs<PrimitiveVectorType> ()->elementType;
+
+    std::vector<llvm::Constant*> elements;
+    elements.reserve(elementCount);
+    for(size_t i = 0; i < elementCount; ++i)
+        elements.push_back(backend->translateLiteralValueWithExpectedType(value->elements[i], expectedElementType));
+
+    return wrapLLVMConstant(llvm::ConstantVector::get(elements));
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value)

@@ -32,3 +32,4 @@ endfunction()
 
 sysmel_llvm_codegen_unittest(HelloWorld PASS_REGULAR_EXPRESSION "Hello World")
 sysmel_llvm_codegen_unittest(PrimitiveScalars FAIL_REGULAR_EXPRESSION "Failure")
+sysmel_llvm_codegen_unittest(PrimitiveVectors FAIL_REGULAR_EXPRESSION "Failure")
