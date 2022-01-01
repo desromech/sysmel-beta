@@ -29,6 +29,7 @@ public:
     virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node) override;
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node) override;
     virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node) override;
     virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
@@ -45,6 +46,7 @@ public:
     virtual AnyValuePtr visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node) override;
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node) override;
+    virtual AnyValuePtr visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &node) override;
 
     virtual AnyValuePtr visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node) override;
     virtual AnyValuePtr visitQuasiQuotePatternExpansionArgumentNode(const ASTQuasiQuotePatternExpansionArgumentNodePtr &node) override;

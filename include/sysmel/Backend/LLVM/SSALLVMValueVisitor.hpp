@@ -82,6 +82,7 @@ public:
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction) override;
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitVectorSwizzleInstruction(const SSAVectorSwizzleInstructionPtr &instruction) override;
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction) override;
 
     virtual AnyValuePtr visitUpcastInstruction(const SSAUpcastInstructionPtr &instruction) override;

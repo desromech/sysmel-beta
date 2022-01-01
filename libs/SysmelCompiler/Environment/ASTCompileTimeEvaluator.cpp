@@ -20,6 +20,7 @@
 #include "Environment/ASTParseErrorNode.hpp"
 #include "Environment/ASTSequenceNode.hpp"
 #include "Environment/ASTSpliceNode.hpp"
+#include "Environment/ASTVectorSwizzleNode.hpp"
 
 #include "Environment/ASTQuasiQuoteExpander.hpp"
 #include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
@@ -267,6 +268,13 @@ AnyValuePtr ASTCompileTimeEvaluator::visitSequenceNode(const ASTSequenceNodePtr 
     for(const auto &expression : node->expressions)
         result = visitNode(expression);
     return result;
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &node)
+{
+    auto vector = visitNode(node->vector);
+    sysmelAssert(vector->isPrimitiveVectorTypeValue());
+    return vector.staticAs<PrimitiveVectorTypeValue>()->swizzle(node->selectedElements);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node)

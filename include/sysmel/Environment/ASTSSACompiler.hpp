@@ -42,6 +42,7 @@ public:
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
     virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
+    virtual AnyValuePtr visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &node) override;
 
     virtual AnyValuePtr visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node) override;
     

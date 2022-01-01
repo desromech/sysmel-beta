@@ -87,6 +87,11 @@ AnyValuePtr ASTVisitor::visitLiteralValueNode(const ASTLiteralValueNodePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr ASTVisitor::visitMakeAggregateNode(const ASTMakeAggregateNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
@@ -163,6 +168,11 @@ AnyValuePtr ASTVisitor::visitSequenceNode(const ASTSequenceNodePtr &)
 }
 
 AnyValuePtr ASTVisitor::visitSpliceNode(const ASTSpliceNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

@@ -24,6 +24,7 @@
 #include "Environment/SSASendMessageInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
 #include "Environment/SSAUnreachableInstruction.hpp"
+#include "Environment/SSAVectorSwizzleInstruction.hpp"
 #include "Environment/SSAWhileInstruction.hpp"
 
 #include "Environment/SSABitcastInstruction.hpp"
@@ -332,6 +333,17 @@ SSAUnreachableInstructionPtr SSABuilder::unreachableInstruction()
     instruction->setSourcePosition(currentSourcePosition);
     addInstruction(instruction);
     return instruction;   
+}
+
+SSAVectorSwizzleInstructionPtr SSABuilder::vectorSwizzle(const TypePtr &resultType, const SSAValuePtr &vector, const std::vector<uint32_t> &selectedElements)
+{
+    auto instruction = basicMakeObject<SSAVectorSwizzleInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(resultType);
+    instruction->setVector(vector);
+    instruction->setSelectedElements(selectedElements);
+    addInstruction(instruction);
+    return instruction;
 }
 
 SSAWhileInstructionPtr SSABuilder::whileDoContinueWith(const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &continueRegion)

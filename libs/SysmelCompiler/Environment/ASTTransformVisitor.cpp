@@ -9,6 +9,7 @@
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTLexicalScopeNode.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
 #include "Environment/ASTMakeAssociationNode.hpp"
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
@@ -25,6 +26,7 @@
 #include "Environment/ASTSequenceNode.hpp"
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/ASTSpliceNode.hpp"
+#include "Environment/ASTVectorSwizzleNode.hpp"
 
 #include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
 #include "Environment/ASTQuasiQuotePatternExpansionArgumentNode.hpp"
@@ -158,6 +160,13 @@ AnyValuePtr ASTTransformVisitor::visitLiteralValueNode(const ASTLiteralValueNode
     return node;
 }
 
+AnyValuePtr ASTTransformVisitor::visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNodeList(result->elements);
+    return result;
+}
+
 AnyValuePtr ASTTransformVisitor::visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node)
 {
     auto result = shallowCloneObject(node);
@@ -270,6 +279,13 @@ AnyValuePtr ASTTransformVisitor::visitSpliceNode(const ASTSpliceNodePtr &node)
 {
     auto result = shallowCloneObject(node);
     transformChildNode(result->expression);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->vector);
     return result;
 }
 

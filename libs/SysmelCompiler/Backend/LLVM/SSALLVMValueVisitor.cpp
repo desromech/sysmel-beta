@@ -35,6 +35,7 @@
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
 #include "Environment/SSAUnreachableInstruction.hpp"
+#include "Environment/SSAVectorSwizzleInstruction.hpp"
 #include "Environment/SSAWhileInstruction.hpp"
 
 #include "Environment/SSAUpcastInstruction.hpp"
@@ -1599,6 +1600,17 @@ AnyValuePtr SSALLVMValueVisitor::visitUnreachableInstruction(const SSAUnreachabl
 {
     builder->CreateUnreachable();
     return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitVectorSwizzleInstruction(const SSAVectorSwizzleInstructionPtr &instruction)
+{
+    auto vector = translateValue(instruction->getVector());
+    const auto &selectedElements = instruction->getSelectedElements();
+    std::vector<int> mask;
+    mask.reserve(selectedElements.size());
+    for(auto &el : selectedElements)
+        mask.push_back(int(el));
+    return wrapLLVMValue(builder->CreateShuffleVector(vector, mask));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitWhileInstruction(const SSAWhileInstructionPtr &instruction)

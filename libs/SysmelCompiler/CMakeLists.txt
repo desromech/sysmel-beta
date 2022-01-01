@@ -45,6 +45,7 @@ set(Environment_Sources
     ASTLiteralValueNode.cpp
     ASTLocalImmutableAccessNode.cpp
     ASTLocalVariableNode.cpp
+    ASTMakeAggregateNode.cpp
     ASTMakeAssociationNode.cpp
     ASTMakeDictionaryNode.cpp
     ASTMakeLiteralArrayNode.cpp
@@ -89,6 +90,7 @@ set(Environment_Sources
     ASTValueAsVoidTypeConversionNode.cpp
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
+    ASTVectorSwizzleNode.cpp
     ASTVisitor.cpp
     ASTWhileNode.cpp
     Auto.cpp
@@ -273,6 +275,7 @@ set(Environment_Sources
     SSAUpcastInstruction.cpp
     SSAValue.cpp
     SSAValueVisitor.cpp
+    SSAVectorSwizzleInstruction.cpp
     SSAWhileInstruction.cpp
     StringUtilities.cpp
     StructMetaBuilder.cpp

@@ -46,6 +46,7 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     void addSpecializedInstanceMethods();
 
@@ -71,6 +72,7 @@ public:
 
     AnyValuePtr reduce(const AnyValuePtr &selector);
     AnyValuePtr reduce(const std::string &selector);
+    AnyValuePtr swizzle(const std::vector<uint32_t> &selectedElementsMask);
 
     PrimitiveVectorTypePtr type;
     AnyValuePtrList elements;

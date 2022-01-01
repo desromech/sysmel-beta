@@ -64,6 +64,7 @@ public:
     SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);
     SSAStoreInstructionPtr storeValueIn(const SSAValuePtr &value, const SSAValuePtr &reference);
     SSAUnreachableInstructionPtr unreachableInstruction();
+    SSAVectorSwizzleInstructionPtr vectorSwizzle(const TypePtr &resultType, const SSAValuePtr &vector, const std::vector<uint32_t> &selectedElements);
     SSAWhileInstructionPtr whileDoContinueWith(const SSACodeRegionPtr &conditionRegion, const SSACodeRegionPtr &bodyRegion, const SSACodeRegionPtr &continueRegion);
 
     SSABitcastInstructionPtr bitcast(const TypePtr &targetType, const SSAValuePtr &value);

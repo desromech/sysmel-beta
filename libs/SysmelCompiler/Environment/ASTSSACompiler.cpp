@@ -12,6 +12,7 @@
 #include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTQuoteNode.hpp"
 #include "Environment/ASTSequenceNode.hpp"
+#include "Environment/ASTVectorSwizzleNode.hpp"
 
 #include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
 
@@ -62,6 +63,7 @@
 #include "Environment/SSASendMessageInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
 #include "Environment/SSAUnreachableInstruction.hpp"
+#include "Environment/SSAVectorSwizzleInstruction.hpp"
 #include "Environment/SSAWhileInstruction.hpp"
 
 #include "Environment/SSADowncastInstruction.hpp"
@@ -425,6 +427,12 @@ AnyValuePtr ASTSSACompiler::visitSequenceNode(const ASTSequenceNodePtr &node)
     if(!result)
         result = builder->literal(getVoidConstant());
     return result;
+}
+
+AnyValuePtr ASTSSACompiler::visitVectorSwizzleNode(const ASTVectorSwizzleNodePtr &node)
+{
+    auto vector = visitNodeForValue(node->vector);
+    return builder->vectorSwizzle(node->analyzedType, vector, node->selectedElements);
 }
 
 AnyValuePtr ASTSSACompiler::visitQuasiQuotePatternExpansionNode(const ASTQuasiQuotePatternExpansionNodePtr &node)

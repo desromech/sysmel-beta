@@ -58,6 +58,7 @@ public:
     virtual AnyValuePtr visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction);
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction);
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction);
+    virtual AnyValuePtr visitVectorSwizzleInstruction(const SSAVectorSwizzleInstructionPtr &instruction);
     virtual AnyValuePtr visitWhileInstruction(const SSAWhileInstructionPtr &instruction);
 
     virtual AnyValuePtr visitCastInstruction(const SSACastInstructionPtr &instruction);

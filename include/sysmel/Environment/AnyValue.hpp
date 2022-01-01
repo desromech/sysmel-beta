@@ -408,6 +408,9 @@ public:
     /// Is this object an AST intrinsic operation node?
     virtual bool isASTCallNode() const;
 
+    /// Is this object an AST make aggregate node?
+    virtual bool isASTMakeAggregateNode() const;
+
     /// Is this object an AST make tuple node?
     virtual bool isASTMakeTupleNode() const;
 
@@ -485,6 +488,9 @@ public:
 
     /// Is this object an AST splice node?
     virtual bool isASTSpliceNode() const;
+
+    /// Is this object an AST vector swizzle node?
+    virtual bool isASTVectorSwizzleNode() const;
 
     /// Is this object an AST program entity node?
     virtual bool isASTProgramEntityNode() const;
@@ -594,7 +600,7 @@ public:
     /// Is this object an AST quasi quote pattern expansion?
     virtual bool isASTQuasiQuotePatternExpansionNode() const;
 
-    /// Is this object an AST quasi ?
+    /// Is this object an AST quasi quote pattern expansion argument node?
     virtual bool isASTQuasiQuotePatternExpansionArgumentNode() const;
 
     /// Is this object an identifier lookup scope?
@@ -1019,6 +1025,9 @@ public:
 
     // Is this a SSA declara local variable instruction?
     virtual bool isSSADeclareLocalVariableInstruction() const;
+
+    // Is this a SSA vector swizzle instruction?
+    virtual bool isSSAVectorSwizzleInstruction() const;
 
     // Is this a SSA while statement?
     virtual bool isSSAWhileInstruction() const;

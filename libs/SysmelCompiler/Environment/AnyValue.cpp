@@ -214,6 +214,11 @@ bool AnyValue::isASTCallNode() const
     return false;
 }
 
+bool AnyValue::isASTMakeAggregateNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTMakeTupleNode() const
 {
     return false;
@@ -340,6 +345,11 @@ bool AnyValue::isASTSourceCodePosition() const
 }
 
 bool AnyValue::isASTSpliceNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTVectorSwizzleNode() const
 {
     return false;
 }
@@ -1230,6 +1240,11 @@ bool AnyValue::isSSAConditionalJumpInstruction() const
 }
 
 bool AnyValue::isSSAIfInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAVectorSwizzleInstruction() const
 {
     return false;
 }

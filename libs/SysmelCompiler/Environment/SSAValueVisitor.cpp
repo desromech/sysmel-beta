@@ -214,6 +214,11 @@ AnyValuePtr SSAValueVisitor::visitUnreachableInstruction(const SSAUnreachableIns
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitVectorSwizzleInstruction(const SSAVectorSwizzleInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitWhileInstruction(const SSAWhileInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

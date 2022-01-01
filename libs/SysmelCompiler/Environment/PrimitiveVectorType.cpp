@@ -8,7 +8,10 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/Error.hpp"
 #include "Environment/ASTNode.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTMakeVectorNode.hpp"
+#include "Environment/ASTVectorSwizzleNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
@@ -147,6 +150,7 @@ AnyValuePtr PrimitiveVectorType::basicNewValue()
 {
     return withAll(elementType->basicNewValue());
 }
+
 ASTNodePtr PrimitiveVectorType::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     TypePtrList decayedTypes;
@@ -189,6 +193,62 @@ ASTNodePtr PrimitiveVectorType::analyzeFallbackValueConstructionWithArguments(co
     return result;
 }
 
+bool parseSwizzleMask(const std::string &swizzleMask, std::vector<uint32_t> &selectedElements, uint64_t elementCount)
+{
+    for(auto c : swizzleMask)
+    {
+        uint32_t selectedElement = 0;
+        switch(c)
+        {
+        case 'x':
+        case 'r':
+            selectedElement = 0;
+            break;
+        case 'y':
+        case 'g':
+            selectedElement = 1;
+            break;
+        case 'z':
+        case 'b':
+            selectedElement = 2;
+            break;
+        case 'w':
+        case 'a':
+            selectedElement = 3;
+            break;
+        default:
+            return false;
+        }
+
+        // Make sure the element index is in bounds.
+        if(selectedElement >= elementCount)
+            return false;
+
+        selectedElements.push_back(selectedElement);
+    }
+    return selectedElements.size() > 1;
+}
+
+ASTNodePtr PrimitiveVectorType::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(node->arguments.empty() && node->selector->isASTLiteralSymbolValue())
+    {
+        auto selector = node->selector.staticAs<ASTLiteralValueNode>()->value->asString();
+        std::vector<uint32_t> selectedElements;
+        if(parseSwizzleMask(selector, selectedElements, elements))
+        {
+            auto swizzle = basicMakeObject<ASTVectorSwizzleNode> ();
+            swizzle->sourcePosition = node->sourcePosition;
+            swizzle->vector = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(node->receiver, selfFromThis());
+            swizzle->selectedElements = selectedElements;
+            swizzle->analyzedType = make(elementType, selectedElements.size());
+            return swizzle;
+        }
+    }
+
+    return SuperType::analyzeUnboundMessageSendNode(node, semanticAnalyzer);
+}
+
 void PrimitiveVectorType::addSpecializedInstanceMethods()
 {
     auto accessElement = [](const PrimitiveVectorTypeValuePtr &self, const AnyValuePtr &index) {
@@ -218,6 +278,9 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.first", "x", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
                 return self->elements[0];
             }, MethodFlags::Pure),
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.first", "r", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                return self->elements[0];
+            }, MethodFlags::Pure),
         }},
     });
 
@@ -227,6 +290,9 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             {"accessing", {
                 // y
                 makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.second", "y", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[1];
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.second", "g", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
                     return self->elements[1];
                 }, MethodFlags::Pure),
             }},
@@ -241,6 +307,9 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
                 makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.third", "z", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
                     return self->elements[2];
                 }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.third", "b", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[2];
+                }, MethodFlags::Pure),
             }},
         });
     }
@@ -251,6 +320,9 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             {"accessing", {
                 // w
                 makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.fourth", "w", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[3];
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.fourth", "a", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
                     return self->elements[3];
                 }, MethodFlags::Pure),
             }},
@@ -532,6 +604,23 @@ AnyValuePtr PrimitiveVectorTypeValue::reduce(const AnyValuePtr &selector)
 AnyValuePtr PrimitiveVectorTypeValue::reduce(const std::string &selector)
 {
     return reduce(internSymbol(selector));
+}
+
+AnyValuePtr PrimitiveVectorTypeValue::swizzle(const std::vector<uint32_t> &selectedElementsMask)
+{
+    sysmelAssert(selectedElementsMask.size() > 1);
+    auto result = basicMakeObject<PrimitiveVectorTypeValue> ();
+    result->type = staticObjectCast<PrimitiveVectorType> (
+        PrimitiveVectorType::make(type->elementType, selectedElementsMask.size())
+    );
+    result->elements.reserve(selectedElementsMask.size());
+    for(auto index: selectedElementsMask)
+    {
+        sysmelAssert(index < elements.size());
+        result->elements.push_back(elements[index]);
+    }
+
+    return result;
 }
 
 } // End of namespace Environment
