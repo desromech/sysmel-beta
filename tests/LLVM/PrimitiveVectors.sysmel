@@ -88,17 +88,39 @@ public template PrimitiveVectorTestCase(ST: Type)
         }
     }.
 
+    public method reductions => Void := {
+        {
+            let v := Vector2(2, 3).
+            self assert: v sum equals: 5.
+            self assert: v product equals: 6.
+            self assert: v min equals: 2.
+            self assert: v max equals: 3.
+        }
+    }.
+
+    public method linearAlgebra => Void := {
+        {
+            let a := Vector2(2, 3).
+            let b := Vector2(5, 7).
+            self assert: (a dot: b) equals: 31.
+        }
+    }.
+
     public method run => Void := {
         self
             construction;
-            arithmetic
+            arithmetic;
+            reductions;
+            linearAlgebra
     }.
 }.
 
 compileTime constant Float32TestCase := PrimitiveVectorTestCase(Float32).
+compileTime constant Float64TestCase := PrimitiveVectorTestCase(Float64).
 
 public externC function main() => Int32 := {
     Float32TestCase() run.
+    Float64TestCase() run.
     
     0
 }.

@@ -133,7 +133,7 @@ void BootstrapModule::initializePrimitiveVectorTypes()
         Float64::__staticType__(),
     };
     uint32_t primitiveVectorTypeElements[] = {
-        2, 3, 4
+        2, 3, 4, 8
     };
 
     // Synthethize the basic primitive vector types.

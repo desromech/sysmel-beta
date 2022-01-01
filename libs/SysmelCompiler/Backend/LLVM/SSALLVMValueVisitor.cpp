@@ -452,6 +452,32 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateXorReduce(context.arguments[0]);
     }},
 
+    {"vector.min.integer.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateIntMinReduce(context.arguments[0], false);
+    }},
+    {"vector.min.integer.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateIntMinReduce(context.arguments[0], true);
+    }},
+    {"vector.min.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateFPMinReduce(context.arguments[0]);
+    }},
+
+    {"vector.max.integer.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateIntMaxReduce(context.arguments[0], false);
+    }},
+    {"vector.max.integer.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateIntMaxReduce(context.arguments[0], true);
+    }},
+    {"vector.max.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateFPMaxReduce(context.arguments[0]);
+    }},
+
     {"vector.dot.integer", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateAddReduce(
