@@ -296,6 +296,7 @@ set(Environment_Sources
     UnionMetaBuilder.cpp
     UnionType.cpp
     ValueBox.cpp
+    ValueAsConstRefTypeConversionRule.cpp
     ValueAsReceiverReferenceTypeConversionRule.cpp
     ValueAsVoidTypeConversionRule.cpp
     Variable.cpp

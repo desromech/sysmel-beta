@@ -1,0 +1,49 @@
+public class Operation definition: {
+    public const virtual method applyOn: (a: Int32) ::=> Int32
+        := 0.
+
+    public const virtual method applyOn: (a: Int32) with: (b: Int32) ::=> Int32
+        := 0.
+}.
+
+public class Negate superclass: Operation; definition: {
+    public const override method applyOn: (v: Int32) ::=> Int32
+        := v negated.
+}.
+
+public class Addition superclass: Operation; definition: {
+    public const override method applyOn: (a: Int32) with: (b: Int32) ::=> Int32
+        := a + b.
+}.
+
+public class Subtraction superclass: Operation; definition: {
+    public const override method applyOn: (a: Int32) with: (b: Int32) ::=> Int32
+        := a - b.
+}.
+
+public class Multiplication superclass: Operation; definition: {
+    public const override method applyOn: (a: Int32) with: (b: Int32) ::=> Int32
+        := a * b.
+}.
+
+public class PolymorphismTestCase superclass: TestCase; definition: {
+    public method operate: (operation: Operation const ref) on: (a: Int32) ::=> Int32
+        := operation applyOn: a.
+
+    public method operate: (operation: Operation const ref) on: (a: Int32) with: (b: Int32) ::=> Int32
+        := operation applyOn: a with: b.
+
+    public method run => Void := {
+        self assert: (self operate: Operation() on: 2 with: 3) equals: 0.
+        self assert: (self operate: Negate() on: 2) equals: -2.
+        self assert: (self operate: Addition() on: 2) equals: 0.
+        self assert: (self operate: Addition() on: 2 with: 3) equals: 5.
+        self assert: (self operate: Subtraction() on: 2 with: 3) equals: -1.
+        self assert: (self operate: Multiplication() on: 2 with: 3) equals: 6.
+    }.
+}.
+
+public externC function main() => Int32 := {
+    PolymorphismTestCase() run.
+    0
+}.

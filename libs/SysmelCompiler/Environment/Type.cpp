@@ -21,6 +21,7 @@
 #include "Environment/DowncastTypeConversionRule.hpp"
 #include "Environment/ValueAsReceiverReferenceTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
+#include "Environment/ValueAsConstRefTypeConversionRule.hpp"
 #include "Environment/ConstructorMethodTypeConversionRule.hpp"
 #include "Environment/ConversionMethodTypeConversionRule.hpp"
 #include "Environment/DeferredCompileTimeCodeFragment.hpp"
@@ -817,6 +818,7 @@ void Type::addDefaultTypeConversionRules()
     addTypeConversionRule(IdentityTypeConversionRule::uniqueInstance());
     addTypeConversionRule(UpcastTypeConversionRule::uniqueInstance());
     addTypeConversionRule(ValueAsVoidTypeConversionRule::uniqueInstance());
+    addTypeConversionRule(ValueAsConstRefTypeConversionRule::uniqueInstance());
     addExplicitTypeConversionRule(DowncastTypeConversionRule::uniqueInstance());
 }
 

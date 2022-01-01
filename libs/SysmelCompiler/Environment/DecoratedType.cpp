@@ -46,6 +46,11 @@ AnyValuePtr DecoratedType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
     return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
 }
 
+ASTNodePtr DecoratedType::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
 bool DecoratedType::isConstDecoratedType() const
 {
     return (decorations & TypeDecorationFlags::Const) != TypeDecorationFlags::None;
