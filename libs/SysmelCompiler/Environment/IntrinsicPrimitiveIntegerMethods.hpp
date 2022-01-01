@@ -250,6 +250,16 @@ struct IntrinsicPrimitiveIntegerMethods
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.neg", "negated", +[](const PrimitiveIntegerPtr &v) {
                     return makeValue(-v->value);
                 }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.sign" + signSuffix, "sign", +[](const PrimitiveIntegerPtr &v) {
+                    return makeValue(v->value < 0 ? -1 : (v->value > 0 ? 1 : 0));
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr)> ("integer.abs" + signSuffix, "abs", +[](const PrimitiveIntegerPtr &v) {
+                    if constexpr(IsSigned)
+                        return makeValue(v->value < 0 ? -v->value : v->value);
+                    else 
+                        return v;
+                }, MethodFlags::Pure),
+
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.add", "+", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value + b->value);
                 }, MethodFlags::Pure),
@@ -270,6 +280,13 @@ struct IntrinsicPrimitiveIntegerMethods
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.mod" + signSuffix, "\\\\", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
                     return makeValue(a->value % b->value);
+                }, MethodFlags::Pure),
+
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.min" + signSuffix, "min:", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                    return makeValue(a->value <= b->value ? a->value : b->value);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveIntegerPtr (PrimitiveIntegerPtr, PrimitiveIntegerPtr)> ("integer.max" + signSuffix, "max:", +[](const PrimitiveIntegerPtr &a, const PrimitiveIntegerPtr &b) {
+                    return makeValue(a->value >= b->value ? a->value : b->value);
                 }, MethodFlags::Pure),
             }},
             {"bitwise", {

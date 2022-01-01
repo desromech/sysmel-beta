@@ -85,6 +85,9 @@ public template PrimitiveVectorTestCase(ST: Type)
             self assert: b - a equals: Vector2(3, 4).
             self assert: a * b equals: Vector2(4, 12).
             self assert: b / a equals: Vector2(4, 3).
+
+            self assert: (a min: b) equals: Vector2(1, 2).
+            self assert: (a max: b) equals: Vector2(4, 6).
         }
     }.
 
@@ -95,6 +98,22 @@ public template PrimitiveVectorTestCase(ST: Type)
             self assert: v product equals: 6.
             self assert: v min equals: 2.
             self assert: v max equals: 3.
+        }.
+
+        {
+            let v := Vector3(2, 3, 5).
+            self assert: v sum equals: 10.
+            self assert: v product equals: 30.
+            self assert: v min equals: 2.
+            self assert: v max equals: 5.
+        }.
+
+        {
+            let v := Vector4(2, 3, 5, 4).
+            self assert: v sum equals: 14.
+            self assert: v product equals: 120.
+            self assert: v min equals: 2.
+            self assert: v max equals: 5.
         }
     }.
 
@@ -103,7 +122,16 @@ public template PrimitiveVectorTestCase(ST: Type)
             let a := Vector2(2, 3).
             let b := Vector2(5, 7).
             self assert: (a dot: b) equals: 31.
-        }
+        }.
+
+        {
+            let x := Vector3(1, 0, 0).
+            let y := Vector3(0, 1, 0).
+            let z := Vector3(0, 0, 1).
+            self assert: (x cross: y) equals: z.
+            self assert: (y cross: z) equals: x.
+            self assert: (z cross: x) equals: y.
+        }.
     }.
 
     public method run => Void := {
@@ -115,10 +143,38 @@ public template PrimitiveVectorTestCase(ST: Type)
     }.
 }.
 
+compileTime constant Int8TestCase := PrimitiveVectorTestCase(Int8).
+compileTime constant Int16TestCase := PrimitiveVectorTestCase(Int16).
+compileTime constant Int32TestCase := PrimitiveVectorTestCase(Int32).
+compileTime constant Int64TestCase := PrimitiveVectorTestCase(Int64).
+
+compileTime constant UInt8TestCase := PrimitiveVectorTestCase(UInt8).
+compileTime constant UInt16TestCase := PrimitiveVectorTestCase(UInt16).
+compileTime constant UInt32TestCase := PrimitiveVectorTestCase(UInt32).
+compileTime constant UInt64TestCase := PrimitiveVectorTestCase(UInt64).
+
+compileTime constant Char8TestCase := PrimitiveVectorTestCase(Char8).
+compileTime constant Char16TestCase := PrimitiveVectorTestCase(Char16).
+compileTime constant Char32TestCase := PrimitiveVectorTestCase(Char32).
+
 compileTime constant Float32TestCase := PrimitiveVectorTestCase(Float32).
 compileTime constant Float64TestCase := PrimitiveVectorTestCase(Float64).
 
 public externC function main() => Int32 := {
+    Int8TestCase() run.
+    Int16TestCase() run.
+    Int32TestCase() run.
+    Int64TestCase() run.
+
+    UInt8TestCase() run.
+    UInt16TestCase() run.
+    UInt32TestCase() run.
+    UInt64TestCase() run.
+
+    Char8TestCase() run.
+    Char16TestCase() run.
+    Char32TestCase() run.
+
     Float32TestCase() run.
     Float64TestCase() run.
     

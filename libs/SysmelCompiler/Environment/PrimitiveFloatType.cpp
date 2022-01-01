@@ -111,6 +111,14 @@ struct IntrinsicPrimitiveFloatMethods
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.neg", "negated", +[](const PrimitiveFloatPtr &v) {
                     return makeValue(-v->value);
                 }, MethodFlags::Pure),
+
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.sign", "sign", +[](const PrimitiveFloatPtr &v) {
+                    return makeValue(v->value < 0 ? -1 : (v->value > 0 ? 1 : 0));
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.abs", "abs", +[](const PrimitiveFloatPtr &v) {
+                    return makeValue(v->value < 0 ? -v->value : v->value);
+                }, MethodFlags::Pure),
+
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.add", "+", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return makeValue(a->value + b->value);
                 }, MethodFlags::Pure),
@@ -131,6 +139,13 @@ struct IntrinsicPrimitiveFloatMethods
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.mod", "\\\\", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
                     return makeValue(fmod(a->value, b->value));
+                }, MethodFlags::Pure),
+
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.min", "min:", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                    return makeValue(a->value <= b->value ? a->value : b->value);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr, PrimitiveFloatPtr)> ("float.max", "max:", +[](const PrimitiveFloatPtr &a, const PrimitiveFloatPtr &b) {
+                    return makeValue(a->value >= b->value ? a->value : b->value);
                 }, MethodFlags::Pure),
             }}
         };

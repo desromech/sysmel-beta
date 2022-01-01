@@ -307,7 +307,7 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             // ~=
             makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.not-equals" + equalitySuffix, "~=", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, notEquals, MethodFlags::Pure),
             makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.not-equals" + equalitySuffix, "~~", selfFromThis(), Boolean8::__staticType__(), {selfFromThis()}, notEquals, MethodFlags::Pure),
-        }},
+        }}
     });
 
     // Reduction.
@@ -369,6 +369,32 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
             }, MethodFlags::Pure),
         }}
     });
+
+    if(elements == 3)
+    {
+        addMethodCategories(MethodCategories{
+            {"linear algebra", {
+                makeIntrinsicMethodBindingWithSignature<PrimitiveVectorTypeValuePtr (PrimitiveVectorTypeValuePtr, PrimitiveVectorTypeValuePtr)> ("vector.cross" + equalitySuffix, "cross:", selfFromThis(), selfFromThis(), {selfFromThis()}, [=](const PrimitiveVectorTypeValuePtr &self, const PrimitiveVectorTypeValuePtr &other){
+                    const auto &a1 = self->elements[0];
+                    const auto &a2 = self->elements[1];
+                    const auto &a3 = self->elements[2];
+
+                    const auto &b1 = other->elements[0];
+                    const auto &b2 = other->elements[1];
+                    const auto &b3 = other->elements[2];
+
+                    auto times = internSymbol("*");
+                    auto subtract = internSymbol("-");
+
+                    return withValues({
+                        a2->perform<AnyValuePtr> (times, b3)->perform<AnyValuePtr>(subtract, a3->perform<AnyValuePtr> (times, b2)),
+                        a3->perform<AnyValuePtr> (times, b1)->perform<AnyValuePtr>(subtract, a1->perform<AnyValuePtr> (times, b3)),
+                        a1->perform<AnyValuePtr> (times, b2)->perform<AnyValuePtr>(subtract, a2->perform<AnyValuePtr> (times, b1))
+                    });
+                }, MethodFlags::Pure),
+            }}
+        });
+    }
 
     // Unary intrinsics.
     {
@@ -446,7 +472,6 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
         }
     }
 }
-
 
 bool PrimitiveVectorTypeValue::isPrimitiveVectorTypeValue() const
 {

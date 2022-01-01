@@ -201,6 +201,77 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateNeg(context.arguments[0]);
     }},
 
+    {"integer.sign.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto integerType = x->getType();
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpUGT(x, llvm::ConstantInt::get(integerType, 0)),
+            llvm::ConstantInt::get(integerType, 1),
+            llvm::ConstantInt::get(integerType, 0)
+        );
+    }},
+    {"integer.sign.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto integerType = x->getType();
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpSLT(x, llvm::ConstantInt::get(integerType, 0)),
+            llvm::ConstantInt::get(integerType, -1),
+            context.builder->CreateSelect(
+                context.builder->CreateICmpUGT(x, llvm::ConstantInt::get(integerType, 0)),
+                llvm::ConstantInt::get(integerType, 1),
+                llvm::ConstantInt::get(integerType, 0)
+            )
+        ); 
+    }},
+    {"integer.abs.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.arguments[0];
+    }},
+    {"integer.abs.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto integerType = x->getType();
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpSGE(x, llvm::ConstantInt::get(integerType, 0)),
+            x,
+            context.builder->CreateNeg(x)
+        );
+    }},
+    {"integer.min.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpULE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
+    }},
+    {"integer.min.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpSLE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
+    }},
+    {"integer.max.unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpUGE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
+    }},
+    {"integer.max.signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateICmpSGE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
+    }},
+
     {"integer.add", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.builder->CreateAdd(context.arguments[0], context.arguments[1]);
@@ -297,6 +368,47 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     {"float.neg", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateFNeg(context.arguments[0]);
+    }},
+
+    {"float.sign", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto floatType = x->getType();
+        return context.builder->CreateSelect(
+            context.builder->CreateFCmpULT(x, llvm::ConstantFP::get(floatType, 0)),
+            llvm::ConstantInt::get(floatType, -1),
+            context.builder->CreateSelect(
+                context.builder->CreateFCmpUGT(x, llvm::ConstantFP::get(floatType, 0)),
+                llvm::ConstantInt::get(floatType, 1),
+                llvm::ConstantInt::get(floatType, 0)
+            )
+        ); 
+    }},
+    {"float.abs", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto floatType = x->getType();
+        return context.builder->CreateSelect(
+            context.builder->CreateFCmpUGE(x, llvm::ConstantFP::get(floatType, 0)),
+            x,
+            context.builder->CreateNeg(x)
+        );
+    }},
+    {"float.min", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateFCmpULE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
+    }},
+    {"float.max", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateSelect(
+            context.builder->CreateFCmpUGE(context.arguments[0], context.arguments[1]),
+            context.arguments[0],
+            context.arguments[1]
+        );
     }},
 
     {"float.add", +[](const IntrinsicGenerationContext &context) {
@@ -492,6 +604,36 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
             context.builder->CreateFMul(context.arguments[0], context.arguments[1])
         );
     }},
+
+    {"vector.cross.integer", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        auto a =  context.arguments[0];
+        auto b =  context.arguments[1];
+        auto a231 = context.builder->CreateShuffleVector(a, {1, 2, 0});
+        auto b312 = context.builder->CreateShuffleVector(b, {2, 0, 1});
+        auto a312 = context.builder->CreateShuffleVector(a, {2, 0, 1});
+        auto b231 = context.builder->CreateShuffleVector(b, {1, 2, 0});
+
+        return context.builder->CreateSub(
+            context.builder->CreateMul(a231, b312),
+            context.builder->CreateMul(a312, b231)
+        );
+    }},
+    {"vector.cross.float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        auto a =  context.arguments[0];
+        auto b =  context.arguments[1];
+        auto a231 = context.builder->CreateShuffleVector(a, {1, 2, 0});
+        auto b312 = context.builder->CreateShuffleVector(b, {2, 0, 1});
+        auto a312 = context.builder->CreateShuffleVector(a, {2, 0, 1});
+        auto b231 = context.builder->CreateShuffleVector(b, {1, 2, 0});
+
+        return context.builder->CreateFSub(
+            context.builder->CreateFMul(a231, b312),
+            context.builder->CreateFMul(a312, b231)
+        );
+    }},
+
 
     // Pointer
     {"pointer.equals", +[](const IntrinsicGenerationContext &context) {
