@@ -86,6 +86,11 @@ TypePtr TemporaryReferenceType::withDecorations(TypeDecorationFlags decorations)
     return selfFromThis();
 }
 
+TypePtr TemporaryReferenceType::asDecayedType()
+{
+    return baseType->asDecayedType();
+}
+
 std::string TemporaryReferenceType::printString() const
 {
     if(hasGenericAddressSpace())

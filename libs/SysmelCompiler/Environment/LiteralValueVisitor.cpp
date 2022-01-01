@@ -127,7 +127,7 @@ AnyValuePtr LiteralValueVisitor::visitPrimitiveScalarType(const PrimitiveScalarT
     return visitPrimitiveTensorType(value);
 }
 
-AnyValuePtr LiteralValueVisitor::visitPrimitiveVectorTypeValue(const PrimitiveVectorTypeValuePtr &value)
+AnyValuePtr LiteralValueVisitor::visitPrimitiveVectorTypeValue(const PrimitiveVectorTypeValuePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }

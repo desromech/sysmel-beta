@@ -184,6 +184,11 @@ AnyValuePtr SSAValueVisitor::visitMakeClosureInstruction(const SSAMakeClosureIns
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitMakeVectorInstruction(const SSAMakeVectorInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr SSAValueVisitor::visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &)
 {
     SysmelSelfSubclassResponsibility();

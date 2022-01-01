@@ -107,6 +107,11 @@ AnyValuePtr ASTVisitor::visitMakeTupleNode(const ASTMakeTupleNodePtr &)
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr ASTVisitor::visitMakeVectorNode(const ASTMakeVectorNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 AnyValuePtr ASTVisitor::visitMessageChainNode(const ASTMessageChainNodePtr &)
 {
     SysmelSelfSubclassResponsibility();

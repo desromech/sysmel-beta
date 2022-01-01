@@ -334,7 +334,10 @@ public:
     
     /// This method analyzes the construction of a value of this type with the specified arguments.
     virtual ASTNodePtr analyzeValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
-    
+
+    /// This method analyzes the construction of a value of this type with the specified arguments using a fallback method, or error.
+    virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
     /// Is it possible to instantiate this type with the specified literal value?
     virtual bool canBeInstantiatedWithLiteralValue(const AnyValuePtr &value);
 
@@ -401,6 +404,9 @@ public:
     /// Removes the decorations of this type.
     virtual TypePtr asUndecoratedType();
 
+    /// Removes the decorations and ref/tempRef of this type.
+    virtual TypePtr asDecayedType();
+
     /// Removes the decorations of this that are omitted from an argument type.
     virtual TypePtr asCanonicalArgumentType();
 
@@ -444,6 +450,8 @@ protected:
 
     /// Has a trivial lifetime method?
     bool hasTrivialLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
+
+    void recordPotentialSpecialMethod(const AnyValuePtr &method);
 
     AnyValuePtr name;
     mutable TypePtr supertype;

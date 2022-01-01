@@ -48,6 +48,7 @@ public:
     virtual TypePtr asInferredTypeForWithModeInEnvironment(const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
     virtual TypePtr asUndecoratedType() override;
+    virtual TypePtr asDecayedType() override;
     virtual TypePtr asCanonicalArgumentType() override;
     virtual TypePtr asCanonicalResultType() override;
 

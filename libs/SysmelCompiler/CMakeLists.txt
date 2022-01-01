@@ -49,6 +49,7 @@ set(Environment_Sources
     ASTMakeDictionaryNode.cpp
     ASTMakeLiteralArrayNode.cpp
     ASTMakeTupleNode.cpp
+    ASTMakeVectorNode.cpp
     ASTMessageChainMessageNode.cpp
     ASTMessageChainNode.cpp
     ASTMessageSendNode.cpp
@@ -256,6 +257,7 @@ set(Environment_Sources
     SSAGetAggregateFieldReferenceInstruction.cpp
     SSAGetAggregateSlotReferenceInstruction.cpp
     SSAMakeClosureInstruction.cpp
+    SSAMakeVectorInstruction.cpp
     SSAModule.cpp
     SSANamespace.cpp
     SSAProgramEntity.cpp

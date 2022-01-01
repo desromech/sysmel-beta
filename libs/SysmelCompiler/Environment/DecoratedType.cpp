@@ -136,6 +136,11 @@ TypePtr DecoratedType::asUndecoratedType()
     return baseType;
 }
 
+TypePtr DecoratedType::asDecayedType()
+{
+    return baseType->asDecayedType();
+}
+
 TypePtr DecoratedType::asCanonicalArgumentType()
 {
     return make(baseType, decorations & TypeDecorationFlags::ArgumentTypeDecorations);

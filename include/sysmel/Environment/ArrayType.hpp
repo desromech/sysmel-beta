@@ -45,6 +45,9 @@ public:
 
     TypePtr elementType;
     uint64_t size;
+
+protected:
+    virtual void buildLayout() override;
 };
 
 /**

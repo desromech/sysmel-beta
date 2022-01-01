@@ -91,6 +91,10 @@ TypePtr ReferenceType::withDecorations(TypeDecorationFlags decorations)
     return selfFromThis();
 }
 
+TypePtr ReferenceType::asDecayedType()
+{
+    return baseType->asDecayedType();
+}
 
 bool ReferenceType::isConstOrConstReferenceType() const
 {

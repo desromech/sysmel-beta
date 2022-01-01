@@ -33,6 +33,7 @@ public:
     virtual PointerLikeTypePtr tempRef() override;
     virtual PointerLikeTypePtr tempRefFor(const AnyValuePtr &addressSpace) override;
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
+    virtual TypePtr asDecayedType() override;
 
     virtual bool isConstOrConstReferenceType() const override;
     virtual TypePtr asConstOrConstReferenceType() override;

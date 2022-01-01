@@ -33,6 +33,7 @@ public:
     virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
     virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
+    virtual AnyValuePtr visitMakeVectorNode(const ASTMakeVectorNodePtr &node) override;
     virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node) override;
     virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node) override;
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;

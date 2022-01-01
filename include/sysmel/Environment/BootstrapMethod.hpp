@@ -42,7 +42,7 @@ class BootstrapMethod<ResultType (ReceiverType, Args...), FT> : public Bootstrap
 public:
     typedef BootstrapMethod<ResultType (Args...), FT> SelfType;
 
-    BootstrapMethod(const AnyValuePtr &initialSelector, FT initialFunctor)
+    BootstrapMethod(const AnyValuePtr &initialSelector, const FT &initialFunctor)
         : functor(initialFunctor)
     {
         setName(initialSelector);

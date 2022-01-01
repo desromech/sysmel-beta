@@ -408,16 +408,19 @@ public:
     /// Is this object an AST intrinsic operation node?
     virtual bool isASTCallNode() const;
 
-    /// Is this object an AST message a make tuple node?
+    /// Is this object an AST make tuple node?
     virtual bool isASTMakeTupleNode() const;
 
-    /// Is this object an AST message a make literal array node?
+    /// Is this object an AST make vector node?
+    virtual bool isASTMakeVectorNode() const;
+
+    /// Is this object an AST make literal array node?
     virtual bool isASTMakeLiteralArrayNode() const;
 
-    /// Is this object an AST message a make dictionary node?
+    /// Is this object an AST make dictionary node?
     virtual bool isASTMakeDictionaryNode() const;
 
-    /// Is this object an AST message a make association node?
+    /// Is this object an AST make association node?
     virtual bool isASTMakeAssociationNode() const;
 
     /// Is this object an AST message chain node?
@@ -1034,6 +1037,9 @@ public:
 
     // Is this a SSA make closure instruction?
     virtual bool isSSAMakeClosureInstruction() const;
+
+    // Is this a SSA make vector instruction?
+    virtual bool isSSAMakeVectorInstruction() const;
 
     // Is this a SSA return from region instruction?
     virtual bool isSSAReturnFromRegionInstruction() const;

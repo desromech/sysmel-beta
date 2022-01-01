@@ -20,6 +20,9 @@ class SYSMEL_COMPILER_LIB_EXPORT PrimitiveVectorType : public SubMetaTypeOf<Simp
 {
 public:
     static TypePtr make(const TypePtr &elementType, uint32_t elements);
+
+    virtual PrimitiveVectorTypeValuePtr withValues(const AnyValuePtrList &elements);
+    virtual PrimitiveVectorTypeValuePtr withAll(const AnyValuePtr &element);
     
     virtual bool isPrimitiveVectorType() const override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
@@ -41,6 +44,8 @@ public:
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
+
+    virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     void addSpecializedInstanceMethods();
 

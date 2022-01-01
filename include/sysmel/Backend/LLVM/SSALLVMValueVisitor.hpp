@@ -77,6 +77,7 @@ public:
     virtual AnyValuePtr visitLoadInstruction(const SSALoadInstructionPtr &instruction) override;
     virtual AnyValuePtr visitLocalVariableInstruction(const SSALocalVariableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitMakeVectorInstruction(const SSAMakeVectorInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction) override;

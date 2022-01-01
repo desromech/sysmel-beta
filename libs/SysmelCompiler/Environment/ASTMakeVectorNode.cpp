@@ -1,4 +1,4 @@
-#include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
 #include "Environment/Type.hpp"
@@ -10,23 +10,23 @@ namespace Sysmel
 namespace Environment
 {
 
-static BootstrapTypeRegistration<ASTMakeTupleNode> ASTMakeTupleNodeTypeRegistration;
+static BootstrapTypeRegistration<ASTMakeVectorNode> ASTMakeVectorNodeTypeRegistration;
 
-bool ASTMakeTupleNode::isASTMakeTupleNode() const
+bool ASTMakeVectorNode::isASTMakeVectorNode() const
 {
     return true;
 }
 
-AnyValuePtr ASTMakeTupleNode::accept(const ASTVisitorPtr &visitor)
+AnyValuePtr ASTMakeVectorNode::accept(const ASTVisitorPtr &visitor)
 {
-    return visitor->visitMakeTupleNode(selfFromThis());
+    return visitor->visitMakeVectorNode(selfFromThis());
 }
 
-SExpression ASTMakeTupleNode::asSExpression() const
+SExpression ASTMakeVectorNode::asSExpression() const
 {
     SExpressionList sexpr;
     sexpr.elements.reserve(3 + elements.size());
-    sexpr.elements.push_back(SExpressionIdentifier{{"tuple"}});
+    sexpr.elements.push_back(SExpressionIdentifier{{"vector"}});
     sexpr.elements.push_back(sourcePosition->asSExpression());
     sexpr.elements.push_back(analyzedType ? analyzedType->asSExpression() : nullptr);
     for(const auto &element : elements)
@@ -35,7 +35,7 @@ SExpression ASTMakeTupleNode::asSExpression() const
     return sexpr;
 }
 
-void ASTMakeTupleNode::childrenDo(const ASTIterationBlock &aBlock)
+void ASTMakeVectorNode::childrenDo(const ASTIterationBlock &aBlock)
 {
     SuperType::childrenDo(aBlock);
     for(auto &el : elements)

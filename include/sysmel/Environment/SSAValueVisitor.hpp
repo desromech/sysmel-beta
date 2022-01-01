@@ -52,6 +52,7 @@ public:
     virtual AnyValuePtr visitGetAggregateFieldReferenceInstruction(const SSAGetAggregateFieldReferenceInstructionPtr &instruction);
     virtual AnyValuePtr visitGetAggregateSlotReferenceInstruction(const SSAGetAggregateSlotReferenceInstructionPtr &instruction);
     virtual AnyValuePtr visitMakeClosureInstruction(const SSAMakeClosureInstructionPtr &instruction);
+    virtual AnyValuePtr visitMakeVectorInstruction(const SSAMakeVectorInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction);
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction);
     virtual AnyValuePtr visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction);

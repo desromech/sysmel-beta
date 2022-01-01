@@ -638,8 +638,22 @@ const FieldVariablePtrList &Type::getFields()
     return fields;
 }
 
+void Type::recordPotentialSpecialMethod(const AnyValuePtr &method)
+{
+    if(!validAnyValue(method)->isSpecificMethod())
+        return;
+    
+    auto specificMethod = method.staticAs<SpecificMethod> ();
+    if(specificMethod->isConstructor())
+        getInstanceType()->addConstructor(method);
+
+    if(specificMethod->isConversion())
+        addConversion(method);
+}
+
 void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
+    recordPotentialSpecialMethod(method);
     if(!macroMethodDictionary)
         macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
@@ -647,6 +661,7 @@ void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValueP
 
 void Type::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
+    recordPotentialSpecialMethod(method);
     if(!methodDictionary)
         methodDictionary = basicMakeObject<MethodDictionary> ();
     methodDictionary->addMethodWithSelector(method, selector);
@@ -654,6 +669,7 @@ void Type::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &s
 
 void Type::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
+    recordPotentialSpecialMethod(method);
     if(!macroMethodDictionary)
         macroMethodDictionary = basicMakeObject<MethodDictionary> ();
     macroMethodDictionary->addMethodWithSelector(method, selector);
@@ -683,13 +699,13 @@ bool Type::isSubtypeOf(const TypePtr &otherType) const
 
 PatternMatchingRank Type::rankToMatchType(const TypePtr &type)
 {
-    PatternMatchingRank rank = 0;
+    PatternMatchingRank upCastRank = 0;
     for(auto currentType = type; currentType; currentType = currentType->getSupertype())
     {
         if(currentType.get() == this)
-            return rank;
+            return upCastRank;
 
-        ++rank;
+        ++upCastRank;
     }
 
     return -1;
@@ -1040,6 +1056,11 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
         );
     }
 
+    return analyzeFallbackValueConstructionWithArguments(node, arguments, semanticAnalyzer);
+}
+
+ASTNodePtr Type::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
     return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Unsupported construction of value with type {0} using the specified arguments.", {printString()}));
 }
 
@@ -1190,6 +1211,11 @@ TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 }
 
 TypePtr Type::asUndecoratedType()
+{
+    return selfFromThis();
+}
+
+TypePtr Type::asDecayedType()
 {
     return selfFromThis();
 }

@@ -8,6 +8,7 @@
 #include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/ASTLexicalScopeNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTQuoteNode.hpp"
 #include "Environment/ASTSequenceNode.hpp"
@@ -56,6 +57,7 @@
 #include "Environment/SSALoadInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
 #include "Environment/SSAMakeClosureInstruction.hpp"
+#include "Environment/SSAMakeVectorInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSASendMessageInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
@@ -366,6 +368,20 @@ AnyValuePtr ASTSSACompiler::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 
     sysmelAssert(node->analyzedType->isAggregateType());
     return makeAggregateWithElements(staticObjectCast<AggregateType> (node->analyzedType), elements);
+}
+
+AnyValuePtr ASTSSACompiler::visitMakeVectorNode(const ASTMakeVectorNodePtr &node)
+{
+    SSAValuePtrList elements;
+    elements.reserve(node->elements.size());
+    for(auto &el : node->elements)
+    {
+        auto value = visitNodeForValue(el);
+        if(!el->analyzedType->isVoidType())
+            elements.push_back(value);
+    }
+
+    return builder->makeVector(node->analyzedType, elements);
 }
 
 AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &node)

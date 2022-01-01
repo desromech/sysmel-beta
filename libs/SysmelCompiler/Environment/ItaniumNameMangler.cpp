@@ -15,6 +15,7 @@
 #include "Environment/TupleType.hpp"
 #include "Environment/VariantType.hpp"
 #include "Environment/FunctionalType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/SSAProgramEntity.hpp"
@@ -90,6 +91,28 @@ public:
             result.push_back('_');
 
             result += context->mangleType(type->elementType);
+            return nullptr;
+        }
+
+        virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type) override
+        {
+            std::ostringstream out;
+            if(!validAnyValue(type->getName())->isUndefined())
+            {
+                auto name = type->getValidNameString();
+                out << 'u';
+                out << name.size();
+                out << name;
+            }
+            else
+            {
+                out << "15primitiveVectorI";
+                out << context->mangleType(type->elementType);
+                out << "Li" << type->elements << 'E';
+                out << 'E';
+            }
+            
+            result += out.str();
             return nullptr;
         }
 

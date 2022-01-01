@@ -18,6 +18,7 @@
 #include "Environment/SSALoadInstruction.hpp"
 #include "Environment/SSALocalVariableInstruction.hpp"
 #include "Environment/SSAMakeClosureInstruction.hpp"
+#include "Environment/SSAMakeVectorInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
 #include "Environment/SSASendMessageInstruction.hpp"
@@ -275,6 +276,15 @@ SSAMakeClosureInstructionPtr SSABuilder::makeClosure(const SSAValuePtr &closureI
     return instruction;
 }
 
+SSAMakeVectorInstructionPtr SSABuilder::makeVector(const TypePtr &vectorType, const SSAValuePtrList &elements)
+{
+    auto instruction = basicMakeObject<SSAMakeVectorInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setValueType(vectorType);
+    instruction->setElements(elements);
+    addInstruction(instruction);
+    return instruction;
+}
 
 SSAReturnFromFunctionInstructionPtr SSABuilder::returnFromFunction(const SSAValuePtr &value)
 {

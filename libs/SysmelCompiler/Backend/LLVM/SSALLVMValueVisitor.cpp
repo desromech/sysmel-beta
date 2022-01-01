@@ -29,6 +29,7 @@
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSADoWhileInstruction.hpp"
 #include "Environment/SSAMakeClosureInstruction.hpp"
+#include "Environment/SSAMakeVectorInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
@@ -331,6 +332,28 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
             llvm::ConstantInt::get(context.self->backend->translateType(Type::getIntPointerType()), 0),
             context.arguments[1]
         });
+    }},
+
+    // Vector
+    {"vector.element", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateExtractElement(context.arguments[0], context.arguments[1]);
+    }},
+    {"vector.element.first", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateExtractElement(context.arguments[0], uint64_t(0));
+    }},
+    {"vector.element.second", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateExtractElement(context.arguments[0], 1);
+    }},
+    {"vector.element.third", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateExtractElement(context.arguments[0], 2);
+    }},
+    {"vector.element.fourth", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.builder->CreateExtractElement(context.arguments[0], 3);
     }},
 
     // Pointer
@@ -1225,6 +1248,32 @@ AnyValuePtr SSALLVMValueVisitor::visitMakeClosureInstruction(const SSAMakeClosur
 
     // Cast and return the closure.
     return wrapLLVMValue(builder->CreatePointerCast(closureStruct, resultType));
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitMakeVectorInstruction(const SSAMakeVectorInstructionPtr &instruction)
+{
+    std::vector<llvm::Value*> elements;
+    for(auto &el : instruction->getElements())
+    {
+        auto elementOrVector = translateValue(el);
+        auto elementOrVectorType = elementOrVector->getType();
+        if(elementOrVectorType->isVectorTy())
+        {
+            auto subvectorCount = llvm::cast<llvm::FixedVectorType> (elementOrVectorType)->getNumElements();
+            for(uint64_t i = 0; i < subvectorCount; ++i)
+                elements.push_back(builder->CreateExtractElement(elementOrVector, i));
+        }
+        else
+        {
+            elements.push_back(elementOrVector);
+        }
+    }
+
+    auto translatedResultType = backend->translateType(instruction->getValueType());
+    llvm::Value *result = llvm::UndefValue::get(translatedResultType);
+    for(size_t i  = 0; i < elements.size(); ++i)
+        result = builder->CreateInsertElement(result, elements[i], uint64_t(i));
+    return wrapLLVMValue(result);
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction)

@@ -49,7 +49,6 @@ public:
     MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTMessageSendNodePtr &node);
     MacroInvocationContextPtr makeMacroInvocationContextFor(const ASTNodePtr &node);
 
-    PatternMatchingRank rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType);
     PatternMatchingRank rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node);
 
     ASTNodePtr analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node);

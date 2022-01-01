@@ -58,6 +58,7 @@ public:
     SSALoadInstructionPtr load(const SSAValuePtr &reference);
     SSALocalVariableInstructionPtr localVariable(const TypePtr &referenceType, const TypePtr &valueType);
     SSAMakeClosureInstructionPtr makeClosure(const SSAValuePtr &closureImplementation, const SSAValuePtrList &capturedValues);
+    SSAMakeVectorInstructionPtr makeVector(const TypePtr &vectorType, const SSAValuePtrList &elements);
     SSAReturnFromFunctionInstructionPtr returnFromFunction(const SSAValuePtr &value);
     SSAReturnFromRegionInstructionPtr returnFromRegion(const SSAValuePtr &value);
     SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);

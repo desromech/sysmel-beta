@@ -219,6 +219,11 @@ bool AnyValue::isASTMakeTupleNode() const
     return false;
 }
 
+bool AnyValue::isASTMakeVectorNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTMakeLiteralArrayNode() const
 {
     return false;
@@ -1255,6 +1260,11 @@ bool AnyValue::isSSAGetAggregateSlotReferenceInstruction() const
 }
 
 bool AnyValue::isSSAMakeClosureInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAMakeVectorInstruction() const
 {
     return false;
 }

@@ -31,6 +31,7 @@ public:
     virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node);
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node);
     virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node);
+    virtual AnyValuePtr visitMakeVectorNode(const ASTMakeVectorNodePtr &node);
     virtual AnyValuePtr visitMessageChainNode(const ASTMessageChainNodePtr &node);
     virtual AnyValuePtr visitMessageChainMessageNode(const ASTMessageChainMessageNodePtr &node);
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node);

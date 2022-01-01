@@ -20,6 +20,25 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeArrayLayout : public SubtypeOf<Agg
 public:
     static constexpr char const __typeName__[] = "AggregateTypeArrayLayout";
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
+
+    virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
+
+    void setElementTypeAndSize(const TypePtr &newElementType, uint64_t newSize);
+
+protected:
+    TypePtr elementType;
+    uint64_t size = 0;
+    uint64_t memorySize = 0;
+    uint64_t memoryAlignment = 0;
 };
 
 } // End of namespace Environment

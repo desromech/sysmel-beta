@@ -135,7 +135,7 @@ AnyValuePtr LLVMTypeVisitor::visitArrayType(const ArrayTypePtr &type)
 AnyValuePtr LLVMTypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
 {
     auto elementType = backend->translateType(type->elementType);
-    return wrapLLVMType(llvm::VectorType::get(elementType, type->elements, false));
+    return wrapLLVMType(llvm::FixedVectorType::get(elementType, type->elements));
 }
 
 AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix)

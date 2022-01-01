@@ -4,6 +4,9 @@
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/Error.hpp"
+#include "Environment/ASTNode.hpp"
+#include "Environment/ASTMakeVectorNode.hpp"
+#include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/Utilities.hpp"
@@ -121,14 +124,66 @@ SExpression PrimitiveVectorType::asSExpression() const
     }};
 }
 
-AnyValuePtr PrimitiveVectorType::basicNewValue()
+PrimitiveVectorTypeValuePtr PrimitiveVectorType::withValues(const AnyValuePtrList &valueElements)
 {
     auto vector = basicMakeObject<PrimitiveVectorTypeValue> ();
     vector->type = selfFromThis();
-    vector->elements.reserve(elements);
-    for(size_t i = 0; i < elements; ++i)
-        vector->elements.push_back(elementType->basicNewValue());
+    vector->elements = valueElements;
     return vector;
+}
+
+PrimitiveVectorTypeValuePtr PrimitiveVectorType::withAll(const AnyValuePtr &element)
+{
+    auto vector = basicMakeObject<PrimitiveVectorTypeValue> ();
+    vector->type = selfFromThis();
+    vector->elements.resize(elements, element);
+    return vector;
+}
+
+AnyValuePtr PrimitiveVectorType::basicNewValue()
+{
+    return withAll(elementType->basicNewValue());
+}
+ASTNodePtr PrimitiveVectorType::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    TypePtrList decayedTypes;
+    decayedTypes.reserve(arguments.size());
+    uint32_t resultRank = 0;
+    auto constructionArguments = arguments;
+    ASTNodePtr errorNode;
+    
+    for(auto &arg : constructionArguments)
+    {
+        arg = semanticAnalyzer->analyzeNodeIfNeededWithAutoType(arg);
+        
+        auto decayedArgumentType = arg->analyzedType->asDecayedType();
+        if(decayedArgumentType->isPrimitiveVectorType())
+        {
+            auto vectorArgumentSize = decayedArgumentType.staticAs<PrimitiveVectorType> ()->elements;
+            auto expectedVectorArgumentType = PrimitiveVectorType::make(elementType, vectorArgumentSize);
+            arg = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(arg, expectedVectorArgumentType);
+            resultRank += vectorArgumentSize;
+        }
+        else
+        {
+            arg = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(arg, elementType);
+            ++resultRank;
+        }
+
+        if(arg->isASTErrorNode())
+            errorNode = arg;
+    }
+
+    if(resultRank != elements)
+        return semanticAnalyzer->recordSemanticErrorInNode(node, "Invalid number of components provided for making the requested primitive vector.");
+    if(errorNode)
+        return errorNode;
+    
+    auto result = basicMakeObject<ASTMakeVectorNode>();
+    result->sourcePosition = node->sourcePosition;
+    result->elements = constructionArguments;
+    result->analyzedType = selfFromThis();
+    return result;
 }
 
 void PrimitiveVectorType::addSpecializedInstanceMethods()
@@ -141,12 +196,63 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
         return self->elements[indexValue];
     };
 
+    // Exposed constructors.
+    getType()->addMethodCategories(MethodCategories{
+        {"constructors", {
+            makeIntrinsicMethodBindingWithSignature<PrimitiveVectorTypeValuePtr (PrimitiveVectorTypePtr, AnyValuePtr)> ("vector.make.with-all", "withAll:", getType(), selfFromThis(), {elementType}, [](const PrimitiveVectorTypePtr &vectorType, const AnyValuePtr &element){
+                return vectorType->withAll(element);
+            }, MethodFlags::Pure | MethodFlags::Constructor),
+        }},
+    });
+
+    // Accessing methods.
     addMethodCategories(MethodCategories{
         {"accessing", {
             // []
             makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr, AnyValuePtr)> ("vector.element", "[]", selfFromThis(), elementType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
+
+            // x
+            makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.first", "x", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                return self->elements[0];
+            }, MethodFlags::Pure),
         }},
     });
+
+    if(elements >= 2)
+    {
+        addMethodCategories(MethodCategories{
+            {"accessing", {
+                // y
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.second", "y", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[1];
+                }, MethodFlags::Pure),
+            }},
+        });
+    }
+
+    if(elements >= 3)
+    {
+        addMethodCategories(MethodCategories{
+            {"accessing", {
+                // z
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.third", "z", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[2];
+                }, MethodFlags::Pure),
+            }},
+        });
+    }
+
+    if(elements >= 4)
+    {
+        addMethodCategories(MethodCategories{
+            {"accessing", {
+                // w
+                makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> ("vector.element.fourth", "w", selfFromThis(), elementType, {}, [](const PrimitiveVectorTypeValuePtr &self){
+                    return self->elements[3];
+                }, MethodFlags::Pure),
+            }},
+        });
+    }
 }
 
 

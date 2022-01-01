@@ -9,6 +9,7 @@
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
@@ -51,6 +52,7 @@
 #include "Environment/Variable.hpp"
 
 #include "Environment/ClosureType.hpp"
+#include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/TupleType.hpp"
 #include "Environment/LiteralAssociation.hpp"
 #include "Environment/LiteralDictionary.hpp"
@@ -213,6 +215,29 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
         sysmelAssert(node->analyzedType->isTupleType());
         return node->analyzedType.staticAs<TupleType> ()->makeWithElements(elements);
     }
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitMakeVectorNode(const ASTMakeVectorNodePtr &node)
+{
+    auto resultVectorType = node->analyzedType.staticAs<PrimitiveVectorType> ();
+    
+    AnyValuePtrList elements;
+    elements.reserve(resultVectorType->elements);
+    for(auto &arg : node->elements)
+    {
+        auto elementOrVector = visitNode(arg);
+        if(elementOrVector->isPrimitiveVectorTypeValue())
+        {
+            auto &subvector = elementOrVector.staticAs<PrimitiveVectorTypeValue> ()->elements;
+            elements.insert(elements.end(), subvector.begin(), subvector.end());
+        }
+        else
+        {
+            elements.push_back(elementOrVector);
+        }
+    }
+
+    return resultVectorType->withValues(elements);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMessageSendNode(const ASTMessageSendNodePtr &node)

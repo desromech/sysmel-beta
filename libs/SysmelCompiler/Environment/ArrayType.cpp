@@ -1,4 +1,5 @@
 #include "Environment/ArrayType.hpp"
+#include "Environment/AggregateTypeArrayLayout.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -133,7 +134,7 @@ void ArrayType::addSpecializedInstanceMethods()
     auto elementRefType = elementType->ref();
     auto elementConstRefType = elementType->withConst()->ref();
 
-    auto accessElement = +[](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
+    auto accessElement = [](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
         auto indexValue = index->unwrapAsInt64();
         sysmelAssert(self->baseValue && self->baseValue->isArrayTypeValue());
         auto array = self->baseValue.staticAs<ArrayTypeValue> ();
@@ -153,6 +154,13 @@ void ArrayType::addSpecializedInstanceMethods()
             //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
         }},
     });
+}
+
+void ArrayType::buildLayout()
+{
+    auto arrayLayout = basicMakeObject<AggregateTypeArrayLayout> ();
+    layout = arrayLayout;
+    arrayLayout->setElementTypeAndSize(elementType, size);
 }
 
 bool ArrayTypeValue::isArrayTypeValue() const

@@ -287,16 +287,13 @@ AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr
     return evaluateInCompileTime(analyzedNode);
 }
 
-PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithValueOfType(const TypePtr &expectedType, const TypePtr &valueType)
-{
-    // TODO: Introduce support for implicit casting here.
-    return expectedType->rankToMatchType(valueType);
-}
-
 PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node)
 {
-    sysmelAssert(node->analyzedType);
-    return rankForMatchingTypeWithValueOfType(expectedType, node->analyzedType);
+    auto typeConversionRule = node->analyzedType->findImplicitTypeConversionRuleForInto(node, expectedType);
+    if(!typeConversionRule)
+        return -1;
+
+    return PatternMatchingRank(typeConversionRule->getConversionCost(node, expectedType));
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node)
