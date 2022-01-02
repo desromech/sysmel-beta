@@ -305,14 +305,16 @@ SSAReturnFromRegionInstructionPtr SSABuilder::returnFromRegion(const SSAValuePtr
     return instruction;
 }
 
-SSASendMessageInstructionPtr SSABuilder::sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments)
+SSASendMessageInstructionPtr SSABuilder::sendMessage(const TypePtr &resultType, const FunctionalTypePtr &calledFunctionType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments, bool useVirtualTable, uint32_t virtualTableSlotIndex, uint32_t virtualTableEntrySlotIndex)
 {
     auto instruction = basicMakeObject<SSASendMessageInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setValueType(resultType);
+    instruction->setCalledFunctionalType(calledFunctionType);
     instruction->setSelector(selector);
     instruction->setReceiver(receiver);
     instruction->setArguments(arguments);
+    instruction->setVirtualTableUsage(useVirtualTable, virtualTableSlotIndex, virtualTableEntrySlotIndex);
     addInstruction(instruction);
     return instruction;
 }

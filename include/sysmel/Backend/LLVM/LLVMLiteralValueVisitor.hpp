@@ -27,6 +27,7 @@ public:
     llvm::Constant *translateConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue);
 
     virtual AnyValuePtr visitValueBox(const ValueBoxPtr &value) override;
+    virtual AnyValuePtr visitVirtualTable(const VirtualTablePtr &value) override;
     
     virtual AnyValuePtr visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveCharacterType(const PrimitiveCharacterTypePtr &value) override;

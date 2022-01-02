@@ -158,7 +158,8 @@ void ReferenceType::addSpecializedInstanceMethods()
     }));
 
     // Define the assignment
-    if(!baseType->isConstDecoratedType() && baseType->hasTrivialAssignCopyingFrom() && baseType->hasTrivialAssignMovingFrom())
+    if(!baseType->isConstDecoratedType() && !baseType->isPassedByReference() &&
+        baseType->hasTrivialAssignCopyingFrom() && baseType->hasTrivialAssignMovingFrom())
     {
         addMethodCategories(MethodCategories{
                 {"assignment", {

@@ -11,6 +11,7 @@
 #include "Environment/LiteralSymbol.hpp"
 #include "Environment/AggregateElementReference.hpp"
 #include "Environment/ValueBox.hpp"
+#include "Environment/VirtualTable.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
@@ -113,6 +114,11 @@ AnyValuePtr LiteralValueVisitor::visitValueBox(const ValueBoxPtr &value)
 }
 
 AnyValuePtr LiteralValueVisitor::visitAggregateElementReference(const AggregateElementReferencePtr &value)
+{
+    return visitAnyValue(value);
+}
+
+AnyValuePtr LiteralValueVisitor::visitVirtualTable(const VirtualTablePtr &value)
 {
     return visitAnyValue(value);
 }

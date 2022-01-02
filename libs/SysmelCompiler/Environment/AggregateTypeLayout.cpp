@@ -55,6 +55,11 @@ void AggregateTypeLayout::beginGroup()
 {
 }
 
+void AggregateTypeLayout::addVirtualMethods(const SpecificMethodPtrList &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 void AggregateTypeLayout::addFieldVariable(const FieldVariablePtr &field)
 {
     // TODO: Support bit fields.

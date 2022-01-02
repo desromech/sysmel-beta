@@ -16,6 +16,7 @@
 #include "Environment/VariantType.hpp"
 #include "Environment/FunctionalType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/VirtualTable.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/SSAProgramEntity.hpp"
@@ -172,6 +173,11 @@ public:
     std::string mangleTypeInfo(const TypePtr &type)
     {
         return "_ZTS" + mangleType(type);
+    }
+
+    std::string mangleVirtualTable(const VirtualTablePtr &vtable)
+    {
+        return "_ZTV" + mangleType(vtable->ownerType.lock());
     }
 
     NameComponents extractProgramEntityNameComponents(const SSAProgramEntityPtr &programEntity)
@@ -403,6 +409,13 @@ std::string ItaniumNameMangler::mangleTypeInfo(const TypePtr &type)
     ItaniumNameManglerContext context;
     context.mangler = this;
     return context.mangleTypeInfo(type);
+}
+
+std::string ItaniumNameMangler::mangleVirtualTable(const VirtualTablePtr &vtable)
+{
+    ItaniumNameManglerContext context;
+    context.mangler = this;
+    return context.mangleVirtualTable(vtable);
 }
 
 std::string ItaniumNameMangler::mangleSSAProgramEntity(const SSAProgramEntityPtr &programEntity)

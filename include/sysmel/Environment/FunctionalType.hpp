@@ -34,6 +34,7 @@ public:
     bool hasAutoResultType() const;
     virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType);
     
+    bool matchesDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType);
     bool matchesSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) const;
 
     TypePtr getParamsType() const;

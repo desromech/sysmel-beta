@@ -10,6 +10,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateTypeSequentialLayout);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable);
 
 
 /**
@@ -31,7 +32,7 @@ public:
     virtual bool hasTrivialAssignMovingFrom() override;
 
     virtual void addInheritance(const AggregateTypeSequentialLayoutPtr &parentLayout);
-
+    virtual void addVirtualMethods(const SpecificMethodPtrList &virtualMethods) override;
     virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
     virtual void finishGroup() override;
 
@@ -57,7 +58,20 @@ public:
         isPacked_ = newPacked;
     }
 
+    const VirtualTablePtr &getVirtualTable() const
+    {
+        return virtualTable;
+    }
+
+    uint32_t getVirtualTableSlotIndex() const
+    {
+        return virtualTableSlotIndex;
+    }
+
 protected:
+    void ensureVirtualTableExists();
+    void addVirtualMethod(const SpecificMethodPtr &virtualMethod);
+
     uint64_t memorySize = 0;
     uint64_t memoryAlignment = 1;
 
@@ -69,6 +83,9 @@ protected:
     bool hasTrivialAssignMovingFrom_ = true;
 
     bool isPacked_ = false;
+
+    VirtualTablePtr virtualTable;
+    uint32_t virtualTableSlotIndex = 0;
 
     TypePtrList slotTypes;
     std::vector<uint64_t> offsets;

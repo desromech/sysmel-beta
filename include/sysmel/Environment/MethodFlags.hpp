@@ -49,6 +49,8 @@ enum class MethodFlags : uint32_t
     // Compile time availability.
     NotInCompileTime = 1<<16,
     CompileTime = 1<<17,
+
+    VirtualSendFlags = Virtual | Abstract | Override,
 };
 
 inline MethodFlags operator|(MethodFlags a, MethodFlags b)

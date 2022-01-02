@@ -11,6 +11,7 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClassType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClassTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(SpecificMethod);
 
 /**
  * I am an instance of a function type object.
@@ -27,6 +28,11 @@ public:
 
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
+
+    virtual bool canHaveVirtualMethods() const override;
+    virtual SpecificMethodPtr lookupParentOverridenMethod(const AnyValuePtr &selector, bool hasConstReceiver, const TypePtrList &argumentTypes) override;
+    virtual void addVirtualMethod(const SpecificMethodPtr &virtualMethod) override;
+    const SpecificMethodPtrList &getVirtualMethods() const;
 
 protected:
     /// This method evaluates all of the pending code fragments.
@@ -45,6 +51,9 @@ protected:
 
     mutable DeferredCompileTimeCodeFragmentPtrList pendingSuperclassCodeFragments;
     mutable bool hasEvaluatedSuperclassCodeFragment = false;
+
+    SpecificMethodPtrList virtualMethods;
+    bool hasBuiltLayout = false;
 };
 
 /**

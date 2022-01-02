@@ -33,6 +33,7 @@
 #include "Environment/SSAMakeVectorInstruction.hpp"
 #include "Environment/SSAReturnFromFunctionInstruction.hpp"
 #include "Environment/SSAReturnFromRegionInstruction.hpp"
+#include "Environment/SSASendMessageInstruction.hpp"
 #include "Environment/SSAStoreInstruction.hpp"
 #include "Environment/SSAUnreachableInstruction.hpp"
 #include "Environment/SSAVectorSwizzleInstruction.hpp"
@@ -48,6 +49,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
+#include "Environment/Error.hpp"
 
 namespace Sysmel
 {
@@ -903,7 +905,7 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
     if(!parentFunction)
         currentFunction->setDLLStorageClass(convertDLLStorageClass(globalVariable->getDllLinkageMode()));
 
-    auto translatedGlobalVariable = new llvm::GlobalVariable(valueType, false, linkage, nullptr, name);
+    auto translatedGlobalVariable = new llvm::GlobalVariable(*backend->getTargetModule(), valueType, false, linkage, nullptr, name);
     backend->setGlobalValueTranslation(globalVariable, translatedGlobalVariable);
 
     // TODO: Set the global variable initializer.
@@ -1218,15 +1220,21 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
     auto functionType = calledFunction->getValueType();
     sysmelAssert(functionType->isFunctionalType());
 
+    return translateCallWithArguments(translateValue(calledFunction), staticObjectCast<FunctionalType> (functionType), instruction->getArguments());
+}
+
+llvm::Value *SSALLVMValueVisitor::translateCallWithArguments(llvm::Value *calledFunction, const FunctionalTypePtr &functionType, const SSAValuePtrList &callArguments)
+{
+    sysmelAssert(functionType->isFunctionalType());
+
     bool isClosure = functionType->isClosureType();
     bool isReturningByReference = functionType.staticAs<FunctionalType> ()->getResultType()->isReturnedByReference();
     
     auto translatedFunctionType = backend->translateType(functionType);
-    auto translatedCalledFunction = translateValue(calledFunction);
-    sysmelAssert(translatedCalledFunction->getType()->isPointerTy());
+    sysmelAssert(calledFunction->getType()->isPointerTy());
 
     std::vector<llvm::Value*> arguments;
-    auto argumentCount = instruction->getArguments().size();
+    auto argumentCount = callArguments.size();
     arguments.reserve((isClosure ? 1 : 0) + argumentCount);
 
     size_t firstArgumentIndex = 0;
@@ -1234,12 +1242,12 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
     // Translate the result argument first.
     if(isReturningByReference)
     {
-        arguments.push_back(translateValue(instruction->getArguments()[0]));
+        arguments.push_back(translateValue(callArguments[0]));
         ++firstArgumentIndex;
     }
 
     llvm::FunctionType *calledFunctionType = nullptr;
-    auto calledFunctionValue = translatedCalledFunction;
+    auto calledFunctionValue = calledFunction;
 
     // Add the closure argument first or second.
     if(isClosure)
@@ -1251,8 +1259,8 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
         sysmelAssert(unwrappedType->isFunctionTy());
         calledFunctionType = llvm::cast<llvm::FunctionType> (unwrappedType);
 
-        calledFunctionValue = builder->CreateLoad(translatedCalledFunction);
-        arguments.push_back(builder->CreatePointerCast(translatedCalledFunction, llvm::Type::getInt8PtrTy(*backend->getContext())));
+        calledFunctionValue = builder->CreateLoad(calledFunction);
+        arguments.push_back(builder->CreatePointerCast(calledFunction, llvm::Type::getInt8PtrTy(*backend->getContext())));
     }
     else
     {
@@ -1261,8 +1269,8 @@ llvm::Value *SSALLVMValueVisitor::translateCall(const SSACallInstructionPtr &ins
     }
 
     // Pass the remaining arguments.
-    for(size_t i = firstArgumentIndex; i < instruction->getArguments().size(); ++i)
-        arguments.push_back(translateValue(instruction->getArguments()[i]));
+    for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
+        arguments.push_back(translateValue(callArguments[i]));
 
     return builder->CreateCall(calledFunctionType, calledFunctionValue, arguments);
 }
@@ -1586,6 +1594,47 @@ AnyValuePtr SSALLVMValueVisitor::visitLoadInstruction(const SSALoadInstructionPt
 {
     auto reference = translateValue(instruction->getReference());
     return wrapLLVMValue(builder->CreateLoad(reference));
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction)
+{
+    sysmelAssert(instruction->isUsingVirtualTable());
+
+    const auto &functionalType = instruction->getCalledFunctionalType();
+
+    auto &receiver = instruction->getReceiver();
+    auto translatedReceiver = translateValue(receiver);
+    llvm::Value *dispatchedMethod = nullptr;
+    if(instruction->isUsingVirtualTable())
+    {
+        auto vtablePointer = builder->CreateLoad(builder->CreateConstInBoundsGEP2_32(nullptr, translatedReceiver, 0, instruction->getVirtualTableSlotIndex()));
+        auto methodPointer = builder->CreateLoad(builder->CreateConstInBoundsGEP1_64(nullptr, vtablePointer, instruction->getVirtualTableEntrySlotIndex()));
+        auto expectedMethodPointerType = llvm::PointerType::getUnqual(backend->translateType(functionalType));
+        dispatchedMethod = builder->CreateBitOrPointerCast(methodPointer, expectedMethodPointerType);
+    }
+    else
+    {
+        signalNewWithMessage<Error> ("Unsuported send message instruction generation without a vtable.");
+    }
+
+    auto &sendArgument = instruction->getArguments();
+    SSAValuePtrList callArguments;
+    callArguments.reserve(1 + sendArgument.size());
+
+    // Pass the sret.
+    size_t firstArgumentIndex = 0;
+    if(functionalType->getResultType()->isReturnedByReference())
+    {
+        callArguments.push_back(sendArgument[0]);
+        firstArgumentIndex = 1;
+    }
+
+    callArguments.push_back(receiver);
+
+    for(size_t i = firstArgumentIndex; i < sendArgument.size(); ++i)
+        callArguments.push_back(sendArgument[i]);
+
+    return wrapLLVMValue(translateCallWithArguments(dispatchedMethod, functionalType, callArguments));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitStoreInstruction(const SSAStoreInstructionPtr &instruction)

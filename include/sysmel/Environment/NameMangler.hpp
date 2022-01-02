@@ -11,6 +11,7 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ProgramEntity);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAProgramEntity);
 
 /**
@@ -23,6 +24,7 @@ public:
 
     virtual std::string mangleType(const TypePtr &type);
     virtual std::string mangleTypeInfo(const TypePtr &type);
+    virtual std::string mangleVirtualTable(const VirtualTablePtr &vtable);
     virtual std::string mangleProgramEntity(const ProgramEntityPtr &programEntity);
     virtual std::string mangleSSAProgramEntity(const SSAProgramEntityPtr &programEntity);
 };

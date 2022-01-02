@@ -18,6 +18,8 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
+#include "Environment/VirtualTable.hpp"
+
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/StringUtilities.hpp"
 
@@ -138,6 +140,8 @@ void SSALLVMCodeGenerationBackend::initializePrimitiveTypeMap()
         {Float16::__staticType__(), llvm::Type::getHalfTy(*context)},
         {Float32::__staticType__(), llvm::Type::getFloatTy(*context)},
         {Float64::__staticType__(), llvm::Type::getDoubleTy(*context)},
+
+        {VirtualTable::__staticType__(), llvm::PointerType::getUnqual(llvm::Type::getInt8PtrTy(*context))},
 
         {Type::__staticType__(), llvm::Type::getInt8PtrTy(*context)},
     };
@@ -372,6 +376,42 @@ llvm::Type *SSALLVMCodeGenerationBackend::translateType(const TypePtr &type)
     return result;
 }
 
+llvm::Constant *SSALLVMCodeGenerationBackend::translateVirtualTable(const VirtualTablePtr &vtable)
+{
+    auto it = translatedVirtualTables.find(vtable);
+    if(it != translatedVirtualTables.end())
+        return it->second;
+
+    auto name = nameMangler->mangleVirtualTable(vtable);
+    auto elementType = llvm::Type::getInt8PtrTy(*context);
+    auto tableType = llvm::ArrayType::get(elementType, vtable->slots.size());
+    auto ownerType = vtable->ownerType.lock();
+
+    // TODO: Compute a proper linkage for this.
+    auto linkage = llvm::GlobalValue::ExternalLinkage;
+    auto vtableGlobal = new llvm::GlobalVariable(*targetModule, tableType, true, linkage, nullptr, name);
+
+    // Cast and set the vtable result.
+    auto resultType = translateType(vtable->getType());
+    auto result = llvm::ConstantExpr::getBitCast(vtableGlobal, resultType);
+    translatedVirtualTables.insert({vtable, result});
+
+    // Set the vtable elements.
+    std::vector<llvm::Constant*> vtableElements;
+    vtableElements.reserve(vtable->slots.size());
+    for(auto &slot : vtable->slots)
+    {
+        auto slotSSA = slot->asSSAValueRequiredInPosition(ASTSourcePosition::empty());
+        auto slotConstant = llvm::cast<llvm::Constant> (translateGlobalValue(slotSSA));
+        
+        vtableElements.push_back(llvm::ConstantExpr::getBitCast(slotConstant, elementType));
+    }
+
+    vtableGlobal->setInitializer(llvm::ConstantArray::get(tableType, vtableElements));
+
+    return result;
+}
+
 void SSALLVMCodeGenerationBackend::setTypeTranslation(const TypePtr &type, llvm::Type *translatedType)
 {
     typeMap.insert({type, translatedType});
@@ -404,8 +444,17 @@ llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstant(const TypePtr
 
 llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstantPointer(const TypePtr &elementType, const std::string &constant, bool addNullTerminator)
 {
+    auto elementSize = elementType->getMemorySize();
+    {
+        auto it = internedStringConstants.find({elementSize, constant});
+        if(it != internedStringConstants.end())
+            return it->second;
+    }
+
     auto stringConstantData = internStringConstant(elementType, constant, addNullTerminator);
-    return new llvm::GlobalVariable(*targetModule, stringConstantData->getType(), true, llvm::GlobalValue::PrivateLinkage, stringConstantData);
+    auto result = new llvm::GlobalVariable(*targetModule, stringConstantData->getType(), true, llvm::GlobalValue::PrivateLinkage, stringConstantData);
+    internedStringConstants.insert({{elementSize, constant}, result});
+    return result;
 }
 
 bool SSALLVMCodeGenerationBackend::isSignedIntegerType(const TypePtr &type)

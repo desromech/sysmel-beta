@@ -86,5 +86,37 @@ void SSASendMessageInstruction::setArguments(const SSAValuePtrList &newArguments
         arg->addUse(selfFromThis());
 }
 
+const FunctionalTypePtr &SSASendMessageInstruction::getCalledFunctionalType() const
+{
+    return calledFunctionalType;
+}
+
+void SSASendMessageInstruction::setCalledFunctionalType(const FunctionalTypePtr &newCalledFunctionalType)
+{
+    calledFunctionalType = newCalledFunctionalType;
+}
+
+void SSASendMessageInstruction::setVirtualTableUsage(bool newUseVirtualTable, uint32_t newVirtualTableSlotIndex, uint32_t newVirtualTableEntrySlotIndex)
+{
+    useVirtualTable = newUseVirtualTable;
+    virtualTableSlotIndex = newVirtualTableSlotIndex;
+    virtualTableEntrySlotIndex = newVirtualTableEntrySlotIndex;
+}
+
+bool SSASendMessageInstruction::isUsingVirtualTable() const
+{
+    return useVirtualTable;
+}
+
+uint32_t SSASendMessageInstruction::getVirtualTableSlotIndex() const
+{
+    return virtualTableSlotIndex;
+}
+
+uint32_t SSASendMessageInstruction::getVirtualTableEntrySlotIndex() const
+{
+    return virtualTableEntrySlotIndex;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

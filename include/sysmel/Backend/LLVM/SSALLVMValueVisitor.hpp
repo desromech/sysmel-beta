@@ -80,6 +80,7 @@ public:
     virtual AnyValuePtr visitMakeVectorInstruction(const SSAMakeVectorInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromFunctionInstruction(const SSAReturnFromFunctionInstructionPtr &instruction) override;
     virtual AnyValuePtr visitReturnFromRegionInstruction(const SSAReturnFromRegionInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitSendMessageInstruction(const SSASendMessageInstructionPtr &instruction) override;
     virtual AnyValuePtr visitStoreInstruction(const SSAStoreInstructionPtr &instruction) override;
     virtual AnyValuePtr visitUnreachableInstruction(const SSAUnreachableInstructionPtr &instruction) override;
     virtual AnyValuePtr visitVectorSwizzleInstruction(const SSAVectorSwizzleInstructionPtr &instruction) override;
@@ -104,6 +105,7 @@ protected:
     void translateInstruction(const SSAInstructionPtr &instruction);
     llvm::Value *translateIntrinsicCall(const std::string &intrinsicName, const SSACallInstructionPtr &instruction);
     llvm::Value *translateCall(const SSACallInstructionPtr &instruction);
+    llvm::Value *translateCallWithArguments(llvm::Value *calledFunction, const FunctionalTypePtr &functionType, const SSAValuePtrList &arguments);
     void returnFromFunction(const SSAValuePtr &resultValue);
     void emitCleanUpsForReturning();
     llvm::Value *makeVoidValue();

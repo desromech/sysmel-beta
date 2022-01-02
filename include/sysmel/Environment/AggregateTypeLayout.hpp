@@ -33,6 +33,9 @@ public:
     /// Begin building a group.
     virtual void beginGroup();
 
+    /// Adds the virtual methods onto the layout.
+    virtual void addVirtualMethods(const SpecificMethodPtrList &virtualMethods);
+
     /// Adds a field variable onto the layout.
     virtual void addFieldVariable(const FieldVariablePtr &field);
 
@@ -47,7 +50,6 @@ public:
 
     /// Get the type for a specific slot.
     virtual TypePtr getTypeForSlot(int64_t slotIndex);
-
 };
 
 } // End of namespace Environment

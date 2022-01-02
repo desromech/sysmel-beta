@@ -1737,6 +1737,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         analyzedNode->visibility = ProgramEntityVisibility::Public;
     bool isMacro = (analyzedNode->methodFlags & MethodFlags::Macro) != MethodFlags::None;
     bool isFallback = (analyzedNode->methodFlags & MethodFlags::Fallback) != MethodFlags::None;
+    bool hasVirtualSend = (analyzedNode->methodFlags & MethodFlags::VirtualSendFlags) != MethodFlags::None;
+    bool isOverride = (analyzedNode->methodFlags & MethodFlags::Override) != MethodFlags::None;
+    bool isStatic = (analyzedNode->methodFlags & MethodFlags::Static) != MethodFlags::None;
+    bool hasConstReceiver = (analyzedNode->methodFlags & MethodFlags::Const) != MethodFlags::None;
 
     // Analyze the arguments node.
     bool hasError = false;
@@ -1803,7 +1807,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     }
     else
     {
-        if((analyzedNode->methodFlags & MethodFlags::Static) != MethodFlags::None)
+        if(isStatic)
             receiverType = Type::getVoidType();
         else if((analyzedNode->methodFlags & MethodFlags::Const) != MethodFlags::None)
             receiverType = ownerEntity->asConstReceiverType();
@@ -1837,6 +1841,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         return analyzedNode;
     }
 
+    // Static vs Virtuality
+    if(isStatic && hasVirtualSend)
+        return recordSemanticErrorInNode(analyzedNode, "Static cannot be used in combination of abstract, virtual or override.");
+    else if(isMacro && hasVirtualSend)
+        return recordSemanticErrorInNode(analyzedNode, "Macros cannot virtual send semantics.");
+    else if(!ownerEntity->canHaveVirtualMethods() && hasVirtualSend)
+        return recordSemanticErrorInNode(analyzedNode, formatString("{0} cannot have virtual methods.", {ownerEntity->printString()}));
+
     // Create the function type.
     TypePtrList argumentTypes;
     argumentTypes.reserve(analyzedNode->arguments.size());
@@ -1844,6 +1856,11 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         argumentTypes.push_back(arg->analyzedType);
     auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
 
+    // Find the parent method and check the virtuality semantics.
+    auto parentMethod = ownerEntity->lookupParentOverridenMethod(name, hasConstReceiver, argumentTypes);
+    if(parentMethod && parentMethod->hasVirtualSendSemantics() && !isOverride)
+        return recordSemanticErrorInNode(analyzedNode, formatString("Override is required for this method", {ownerEntity->printString()}));
+    
     // Create the compiled method if missing.
     if(!compiledMethod)
     {
@@ -1854,6 +1871,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         compiledMethod->setVisibility(node->visibility);
         compiledMethod->setExternalLanguageMode(node->externalLanguageMode);
         compiledMethod->setDllLinkageMode(node->dllLinkageMode);
+        compiledMethod->setOverridenParentMethod(parentMethod);
 
         // Set the arguments declaration node.
         for(size_t i = 0; i < analyzedNode->arguments.size(); ++i)
@@ -1890,6 +1908,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         }
         else
         {
+            if(hasVirtualSend)
+                ownerEntity->addVirtualMethod(compiledMethod);
             ownerEntity->addMethodWithSelector(compiledMethod, name);
         }
     }

@@ -16,6 +16,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(Module);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(RuntimeContext);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Method);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SpecificMethod);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(Variable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
 
@@ -116,8 +117,17 @@ public:
     /// This method performs the lookup for a message with the specified selector only in this type.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
+    /// This method performs the lookup of an overriden parent method with the specified selector and argument types.
+    virtual SpecificMethodPtr lookupParentOverridenMethod(const AnyValuePtr &selector, bool hasConstReceiver, const TypePtrList &argumentTypes);
+
+    /// This method performs the lookup of an overriden parent method with the specified selector and argument types.
+    virtual void addVirtualMethod(const SpecificMethodPtr &virtualMethod);
+
     /// Does this program entity support the definition of fields?
     virtual bool canHaveUserDefinedFields() const;
+
+    /// Does this program entity support the definition of virtual methods?
+    virtual bool canHaveVirtualMethods() const;
 
     /// This makes accessor for public the program entity.
     virtual void addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity);

@@ -114,6 +114,11 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
     return MethodPatternMatchingResult{selfFromThis(), totalRank};
 }
 
+AnyValuePtr SpecificMethod::asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    return functionalType && functionalType->matchesDefinitionSignature(hasReceiver, hasConstReceiver, argumentTypes, resultType) ? selfFromThis() : nullptr;  
+}
+
 AnyValuePtr SpecificMethod::asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType)
 {
     return functionalType && functionalType->matchesSignature(receiverType, argumentTypes, resultType) ? selfFromThis() : nullptr;
@@ -195,10 +200,16 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
         return errorNode;
 
     auto receiverType = functionalType->getReceiverType();
-    node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || !receiverType->supportsDynamicCompileTimeMessageSend();
+    node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || !receiverType->supportsDynamicCompileTimeMessageSend() ;
+    node->useVirtualTable = hasVirtualSendSemantics() && !isFinal();
+    node->analyzedBoundMessageIsDirect = node->analyzedBoundMessageIsDirect && !node->useVirtualTable;
     node->analyzedBoundMessage = selfFromThis();
+    node->calledMessageType = getFunctionalType();
     node->analyzedType = functionalType->getResultType();
     node->isPureMessageSend = isPure();
+    node->virtualTableSlotIndex = virtualTableSlotIndex;
+    node->virtualTableEntrySlotIndex = virtualTableEntrySlotIndex;
+
     return semanticAnalyzer->optimizeAnalyzedMessageSend(node);
 }
 
@@ -341,6 +352,62 @@ bool SpecificMethod::isCompileTimeMethod() const
         return false;
 
     return (methodFlags & MethodFlags::CompileTime) != MethodFlags::None || isMacroMethod();
+}
+
+bool SpecificMethod::hasVirtualSendSemantics() const
+{
+    return (methodFlags & MethodFlags::VirtualSendFlags) != MethodFlags::None;
+}
+
+bool SpecificMethod::isAbstract() const
+{
+    return (methodFlags & MethodFlags::VirtualSendFlags) != MethodFlags::None;
+}
+
+bool SpecificMethod::isVirtual() const
+{
+    return (methodFlags & MethodFlags::Virtual) != MethodFlags::None;
+}
+
+bool SpecificMethod::isOverride() const
+{
+    return (methodFlags & MethodFlags::Override) != MethodFlags::None;
+}
+
+bool SpecificMethod::isFinal() const
+{
+    return (methodFlags & MethodFlags::Final) != MethodFlags::None;
+}
+
+bool SpecificMethod::isStatic() const
+{
+    return (methodFlags & MethodFlags::Static) != MethodFlags::None;
+}
+
+const SpecificMethodPtr &SpecificMethod::getOverridenParentMethod()
+{
+    return overridenParentMethod;
+}
+
+void SpecificMethod::setOverridenParentMethod(const SpecificMethodPtr &newParentMethod)
+{
+    overridenParentMethod = newParentMethod;
+}
+
+void SpecificMethod::setVirtualTableEntry(uint32_t newVirtualTableSlotIndex, uint32_t newVirtualTableEntrySlotIndex)
+{
+    virtualTableSlotIndex = newVirtualTableSlotIndex;
+    virtualTableEntrySlotIndex = newVirtualTableEntrySlotIndex;
+}
+
+uint32_t SpecificMethod::getVirtualTableSlotIndex() const
+{
+    return virtualTableSlotIndex;
+}
+
+uint32_t SpecificMethod::getVirtualTableEntrySlotIndex() const
+{
+    return virtualTableEntrySlotIndex;
 }
 
 } // End of namespace Environment

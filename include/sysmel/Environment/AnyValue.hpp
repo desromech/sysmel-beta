@@ -942,6 +942,9 @@ public:
     // Is this a template instance?
     virtual bool isTemplateInstance() const;
 
+    // Is this a virtual table?
+    virtual bool isVirtualTable() const;
+
     // Is this a SSA value?
     virtual bool isSSAValue() const;
 
@@ -1172,6 +1175,9 @@ public:
 
     /// This method evaluates the specific message in the receiver with the specific arguments.
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
+
+    /// This converts the receiver into a method with the matching signature if possible.
+    virtual AnyValuePtr asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType);
 
     /// This converts the receiver into a method with the matching signature if possible.
     virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType);

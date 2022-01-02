@@ -10,6 +10,8 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionalType)
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -34,8 +36,12 @@ public:
     ASTNodePtrList arguments;
 
     AnyValuePtr analyzedBoundMessage;
+    FunctionalTypePtr calledMessageType;
     bool analyzedBoundMessageIsDirect = false;
     bool isPureMessageSend = false; // TODO: Replace this with a pure flag.
+    bool useVirtualTable = false;
+    uint32_t virtualTableSlotIndex = 0;
+    uint32_t virtualTableEntrySlotIndex = 0;
 };
 
 } // End of namespace Environment

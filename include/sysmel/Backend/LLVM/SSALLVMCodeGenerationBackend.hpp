@@ -54,6 +54,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable)
 }
 
 namespace LLVM
@@ -78,6 +79,7 @@ public:
 
     llvm::Value *translateGlobalValue(const SSAValuePtr &value);
     llvm::Type *translateType(const TypePtr &type);
+    llvm::Constant *translateVirtualTable(const VirtualTablePtr &vtable);
     void setTypeTranslation(const TypePtr &type, llvm::Type *translatedType);
     bool isSignedIntegerType(const TypePtr &type);
     bool isUnsignedIntegerType(const TypePtr &type);
@@ -141,6 +143,8 @@ protected:
     std::unordered_map<TypePtr, llvm::DIType*> debugTypeMap;
     std::unordered_map<std::string, llvm::DIFile*> debugFileMap;
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;
+    std::unordered_map<VirtualTablePtr, llvm::Constant*> translatedVirtualTables;
+    std::map<std::pair<uint32_t, std::string>, llvm::Constant*> internedStringConstants;
 };
 
 } // End of namespace LLVM

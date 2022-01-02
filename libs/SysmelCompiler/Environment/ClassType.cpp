@@ -6,6 +6,8 @@
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/CompilationError.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/SpecificMethod.hpp"
+#include "Environment/VirtualTable.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
@@ -100,6 +102,7 @@ void ClassType::buildLayout()
     evaluateAllPendingBodyBlockCodeFragments();
 
     layout = makeLayoutInstance();
+    hasBuiltLayout = true;
 
     // Add the super class layout.
     auto st = getSupertype();
@@ -111,9 +114,14 @@ void ClassType::buildLayout()
 
     // Add my layout.
     layout->beginGroup();
+    layout->addVirtualMethods(virtualMethods);
     for(auto &field : fields)
         layout->addFieldVariable(field);
     layout->finishGroup();
+
+    const auto &vtable = layout.staticAs<AggregateTypeSequentialLayout>()->getVirtualTable();
+    if(vtable)
+        vtable->ownerType = selfFromThis();
 }
 
 AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
@@ -135,7 +143,10 @@ AnyValuePtr ClassType::basicNewValue()
     for(const auto &slotType : slotTypes)
         result->slots.push_back(slotType->basicNewValue());
 
-    // TODO: Set the vtable/typeinfo values.
+    // Set the vtable, if it exists.
+    auto vtable = sequentialLayout->getVirtualTable();
+    if(vtable)
+        result->slots[sequentialLayout->getVirtualTableSlotIndex()] = vtable;
 
     return result;
 }
@@ -143,6 +154,39 @@ AnyValuePtr ClassType::basicNewValue()
 AnyValuePtr ClassType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
 {
     return visitor->visitClassType(selfFromThis());
+}
+
+bool ClassType::canHaveVirtualMethods() const
+{
+    return true;
+}
+
+SpecificMethodPtr ClassType::lookupParentOverridenMethod(const AnyValuePtr &selector, bool hasConstReceiver, const TypePtrList &argumentTypes)
+{
+    auto candidate = lookupSelector(selector);
+    if(candidate)
+    {
+        auto result = candidate->asMethodMatchingDefinitionSignature(true, hasConstReceiver, argumentTypes, nullptr);
+        if(result && result->isSpecificMethod())
+            return staticObjectCast<SpecificMethod> (result);
+    }
+
+    auto st = getSupertype();
+    if(st)
+        return st->lookupParentOverridenMethod(selector, hasConstReceiver, argumentTypes);
+    return nullptr;
+}
+
+void ClassType::addVirtualMethod(const SpecificMethodPtr &virtualMethod)
+{
+    if(!!hasBuiltLayout)
+        signalNewWithMessage<Error> (formatString("Cannot add virtual methods to {0} after the type layout is built.", {printString()}));
+    virtualMethods.push_back(virtualMethod);
+}
+
+const SpecificMethodPtrList &ClassType::getVirtualMethods() const
+{
+    return virtualMethods;
 }
 
 bool ClassTypeValue::isClassTypeValue() const

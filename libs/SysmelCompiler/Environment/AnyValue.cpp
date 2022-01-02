@@ -1104,6 +1104,11 @@ bool AnyValue::isTemplateInstance() const
     return false;
 }
 
+bool AnyValue::isVirtualTable() const
+{
+    return false;
+}
+
 bool AnyValue::isSSAValue() const
 {
     return false;
@@ -1495,6 +1500,11 @@ AnyValuePtr AnyValue::runWithArgumentsIn(const AnyValuePtr &selector, const std:
     (void)receiver;
     (void)arguments;
     signalNew<CannotEvaluateMessage> ();
+}
+
+AnyValuePtr AnyValue::asMethodMatchingDefinitionSignature(bool, bool, const TypePtrList &, const TypePtr &)
+{
+    return nullptr;
 }
 
 AnyValuePtr AnyValue::asMethodMatchingSignature(const TypePtr &, const TypePtrList &, const TypePtr &)

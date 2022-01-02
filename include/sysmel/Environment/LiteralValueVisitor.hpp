@@ -26,6 +26,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(AggregateElementReference);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ValueBox);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveTensorType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveScalarType);
@@ -78,6 +79,7 @@ public:
 
     virtual AnyValuePtr visitValueBox(const ValueBoxPtr &value);
     virtual AnyValuePtr visitAggregateElementReference(const AggregateElementReferencePtr &value);
+    virtual AnyValuePtr visitVirtualTable(const VirtualTablePtr &value);
 
     virtual AnyValuePtr visitPrimitiveTensorType(const PrimitiveTensorTypePtr &value);
     virtual AnyValuePtr visitPrimitiveScalarType(const PrimitiveScalarTypePtr &value);

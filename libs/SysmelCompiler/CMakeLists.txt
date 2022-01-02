@@ -302,6 +302,7 @@ set(Environment_Sources
     Variable.cpp
     VariantType.cpp
     VariableMetaBuilder.cpp
+    VirtualTable.cpp
     VisibilityMetaBuilder.cpp
     Void.cpp
     Wrappers.cpp

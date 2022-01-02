@@ -166,6 +166,16 @@ AnyValuePtr ProgramEntity::lookupLocalMacroFallbackSelector(const AnyValuePtr &s
     return nullptr;
 }
 
+SpecificMethodPtr ProgramEntity::lookupParentOverridenMethod(const AnyValuePtr &, bool, const TypePtrList &)
+{
+    return nullptr;
+}
+
+void ProgramEntity::addVirtualMethod(const SpecificMethodPtr &method)
+{
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot define virtual method {0} in {1}.", {{method->printString(), printString()}}));
+}
+
 void ProgramEntity::addFieldVariableWithVisibility(const FieldVariablePtr &field, ProgramEntityVisibility visibility)
 {
     (void)field;
@@ -233,6 +243,11 @@ void ProgramEntity::addMacroFallbackMethodCategories(const MethodCategories &cat
 }
 
 bool ProgramEntity::canHaveUserDefinedFields() const
+{
+    return false;
+}
+
+bool ProgramEntity::canHaveVirtualMethods() const
 {
     return false;
 }

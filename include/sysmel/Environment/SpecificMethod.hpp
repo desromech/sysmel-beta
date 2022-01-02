@@ -11,6 +11,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionalTypeValue)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SpecificMethod)
 
 /**
  * I am the base interface for most of the methods that are defined in the system.
@@ -34,6 +35,7 @@ public:
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex) override;
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
     virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual AnyValuePtr asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
     virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
 
     virtual bool isMacroMethod() const override;
@@ -71,12 +73,30 @@ public:
 
     bool isCompileTimeMethod() const;
 
+    bool hasVirtualSendSemantics() const;
+    bool isAbstract() const;
+    bool isVirtual() const;
+    bool isOverride() const;
+    bool isFinal() const;
+    bool isStatic() const;
+
+    const SpecificMethodPtr &getOverridenParentMethod();
+    void setOverridenParentMethod(const SpecificMethodPtr &newParentMethod);
+
+    void setVirtualTableEntry(uint32_t newVirtualTableSlotIndex, uint32_t newVirtualTableEntrySlotIndex);
+    uint32_t getVirtualTableSlotIndex() const;
+    uint32_t getVirtualTableEntrySlotIndex() const;
+
 protected:
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;
     AnyValuePtr intrinsicName;
 
     MethodFlags methodFlags = MethodFlags::None;
+    SpecificMethodPtr overridenParentMethod;
+
+    uint32_t virtualTableSlotIndex = 0;
+    uint32_t virtualTableEntrySlotIndex = 0;
 };
 
 } // End of namespace Environment

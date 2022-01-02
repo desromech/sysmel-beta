@@ -61,7 +61,7 @@ public:
     SSAMakeVectorInstructionPtr makeVector(const TypePtr &vectorType, const SSAValuePtrList &elements);
     SSAReturnFromFunctionInstructionPtr returnFromFunction(const SSAValuePtr &value);
     SSAReturnFromRegionInstructionPtr returnFromRegion(const SSAValuePtr &value);
-    SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments);
+    SSASendMessageInstructionPtr sendMessage(const TypePtr &resultType, const FunctionalTypePtr &calledFunctionType, const SSAValuePtr &selector, const SSAValuePtr &receiver, const SSAValuePtrList &arguments, bool useVirtualTable = false, uint32_t virtualTableSlotIndex = 0, uint32_t virtualTableEntrySlotIndex = 0);
     SSAStoreInstructionPtr storeValueIn(const SSAValuePtr &value, const SSAValuePtr &reference);
     SSAUnreachableInstructionPtr unreachableInstruction();
     SSAVectorSwizzleInstructionPtr vectorSwizzle(const TypePtr &resultType, const SSAValuePtr &vector, const std::vector<uint32_t> &selectedElements);

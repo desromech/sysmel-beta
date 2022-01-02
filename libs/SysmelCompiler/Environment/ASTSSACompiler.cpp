@@ -411,7 +411,9 @@ AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &no
         return builder->call(node->analyzedType, node->analyzedBoundMessage->asSSAValueRequiredInPosition(node->sourcePosition), arguments);
     }
 
-    return builder->sendMessage(node->analyzedType, selectorValue, receiverValue, arguments);
+    return builder->sendMessage(node->analyzedType, node->calledMessageType,
+        selectorValue, receiverValue, arguments, 
+        node->useVirtualTable, node->virtualTableSlotIndex, node->virtualTableEntrySlotIndex);
 }
 
 AnyValuePtr ASTSSACompiler::visitSequenceNode(const ASTSequenceNodePtr &node)

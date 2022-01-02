@@ -2,6 +2,9 @@
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/Utilities.hpp"
+#include "Environment/VirtualTable.hpp"
+#include "Environment/SpecificMethod.hpp"
+#include "Environment/RuntimeContext.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -85,6 +88,67 @@ void AggregateTypeSequentialLayout::addInheritance(const AggregateTypeSequential
     else
     {
         offsets.insert(offsets.end(), parentOffsets.begin(), parentOffsets.end());
+    }
+
+    // Inherit the virtual table.
+    if(parentLayout->virtualTable)
+    {
+        virtualTableSlotIndex = parentLayout->virtualTableSlotIndex;
+        virtualTable = shallowCloneObject(parentLayout->virtualTable);
+    }
+}
+
+void AggregateTypeSequentialLayout::addVirtualMethods(const SpecificMethodPtrList &virtualMethods)
+{
+    if(virtualMethods.empty())
+        return;
+
+    for(const auto &virtualMethod : virtualMethods)
+        addVirtualMethod(virtualMethod);
+}
+
+void AggregateTypeSequentialLayout::ensureVirtualTableExists()
+{
+    if(virtualTable)
+        return;
+
+    virtualTable = basicMakeObject<VirtualTable> ();
+    virtualTableSlotIndex = slotTypes.size();
+
+    if(memoryAlignment != 0)
+    {
+        auto &targetDescription = RuntimeContext::getActive()->getTargetDescription();
+        auto offset = alignedTo(memorySize, uint64_t(targetDescription.pointerAlignment));
+        memoryAlignment = std::max(memoryAlignment, uint64_t(targetDescription.pointerAlignment));
+        memorySize = offset + targetDescription.pointerSize;
+        slotTypes.push_back(VirtualTable::__staticType__());
+        offsets.push_back(offset);
+    }
+    else
+    {
+        slotTypes.push_back(VirtualTable::__staticType__());
+        offsets.push_back(0);
+    }
+}
+
+void AggregateTypeSequentialLayout::addVirtualMethod(const SpecificMethodPtr &virtualMethod)
+{
+    ensureVirtualTableExists();
+
+    auto parentMethod = virtualMethod->getOverridenParentMethod();
+    if(parentMethod)
+    {
+        sysmelAssert(virtualTableSlotIndex == parentMethod->getVirtualTableSlotIndex());
+        
+        auto entryIndex = parentMethod->getVirtualTableEntrySlotIndex();
+        sysmelAssert(entryIndex < virtualTable->slots.size());
+        virtualTable->slots[entryIndex] = virtualMethod;
+        virtualMethod->setVirtualTableEntry(virtualTableSlotIndex, entryIndex);
+    }
+    else
+    {
+        virtualMethod->setVirtualTableEntry(virtualTableSlotIndex, virtualTable->slots.size());
+        virtualTable->slots.push_back(virtualMethod);
     }
 }
 

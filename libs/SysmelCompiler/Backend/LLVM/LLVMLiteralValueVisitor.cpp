@@ -49,6 +49,11 @@ AnyValuePtr LLVMLiteralValueVisitor::visitValueBox(const ValueBoxPtr &value)
     return value->value->acceptLiteralValueVisitor(selfFromThis());
 }
 
+AnyValuePtr LLVMLiteralValueVisitor::visitVirtualTable(const VirtualTablePtr &value)
+{
+    return wrapLLVMConstant(backend->translateVirtualTable(value));
+}
+
 AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value)
 {
     auto data = value->unwrapAsBoolean();

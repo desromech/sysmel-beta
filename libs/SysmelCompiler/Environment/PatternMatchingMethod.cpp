@@ -147,6 +147,18 @@ ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNod
     return matchingCandidates.front()->analyzeMessageSendNode(node, semanticAnalyzer);
 }
 
+AnyValuePtr PatternMatchingMethod::asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType)
+{
+    for(const auto &pattern : patterns)
+    {
+        auto matchedPattern = pattern->asMethodMatchingDefinitionSignature(hasReceiver, hasConstReceiver, argumentTypes, resultType);
+        if(matchedPattern)
+            return matchedPattern;
+    }
+    
+    return nullptr;
+}
+
 AnyValuePtr PatternMatchingMethod::asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType)
 {
     for(const auto &pattern : patterns)

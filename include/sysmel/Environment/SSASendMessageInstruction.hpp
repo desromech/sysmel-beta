@@ -36,13 +36,26 @@ public:
 
     const SSAValuePtrList &getArguments() const;
     void setArguments(const SSAValuePtrList &newArguments);
+
+    const FunctionalTypePtr &getCalledFunctionalType() const;
+    void setCalledFunctionalType(const FunctionalTypePtr &newCalledFunctionalType);
+    
+    void setVirtualTableUsage(bool newUseVirtualTable, uint32_t newVirtualTableSlotIndex, uint32_t newVirtualTableEntrySlotIndex);
+    bool isUsingVirtualTable() const;
+    uint32_t getVirtualTableSlotIndex() const;
+    uint32_t getVirtualTableEntrySlotIndex() const;
     
 protected:
     TypePtr valueType;
 
+    FunctionalTypePtr calledFunctionalType;
     SSAValuePtr selector;
     SSAValuePtr receiver;
     SSAValuePtrList arguments;
+
+    bool useVirtualTable = false;
+    uint32_t virtualTableSlotIndex = 0;
+    uint32_t virtualTableEntrySlotIndex = 0;
 };
 
 } // End of namespace Environment

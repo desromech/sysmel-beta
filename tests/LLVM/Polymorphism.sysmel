@@ -38,7 +38,9 @@ public class PolymorphismTestCase superclass: TestCase; definition: {
         self assert: (self operate: Negate() on: 2) equals: -2.
         self assert: (self operate: Addition() on: 2) equals: 0.
         self assert: (self operate: Addition() on: 2 with: 3) equals: 5.
+        self assert: (self operate: Subtraction() on: 2) equals: 0.
         self assert: (self operate: Subtraction() on: 2 with: 3) equals: -1.
+        self assert: (self operate: Multiplication() on: 2) equals: 0.
         self assert: (self operate: Multiplication() on: 2 with: 3) equals: 6.
     }.
 }.
