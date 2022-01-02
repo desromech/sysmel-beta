@@ -1753,7 +1753,7 @@ AnyValuePtr SSALLVMValueVisitor::visitDowncastInstruction(const SSADowncastInstr
 
 AnyValuePtr SSALLVMValueVisitor::visitBitcastInstruction(const SSABitcastInstructionPtr &instruction)
 {
-    return wrapLLVMValue(builder->CreateBitCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
+    return wrapLLVMValue(builder->CreateBitOrPointerCast(translateValue(instruction->getValue()), backend->translateType(instruction->getTargetType())));
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction)

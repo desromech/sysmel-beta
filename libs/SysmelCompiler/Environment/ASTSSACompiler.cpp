@@ -27,6 +27,7 @@
 #include "Environment/ASTTypeNode.hpp"
 #include "Environment/ASTProgramEntityExtensionNode.hpp"
 
+#include "Environment/ASTReinterpretCastNode.hpp"
 #include "Environment/ASTValueAsVoidTypeConversionNode.hpp"
 #include "Environment/ASTUpcastTypeConversionNode.hpp"
 #include "Environment/ASTDowncastTypeConversionNode.hpp"
@@ -66,6 +67,7 @@
 #include "Environment/SSAVectorSwizzleInstruction.hpp"
 #include "Environment/SSAWhileInstruction.hpp"
 
+#include "Environment/SSABitcastInstruction.hpp"
 #include "Environment/SSADowncastInstruction.hpp"
 #include "Environment/SSAUpcastInstruction.hpp"
 
@@ -555,6 +557,12 @@ AnyValuePtr ASTSSACompiler::visitTypeNode(const ASTTypeNodePtr &node)
 AnyValuePtr ASTSSACompiler::visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node)
 {
     return builder->literal(node->analyzedProgramEntity);
+}
+
+AnyValuePtr ASTSSACompiler::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
+{
+    auto value = visitNodeForValue(node->expression);
+    return builder->bitcast(node->analyzedType, value);
 }
 
 AnyValuePtr ASTSSACompiler::visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node)

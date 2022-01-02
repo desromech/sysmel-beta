@@ -838,11 +838,6 @@ void Type::addImplicitTypeConversionRule(const TypeConversionRulePtr &rule)
     implicitTypeConversionRules.push_back(rule);
 }
 
-void Type::addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule)
-{
-    reinterpretTypeConversionRules.push_back(rule);
-}
-
 TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType)
 {
     if(isReceiverType &&
@@ -919,16 +914,17 @@ TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodeP
     return nullptr;
 }
 
-TypeConversionRulePtr Type::findReinterpretTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+bool Type::canBeReinterpretedAsType(const TypePtr &otherType)
 {
-    auto sourceType = selfFromThis();
-    for(auto & rule : reinterpretTypeConversionRules)
-    {
-        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
-            return rule;
-    }
 
-    return nullptr;
+    auto selfUndecoratedType = selfFromThis()->asUndecoratedType();
+    auto otherUndecoratedType = otherType->asUndecoratedType();
+
+    return
+        selfUndecoratedType->getMemorySize() == otherUndecoratedType->getMemorySize() &&
+        selfUndecoratedType->isReferenceType() == otherUndecoratedType->isReferenceType() &&
+        selfUndecoratedType->isTemporaryReferenceType() == otherUndecoratedType->isTemporaryReferenceType() &&
+        hasTrivialAssignCopyingFrom() && otherUndecoratedType->hasTrivialAssignCopyingFrom();
 }
 
 AnyValuePtr Type::basicNewValue()

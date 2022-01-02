@@ -58,6 +58,7 @@ public:
     virtual AnyValuePtr visitTypeNode(const ASTTypeNodePtr &node) override;
     virtual AnyValuePtr visitProgramEntityExtensionNode(const ASTProgramEntityExtensionNodePtr &node) override;
 
+    virtual AnyValuePtr visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node) override;
     virtual AnyValuePtr visitValueAsVoidTypeConversionNode(const ASTValueAsVoidTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitUpcastTypeConversionNode(const ASTUpcastTypeConversionNodePtr &node) override;
     virtual AnyValuePtr visitDowncastTypeConversionNode(const ASTDowncastTypeConversionNodePtr &node) override;

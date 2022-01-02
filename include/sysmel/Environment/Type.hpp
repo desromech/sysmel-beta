@@ -294,7 +294,7 @@ public:
     virtual TypeConversionRulePtr findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
 
     /// This method finds an reinterpret type conversion rule.
-    virtual TypeConversionRulePtr findReinterpretTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType);
+    virtual bool canBeReinterpretedAsType(const TypePtr &otherType);
 
     /// This method adds the default type conversion rules of this type.
     virtual void addDefaultTypeConversionRules();
@@ -307,9 +307,6 @@ public:
 
     /// Adds an implicit type conversion rule.
     virtual void addImplicitTypeConversionRule(const TypeConversionRulePtr &rule);
-
-    /// Adds an reinterpret type conversion rule.
-    virtual void addReinterpretTypeConversionRule(const TypeConversionRulePtr &rule);
 
     /// Expands the #basicNewValue macro.
     virtual ASTNodePtr expandBasicNewValue(const MacroInvocationContextPtr &context);
@@ -469,7 +466,6 @@ protected:
 
     TypeConversionRulePtrList implicitTypeConversionRules;
     TypeConversionRulePtrList explicitTypeConversionRules;
-    TypeConversionRulePtrList reinterpretTypeConversionRules;
 
     DeferredCompileTimeCodeFragmentPtrList pendingBodyBlockCodeFragments;
 

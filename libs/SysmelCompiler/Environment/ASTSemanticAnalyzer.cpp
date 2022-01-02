@@ -2390,23 +2390,22 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
 
 AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
 {
-    auto analyzedExpression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
-    auto targetTypeNode = evaluateTypeExpression(node->targetType);
-    if(analyzedExpression->isASTErrorNode())
-        return analyzedExpression;
-    if(targetTypeNode->isASTErrorNode())
-        return targetTypeNode;
+    auto analyzedNode = shallowCloneObject(node);
+    analyzedNode->expression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
+    analyzedNode->targetType = evaluateTypeExpression(node->targetType);
+    if(analyzedNode->isASTErrorNode())
+        return analyzedNode->expression;
+    if(analyzedNode->isASTErrorNode())
+        return analyzedNode->targetType;
 
-    auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = staticObjectCast<Type> (
-        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
-    );
+    auto sourceType = analyzedNode->expression->analyzedType;
+    auto targetType = unwrapTypeFromLiteralValue(analyzedNode->targetType);
 
-    auto typeConversionRule = sourceType->findReinterpretTypeConversionRuleForInto(analyzedExpression, targetType);
-    if(!typeConversionRule)
-        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
-    
-    return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, selfFromThis());
+    if(!sourceType->canBeReinterpretedAsType(targetType))
+        return recordSemanticErrorInNode(analyzedNode, formatString("Cannot perform reinterpret cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+
+    analyzedNode->analyzedType = targetType;
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitTypeConversionNode(const ASTTypeConversionNodePtr &node)
