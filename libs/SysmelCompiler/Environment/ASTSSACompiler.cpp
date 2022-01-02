@@ -102,6 +102,9 @@ SSAValuePtr ASTSSACompiler::visitNodeForValue(const ASTNodePtr &node)
 
 void ASTSSACompiler::assignInitialValueFrom(const SSAValuePtr &destination, const TypePtr &destinationValueType, const SSAValuePtr &initialValue, bool isAggregateComponent)
 {
+    if(destinationValueType->isPaddingType())
+        return;
+
     auto initialValueType = initialValue->getValueType()->asUndecoratedType();
     auto undecoratedDestinationValueType = destinationValueType->asUndecoratedType();
     if(undecoratedDestinationValueType == initialValueType)
@@ -173,7 +176,7 @@ SSAValuePtr ASTSSACompiler::makeAggregateWithElements(const AggregateTypePtr &ag
 
     for(size_t i = 0; i < elements.size(); ++i)
     {
-        auto slotType = layout->getTypeForSlot(i);
+        auto slotType = layout->getTypeForNonPaddingSlot(i);
         auto slot = builder->getAggregateSlotReference(slotType, result, builder->literal(wrapValue(uint64_t(i))));
         assignInitialValueFrom(slot, slotType, elements[i], true);
     }

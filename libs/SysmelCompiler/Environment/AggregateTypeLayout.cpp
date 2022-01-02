@@ -83,9 +83,10 @@ TypePtr AggregateTypeLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t 
     SysmelSelfSubclassResponsibility();
 }
 
-TypePtr AggregateTypeLayout::getTypeForSlot(int64_t slotIndex)
+TypePtr AggregateTypeLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
 {
-    return getTypeForSlotAndOffset(slotIndex, 0);
+    (void)slotIndex;
+    SysmelSelfSubclassResponsibility();
 }
 
 } // End of namespace Environment

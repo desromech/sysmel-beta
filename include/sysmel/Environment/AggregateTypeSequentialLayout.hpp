@@ -37,6 +37,7 @@ public:
     virtual void finishGroup() override;
 
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
+    virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex) override;
 
     const TypePtrList &getSlotTypes() const
     {
@@ -68,8 +69,15 @@ public:
         return virtualTableSlotIndex;
     }
 
+    const std::vector<size_t> &getNonPaddingSlotIndices() const
+    {
+        return nonPaddingSlotIndices;
+    }
+
 protected:
     void ensureVirtualTableExists();
+    uint64_t nextOffsetAlignedTo(uint64_t alignment);
+    void addPadding(uint64_t size);
     void addVirtualMethod(const SpecificMethodPtr &virtualMethod);
 
     uint64_t memorySize = 0;
@@ -89,6 +97,7 @@ protected:
 
     TypePtrList slotTypes;
     std::vector<uint64_t> offsets;
+    std::vector<size_t> nonPaddingSlotIndices;
 
 };
 

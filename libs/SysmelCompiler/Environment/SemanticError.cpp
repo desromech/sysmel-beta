@@ -12,7 +12,7 @@ static BootstrapTypeRegistration<SemanticError> SemanticErrorTypeRegistration;
 
 std::string SemanticError::getDescription() const
 {
-    return semanticErrorNode->sourcePosition->printString() + ": Semantic Analysis Error: " + semanticErrorNode->errorMessage;
+    return semanticErrorNode->sourcePosition->printString() + ": semantic error: " + semanticErrorNode->errorMessage;
 }
 
 } // End of namespace Environment

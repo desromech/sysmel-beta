@@ -195,6 +195,7 @@ set(Environment_Sources
     NamespaceMetaBuilder.cpp
     NotInCompileTimeError.cpp
     NotMatchingPatternFound.cpp
+    PaddingType.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp
     PointerLikeType.cpp

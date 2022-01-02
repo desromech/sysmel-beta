@@ -74,8 +74,11 @@ SExpression StructureTypeValue::asSExpression() const
 {
     SExpressionList elementsSExpr;
     elementsSExpr.elements.reserve(slots.size());
-    for(auto &el : slots)
-        elementsSExpr.elements.push_back(el->asSExpression());
+    auto layout = getType().staticAs<StructureType> ()->getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    const auto &nonPaddingSlotIndices = layout->getNonPaddingSlotIndices();
+    elementsSExpr.elements.reserve(nonPaddingSlotIndices.size());
+    for(auto &slotIndex : nonPaddingSlotIndices)
+        elementsSExpr.elements.push_back(validAnyValue(slots[slotIndex])->asSExpression());
 
     return SExpressionList{{
         SExpressionIdentifier{{"struct"}},

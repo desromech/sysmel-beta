@@ -863,6 +863,9 @@ public:
     // Is this an union type value?
     virtual bool isUnionTypeValue() const;
 
+    // Is this a padding type?
+    virtual bool isPaddingType() const;
+
     // Is this a tuple type?
     virtual bool isTupleType() const;
 

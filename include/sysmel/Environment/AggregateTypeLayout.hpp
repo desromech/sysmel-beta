@@ -48,8 +48,8 @@ public:
     /// Get the type for a specific slot and offset.
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset);
 
-    /// Get the type for a specific slot.
-    virtual TypePtr getTypeForSlot(int64_t slotIndex);
+    /// Get the type for a specific non-padding slot.
+    virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex);
 };
 
 } // End of namespace Environment

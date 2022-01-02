@@ -15,6 +15,7 @@
 #include "Environment/TupleType.hpp"
 
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/PaddingType.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -132,6 +133,11 @@ AnyValuePtr LLVMTypeVisitor::visitArrayType(const ArrayTypePtr &type)
     return wrapLLVMType(llvm::ArrayType::get(elementType, type->size));
 }
 
+AnyValuePtr LLVMTypeVisitor::visitPaddingType(const PaddingTypePtr &type)
+{
+    return wrapLLVMType(llvm::ArrayType::get(llvm::Type::getInt8Ty(*backend->getContext()), type->size));
+}
+
 AnyValuePtr LLVMTypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
 {
     auto elementType = backend->translateType(type->elementType);
@@ -162,6 +168,11 @@ AnyValuePtr LLVMTypeVisitor::visitClassType(const ClassTypePtr &type)
 AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
 {
     return translateAggregateTypeWithSequentialLayout(type, "struct.");
+}
+
+AnyValuePtr LLVMTypeVisitor::visitUnionType(const UnionTypePtr &type)
+{
+    return wrapLLVMType(llvm::ArrayType::get(llvm::Type::getInt8Ty(*backend->getContext()), type->getAlignedMemorySize()));
 }
 
 AnyValuePtr LLVMTypeVisitor::visitTupleType(const TupleTypePtr &type)

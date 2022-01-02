@@ -35,7 +35,7 @@ public:
     virtual void finishGroup() override;
 
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
-    virtual TypePtr getTypeForSlot(int64_t slotIndex) override;
+    virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex) override;
 
 private:
     bool hasTrivialInitialization_ = true;

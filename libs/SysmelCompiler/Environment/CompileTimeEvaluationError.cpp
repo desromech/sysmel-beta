@@ -13,7 +13,7 @@ static BootstrapTypeRegistration<CompileTimeEvaluationError> CompileTimeEvaluati
 
 std::string CompileTimeEvaluationError::getDescription() const
 {
-    return formatString("{0}: Error caught during compile time evaluation. {1}", {{
+    return formatString("{0}: compile time evaluation error: {1}", {{
         compileTimeEvaluationErrorNode->sourcePosition->printString(),
         compileTimeEvaluationErrorNode->errorMessage
     }});

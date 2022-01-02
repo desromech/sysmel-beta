@@ -20,6 +20,8 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeUnionLayout : public SubtypeOf<Agg
 public:
     static constexpr char const __typeName__[] = "AggregateTypeUnionLayout";
 
+protected:
+    
 };
 
 } // End of namespace Environment

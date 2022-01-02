@@ -19,6 +19,7 @@ class SYSMEL_COMPILER_LIB_EXPORT UnionType : public SubMetaTypeOf<AggregateTypeW
 {
 public:
     virtual bool isUnionType() const override;
+    virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
 protected:
     virtual AggregateTypeLayoutPtr makeLayoutInstance() override;

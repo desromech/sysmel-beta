@@ -1,6 +1,7 @@
 #include "Environment/UnionType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeUnionLayout.hpp"
 #include <sstream>
 
@@ -14,6 +15,11 @@ static BootstrapTypeRegistration<UnionTypeValue> UnionTypeValueTypeRegistration;
 bool UnionType::isUnionType() const
 {
     return true;
+}
+
+AnyValuePtr UnionType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
+{
+    return visitor->visitUnionType(selfFromThis());
 }
 
 AggregateTypeLayoutPtr UnionType::makeLayoutInstance()

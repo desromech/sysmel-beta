@@ -111,7 +111,7 @@ TypePtr AggregateTypeVariantLayout::getTypeForSlotAndOffset(int64_t slotIndex, i
     }
 }
 
-TypePtr AggregateTypeVariantLayout::getTypeForSlot(int64_t slotIndex)
+TypePtr AggregateTypeVariantLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
 {
     return getTypeForSlotAndOffset(slotIndex, 0);
 }

@@ -41,6 +41,7 @@ public:
     void addSpecializedInstanceMethods();
 
     TypePtrList elementTypes;
+    std::vector<uint32_t> elementSlotIndices;
 
 protected:
     virtual void buildLayout() override;

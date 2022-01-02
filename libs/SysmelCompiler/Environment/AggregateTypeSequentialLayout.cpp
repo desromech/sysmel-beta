@@ -5,6 +5,7 @@
 #include "Environment/VirtualTable.hpp"
 #include "Environment/SpecificMethod.hpp"
 #include "Environment/RuntimeContext.hpp"
+#include "Environment/PaddingType.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -118,7 +119,7 @@ void AggregateTypeSequentialLayout::ensureVirtualTableExists()
     if(memoryAlignment != 0)
     {
         auto &targetDescription = RuntimeContext::getActive()->getTargetDescription();
-        auto offset = alignedTo(memorySize, uint64_t(targetDescription.pointerAlignment));
+        auto offset = nextOffsetAlignedTo(uint64_t(targetDescription.pointerAlignment));
         memoryAlignment = std::max(memoryAlignment, uint64_t(targetDescription.pointerAlignment));
         memorySize = offset + targetDescription.pointerSize;
         slotTypes.push_back(VirtualTable::__staticType__());
@@ -129,6 +130,7 @@ void AggregateTypeSequentialLayout::ensureVirtualTableExists()
         slotTypes.push_back(VirtualTable::__staticType__());
         offsets.push_back(0);
     }
+    nonPaddingSlotIndices.push_back(slotTypes.size() - 1);
 }
 
 void AggregateTypeSequentialLayout::addVirtualMethod(const SpecificMethodPtr &virtualMethod)
@@ -181,7 +183,7 @@ uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
             }
             else
             {
-                offset = alignedTo(memorySize, slotAlignment);
+                offset = nextOffsetAlignedTo(slotAlignment);
                 memorySize = offset + slotSize;
                 memoryAlignment = std::max(memoryAlignment, slotAlignment);
             }
@@ -189,6 +191,7 @@ uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
     }
 
     auto slotIndex = uint32_t(slotTypes.size());
+    nonPaddingSlotIndices.push_back(slotIndex);
     slotTypes.push_back(slotType);
     offsets.push_back(offset);
     return slotIndex;
@@ -197,7 +200,22 @@ uint32_t AggregateTypeSequentialLayout::addSlotWithType(const TypePtr &slotType)
 void AggregateTypeSequentialLayout::finishGroup()
 {
     if(memoryAlignment != 0)
-        memorySize = alignedTo(memorySize, memoryAlignment);
+        nextOffsetAlignedTo(memoryAlignment);       
+}
+
+uint64_t AggregateTypeSequentialLayout::nextOffsetAlignedTo(uint64_t alignment)
+{
+    auto nextOffset = alignedTo(memorySize, alignment);
+    addPadding(nextOffset - memorySize);
+    return nextOffset;
+}
+
+void AggregateTypeSequentialLayout::addPadding(uint64_t size)
+{
+    if(size == 0)
+        return;
+    slotTypes.push_back(PaddingType::make(size));
+    memorySize += size;
 }
 
 TypePtr AggregateTypeSequentialLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset)
@@ -207,6 +225,13 @@ TypePtr AggregateTypeSequentialLayout::getTypeForSlotAndOffset(int64_t slotIndex
         return nullptr;
 
     return slotTypes[slotIndex];
+}
+
+TypePtr AggregateTypeSequentialLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
+{
+    if(slotIndex < 0 || size_t(slotIndex) >= nonPaddingSlotIndices.size())
+        return nullptr;
+    return slotTypes[nonPaddingSlotIndices[slotIndex]];
 }
 
 } // End of namespace Environment

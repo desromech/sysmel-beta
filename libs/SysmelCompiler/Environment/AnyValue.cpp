@@ -954,6 +954,11 @@ bool AnyValue::isUnionTypeValue() const
     return false;
 }
 
+bool AnyValue::isPaddingType() const
+{
+    return false;
+}
+
 bool AnyValue::isTupleType() const
 {
     return false;

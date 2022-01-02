@@ -16,6 +16,7 @@
 #include "Environment/UnionType.hpp"
 #include "Environment/VariantType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/PaddingType.hpp"
 #include "Environment/BootstrapType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -142,6 +143,11 @@ AnyValuePtr TypeVisitor::visitUnionType(const UnionTypePtr &type)
 }
 
 AnyValuePtr TypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)
+{
+    return visitSimpleType(type);
+}
+
+AnyValuePtr TypeVisitor::visitPaddingType(const PaddingTypePtr &type)
 {
     return visitSimpleType(type);
 }

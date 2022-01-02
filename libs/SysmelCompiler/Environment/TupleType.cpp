@@ -119,11 +119,13 @@ SExpression TupleType::asSExpression() const
 
 AnyValuePtr TupleType::basicNewValue()
 {
+    auto &slotTypes = getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes();
+
     auto tuple = basicMakeObject<TupleTypeValue> ();
     tuple->type = selfFromThis();
-    tuple->slots.reserve(elementTypes.size());
-    for(auto & elType : elementTypes)
-        tuple->slots.push_back(elType->basicNewValue());
+    tuple->slots.reserve(slotTypes.size());
+    for(auto & slotType : slotTypes)
+        tuple->slots.push_back(slotType->basicNewValue());
     return tuple;
 }
 
@@ -136,7 +138,9 @@ TupleTypeValuePtr TupleType::makeWithElements(const AnyValuePtrList &elements)
 {
     auto tuple = basicMakeObject<TupleTypeValue> ();
     tuple->type = selfFromThis();
-    tuple->slots = elements;
+    tuple->slots.resize(getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes().size());
+    for(size_t i = 0; i < elementSlotIndices.size(); ++i)
+        tuple->slots[elementSlotIndices[i]] = elements[i];
     return tuple;
 }
 
@@ -175,7 +179,7 @@ void TupleType::buildLayout()
     layout = basicMakeObject<AggregateTypeSequentialLayout>();
     layout->beginGroup();
     for(auto &type : elementTypes)
-        layout->addSlotWithType(type);
+        elementSlotIndices.push_back(layout->addSlotWithType(type));
     layout->finishGroup();
 }
 

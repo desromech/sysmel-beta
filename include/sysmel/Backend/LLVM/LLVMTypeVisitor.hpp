@@ -33,11 +33,13 @@ public:
     virtual AnyValuePtr visitPointerLikeType(const PointerLikeTypePtr &type) override;
 
     virtual AnyValuePtr visitArrayType(const ArrayTypePtr &type) override;
+    virtual AnyValuePtr visitPaddingType(const PaddingTypePtr &type) override;
     virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type) override;
 
     AnyValuePtr translateAggregateTypeWithSequentialLayout(const AggregateTypePtr &type, const std::string &prefix=std::string());
     virtual AnyValuePtr visitClassType(const ClassTypePtr &type) override;
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
+    virtual AnyValuePtr visitUnionType(const UnionTypePtr &type) override;
     virtual AnyValuePtr visitTupleType(const TupleTypePtr &type) override;
 
 

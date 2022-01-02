@@ -202,9 +202,11 @@ AnyValuePtr ClassTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorP
 SExpression ClassTypeValue::asSExpression() const
 {
     SExpressionList elementsSExpr;
-    elementsSExpr.elements.reserve(slots.size());
-    for(auto &el : slots)
-        elementsSExpr.elements.push_back(el->asSExpression());
+    auto layout = getType().staticAs<ClassType> ()->getLayout().staticAs<AggregateTypeSequentialLayout> ();
+    const auto &nonPaddingSlotIndices = layout->getNonPaddingSlotIndices();
+    elementsSExpr.elements.reserve(nonPaddingSlotIndices.size());
+    for(auto &slotIndex : nonPaddingSlotIndices)
+        elementsSExpr.elements.push_back(validAnyValue(slots[slotIndex])->asSExpression());
 
     return SExpressionList{{
         SExpressionIdentifier{{"struct"}},

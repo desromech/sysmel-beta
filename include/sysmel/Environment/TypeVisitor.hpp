@@ -39,6 +39,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(UnionType);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorType);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(PaddingType);
+
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
  */
@@ -77,6 +79,7 @@ public:
     virtual AnyValuePtr visitUnionType(const UnionTypePtr &type);
 
     virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type);
+    virtual AnyValuePtr visitPaddingType(const PaddingTypePtr &type);
 };
 
 } // End of namespace Environment
