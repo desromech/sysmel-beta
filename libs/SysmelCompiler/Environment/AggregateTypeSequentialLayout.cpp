@@ -234,5 +234,11 @@ TypePtr AggregateTypeSequentialLayout::getTypeForNonPaddingSlot(int64_t slotInde
     return slotTypes[nonPaddingSlotIndices[slotIndex]];
 }
 
+uint64_t AggregateTypeSequentialLayout::getIndexForNonPaddingSlot(uint64_t slotIndex)
+{
+    sysmelAssert(slotIndex < nonPaddingSlotIndices.size());
+    return nonPaddingSlotIndices[slotIndex];
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -37,6 +37,26 @@ public:
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
     virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex) override;
 
+    const TypePtr &getDataTypeIndexType() const
+    {
+        return dataTypeIndexType;
+    }
+
+    uint64_t getPaddingSize() const
+    {
+        return paddingSize;
+    }
+
+    uint64_t getElementMemorySize() const
+    {
+        return elementMemorySize;
+    }
+
+    uint64_t getEndPaddingSize() const
+    {
+        return endPaddingSize;
+    }
+
 private:
     bool hasTrivialInitialization_ = true;
     bool hasTrivialInitializationCopyingFrom_ = true;
@@ -47,15 +67,21 @@ private:
 
     uint64_t memorySize = 0;
     uint64_t memoryAlignment = 1;
+
+    uint64_t paddingOffset = 0;
+    uint64_t paddingSize = 0;
+
     uint64_t elementMemorySize = 0;
     uint64_t elementMemoryAlignment = 1;
     uint64_t elementMemoryOffset = 0;
-    
+
+    uint64_t endPaddingOffset = 0;
+    uint64_t endPaddingSize = 0;
+
     TypePtrList elementTypes;
     
     TypePtr dataTypeIndexType;
     uint64_t dataTypeIndexOffset = 0;
-
 };
 
 } // End of namespace Environment

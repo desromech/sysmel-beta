@@ -31,6 +31,8 @@ public:
     virtual bool hasTrivialAssignMovingFrom() override;
 
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
+    virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex) override ;
+    virtual uint64_t getIndexForNonPaddingSlot(uint64_t slotIndex) override;
 
     void setElementTypeAndSize(const TypePtr &newElementType, uint64_t newSize);
 

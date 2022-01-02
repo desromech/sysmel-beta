@@ -50,6 +50,9 @@ public:
 
     /// Get the type for a specific non-padding slot.
     virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex);
+
+    /// Gets the index for a non-padding slot
+    virtual uint64_t getIndexForNonPaddingSlot(uint64_t slotIndex);
 };
 
 } // End of namespace Environment

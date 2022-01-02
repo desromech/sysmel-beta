@@ -41,6 +41,9 @@ public:
     virtual AnyValuePtr visitClassType(const ClassTypePtr &type) override;
     virtual AnyValuePtr visitUnionType(const UnionTypePtr &type) override;
 
+    virtual AnyValuePtr visitTupleType(const TupleTypePtr &type) override;
+    virtual AnyValuePtr visitVariantType(const VariantTypePtr &type) override;
+
     llvm::DIType *translateFieldOf(const FieldVariablePtr &field, llvm::DIScope *parent);
     SSALLVMCodeGenerationBackend *backend = nullptr;
 };

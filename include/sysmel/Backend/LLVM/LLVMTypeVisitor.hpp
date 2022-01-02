@@ -41,7 +41,7 @@ public:
     virtual AnyValuePtr visitStructureType(const StructureTypePtr &type) override;
     virtual AnyValuePtr visitUnionType(const UnionTypePtr &type) override;
     virtual AnyValuePtr visitTupleType(const TupleTypePtr &type) override;
-
+    virtual AnyValuePtr visitVariantType(const VariantTypePtr &type) override;
 
     llvm::Type *translateArgumentType(const TypePtr &type);
     

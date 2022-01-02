@@ -225,5 +225,17 @@ AnyValuePtr LLVMDebugTypeVisitor::visitUnionType(const UnionTypePtr &type)
     return wrapLLVMDebugType(translateAggregateTypeWithFields(type, llvm::dwarf::DW_TAG_union_type));
 }
 
+AnyValuePtr LLVMDebugTypeVisitor::visitTupleType(const TupleTypePtr &type)
+{
+    (void)type;
+    return wrapLLVMDebugType(backend->translateDIType(Type::getUIntPointerType()));
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
+{
+    (void)type;
+    return wrapLLVMDebugType(backend->translateDIType(Type::getUIntPointerType()));
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

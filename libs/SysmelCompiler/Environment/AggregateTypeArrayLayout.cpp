@@ -54,6 +54,16 @@ TypePtr AggregateTypeArrayLayout::getTypeForSlotAndOffset(int64_t, int64_t)
     return elementType;
 }
 
+TypePtr AggregateTypeArrayLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
+{
+    return elementType;
+}
+
+uint64_t AggregateTypeArrayLayout::getIndexForNonPaddingSlot(uint64_t slotIndex)
+{
+    return slotIndex;
+}
+
 void AggregateTypeArrayLayout::setElementTypeAndSize(const TypePtr &newElementType, uint64_t newSize)
 {
     elementType = newElementType;

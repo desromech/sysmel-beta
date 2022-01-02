@@ -6,6 +6,7 @@
 #include "Environment/PointerLikeType.hpp"
 
 #include "Environment/AggregateTypeSequentialLayout.hpp"
+#include "Environment/AggregateTypeVariantLayout.hpp"
 
 #include "Environment/ArrayType.hpp"
 
@@ -13,6 +14,7 @@
 #include "Environment/ClassType.hpp"
 #include "Environment/UnionType.hpp"
 #include "Environment/TupleType.hpp"
+#include "Environment/VariantType.hpp"
 
 #include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/PaddingType.hpp"
@@ -181,7 +183,31 @@ AnyValuePtr LLVMTypeVisitor::visitUnionType(const UnionTypePtr &type)
 
 AnyValuePtr LLVMTypeVisitor::visitTupleType(const TupleTypePtr &type)
 {
-    return translateAggregateTypeWithSequentialLayout(type, "union.");
+    return translateAggregateTypeWithSequentialLayout(type, "tuple.");
+}
+
+AnyValuePtr LLVMTypeVisitor::visitVariantType(const VariantTypePtr &type)
+{
+    auto layout = type->getLayout().staticAs<AggregateTypeVariantLayout> ();
+    std::vector<llvm::Type*> slots;
+    slots.reserve(4);
+
+    slots.push_back(backend->translateType(layout->getDataTypeIndexType()));
+    auto int8Ty = llvm::Type::getInt8Ty(*backend->getContext());
+
+    auto bytes = layout->getPaddingSize();
+    if(bytes)
+        slots.push_back(llvm::ArrayType::get(int8Ty, bytes));
+
+    bytes = layout->getElementMemorySize();
+    if(bytes)
+        slots.push_back(llvm::ArrayType::get(int8Ty, bytes));
+
+    bytes = layout->getEndPaddingSize();
+    if(bytes)
+        slots.push_back(llvm::ArrayType::get(int8Ty, bytes));
+
+    return wrapLLVMType(llvm::StructType::create(*backend->getContext(), slots, "variant." + type->getQualifiedName()));
 }
 
 } // End of namespace Environment

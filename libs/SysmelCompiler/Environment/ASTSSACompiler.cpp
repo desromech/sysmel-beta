@@ -177,7 +177,8 @@ SSAValuePtr ASTSSACompiler::makeAggregateWithElements(const AggregateTypePtr &ag
     for(size_t i = 0; i < elements.size(); ++i)
     {
         auto slotType = layout->getTypeForNonPaddingSlot(i);
-        auto slot = builder->getAggregateSlotReference(slotType, result, builder->literal(wrapValue(uint64_t(i))));
+        auto slotIndex = layout->getIndexForNonPaddingSlot(i);
+        auto slot = builder->getAggregateSlotReference(slotType, result, builder->literal(wrapValue(slotIndex)));
         assignInitialValueFrom(slot, slotType, elements[i], true);
     }
     

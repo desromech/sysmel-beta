@@ -92,12 +92,16 @@ void AggregateTypeVariantLayout::finishGroup()
     dataTypeIndexOffset = 0;
     dataTypeIndexType = UInt8::__staticType__();
 
-    elementMemoryOffset = dataTypeIndexType->getMemorySize();
-    elementMemoryOffset = alignedTo(elementMemoryOffset, elementMemoryAlignment);
+    paddingOffset = dataTypeIndexType->getMemorySize();
+    elementMemoryOffset = alignedTo(paddingOffset, elementMemoryAlignment);
+    paddingSize = elementMemoryOffset - paddingOffset;
+
+    elementMemorySize = alignedTo(elementMemorySize, elementMemoryAlignment);
 
     memoryAlignment = std::max(dataTypeIndexType->getMemoryAlignment(), elementMemoryAlignment);
-    memorySize = elementMemoryOffset + elementMemorySize;
-    memorySize = alignedTo(memorySize, memoryAlignment);
+    endPaddingOffset = elementMemoryOffset + elementMemorySize;
+    memorySize = alignedTo(endPaddingOffset, memoryAlignment);
+    endPaddingSize = memorySize - endPaddingOffset;
 }
 
 TypePtr AggregateTypeVariantLayout::getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset)
