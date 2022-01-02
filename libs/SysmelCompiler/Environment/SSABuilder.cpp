@@ -34,6 +34,8 @@
 #include "Environment/SSAEnableLocalFinalization.hpp"
 #include "Environment/SSALocalFinalization.hpp"
 
+#include "Environment/SSACheckExpectedTypeSelectorValueInstruction.hpp"
+
 #include "Environment/Type.hpp"
 #include "Environment/PointerLikeType.hpp"
 
@@ -404,6 +406,18 @@ SSALocalFinalizationPtr SSABuilder::localFinalization(const SSAValuePtr &localVa
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setLocalVariable(localVariable);
     instruction->setFinalizationRegion(finalizationCodeRegion);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSACheckExpectedTypeSelectorValueInstructionPtr SSABuilder::checkExpectedTypeSelectorValue(const SSAValuePtr &aggregate, uint64_t typeSelectorSlotIndex, const TypePtr &typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue)
+{
+    auto instruction = basicMakeObject<SSACheckExpectedTypeSelectorValueInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setAggregate(aggregate);
+    instruction->setTypeSelectorIndex(typeSelectorSlotIndex);
+    instruction->setTypeSelectorReferenceType(typeSelectorSlotReferenceType);
+    instruction->setExpectedTypeSelector(expectedTypeSelectorValue);
     addInstruction(instruction);
     return instruction;
 }

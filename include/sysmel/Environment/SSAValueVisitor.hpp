@@ -68,6 +68,8 @@ public:
 
     virtual AnyValuePtr visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction);
     virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction);
+
+    virtual AnyValuePtr visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction);
 };
 
 } // End of namespace Environment

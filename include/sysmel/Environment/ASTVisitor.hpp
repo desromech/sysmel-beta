@@ -59,6 +59,7 @@ public:
     virtual AnyValuePtr visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node);
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node);
     virtual AnyValuePtr visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node);
+    virtual AnyValuePtr visitSlotAccessNode(const ASTSlotAccessNodePtr &node);
 
     virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node);
     virtual AnyValuePtr visitFunctionNode(const ASTFunctionNodePtr &node);

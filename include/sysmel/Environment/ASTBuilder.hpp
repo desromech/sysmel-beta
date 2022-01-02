@@ -11,6 +11,8 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTIdentifierReferenceNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticErrorNode);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainMessageNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
@@ -25,6 +27,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBreakNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableAccessNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSlotAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
 
 /**
@@ -65,6 +68,10 @@ public:
     ASTContinueNodePtr continueThisLoop();
 
     ASTFieldVariableAccessNodePtr fieldVariableAccess(const ASTNodePtr &aggregate, const FieldVariablePtr &fieldVariable);
+    ASTSlotAccessNodePtr slotAccess(const ASTNodePtr &aggregate, uint64_t slotIndex, TypePtr slotReferenceType, bool isNotPaddedSlotIndex = true);
+    ASTSlotAccessNodePtr variantSlotAccess(const ASTNodePtr &aggregate, uint64_t slotIndex, TypePtr slotReferenceType, uint64_t typeSelectorSlotIndex, TypePtr typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue, bool isNotPaddedSlotIndex = true);
+
+    ASTSemanticErrorNodePtr semanticError(const std::string &message);
 
     ASTSourcePositionPtr sourcePosition;
 };

@@ -9,6 +9,7 @@
 #include "Environment/ASTReinterpretCastNode.hpp"
 
 #include "Environment/ASTIfNode.hpp"
+#include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/ASTWhileNode.hpp"
 #include "Environment/ASTDoWhileNode.hpp"
 #include "Environment/ASTReturnNode.hpp"
@@ -16,6 +17,7 @@
 #include "Environment/ASTBreakNode.hpp"
 
 #include "Environment/ASTFieldVariableAccessNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -209,6 +211,41 @@ ASTFieldVariableAccessNodePtr ASTBuilder::fieldVariableAccess(const ASTNodePtr &
     node->sourcePosition = sourcePosition;
     node->aggregate = aggregate;
     node->fieldVariable = fieldVariable;
+    return node;
+}
+
+ASTSlotAccessNodePtr ASTBuilder::slotAccess(const ASTNodePtr &aggregate, uint64_t slotIndex, TypePtr slotReferenceType, bool isNotPaddedSlotIndex)
+{
+    auto node = basicMakeObject<ASTSlotAccessNode> ();
+    node->sourcePosition = sourcePosition;
+    node->aggregate = aggregate;
+    node->slotIndex = slotIndex;
+    node->slotReferenceType = slotReferenceType;
+    node->isNotPaddedSlotIndex = isNotPaddedSlotIndex;
+    return node;
+}
+
+ASTSlotAccessNodePtr ASTBuilder::variantSlotAccess(const ASTNodePtr &aggregate, uint64_t slotIndex, TypePtr slotReferenceType, uint64_t typeSelectorSlotIndex, TypePtr typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue, bool isNotPaddedSlotIndex)
+{
+    auto node = basicMakeObject<ASTSlotAccessNode> ();
+    node->sourcePosition = sourcePosition;
+    node->aggregate = aggregate;
+    node->slotIndex = slotIndex;
+    node->slotReferenceType = slotReferenceType;
+    node->isNotPaddedSlotIndex = isNotPaddedSlotIndex;
+
+    node->checkTypeSelectorIndex = true;
+    node->typeSelectorSlotIndex = typeSelectorSlotIndex;
+    node->typeSelectorSlotReferenceType = typeSelectorSlotReferenceType;
+    node->expectedTypeSelectorValue = expectedTypeSelectorValue;
+    return node;
+}
+
+ASTSemanticErrorNodePtr ASTBuilder::semanticError(const std::string &message)
+{
+    auto node = basicMakeObject<ASTSemanticErrorNode> ();
+    node->sourcePosition = sourcePosition;
+    node->errorMessage = message;
     return node;
 }
 

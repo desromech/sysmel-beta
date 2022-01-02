@@ -539,6 +539,11 @@ bool AnyValue::isASTQuasiQuotePatternExpansionArgumentNode() const
     return false;
 }
 
+bool AnyValue::isASTSlotAccessNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;
@@ -1340,6 +1345,11 @@ bool AnyValue::isSSAEnableLocalFinalization() const
 }
 
 bool AnyValue::isSSALocalFinalization() const
+{
+    return false;
+}
+
+bool AnyValue::isSSACheckExpectedTypeSelectorValueInstruction() const
 {
     return false;
 }

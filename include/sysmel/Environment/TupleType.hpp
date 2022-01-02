@@ -57,6 +57,8 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_TupleType";
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
+    
+    static MethodCategories __instanceMacroMethods__();
 
     virtual bool isTupleTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;

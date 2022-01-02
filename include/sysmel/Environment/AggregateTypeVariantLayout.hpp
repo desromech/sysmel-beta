@@ -47,6 +47,11 @@ public:
         return paddingSize;
     }
 
+    uint64_t getElementMemorySlotIndex() const
+    {
+        return paddingSize == 0 ? 1 : 2;
+    }
+
     uint64_t getElementMemorySize() const
     {
         return elementMemorySize;

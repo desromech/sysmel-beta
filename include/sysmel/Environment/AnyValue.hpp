@@ -614,6 +614,9 @@ public:
     /// Is this object an AST quasi quote pattern expansion argument node?
     virtual bool isASTQuasiQuotePatternExpansionArgumentNode() const;
 
+    /// Is this object an AST slot access node?
+    virtual bool isASTSlotAccessNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 
@@ -1085,17 +1088,20 @@ public:
     // Is this a SSA bitcast instruction?
     virtual bool isSSABitcastInstruction() const;
 
-    // Is this a SSA Upcast instruction?
+    /// Is this a SSA Upcast instruction?
     virtual bool isSSAUpcastInstruction() const;
 
-    // Is this a SSA Downcast instruction?
+    /// Is this a SSA Downcast instruction?
     virtual bool isSSADowncastInstruction() const;
 
-    // Is this a SSA enable local finalization?
+    /// Is this a SSA enable local finalization?
     virtual bool isSSAEnableLocalFinalization() const;
 
-    // Is this a SSA local finalization?
+    /// Is this a SSA local finalization?
     virtual bool isSSALocalFinalization() const;
+
+    /// Is this a SSA check expected type selector value instruction?
+    virtual bool isSSACheckExpectedTypeSelectorValueInstruction() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;

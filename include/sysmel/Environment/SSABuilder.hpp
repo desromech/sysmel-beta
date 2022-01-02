@@ -74,6 +74,8 @@ public:
     SSAEnableLocalFinalizationPtr enableLocalFinalization(const SSAValuePtr &localVariable);
     SSALocalFinalizationPtr localFinalization(const SSAValuePtr &localVariable, const SSACodeRegionPtr &finalizationCodeRegion);
 
+    SSACheckExpectedTypeSelectorValueInstructionPtr checkExpectedTypeSelectorValue(const SSAValuePtr &aggregate, uint64_t typeSelectorSlotIndex, const TypePtr &typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue);
+
 protected:
     SSACodeRegionPtr currentRegion;
     SSABasicBlockPtr currentBasicBlock;

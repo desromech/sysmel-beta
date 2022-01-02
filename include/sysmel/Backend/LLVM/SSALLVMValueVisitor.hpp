@@ -93,6 +93,8 @@ public:
     virtual AnyValuePtr visitEnableLocalFinalization(const SSAEnableLocalFinalizationPtr &instruction) override;
     virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction) override;
 
+    virtual AnyValuePtr visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction) override;
+
     SSALLVMCodeGenerationBackend *backend = nullptr;
 
 protected:

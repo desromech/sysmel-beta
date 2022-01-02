@@ -31,6 +31,7 @@
 #include "Environment/ASTCompileTimeConstantNode.hpp"
 
 #include "Environment/ASTFieldVariableAccessNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
 #include "Environment/ASTVariableAccessNode.hpp"
 
 #include "Environment/ASTNamespaceNode.hpp"
@@ -1118,6 +1119,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitSpliceNode(const ASTSpliceNodePtr &node)
     return recordSemanticErrorInNode(node, "Invalid location for a splice expression");
 }
 
+AnyValuePtr ASTSemanticAnalyzer::visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    result->analyzedType = Type::getCompilationErrorValueType();
+    recordedErrors.push_back(result);
+    return result;
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitLocalVariableNode(const ASTLocalVariableNodePtr &node)
 {
     auto analyzedNode = shallowCloneObject(node);
@@ -1444,6 +1453,17 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableAccessNode(const ASTFieldVari
     if(analyzedNode->aggregate->analyzedType->isConstOrConstReferenceType())
         analyzedNode->analyzedType = analyzedNode->analyzedType->asConstOrConstReferenceType();
     return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitSlotAccessNode(const ASTSlotAccessNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    analyzedNode->aggregate = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->aggregate);
+    if(analyzedNode->aggregate->isASTErrorNode())
+        return analyzedNode->aggregate;
+
+    analyzedNode->analyzedType = node->slotReferenceType;
+    return analyzedNode;   
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

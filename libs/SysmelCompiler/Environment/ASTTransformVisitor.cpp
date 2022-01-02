@@ -41,6 +41,7 @@
 #include "Environment/ASTFieldVariableAccessNode.hpp"
 #include "Environment/ASTVariableAccessNode.hpp"
 #include "Environment/ASTLocalImmutableAccessNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
 
 #include "Environment/ASTFunctionalNode.hpp"
 #include "Environment/ASTFunctionNode.hpp"
@@ -371,6 +372,13 @@ AnyValuePtr ASTTransformVisitor::visitVariableAccessNode(const ASTVariableAccess
 AnyValuePtr ASTTransformVisitor::visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node)
 {
     return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitSlotAccessNode(const ASTSlotAccessNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->aggregate);
+    return result;
 }
 
 AnyValuePtr ASTTransformVisitor::visitFunctionalNode(const ASTFunctionalNodePtr &node)

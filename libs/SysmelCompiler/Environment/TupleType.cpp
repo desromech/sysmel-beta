@@ -1,11 +1,17 @@
 #include "Environment/TupleType.hpp"
 #include "Environment/RuntimeContext.hpp"
-#include "Environment/BootstrapTypeRegistration.hpp"
-#include "Environment/BootstrapMethod.hpp"
 #include "Environment/FunctionType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
+#include "Environment/ASTBuilder.hpp"
+#include "Environment/ASTSemanticErrorNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
+#include "Environment/ReferenceType.hpp"
+#include "Environment/MacroInvocationContext.hpp"
+#include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
+#include "Environment/StringUtilities.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -22,7 +28,7 @@ TypePtr TupleType::make(const TypePtrList &elementTypes)
 
     for(auto &elementType : elementTypes)
     {
-        auto undecoratedType = elementType->asUndecoratedType();
+        auto undecoratedType = elementType->asDecayedType();
         if(undecoratedType->isVoidType())
             continue;
 
@@ -181,6 +187,26 @@ void TupleType::buildLayout()
     for(auto &type : elementTypes)
         elementSlotIndices.push_back(layout->addSlotWithType(type));
     layout->finishGroup();
+}
+
+MethodCategories TupleTypeValue::__instanceMacroMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, uint64_t)> ("[]", [=](const MacroInvocationContextPtr &macroContext, int64_t slotIndex) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isTupleType());
+                
+                auto tupleType = decayedType.staticAs<TupleType> ();
+                if(slotIndex < 0 || size_t(slotIndex) >= tupleType->elementTypes.size())
+                    return macroContext->astBuilder->semanticError(formatString("Tuple element index {0} is outside of bounds.", {castToString(index)}));
+
+                auto elementType = tupleType->elementTypes[slotIndex];
+                auto referenceType = elementType->refForMemberOfReceiverWithType(macroContext->selfType);
+                return macroContext->astBuilder->slotAccess(macroContext->receiverNode, slotIndex, referenceType, true);
+            }, MethodFlags::Macro)
+        }}
+    };
 }
 
 bool TupleTypeValue::isTupleTypeValue() const

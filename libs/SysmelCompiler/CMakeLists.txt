@@ -74,6 +74,7 @@ set(Environment_Sources
     ASTSemanticAnalyzer.cpp
     ASTSemanticErrorNode.cpp
     ASTSequenceNode.cpp
+    ASTSlotAccessNode.cpp
     ASTSourceCode.cpp
     ASTSourceCodePosition.cpp
     ASTSourcePosition.cpp
@@ -234,6 +235,7 @@ set(Environment_Sources
     SSABuilder.cpp
     SSACallInstruction.cpp
     SSACastInstruction.cpp
+    SSACheckExpectedTypeSelectorValueInstruction.cpp
     SSACodeGenerationBackend.cpp
     SSACodeRegion.cpp
     SSACodeRegionArgument.cpp

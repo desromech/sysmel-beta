@@ -89,6 +89,8 @@ public:
     virtual AnyValuePtr visitSequenceNode(const ASTSequenceNodePtr &node) override;
     virtual AnyValuePtr visitSpliceNode(const ASTSpliceNodePtr &node) override;
 
+    virtual AnyValuePtr visitSemanticErrorNode(const ASTSemanticErrorNodePtr &node) override;
+
     virtual AnyValuePtr visitLocalVariableNode(const ASTLocalVariableNodePtr &node) override;
     virtual AnyValuePtr visitGlobalVariableNode(const ASTGlobalVariableNodePtr &node) override;
     virtual AnyValuePtr visitFieldVariableNode(const ASTFieldVariableNodePtr &node) override;
@@ -96,6 +98,7 @@ public:
 
     virtual AnyValuePtr visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node) override;
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
+    virtual AnyValuePtr visitSlotAccessNode(const ASTSlotAccessNodePtr &node) override;
 
     virtual AnyValuePtr visitFunctionNode(const ASTFunctionNodePtr &node) override;
     virtual AnyValuePtr visitMethodNode(const ASTMethodNodePtr &node) override;

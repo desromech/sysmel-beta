@@ -1,10 +1,16 @@
 #include "Environment/VariantType.hpp"
 #include "Environment/RuntimeContext.hpp"
-#include "Environment/BootstrapTypeRegistration.hpp"
-#include "Environment/BootstrapMethod.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeVariantLayout.hpp"
+#include "Environment/ASTBuilder.hpp"
+#include "Environment/ASTSemanticErrorNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
+#include "Environment/MacroInvocationContext.hpp"
+#include "Environment/ReferenceType.hpp"
+#include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
+#include "Environment/StringUtilities.hpp"
 #include <unordered_set>
 #include <sstream>
 
@@ -24,7 +30,7 @@ TypePtr VariantType::make(const TypePtrList &elementTypes)
 
     for(auto &elementType : elementTypes)
     {
-        auto undecoratedElementType = elementType->asUndecoratedType();
+        auto undecoratedElementType = elementType->asDecayedType();
         if(undecoratedElementType->isVoidType())
             continue;
 
@@ -58,6 +64,8 @@ VariantTypePtr VariantType::makeNormalized(const TypePtrList &elementTypes)
     auto result = basicMakeObject<VariantType> ();
     result->setSupertypeAndImplicitMetaType(VariantTypeValue::__staticType__());
     result->elementTypes = elementTypes;
+    for(size_t i = 0; i < elementTypes.size(); ++i)
+        result->typeToSelectorMap.insert({elementTypes[i], i});
     cache.insert({elementTypes, result});
     result->addSpecializedInstanceMethods();
     return result;
@@ -156,6 +164,14 @@ void VariantType::addSpecializedInstanceMethods()
 {
 }
 
+std::optional<uint64_t> VariantType::findTypeSelectorIndexFor(const TypePtr &expectedType)
+{
+    auto it = typeToSelectorMap.find(expectedType);
+    if(it != typeToSelectorMap.end())
+        return it->second;
+    return std::nullopt;
+}
+
 void VariantType::buildLayout()
 {
     layout = basicMakeObject<AggregateTypeVariantLayout>();
@@ -163,6 +179,46 @@ void VariantType::buildLayout()
     for(auto &type : elementTypes)
         layout->addSlotWithType(type);
     layout->finishGroup();
+}
+
+MethodCategories VariantTypeValue::__instanceMacroMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("typeSelector", [=](const MacroInvocationContextPtr &macroContext) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isVariantType());
+                
+                auto variantType = decayedType.staticAs<VariantType> ();
+                auto elementType = variantType->getLayout().staticAs<AggregateTypeVariantLayout> ()->getDataTypeIndexType();
+                auto referenceType = elementType->refForMemberOfReceiverWithType(macroContext->selfType);
+
+                return macroContext->astBuilder->slotAccess(macroContext->receiverNode, 0, referenceType, false);
+            }, MethodFlags::Macro),
+
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, TypePtr)> ("get:", [=](const MacroInvocationContextPtr &macroContext, const TypePtr &accessedType) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isVariantType());
+
+                auto variantType = decayedType.staticAs<VariantType> ();
+
+                auto decayedAccessedType = accessedType->asDecayedType();
+                auto expectedTypeSelector = variantType->findTypeSelectorIndexFor(decayedAccessedType);
+                if(!expectedTypeSelector.has_value())
+                    return macroContext->astBuilder->semanticError(formatString("Variant does not contain requested type {0}.", {accessedType->printString()}));
+
+                auto layout = variantType->getLayout().staticAs<AggregateTypeVariantLayout> ();
+                auto slotIndex = layout->getElementMemorySlotIndex();
+                
+                auto selectorReferenceType = layout->getDataTypeIndexType()->refForMemberOfReceiverWithType(macroContext->selfType);
+                auto referenceType = decayedAccessedType->refForMemberOfReceiverWithType(macroContext->selfType);
+
+                return macroContext->astBuilder->variantSlotAccess(macroContext->receiverNode, slotIndex, referenceType,
+                    0, selectorReferenceType, expectedTypeSelector.value(), false);
+            }, MethodFlags::Macro)
+
+        }},
+    };
 }
 
 bool VariantTypeValue::isVariantTypeValue() const

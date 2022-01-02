@@ -46,6 +46,8 @@
 #include "Environment/SSAEnableLocalFinalization.hpp"
 #include "Environment/SSALocalFinalization.hpp"
 
+#include "Environment/SSACheckExpectedTypeSelectorValueInstruction.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
@@ -1406,18 +1408,21 @@ AnyValuePtr SSALLVMValueVisitor::visitGetAggregateSlotReferenceInstruction(const
     sysmelAssert(instruction->getAggregate()->getValueType()->isPointerLikeType());
     auto aggregate = translateValue(instruction->getAggregate());
     auto index = instruction->getSlotIndex();
+    auto expectedType = backend->translateType(instruction->getValueType());
     if(index->isSSAConstantLiteralValue())
     {
         auto constantValue = validAnyValue(index.staticAs<SSAConstantLiteralValue> ()->getValue());
         if(constantValue->isLiteralInteger())
-            return wrapLLVMValue(builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, constantValue->unwrapAsInt32()));
+        {
+            auto slotReference = builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, constantValue->unwrapAsInt32());
+            return wrapLLVMValue(builder->CreateBitOrPointerCast(slotReference, expectedType));
+        }
     }
 
     auto translatedIndex = translateValue(index);
     auto indexType = backend->translateType(Type::getUIntPointerType());
 
     auto reference = builder->CreateGEP(nullptr, aggregate, {llvm::ConstantInt::get(indexType, 0), translatedIndex});
-    auto expectedType = backend->translateType(instruction->getValueType());
     return wrapLLVMValue(builder->CreateBitOrPointerCast(reference, expectedType));
 }
 
@@ -1787,6 +1792,32 @@ AnyValuePtr SSALLVMValueVisitor::visitLocalFinalization(const SSALocalFinalizati
     // Merge block.
     builder->SetInsertPoint(mergeBlock);
     mergeBlock->insertInto(currentFunction);
+
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction)
+{
+    auto aggregate = translateValue(instruction->getAggregate());
+    auto typeSelectorSlot = builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, instruction->getTypeSelectorIndex());
+    auto expectedTypeSelectorType = backend->translateType(instruction->getTypeSelectorReferenceType());
+    typeSelectorSlot = builder->CreateBitOrPointerCast(typeSelectorSlot, expectedTypeSelectorType);
+
+    auto typeSelector = builder->CreateLoad(typeSelectorSlot);
+    auto isNotExpected = builder->CreateICmpNE(typeSelector, llvm::ConstantInt::get(typeSelector->getType(), instruction->getExpectedTypeSelector()));
+
+    auto trapBlock = llvm::BasicBlock::Create(*backend->getContext(), "variantTrap");
+    auto mergeBlock = llvm::BasicBlock::Create(*backend->getContext(), "variantSuccess");
+    builder->CreateCondBr(isNotExpected, trapBlock, mergeBlock);
+
+    trapBlock->insertInto(currentFunction);
+    builder->SetInsertPoint(trapBlock);
+
+    builder->CreateIntrinsic(llvm::Intrinsic::trap, {}, {});
+    builder->CreateUnreachable();
+
+    mergeBlock->insertInto(currentFunction);
+    builder->SetInsertPoint(mergeBlock);
 
     return wrapLLVMValue(makeVoidValue());
 }

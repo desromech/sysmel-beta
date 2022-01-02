@@ -254,5 +254,10 @@ AnyValuePtr SSAValueVisitor::visitLocalFinalization(const SSALocalFinalizationPt
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

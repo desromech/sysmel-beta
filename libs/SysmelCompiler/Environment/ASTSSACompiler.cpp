@@ -21,6 +21,7 @@
 #include "Environment/ASTFieldVariableAccessNode.hpp"
 #include "Environment/ASTVariableAccessNode.hpp"
 #include "Environment/ASTLocalImmutableAccessNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
 
 #include "Environment/ASTFunctionalNode.hpp"
 #include "Environment/ASTNamespaceNode.hpp"
@@ -499,6 +500,23 @@ AnyValuePtr ASTSSACompiler::visitFieldVariableAccessNode(const ASTFieldVariableA
 {
     auto aggregate = visitNodeForValue(node->aggregate);
     return builder->getAggregateFieldReference(node->analyzedType, aggregate, node->fieldVariable);
+}
+
+AnyValuePtr ASTSSACompiler::visitSlotAccessNode(const ASTSlotAccessNodePtr &node)
+{
+    auto aggregate = visitNodeForValue(node->aggregate);
+    if(node->checkTypeSelectorIndex)
+        builder->checkExpectedTypeSelectorValue(aggregate, node->typeSelectorSlotIndex, node->typeSelectorSlotReferenceType, node->expectedTypeSelectorValue);
+
+    auto slotIndex = node->slotIndex;
+    if(node->isNotPaddedSlotIndex)
+    {
+        auto aggregateType = node->aggregate->analyzedType->asDecayedType();
+        sysmelAssert(aggregateType->isAggregateType());
+        slotIndex = aggregateType.staticAs<AggregateType>()->getLayout()->getIndexForNonPaddingSlot(slotIndex);
+    }
+
+    return builder->getAggregateSlotReference(node->analyzedType, aggregate, builder->literal(wrapValue(slotIndex)));
 }
 
 AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

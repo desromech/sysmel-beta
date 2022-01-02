@@ -38,7 +38,10 @@ public:
 
     void addSpecializedInstanceMethods();
 
+    std::optional<uint64_t> findTypeSelectorIndexFor(const TypePtr &expecedType);
+
     TypePtrList elementTypes;
+    std::unordered_map<TypePtr, uint64_t> typeToSelectorMap;
 
 protected:
     virtual void buildLayout() override;
@@ -54,6 +57,8 @@ public:
     static constexpr char const __sysmelTypeName__[] = "_VariantType";
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
+
+    static MethodCategories __instanceMacroMethods__();
 
     virtual bool isVariantTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
