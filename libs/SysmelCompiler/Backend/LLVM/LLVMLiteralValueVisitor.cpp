@@ -31,12 +31,17 @@ llvm::Constant *LLVMLiteralValueVisitor::translateValueWithExpectedType(const An
     expectedType = valueExpectedType;
     translatedExpectedType = backend->translateType(expectedType);
 
-    if(expectedType->isVoidType())
-    {
-        return llvm::UndefValue::get(translatedExpectedType);
-    }
-
     return validAnyValue(value)->acceptLiteralValueVisitor(selfFromThis()).staticAs<SSALLVMConstant>()->value;
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitUndefined(const UndefinedPtr &)
+{
+    return wrapLLVMConstant(llvm::Constant::getNullValue(translatedExpectedType));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitVoid(const VoidPtr &)
+{
+    return wrapLLVMConstant(llvm::UndefValue::get(translatedExpectedType));
 }
 
 llvm::Constant *LLVMLiteralValueVisitor::translateConstantLiteralValue(const SSAConstantLiteralValuePtr &constantValue)

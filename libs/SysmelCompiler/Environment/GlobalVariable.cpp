@@ -30,7 +30,7 @@ void GlobalVariable::ensureEvaluationOfInitialValue()
     if(isMutable_)
     {
         sysmelAssert(referenceType->isReferenceLikeType());
-        currentValueOrValueBox = evaluatedValue->asMutableStoreValue();
+        currentValueOrValueBox = validAnyValue(evaluatedValue)->asMutableStoreValue();
         referenceValue = staticObjectCast<PointerLikeType> (referenceType)->makeWithValue(currentValueOrValueBox);
     }
     else
