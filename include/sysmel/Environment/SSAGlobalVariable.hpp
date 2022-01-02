@@ -19,6 +19,25 @@ public:
     virtual bool isSSAGlobalVariable() const override;
 
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
+
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
+
+    TypePtr getValueType() const override;
+    TypePtr getContentType() const;
+    void setContentAndValueType(const TypePtr &newContentType, const TypePtr &newValueType);
+
+    const AnyValuePtr &getInitialValue();
+    void setInitialValue(const AnyValuePtr &newInitialValue);
+
+    bool isExternallyDefined() const;
+    void setExternallyDefined(bool newExternallyDefined);
+
+private:
+    TypePtr valueType;
+    TypePtr contentType;
+    AnyValuePtr initialValue;
+    bool externallyDefined = false;
 };
 
 } // End of namespace Environment

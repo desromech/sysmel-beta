@@ -11,6 +11,7 @@ namespace Environment
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(GlobalVariable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(DeferredCompileTimeCodeFragment);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAGlobalVariable);
 
 /**
  * I am a variable program entity.
@@ -24,6 +25,10 @@ public:
     virtual AnyValuePtr findStoreBindingInCompileTime(const CompileTimeCleanUpScopePtr &compileTimeCleanUpScope) override;
 
     virtual void ensureSemanticAnalysis() override;
+    virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
+
+    virtual SExpression asSExpression() const override;
+    virtual SExpression asFullDefinitionSExpression() const override;
 
     DeferredCompileTimeCodeFragmentPtr initialValueCodeFragment;
 
@@ -34,6 +39,7 @@ protected:
 
     AnyValuePtr currentValueOrValueBox;
     AnyValuePtr referenceValue;
+    SSAGlobalVariablePtr ssaGlobalVariable;
 };
 
 } // End of namespace Environment

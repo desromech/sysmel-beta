@@ -49,6 +49,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
+#include "Environment/ValueBox.hpp"
 #include "Environment/Error.hpp"
 
 namespace Sysmel
@@ -889,7 +890,7 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
             return wrapLLVMValue(existent);
     }
 
-    auto valueType = backend->translateType(globalVariable->getValueType());
+    auto valueType = backend->translateType(globalVariable->getContentType());
 
     // Guard for recursive definitions.
     {
@@ -902,13 +903,28 @@ AnyValuePtr SSALLVMValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr 
     auto linkage = parentFunction ? llvm::GlobalValue::PrivateLinkage : llvm::GlobalValue::ExternalLinkage;
     auto name = backend->getNameMangler()->mangleSSAProgramEntity(globalVariable);
 
-    if(!parentFunction)
-        currentFunction->setDLLStorageClass(convertDLLStorageClass(globalVariable->getDllLinkageMode()));
-
     auto translatedGlobalVariable = new llvm::GlobalVariable(*backend->getTargetModule(), valueType, false, linkage, nullptr, name);
     backend->setGlobalValueTranslation(globalVariable, translatedGlobalVariable);
+    if(!parentFunction)
+        translatedGlobalVariable->setDLLStorageClass(convertDLLStorageClass(globalVariable->getDllLinkageMode()));
 
-    // TODO: Set the global variable initializer.
+    // Set the global variable initializer.
+    if(!globalVariable->isExternallyDefined())
+    {
+        auto initialValue = globalVariable->getInitialValue();
+
+        // Unbox the value.
+        if(initialValue && initialValue->isValueBox())
+            initialValue = initialValue.staticAs<ValueBox> ()->value;
+
+        llvm::Constant *translatedInitialValue = nullptr;
+        if(validAnyValue(initialValue)->isUndefined())
+            translatedInitialValue = llvm::Constant::getNullValue(valueType);
+        else
+            translatedInitialValue = backend->translateLiteralValueWithExpectedType(initialValue, globalVariable->getContentType());
+        translatedGlobalVariable->setInitializer(translatedInitialValue);
+    }
+
     return wrapLLVMValue(translatedGlobalVariable);
 }
 
