@@ -172,7 +172,11 @@ AnyValuePtr LLVMTypeVisitor::visitStructureType(const StructureTypePtr &type)
 
 AnyValuePtr LLVMTypeVisitor::visitUnionType(const UnionTypePtr &type)
 {
-    return wrapLLVMType(llvm::ArrayType::get(llvm::Type::getInt8Ty(*backend->getContext()), type->getAlignedMemorySize()));
+    llvm::Type *slots = {
+        llvm::ArrayType::get(llvm::Type::getInt8Ty(*backend->getContext()), type->getAlignedMemorySize())
+    };
+
+    return wrapLLVMType(llvm::StructType::create(*backend->getContext(), slots, "union." + type->getQualifiedName()));
 }
 
 AnyValuePtr LLVMTypeVisitor::visitTupleType(const TupleTypePtr &type)

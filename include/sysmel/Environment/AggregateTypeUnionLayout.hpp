@@ -20,8 +20,23 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeUnionLayout : public SubtypeOf<Agg
 public:
     static constexpr char const __typeName__[] = "AggregateTypeUnionLayout";
 
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
+
+    virtual void beginGroup() override;
+    virtual uint32_t addSlotWithType(const TypePtr &slotType) override;
+    virtual void finishGroup() override;
+
 protected:
-    
+    uint64_t memorySize = 0;
+    uint64_t memoryAlignment = 1;
 };
 
 } // End of namespace Environment
