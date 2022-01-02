@@ -236,6 +236,11 @@ public:
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }
 
+    virtual TypePtr getCppType() const override
+    {
+        return StaticBootstrapDefinedTypeFor<SelfType>::get();
+    }
+
     ObjectPtr<SelfType> selfFromThis()
     {
         return ObjectPtr<SelfType>::fromThis(static_cast<SelfType*> (this));
@@ -363,6 +368,12 @@ public:
 
     /// Retrieves the type of the object.
     virtual TypePtr getType() const
+    {
+        return StaticBootstrapDefinedTypeFor<SelfType>::get();
+    }
+
+    /// Retrieves the type of the object.
+    virtual TypePtr getCppType() const
     {
         return StaticBootstrapDefinedTypeFor<SelfType>::get();
     }

@@ -171,7 +171,7 @@ void AnyValue::finalize()
 
 AnyValuePtr AnyValue::shallowClone()
 {
-    return getType()->shallowCloneInstance(selfFromThis());
+    return getCppType()->shallowCloneInstance(selfFromThis());
 }
 
 AnyValuePtr AnyValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
