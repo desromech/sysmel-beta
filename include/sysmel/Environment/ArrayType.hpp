@@ -63,6 +63,9 @@ public:
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
+    static MethodCategories __typeMethods__();
+    static MethodCategories __instanceMacroMethods__();
+
     virtual bool isArrayTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     virtual TypePtr getType() const override;

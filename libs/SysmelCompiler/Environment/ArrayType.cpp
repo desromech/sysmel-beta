@@ -4,6 +4,9 @@
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/ASTMakeAggregateNode.hpp"
+#include "Environment/ASTBuilder.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/MacroInvocationContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/ReferenceType.hpp"
@@ -180,6 +183,30 @@ void ArrayType::buildLayout()
     auto arrayLayout = basicMakeObject<AggregateTypeArrayLayout> ();
     layout = arrayLayout;
     arrayLayout->setElementTypeAndSize(elementType, size);
+}
+
+MethodCategories ArrayTypeValue::__typeMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<uint64_t (TypePtr)> ("size", [](const TypePtr &type) -> uint64_t{
+                return type->isArrayType() ? type.staticAs<ArrayType> ()->size : 0;
+            }, MethodFlags::Pure),
+        }}
+    };
+}
+
+MethodCategories ArrayTypeValue::__instanceMacroMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("size", [](const MacroInvocationContextPtr &context) {
+                auto decayedSelfType = context->selfType->asDecayedType();
+                uint64_t size = decayedSelfType->isArrayType() ? decayedSelfType.staticAs<ArrayType> ()->size : 0;
+                return context->astBuilder->literal(wrapValue(size));
+            }, MethodFlags::Macro),
+        }}
+    };
 }
 
 bool ArrayTypeValue::isArrayTypeValue() const

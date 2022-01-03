@@ -411,6 +411,11 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("Int32[](1, 2)[1]"));
                     CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("Int32[2](1, 2)[0]"));
                     CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("Int32[2](1, 2)[1]"));
+
+                    CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("Int32[2] size"));
+                    CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("Int32[2]() size"));
+                    CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint32_t> ("Int32[2](1, 2) size"));
+                    CHECK_EQUAL(3u, evaluateStringWithValueOfType<uint32_t> ("Int32[](1, 2, 3) size"));
                 }
             });
         });
