@@ -9,6 +9,8 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTSourcePosition);
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -25,6 +27,7 @@ public:
 
     ASTNodePtr pattern;
     ASTNodePtrList arguments;
+    ASTSourcePositionPtrList argumentSourcePositions;
 };
 
 } // End of namespace Environment

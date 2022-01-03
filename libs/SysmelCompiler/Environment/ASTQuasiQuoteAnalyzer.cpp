@@ -28,6 +28,7 @@ ASTQuasiQuotePatternExpansionNodePtr ASTQuasiQuoteAnalyzer::analyzeQuasiQuote(co
     result->sourcePosition = quasiQuote->sourcePosition;
     result->pattern = patternLiteralValue;
     result->arguments = patternExpansionArguments;
+    result->argumentSourcePositions = patternExpansionArgumentSources;
     result->analyzedType = patternType;
     return result;
 }
@@ -37,8 +38,9 @@ AnyValuePtr ASTQuasiQuoteAnalyzer::visitQuasiUnquoteNode(const ASTQuasiUnquoteNo
     auto argumentNode = basicMakeObject<ASTQuasiQuotePatternExpansionArgumentNode> ();
     argumentNode->argumentIndex = uint32_t(patternExpansionArguments.size());
 
-    auto expansionArgument = analyzer->analyzeNodeIfNeededWithExpectedType(node->expression, ASTNode::__staticType__());
+    auto expansionArgument = analyzer->analyzeNodeIfNeededWithAutoType(node->expression);
     patternExpansionArguments.push_back(expansionArgument);
+    patternExpansionArgumentSources.push_back(node->sourcePosition);
     argumentNode->analyzedType = ASTNode::__staticType__();
 
     return argumentNode;

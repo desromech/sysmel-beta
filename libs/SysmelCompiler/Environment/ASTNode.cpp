@@ -15,16 +15,6 @@ namespace Environment
 
 static BootstrapTypeRegistration<ASTNode> ASTNodeTypeRegistration;
 
-// FIXME: Move onto the ASTLiteralNode
-AnyValuePtrList ASTNode::__constructors__()
-{
-    return AnyValuePtrList{
-        makeConstructor<ASTNodePtr (TypePtr, LiteralStringPtr)> (+[](const TypePtr &, const LiteralStringPtr &value){
-            return value->asASTNodeRequiredInPosition(ASTSourcePosition::empty());
-        }, MethodFlags::Pure),        
-    };
-}
-
 MethodCategories ASTNode::__instanceMethods__()
 {
     return MethodCategories{

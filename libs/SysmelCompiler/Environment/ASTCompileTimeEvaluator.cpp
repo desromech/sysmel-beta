@@ -320,10 +320,14 @@ AnyValuePtr ASTCompileTimeEvaluator::visitQuasiQuotePatternExpansionNode(const A
     auto pattern = visitNode(node->pattern);
     sysmelAssert(pattern->isASTNode());
 
+    auto argumentCount = node->arguments.size();
     AnyValuePtrList arguments;
-    arguments.reserve(node->arguments.size());
-    for(auto &arg : node->arguments)
-        arguments.push_back(visitNode(arg));
+    arguments.reserve(argumentCount);
+    for(size_t i = 0; i < argumentCount; ++i)
+    {
+        auto argumentValue = visitNode(node->arguments[i]);
+        arguments.push_back(validAnyValue(argumentValue)->asASTNodeRequiredInPosition(node->argumentSourcePositions[i]));
+    }
 
     return expander->expandPatternWithArguments(staticObjectCast<ASTNode> (pattern), arguments);
 }
