@@ -425,6 +425,9 @@ public:
     /// Is this object an AST make tuple node?
     virtual bool isASTMakeTupleNode() const;
 
+    /// Is this object an AST make variant node?
+    virtual bool isASTMakeVariantNode() const;
+
     /// Is this object an AST make vector node?
     virtual bool isASTMakeVectorNode() const;
 

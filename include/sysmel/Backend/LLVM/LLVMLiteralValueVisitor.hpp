@@ -30,6 +30,8 @@ public:
     virtual AnyValuePtr visitUndefined(const UndefinedPtr &value) override;
     virtual AnyValuePtr visitVoid(const VoidPtr &value) override;
     virtual AnyValuePtr visitVirtualTable(const VirtualTablePtr &value) override;
+
+    virtual AnyValuePtr visitLiteralInteger(const LiteralIntegerPtr &value) override;
     
     virtual AnyValuePtr visitPrimitiveBooleanType(const PrimitiveBooleanTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveCharacterType(const PrimitiveCharacterTypePtr &value) override;

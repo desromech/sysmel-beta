@@ -160,6 +160,11 @@ TypePtr VariantType::appendTypeMakingVariant(const TypePtr &nextType)
     return VariantType::make(newElementTypes);
 }
 
+bool VariantType::includesType(const TypePtr &typeToTest)
+{
+    return typeToSelectorMap.find(typeToTest->asDecayedType()) != typeToSelectorMap.end();
+}
+
 void VariantType::addSpecializedInstanceMethods()
 {
 }

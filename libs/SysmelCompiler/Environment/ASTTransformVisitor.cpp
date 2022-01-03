@@ -14,6 +14,7 @@
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVariantNode.hpp"
 #include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
@@ -194,6 +195,14 @@ AnyValuePtr ASTTransformVisitor::visitMakeTupleNode(const ASTMakeTupleNodePtr &n
 {
     auto result = shallowCloneObject(node);
     transformChildNodeList(result->elements);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitMakeVariantNode(const ASTMakeVariantNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->variantType);
+    transformChildNode(result->value);
     return result;
 }
 

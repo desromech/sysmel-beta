@@ -50,6 +50,7 @@ set(Environment_Sources
     ASTMakeDictionaryNode.cpp
     ASTMakeLiteralArrayNode.cpp
     ASTMakeTupleNode.cpp
+    ASTMakeVariantNode.cpp
     ASTMakeVectorNode.cpp
     ASTMessageChainMessageNode.cpp
     ASTMessageChainNode.cpp
@@ -298,10 +299,11 @@ set(Environment_Sources
     UpcastTypeConversionRule.cpp
     UnionMetaBuilder.cpp
     UnionType.cpp
-    ValueBox.cpp
     ValueAsConstRefTypeConversionRule.cpp
     ValueAsReceiverReferenceTypeConversionRule.cpp
     ValueAsVoidTypeConversionRule.cpp
+    ValueBox.cpp
+    ValueInVariantTypeConversionRule.cpp
     Variable.cpp
     VariantType.cpp
     VariableMetaBuilder.cpp

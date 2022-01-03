@@ -224,6 +224,11 @@ bool AnyValue::isASTMakeTupleNode() const
     return false;
 }
 
+bool AnyValue::isASTMakeVariantNode() const
+{
+    return false;
+}
+
 bool AnyValue::isASTMakeVectorNode() const
 {
     return false;

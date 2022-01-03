@@ -5,6 +5,7 @@
 #include "Environment/Type.hpp"
 #include "Environment/ValueBox.hpp"
 #include "Environment/PointerLikeType.hpp"
+#include "Environment/LiteralInteger.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
@@ -69,6 +70,13 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveCharacterType(const Primitive
 {
     auto data = value->unwrapAsChar32();
     return wrapLLVMConstant(llvm::ConstantInt::get(llvm::cast<llvm::IntegerType> (translatedExpectedType), data, false));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitLiteralInteger(const LiteralIntegerPtr &value)
+{
+    sysmelAssert(translatedExpectedType->isIntegerTy());
+    auto largeInteger = value->unwrapAsLargeInteger();
+    return wrapLLVMConstant(llvm::ConstantInt::get(llvm::cast<llvm::IntegerType> (translatedExpectedType), largeInteger.asString(), 10));
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value)

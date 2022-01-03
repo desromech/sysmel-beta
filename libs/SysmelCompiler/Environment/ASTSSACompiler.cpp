@@ -7,7 +7,9 @@
 #include "Environment/ASTClosureNode.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/ASTLexicalScopeNode.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVariantNode.hpp"
 #include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTQuoteNode.hpp"
@@ -75,9 +77,11 @@
 #include "Environment/FunctionalType.hpp"
 #include "Environment/AggregateType.hpp"
 #include "Environment/AggregateTypeLayout.hpp"
+#include "Environment/AggregateTypeVariantLayout.hpp"
 #include "Environment/PointerLikeType.hpp"
 #include "Environment/ArgumentVariable.hpp"
 #include "Environment/LocalVariable.hpp"
+#include "Environment/VariantType.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
 #include "Environment/Wrappers.hpp"
@@ -181,7 +185,7 @@ SSAValuePtr ASTSSACompiler::makeAggregateWithElements(const AggregateTypePtr &ag
     {
         auto slotType = layout->getTypeForNonPaddingSlot(i);
         auto slotIndex = layout->getIndexForNonPaddingSlot(i);
-        auto slot = builder->getAggregateSlotReference(slotType, result, builder->literal(wrapValue(slotIndex)));
+        auto slot = builder->getAggregateSlotReference(slotType->tempRef(), result, builder->literal(wrapValue(slotIndex)));
         assignInitialValueFrom(slot, slotType, elements[i], true);
     }
     
@@ -391,6 +395,29 @@ AnyValuePtr ASTSSACompiler::visitMakeVectorNode(const ASTMakeVectorNodePtr &node
     }
 
     return builder->makeVector(node->analyzedType, elements);
+}
+
+AnyValuePtr ASTSSACompiler::visitMakeVariantNode(const ASTMakeVariantNodePtr &node)
+{
+    auto value = visitNodeForValue(node->value);
+
+    sysmelAssert(node->analyzedType->isVariantType());
+    auto variantType = staticObjectCast<VariantType> (node->analyzedType);
+    auto result = builder->localVariable(variantType->tempRef(), variantType);
+    auto layout = variantType->getLayout().staticAs<AggregateTypeVariantLayout> ();
+
+    auto typeSelectorSlotType = layout->getDataTypeIndexType();
+    auto typeSelectorIndex = node->typeSelectorIndex;
+    auto typeSelectorSlot = builder->getAggregateSlotReference(typeSelectorSlotType->tempRef(), result, builder->literal(wrapValue(uint64_t(0))));
+    builder->storeValueIn(builder->literalWithType(wrapValue(typeSelectorIndex), typeSelectorSlotType), typeSelectorSlot);
+
+    const auto &dataSlotType = variantType->elementTypes[size_t(typeSelectorIndex)];
+    auto dataSlotIndex = layout->getElementMemorySlotIndex();
+    auto dataSlot = builder->getAggregateSlotReference(dataSlotType->tempRef(), result, builder->literal(wrapValue(dataSlotIndex)));
+    assignInitialValueFrom(dataSlot, dataSlotType, value, true);
+
+    addFinalizationFor(result, variantType);
+    return result;
 }
 
 AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &node)

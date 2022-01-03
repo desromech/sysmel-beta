@@ -36,6 +36,8 @@ public:
 
     virtual TypePtr appendTypeMakingVariant(const TypePtr &nextType) override;
 
+    bool includesType(const TypePtr &typeToTest);
+
     void addSpecializedInstanceMethods();
 
     std::optional<uint64_t> findTypeSelectorIndexFor(const TypePtr &expecedType);

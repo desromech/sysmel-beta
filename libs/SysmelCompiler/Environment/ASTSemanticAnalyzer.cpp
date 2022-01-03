@@ -13,6 +13,7 @@
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVariantNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
@@ -90,6 +91,8 @@
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
 #include "Environment/UnionType.hpp"
+#include "Environment/TupleType.hpp"
+#include "Environment/VariantType.hpp"
 
 #include "Environment/DeferredCompileTimeCodeFragment.hpp"
 
@@ -105,7 +108,6 @@
 #include "Environment/LiteralInteger.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveNumberType.hpp"
-#include "Environment/TupleType.hpp"
 
 #include "Environment/ASTQuasiQuoteAnalyzer.hpp"
 #include "Environment/ASTQuasiQuotePatternExpansionNode.hpp"
@@ -926,6 +928,32 @@ AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &n
         return errorNode;
 
     analyzedNode->analyzedType = TupleType::make(elementTypes);
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitMakeVariantNode(const ASTMakeVariantNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    analyzedNode->value = analyzeNodeIfNeededWithAutoType(analyzedNode->value);
+    analyzedNode->variantType = evaluateTypeExpression(analyzedNode->variantType);
+
+    if(analyzedNode->value->isASTErrorNode())
+        return analyzedNode->value;
+
+    if(analyzedNode->variantType->isASTErrorNode())
+        return analyzedNode->variantType;
+
+    auto variantType = unwrapTypeFromLiteralValue(analyzedNode->variantType);
+    if(!variantType->isVariantType())
+        return recordSemanticErrorInNode(analyzedNode->variantType, "Expected a variant type.");
+
+    auto elementType = analyzedNode->value->analyzedType->asDecayedType();
+    auto typeSelectorIndex = variantType.staticAs<VariantType> ()->findTypeSelectorIndexFor(elementType);
+    if(!typeSelectorIndex.has_value())
+        return recordSemanticErrorInNode(analyzedNode, formatString("Invalid source type {0} for constructing variant type {1}.", {elementType->printString(), variantType->printString()}));
+
+    analyzedNode->typeSelectorIndex = typeSelectorIndex.value();
+    analyzedNode->analyzedType = variantType;
     return analyzedNode;
 }
 
