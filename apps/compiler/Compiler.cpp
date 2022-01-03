@@ -62,6 +62,46 @@ void writeStringToOutputFileNamed(const std::string &string, const std::string &
 
 }
 
+void printHelp()
+{
+    std::cout <<
+R"(sysmelc [options] (input files)+
+-h -help                    Print this message.
+-version                    Print the version info.
+-c                          Emit object file.
+-S                          Emit assembly.
+-shared                     Emit shared library
+-emit-target-ir             
+-emit-llvm                  Emit target specific ir. Must use one of -c|-S
+-module <name>              The name of the module
+-o<output name>
+-g                          Emit debug information in the default format.
+-gdwarf
+-gdwarf2
+-gdwarf3
+-gdwarf4
+-gcodeview
+-target <triple>
+-mcpu <name>
+-mfpu <name>
+-mfloat-abi <triple>
+-O0                         No optimization level
+-O1
+-O2
+-O3
+-Os
+-Oz
+-fPIC
+-fPIE
+-semantic-analysis-only     No generation. For error detection and performance measurements.
+)" << std::endl;
+}
+
+void printVersion()
+{
+    std::cout << "Sysmel Compiler (Beta Branch)" << std::endl;
+}
+
 int main(int argc, const char *argv[])
 {
     CompilerParameters parameters;
@@ -71,6 +111,16 @@ int main(int argc, const char *argv[])
         auto arg = std::string(argv[i]);
         if(arg.size() > 1 && arg[0] == '-')
         {
+            if(arg == "-h" || arg == "-help")
+            {
+                printHelp();
+                return 0;
+            }
+            if(arg == "-version")
+            {
+                printVersion();
+                return 0;
+            }
             if(arg == "-c")
                 parameters.outputMode = SSACodeGenerationOutputMode::ObjectFile;
             else if(arg == "-S")
@@ -139,6 +189,11 @@ int main(int argc, const char *argv[])
         }
     }
 
+    if(parameters.inputFileNames.empty())
+    {
+        printHelp();
+        return 0;
+    }
 
     if(parameters.moduleName.empty())
         parameters.moduleName = basenameWithoutExtension(parameters.inputFileNames.front());

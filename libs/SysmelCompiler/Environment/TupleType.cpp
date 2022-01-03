@@ -194,7 +194,7 @@ MethodCategories TupleTypeValue::__instanceMacroMethods__()
                 
                 auto tupleType = decayedType.staticAs<TupleType> ();
                 if(slotIndex < 0 || size_t(slotIndex) >= tupleType->elementTypes.size())
-                    return macroContext->astBuilder->semanticError(formatString("Tuple element index {0} is outside of bounds.", {castToString(index)}));
+                    return macroContext->astBuilder->semanticError(formatString("Tuple element index {0} is outside of bounds.", {castToString(slotIndex)}));
 
                 auto elementType = tupleType->elementTypes[slotIndex];
                 auto referenceType = elementType->refForMemberOfReceiverWithType(macroContext->selfType);
