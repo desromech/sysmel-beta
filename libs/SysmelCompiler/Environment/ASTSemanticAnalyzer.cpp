@@ -9,6 +9,7 @@
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTLexicalScopeNode.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
 #include "Environment/ASTMakeAssociationNode.hpp"
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
@@ -93,6 +94,7 @@
 #include "Environment/UnionType.hpp"
 #include "Environment/TupleType.hpp"
 #include "Environment/VariantType.hpp"
+#include "Environment/AggregateTypeLayout.hpp"
 
 #include "Environment/DeferredCompileTimeCodeFragment.hpp"
 
@@ -900,6 +902,52 @@ ASTNodePtr ASTSemanticAnalyzer::optimizeAnalyzedMakeLiteralArrayNode(const ASTMa
     return analyzeNodeIfNeededWithCurrentExpectedType(
         LiteralArray::makeFor(elements)->asASTNodeRequiredInPosition(node->sourcePosition)
     );
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+
+    // Evaluate the aggregate type.
+    analyzedNode->aggregateType = evaluateTypeExpression(analyzedNode->aggregateType);
+    if(analyzedNode->aggregateType->isASTErrorNode())
+    {
+        for(auto &el: node->elements)
+            analyzeNodeIfNeededWithTemporaryAutoType(el);
+        return analyzedNode->aggregateType;
+    }
+
+    auto aggregateType = unwrapTypeFromLiteralValue(analyzedNode->aggregateType);
+    if(!aggregateType->isAggregateType())
+        return recordSemanticErrorInNode(analyzedNode->aggregateType, "Expected an aggregate type.");
+
+    const auto &layout = aggregateType.staticAs<AggregateType>()->getLayout();
+
+    // Analyze the elements
+    bool hasError = false;
+    ASTNodePtr errorNode;
+    for(size_t i = 0; i < analyzedNode->elements.size(); ++i)
+    {
+        auto &element = analyzedNode->elements[i];
+        auto expectedElementType = layout->getTypeForNonPaddingSlot(int64_t(i));
+        if(!expectedElementType)
+            element = recordSemanticErrorInNode(element, "Excessive aggregate element.");
+        else
+            element = analyzeNodeIfNeededWithExpectedType(element, expectedElementType);
+
+        if(element->isASTErrorNode())
+        {
+            if(!hasError)
+                errorNode = element;
+            hasError = true;
+        }
+    }
+
+    if(hasError)
+        return errorNode;
+
+    analyzedNode->analyzedType = aggregateType;
+    return analyzedNode;
 }
 
 AnyValuePtr ASTSemanticAnalyzer::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)

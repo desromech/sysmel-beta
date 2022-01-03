@@ -362,6 +362,17 @@ AnyValuePtr ASTSSACompiler::visitLiteralValueNode(const ASTLiteralValueNodePtr &
     return constantValue;
 }
 
+AnyValuePtr ASTSSACompiler::visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node)
+{
+    SSAValuePtrList elements;
+    elements.reserve(node->elements.size());
+    for(auto &el : node->elements)
+        elements.push_back(visitNodeForValue(el));
+
+    sysmelAssert(node->analyzedType->isAggregateType());
+    return makeAggregateWithElements(staticObjectCast<AggregateType> (node->analyzedType), elements);
+}
+
 AnyValuePtr ASTSSACompiler::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
     SSAValuePtrList elements;

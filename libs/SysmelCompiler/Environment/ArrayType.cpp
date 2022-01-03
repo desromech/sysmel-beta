@@ -2,11 +2,13 @@
 #include "Environment/AggregateTypeArrayLayout.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/ASTSemanticAnalyzer.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
-#include "Environment/StringUtilities.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/StringUtilities.hpp"
 
 namespace Sysmel
 {
@@ -154,6 +156,18 @@ void ArrayType::addSpecializedInstanceMethods()
             //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
         }},
     });
+}
+
+ASTNodePtr ArrayType::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(size != 0 && arguments.size() != size)
+        return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Cannot construct {0} with only {1} elements.", {printString(), castToString(arguments.size())}));
+
+    auto result = basicMakeObject<ASTMakeAggregateNode> ();
+    result->sourcePosition = node->sourcePosition;
+    result->aggregateType = make(elementType, arguments.size())->asASTNodeRequiredInPosition(node->sourcePosition);
+    result->elements = arguments;
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
 }
 
 void ArrayType::buildLayout()

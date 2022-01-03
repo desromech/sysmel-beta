@@ -24,6 +24,7 @@ public:
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     ASTNodePtrList elements;
+    ASTNodePtr aggregateType;
 };
 
 } // End of namespace Environment

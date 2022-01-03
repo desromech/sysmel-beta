@@ -25,10 +25,11 @@ AnyValuePtr ASTMakeAggregateNode::accept(const ASTVisitorPtr &visitor)
 SExpression ASTMakeAggregateNode::asSExpression() const
 {
     SExpressionList sexpr;
-    sexpr.elements.reserve(3 + elements.size());
+    sexpr.elements.reserve(4 + elements.size());
     sexpr.elements.push_back(SExpressionIdentifier{{"aggregate"}});
     sexpr.elements.push_back(sourcePosition->asSExpression());
     sexpr.elements.push_back(analyzedType ? analyzedType->asSExpression() : nullptr);
+    sexpr.elements.push_back(aggregateType->asSExpression());
     for(const auto &element : elements)
         sexpr.elements.push_back(element->asSExpression());
 

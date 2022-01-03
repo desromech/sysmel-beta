@@ -37,6 +37,7 @@ public:
     virtual AnyValuePtr visitClosureNode(const ASTClosureNodePtr &node) override;
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node) override;
     virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
     virtual AnyValuePtr visitMakeVectorNode(const ASTMakeVectorNodePtr &node) override;
     virtual AnyValuePtr visitMakeVariantNode(const ASTMakeVariantNodePtr &node) override;

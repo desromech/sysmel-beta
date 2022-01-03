@@ -42,6 +42,7 @@ public:
     virtual SExpression asSExpression() const override;
 
     void addSpecializedInstanceMethods();
+    virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     TypePtr elementType;
     uint64_t size;

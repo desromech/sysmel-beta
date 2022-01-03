@@ -74,7 +74,8 @@ public:
     virtual AnyValuePtr visitIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &node) override;
     virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
-    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;    
+    virtual AnyValuePtr visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node) override;
     virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node) override;
     virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
