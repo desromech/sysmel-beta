@@ -401,6 +401,17 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(b->isArrayType());
                     CHECK_EQUAL(a, b);
                 }
+
+                {
+                    CHECK(evaluateString("Int32[]()")->isArrayTypeValue());
+                    CHECK(evaluateString("Int32[2](1, 2)")->isArrayTypeValue());
+                    CHECK(evaluateString("Int32[](1, 2)")->isArrayTypeValue());
+
+                    CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("Int32[](1, 2)[0]"));
+                    CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("Int32[](1, 2)[1]"));
+                    CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("Int32[2](1, 2)[0]"));
+                    CHECK_EQUAL(2, evaluateStringWithValueOfType<int32_t> ("Int32[2](1, 2)[1]"));
+                }
             });
         });
     }
@@ -443,6 +454,10 @@ SUITE(SysmelCompileTimeEvaluation)
                     auto tupleInstance = evaluateString("Int32(1), Int64(2), Int8(3)");
                     CHECK(tupleInstance->isTupleTypeValue());
                     CHECK_EQUAL(tupleInstance->getType(), a);
+
+                    CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("(Int32(1), Int64(2), Int8(3))[0]"));
+                    CHECK_EQUAL(2, evaluateStringWithValueOfType<int64_t> ("(Int32(1), Int64(2), Int8(3))[1]"));
+                    CHECK_EQUAL(3, evaluateStringWithValueOfType<int8_t> ("(Int32(1), Int64(2), Int8(3))[2]"));
                 }
 
                 {
@@ -514,6 +529,20 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(a->isVariantType());
                     CHECK(b->isVariantType());
                     CHECK_EQUAL(a, b);
+                }
+
+                {
+                    CHECK(evaluateString("(Int32 | Int64 | Int8)(Int32(1))")->isVariantTypeValue());
+                    CHECK(evaluateString("(Int32 | Int64 | Int8)(Int64(2))")->isVariantTypeValue());
+                    CHECK(evaluateString("(Int32 | Int64 | Int8)(Int8(3))")->isVariantTypeValue());
+
+                    CHECK_EQUAL(0u, evaluateStringWithValueOfType<uint8_t> ("(Int32 | Int64 | Int8)(Int32(5)) typeSelector"));
+                    CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint8_t> ("(Int32 | Int64 | Int8)(Int64(5)) typeSelector"));
+                    CHECK_EQUAL(2u, evaluateStringWithValueOfType<uint8_t> ("(Int32 | Int64 | Int8)(Int8(5)) typeSelector"));
+
+                    CHECK_EQUAL(5, evaluateStringWithValueOfType<int32_t> ("(Int32 | Int64 | Int8)(Int32(5)) get: Int32"));
+                    CHECK_EQUAL(5, evaluateStringWithValueOfType<int64_t> ("(Int32 | Int64 | Int8)(Int64(5)) get: Int64"));
+                    CHECK_EQUAL(5, evaluateStringWithValueOfType<int8_t> ("(Int32 | Int64 | Int8)(Int8(5)) get: Int8"));
                 }
             });
         });

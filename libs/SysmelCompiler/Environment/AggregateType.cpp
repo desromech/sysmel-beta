@@ -3,6 +3,8 @@
 #include "Environment/ReferenceType.hpp"
 #include "Environment/AggregateElementReference.hpp"
 #include "Environment/PointerLikeType.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
+#include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/StringUtilities.hpp"
@@ -129,6 +131,37 @@ void AggregateType::buildLayout()
     SysmelSelfSubclassResponsibility();
 }
 
+ASTNodePtr AggregateType::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(getLayout()->supportsSequentialConstruction())
+    {
+        auto result = basicMakeObject<ASTMakeAggregateNode> ();
+        result->sourcePosition = node->sourcePosition;
+        result->aggregateType = selfFromThis()->asASTNodeRequiredInPosition(node->sourcePosition);
+        result->elements = arguments;
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
+    }
+
+    return SuperType::analyzeFallbackValueConstructionWithArguments(node, arguments, semanticAnalyzer);
+}
+
+AggregateTypeValuePtr AggregateType::makeRawValueInstance()
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AggregateTypeValuePtr AggregateType::makeWithElements(const AnyValuePtrList &elements)
+{
+    sysmelAssert(getLayout()->supportsSequentialConstruction());
+
+    auto aggregate = makeRawValueInstance();
+    aggregate->type = selfFromThis();
+    aggregate->slots.resize(getLayout()->getSlotCount());
+    for(size_t i = 0; i < elements.size(); ++i)
+        aggregate->slots[layout->getIndexForNonPaddingSlot(i)] = elements[i];
+    return aggregate;
+}
+
 bool AggregateTypeValue::isAggregateTypeValue() const
 {
     return true;
@@ -145,7 +178,7 @@ AnyValuePtr AggregateTypeValue::getReferenceToSlotWithType(int64_t slotIndex, in
     auto layout = type->getLayout();
     auto elementType = layout->getTypeForSlotAndOffset(slotIndex, slotOffset);
     if(!elementType)
-        signalNewWithMessage<Error> (formatString("Invalid slot index {0} and/or offset: {1} for accessing aggregate of type {1}.", {castToString(slotIndex), castToString(slotOffset), type->printString()}));
+        signalNewWithMessage<Error> (formatString("Invalid slot index {0} and/or offset: {1} for accessing aggregate of type {2}.", {castToString(slotIndex), castToString(slotOffset), type->printString()}));
 
     auto referenceValue = AggregateElementReference::make(selfFromThis(), elementType, slotIndex, slotOffset);
     return referenceType.staticAs<PointerLikeType>()->makeWithValue(referenceValue);

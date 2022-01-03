@@ -20,6 +20,7 @@ class SYSMEL_COMPILER_LIB_EXPORT StructureType : public SubMetaTypeOf<AggregateT
 public:
     virtual bool isStructureType() const override;
     
+    virtual AggregateTypeValuePtr makeRawValueInstance() override;
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 

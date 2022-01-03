@@ -1,4 +1,5 @@
 #include "Environment/AggregateTypeVariantLayout.hpp"
+#include "Environment/PaddingType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/Utilities.hpp"
@@ -10,6 +11,11 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<AggregateTypeVariantLayout> AggregateTypeVariantLayoutTypeRegistration;
+
+uint64_t AggregateTypeVariantLayout::getSlotCount() const
+{
+    return 2 + (paddingSize > 0 ? 1 : 0) + (endPaddingSize > 0 ? 1 : 0);
+}
 
 void AggregateTypeVariantLayout::beginGroup()
 {
@@ -110,6 +116,9 @@ TypePtr AggregateTypeVariantLayout::getTypeForSlotAndOffset(int64_t slotIndex, i
     switch(slotIndex)
     {
     case 0: return dataTypeIndexType;
+    case 1: return paddingSize > 0 ? PaddingType::__staticType__() : Type::getVoidType();
+    case 2: return paddingSize > 0 ? Type::getVoidType() : TypePtr();
+    case 3: return paddingSize > 0 && endPaddingSize > 0 ? PaddingType::__staticType__() : TypePtr();
     default:
         return nullptr;
     }

@@ -420,7 +420,8 @@ AnyValuePtr ASTSSACompiler::visitMakeVariantNode(const ASTMakeVariantNodePtr &no
     auto typeSelectorSlotType = layout->getDataTypeIndexType();
     auto typeSelectorIndex = node->typeSelectorIndex;
     auto typeSelectorSlot = builder->getAggregateSlotReference(typeSelectorSlotType->tempRef(), result, builder->literal(wrapValue(uint64_t(0))));
-    builder->storeValueIn(builder->literalWithType(wrapValue(typeSelectorIndex), typeSelectorSlotType), typeSelectorSlot);
+    auto typeSelectorValue = typeSelectorSlotType->instantiatedWithLiteralValue(wrapValue(typeSelectorIndex));
+    builder->storeValueIn(builder->literal(typeSelectorValue), typeSelectorSlot);
 
     const auto &dataSlotType = variantType->elementTypes[size_t(typeSelectorIndex)];
     auto dataSlotIndex = layout->getElementMemorySlotIndex();

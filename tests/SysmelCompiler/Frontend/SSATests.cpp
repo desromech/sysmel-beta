@@ -341,11 +341,13 @@ R"(
           (
             (localVariable 4
               (tempRefType (tupleType (#Int32 #Float32)) #generic))
-            (getAggregateSlot 5 #Int32
+            (getAggregateSlot 5
+              (tempRefType #Int32 #generic)
               (local 4)
               (constantLiteralValue 0 #LiteralPositiveInteger))
             (store 6 #Void (local 1) (local 5))
-            (getAggregateSlot 7 #Float32
+            (getAggregateSlot 7
+              (tempRefType #Float32 #generic)
               (local 4)
               (constantLiteralValue 1 #LiteralPositiveInteger))
             (store 8 #Void (local 2) (local 7))

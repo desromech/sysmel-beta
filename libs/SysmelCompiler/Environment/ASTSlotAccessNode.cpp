@@ -28,6 +28,7 @@ SExpression ASTSlotAccessNode::asSExpression() const
         analyzedType ? analyzedType->asSExpression() : nullptr,
         aggregate->asSExpression(),
         LargeInteger{slotIndex},
+        LargeInteger{slotOffset},
         slotReferenceType
     }};
 }

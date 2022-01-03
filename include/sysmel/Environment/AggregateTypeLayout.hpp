@@ -20,6 +20,9 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeLayout : public SubtypeOf<Compiler
 public:
     static constexpr char const __typeName__[] = "AggregateTypeLayout";
 
+    virtual bool supportsSequentialConstruction() const;
+    virtual uint64_t getSlotCount() const;
+    
     virtual uint64_t getMemorySize();
     virtual uint64_t getMemoryAlignment();
 

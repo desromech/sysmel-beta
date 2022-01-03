@@ -140,14 +140,9 @@ AnyValuePtr TupleType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitTupleType(selfFromThis());
 }
 
-TupleTypeValuePtr TupleType::makeWithElements(const AnyValuePtrList &elements)
+AggregateTypeValuePtr TupleType::makeRawValueInstance()
 {
-    auto tuple = basicMakeObject<TupleTypeValue> ();
-    tuple->type = selfFromThis();
-    tuple->slots.resize(getLayout().staticAs<AggregateTypeSequentialLayout> ()->getSlotTypes().size());
-    for(size_t i = 0; i < elementSlotIndices.size(); ++i)
-        tuple->slots[elementSlotIndices[i]] = elements[i];
-    return tuple;
+    return basicMakeObject<TupleTypeValue> ();
 }
 
 TypePtr TupleType::asTupleType()

@@ -5,10 +5,12 @@
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTLexicalScopeNode.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTMakeAggregateNode.hpp"
 #include "Environment/ASTMakeAssociationNode.hpp"
 #include "Environment/ASTMakeDictionaryNode.hpp"
 #include "Environment/ASTMakeLiteralArrayNode.hpp"
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTMakeVariantNode.hpp"
 #include "Environment/ASTMakeVectorNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
@@ -30,6 +32,7 @@
 #include "Environment/ASTFieldVariableAccessNode.hpp"
 #include "Environment/ASTVariableAccessNode.hpp"
 #include "Environment/ASTLocalImmutableAccessNode.hpp"
+#include "Environment/ASTSlotAccessNode.hpp"
 
 #include "Environment/ASTFunctionalNode.hpp"
 #include "Environment/ASTNamespaceNode.hpp"
@@ -53,8 +56,11 @@
 #include "Environment/Variable.hpp"
 
 #include "Environment/ClosureType.hpp"
+#include "Environment/AggregateType.hpp"
+#include "Environment/AggregateTypeLayout.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/TupleType.hpp"
+#include "Environment/VariantType.hpp"
 #include "Environment/LiteralAssociation.hpp"
 #include "Environment/LiteralDictionary.hpp"
 
@@ -65,6 +71,8 @@
 #include "Environment/ControlFlowUtilities.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/Error.hpp"
+
+#include <iostream>
 
 namespace Sysmel
 {
@@ -194,6 +202,24 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeLiteralArrayNode(const ASTMakeLite
     return wrapValue(result);
 }
 
+AnyValuePtr ASTCompileTimeEvaluator::visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node)
+{
+    auto aggregateType = visitNode(node->aggregateType);
+    sysmelAssert(aggregateType->isAggregateType());
+
+    AnyValuePtrList elements;
+    elements.reserve(node->elements.size());
+
+    for(auto &el : node->elements)
+    {
+        auto elementValue = visitNode(el);
+        if(!el->analyzedType->isVoidType())
+            elements.push_back(elementValue);
+    }
+
+    return aggregateType.staticAs<AggregateType> ()->makeWithElements(elements);
+}
+
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePtr &node)
 {
     AnyValuePtrList elements;
@@ -216,6 +242,17 @@ AnyValuePtr ASTCompileTimeEvaluator::visitMakeTupleNode(const ASTMakeTupleNodePt
         sysmelAssert(node->analyzedType->isTupleType());
         return node->analyzedType.staticAs<TupleType> ()->makeWithElements(elements);
     }
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitMakeVariantNode(const ASTMakeVariantNodePtr &node)
+{
+    auto rawVariantType = visitNode(node->variantType);
+    sysmelAssert(rawVariantType->isVariantType());
+
+    auto value = visitNode(node->value);
+    
+    auto variantType = rawVariantType.staticAs<VariantType> ();
+    return variantType->makeWithValueAndSelector(value, node->typeSelectorIndex);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitMakeVectorNode(const ASTMakeVectorNodePtr &node)
@@ -333,6 +370,35 @@ AnyValuePtr ASTCompileTimeEvaluator::visitFieldVariableAccessNode(const ASTField
 {
     auto aggregate = visitNode(node->aggregate);
     return aggregate->getReferenceToFieldWithType(node->fieldVariable, node->analyzedType);
+}
+
+AnyValuePtr ASTCompileTimeEvaluator::visitSlotAccessNode(const ASTSlotAccessNodePtr &node)
+{
+    auto aggregate = validAnyValue(visitNode(node->aggregate));
+
+    auto slotIndex = node->slotIndex;
+    auto slotOffset = node->slotOffset;
+    if(node->isNotPaddedSlotIndex)
+    {
+        auto aggregateType = node->aggregate->analyzedType->asDecayedType();
+        sysmelAssert(aggregateType->isAggregateType());
+
+        const auto &layout = aggregateType.staticAs<AggregateType> ()->getLayout();
+        slotIndex = layout->getIndexForNonPaddingSlot(node->slotIndex);
+    }
+
+    if(node->checkTypeSelectorIndex)
+    {
+        auto typeSelectorReference = aggregate->getReferenceToSlotWithType(node->typeSelectorSlotIndex, node->typeSelectorSlotOffset, node->typeSelectorSlotReferenceType);
+        sysmelAssert(typeSelectorReference->isPointerLikeTypeValue());
+        typeSelectorReference = typeSelectorReference.staticAs<PointerLikeTypeValue>()->baseValue;
+        
+        auto slotIndexValue = validAnyValue(typeSelectorReference->accessVariableAsValueWithType(node->typeSelectorSlotReferenceType->asDecayedType()));
+        if(node->expectedTypeSelectorValue != slotIndexValue->unwrapAsUInt64())
+            signalNewWithMessage<Error> (formatString("{0} does have a value with the expected type {1}.", {aggregate->printString(), node->analyzedType->asDecayedType()->printString()}));
+    }
+
+    return aggregate->getReferenceToSlotWithType(slotIndex, slotOffset, node->slotReferenceType);
 }
 
 AnyValuePtr ASTCompileTimeEvaluator::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)

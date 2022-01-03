@@ -36,6 +36,7 @@ public:
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
     
+    virtual AggregateTypeValuePtr makeRawValueInstance() override;
     virtual AnyValuePtr basicNewValue() override;
 
     virtual std::string printString() const override;

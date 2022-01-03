@@ -6,6 +6,8 @@
 #include "Environment/ASTBuilder.hpp"
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/ASTSlotAccessNode.hpp"
+#include "Environment/ASTMakeVariantNode.hpp"
+#include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -131,12 +133,14 @@ SExpression VariantType::asSExpression() const
     }};
 }
 
+AggregateTypeValuePtr VariantType::makeRawValueInstance()
+{
+    return basicMakeObject<VariantTypeValue> ();
+}
+
 AnyValuePtr VariantType::basicNewValue()
 {
-    auto variant = basicMakeObject<VariantTypeValue> ();
-    variant->type = selfFromThis();
-    variant->wrappedElement = elementTypes.front()->basicNewValue();
-    return variant;
+    return makeWithValueAndSelector(elementTypes.front()->basicNewValue(), 0);
 }
 
 AnyValuePtr VariantType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
@@ -169,12 +173,38 @@ void VariantType::addSpecializedInstanceMethods()
 {
 }
 
+ASTNodePtr VariantType::analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(arguments.size() == 1)
+    {
+        auto result = basicMakeObject<ASTMakeVariantNode> ();
+        result->sourcePosition = node->sourcePosition;
+        result->value = arguments[0];
+        result->variantType = asASTNodeRequiredInPosition(node->sourcePosition);
+        return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(result);
+    }
+
+    return SuperType::analyzeFallbackValueConstructionWithArguments(node, arguments, semanticAnalyzer);
+}
+
 std::optional<uint64_t> VariantType::findTypeSelectorIndexFor(const TypePtr &expectedType)
 {
     auto it = typeToSelectorMap.find(expectedType);
     if(it != typeToSelectorMap.end())
         return it->second;
     return std::nullopt;
+}
+
+VariantTypeValuePtr VariantType::makeWithValueAndSelector(const AnyValuePtr &value, uint64_t selectorIndex)
+{
+    auto variantLayout = getLayout().staticAs<AggregateTypeVariantLayout> ();
+
+    auto result = basicMakeObject<VariantTypeValue> ();
+    result->type = selfFromThis();
+    result->slots.resize(getLayout()->getSlotCount());
+    result->slots[0] = variantLayout->getDataTypeIndexType()->instantiatedWithLiteralValue(wrapValue(selectorIndex));
+    result->slots[variantLayout->getElementMemorySlotIndex()] = value;
+    return result;
 }
 
 void VariantType::buildLayout()
@@ -244,7 +274,7 @@ TypePtr VariantTypeValue::getType() const
 std::string VariantTypeValue::printString() const
 {
     std::ostringstream out;
-    out << getType()->printString() << '(' << wrappedElement->printString() << ')';
+    out << getType()->printString() << '(' << getWrappedElement()->printString() << ')';
     return out.str();
 }
 
@@ -253,9 +283,19 @@ SExpression VariantTypeValue::asSExpression() const
     return SExpressionList{{
         SExpressionIdentifier{{"variant"}},
         type->asSExpression(),
-        LargeInteger{typeIndex},
-        wrappedElement->asSExpression()
+        getWrappedElement()->asSExpression()
     }};
+}
+
+const AnyValuePtr &VariantTypeValue::getTypeSelector() const
+{
+    return slots[0];
+}
+
+const AnyValuePtr &VariantTypeValue::getWrappedElement() const
+{
+    auto variantLayout = type->getLayout().staticAs<AggregateTypeVariantLayout> ();
+    return slots[variantLayout->getElementMemorySlotIndex()];
 }
 
 } // End of namespace Environment

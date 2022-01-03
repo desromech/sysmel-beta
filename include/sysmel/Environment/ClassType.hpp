@@ -26,6 +26,7 @@ public:
     /// This method enqueue the analysis of a body block.
     virtual void enqueuePendingSuperclassCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
+    virtual AggregateTypeValuePtr makeRawValueInstance() override;
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
@@ -33,6 +34,7 @@ public:
     virtual SpecificMethodPtr lookupParentOverridenMethod(const AnyValuePtr &selector, bool hasConstReceiver, const TypePtrList &argumentTypes) override;
     virtual void addVirtualMethod(const SpecificMethodPtr &virtualMethod) override;
     const SpecificMethodPtrList &getVirtualMethods() const;
+    virtual void ensureVirtualTableLayoutComputation() override;
 
 protected:
     /// This method evaluates all of the pending code fragments.

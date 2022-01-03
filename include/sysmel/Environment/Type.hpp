@@ -426,6 +426,8 @@ public:
 
     void setSourceDefinitionPosition(const ASTSourcePositionPtr &position);
 
+    virtual void ensureVirtualTableLayoutComputation();
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);

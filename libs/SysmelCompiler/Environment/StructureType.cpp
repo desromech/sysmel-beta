@@ -21,6 +21,11 @@ bool StructureType::isStructureType() const
     return true;
 }
 
+AggregateTypeValuePtr StructureType::makeRawValueInstance()
+{
+    return basicMakeObject<StructureTypeValue> ();
+}
+
 AnyValuePtr StructureType::basicNewValue()
 {
     auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();

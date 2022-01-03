@@ -129,6 +129,11 @@ AggregateTypeLayoutPtr ClassType::makeLayoutInstance()
     return basicMakeObject<AggregateTypeSequentialLayout> ();
 }
 
+AggregateTypeValuePtr ClassType::makeRawValueInstance()
+{
+    return basicMakeObject<ClassTypeValue> ();
+}
+
 AnyValuePtr ClassType::basicNewValue()
 {
     auto sequentialLayout = getLayout().staticAs<AggregateTypeSequentialLayout> ();
@@ -187,6 +192,12 @@ void ClassType::addVirtualMethod(const SpecificMethodPtr &virtualMethod)
 const SpecificMethodPtrList &ClassType::getVirtualMethods() const
 {
     return virtualMethods;
+}
+
+void ClassType::ensureVirtualTableLayoutComputation()
+{
+    // Get the layout for building the vtable.
+    getLayout();
 }
 
 bool ClassTypeValue::isClassTypeValue() const

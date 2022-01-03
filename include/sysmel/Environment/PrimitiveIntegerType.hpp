@@ -57,6 +57,7 @@ public:
     }
 
     virtual uint8_t unwrapAsUInt8() const override;
+    virtual uint64_t unwrapAsUInt64() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
@@ -89,6 +90,7 @@ public:
     }
 
     virtual uint16_t unwrapAsUInt16() const override;
+    virtual uint64_t unwrapAsUInt64() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;
@@ -121,6 +123,7 @@ public:
     }
 
     virtual uint32_t unwrapAsUInt32() const override;
+    virtual uint64_t unwrapAsUInt64() const override;
     virtual LargeInteger unwrapAsLargeInteger() const override;
 
     virtual std::string asString() const override;

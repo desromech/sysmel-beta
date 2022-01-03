@@ -39,6 +39,10 @@ public:
     virtual bool hasTrivialAssignMovingFrom() override;
 
     const AggregateTypeLayoutPtr &getLayout();
+    virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+    virtual AggregateTypeValuePtr makeRawValueInstance();
+    virtual AggregateTypeValuePtr makeWithElements(const AnyValuePtrList &elements);
 
 protected:
     virtual void buildLayout();

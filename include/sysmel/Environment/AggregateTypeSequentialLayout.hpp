@@ -21,6 +21,9 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeSequentialLayout : public SubtypeO
 public:
     static constexpr char const __typeName__[] = "AggregateTypeSequentialLayout";
 
+    virtual bool supportsSequentialConstruction() const override;
+    virtual uint64_t getSlotCount() const override;
+
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
 

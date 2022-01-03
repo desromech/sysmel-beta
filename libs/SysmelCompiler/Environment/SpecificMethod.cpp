@@ -207,6 +207,10 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     node->calledMessageType = getFunctionalType();
     node->analyzedType = functionalType->getResultType();
     node->isPureMessageSend = isPure();
+
+    if(node->useVirtualTable)
+        receiverType->asDecayedType()->ensureVirtualTableLayoutComputation();
+        
     node->virtualTableSlotIndex = virtualTableSlotIndex;
     node->virtualTableEntrySlotIndex = virtualTableEntrySlotIndex;
 

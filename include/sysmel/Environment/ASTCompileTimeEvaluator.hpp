@@ -27,10 +27,12 @@ public:
     virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
     virtual AnyValuePtr visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node) override;
     virtual AnyValuePtr visitLiteralValueNode(const ASTLiteralValueNodePtr &node) override;
+    virtual AnyValuePtr visitMakeAggregateNode(const ASTMakeAggregateNodePtr &node) override;
     virtual AnyValuePtr visitMakeAssociationNode(const ASTMakeAssociationNodePtr &node) override;
     virtual AnyValuePtr visitMakeDictionaryNode(const ASTMakeDictionaryNodePtr &node) override;
     virtual AnyValuePtr visitMakeLiteralArrayNode(const ASTMakeLiteralArrayNodePtr &node) override;
     virtual AnyValuePtr visitMakeTupleNode(const ASTMakeTupleNodePtr &node) override;
+    virtual AnyValuePtr visitMakeVariantNode(const ASTMakeVariantNodePtr &node) override;
     virtual AnyValuePtr visitMakeVectorNode(const ASTMakeVectorNodePtr &node) override;
     virtual AnyValuePtr visitMessageSendNode(const ASTMessageSendNodePtr &node) override;
     virtual AnyValuePtr visitQuoteNode(const ASTQuoteNodePtr &node) override;
@@ -44,6 +46,7 @@ public:
     virtual AnyValuePtr visitFieldVariableAccessNode(const ASTFieldVariableAccessNodePtr &node) override;
     virtual AnyValuePtr visitVariableAccessNode(const ASTVariableAccessNodePtr &node) override;
     virtual AnyValuePtr visitLocalImmutableAccessNode(const ASTLocalImmutableAccessNodePtr &node) override;
+    virtual AnyValuePtr visitSlotAccessNode(const ASTSlotAccessNodePtr &node) override;
 
     virtual AnyValuePtr visitProgramEntityNode(const ASTProgramEntityNodePtr &node) override;
     virtual AnyValuePtr visitFunctionalNode(const ASTFunctionalNodePtr &node) override;

@@ -27,9 +27,9 @@ public:
     
     virtual bool isNullableType() const override;
 
+    virtual AggregateTypeValuePtr makeRawValueInstance() override;
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
-    VariantTypeValuePtr makeWithElements(const AnyValuePtrList &elements);
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
@@ -39,8 +39,11 @@ public:
     bool includesType(const TypePtr &typeToTest);
 
     void addSpecializedInstanceMethods();
+    virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     std::optional<uint64_t> findTypeSelectorIndexFor(const TypePtr &expecedType);
+
+    VariantTypeValuePtr makeWithValueAndSelector(const AnyValuePtr &value, uint64_t selectorIndex);
 
     TypePtrList elementTypes;
     std::unordered_map<TypePtr, uint64_t> typeToSelectorMap;
@@ -69,8 +72,8 @@ public:
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
 
-    uint32_t typeIndex = 0;
-    AnyValuePtr wrappedElement;
+    const AnyValuePtr &getTypeSelector() const;
+    const AnyValuePtr &getWrappedElement() const;
 };
 
 } // End of namespace Environment

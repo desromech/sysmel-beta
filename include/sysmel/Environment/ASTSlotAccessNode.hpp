@@ -22,11 +22,13 @@ public:
     virtual SExpression asSExpression() const override;
 
     ASTNodePtr aggregate;
-    uint64_t slotIndex;
+    uint64_t slotIndex = 0;
+    uint64_t slotOffset = 0;
     TypePtr slotReferenceType;
     bool isNotPaddedSlotIndex = true;
 
     uint64_t typeSelectorSlotIndex = 0;
+    uint64_t typeSelectorSlotOffset = 0;
     TypePtr typeSelectorSlotReferenceType;
     uint64_t expectedTypeSelectorValue = 0;
     bool checkTypeSelectorIndex = false;

@@ -29,7 +29,7 @@ public:
 
     virtual AnyValuePtr basicNewValue() override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
-    TupleTypeValuePtr makeWithElements(const AnyValuePtrList &elements);
+    virtual AggregateTypeValuePtr makeRawValueInstance() override;
 
     virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;

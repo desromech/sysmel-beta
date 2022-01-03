@@ -20,6 +20,7 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeVariantLayout : public SubtypeOf<A
 public:
     static constexpr char const __typeName__[] = "AggregateTypeVariantLayout";
 
+    virtual uint64_t getSlotCount() const override;
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
 

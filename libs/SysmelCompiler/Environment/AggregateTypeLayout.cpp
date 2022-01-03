@@ -11,6 +11,16 @@ namespace Environment
 
 static BootstrapTypeRegistration<AggregateTypeLayout> AggregateTypeLayoutTypeRegistration;
 
+bool AggregateTypeLayout::supportsSequentialConstruction() const
+{
+    return false;
+}
+
+uint64_t AggregateTypeLayout::getSlotCount() const
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 uint64_t AggregateTypeLayout::getMemorySize()
 {
     SysmelSelfSubclassResponsibility();

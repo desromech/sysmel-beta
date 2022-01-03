@@ -1319,5 +1319,9 @@ void Type::setSourceDefinitionPosition(const ASTSourcePositionPtr &position)
     definitionPosition = position;
 }
 
+void Type::ensureVirtualTableLayoutComputation()
+{
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

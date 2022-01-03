@@ -20,6 +20,9 @@ class SYSMEL_COMPILER_LIB_EXPORT AggregateTypeArrayLayout : public SubtypeOf<Agg
 public:
     static constexpr char const __typeName__[] = "AggregateTypeArrayLayout";
 
+    virtual bool supportsSequentialConstruction() const override;
+    virtual uint64_t getSlotCount() const override;
+
     virtual uint64_t getMemorySize() override;
     virtual uint64_t getMemoryAlignment() override;
 

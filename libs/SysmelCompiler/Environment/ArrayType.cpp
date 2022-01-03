@@ -118,6 +118,11 @@ SExpression ArrayType::asSExpression() const
     }};
 }
 
+AggregateTypeValuePtr ArrayType::makeRawValueInstance()
+{
+    return basicMakeObject<ArrayTypeValue> ();
+}
+
 AnyValuePtr ArrayType::basicNewValue()
 {
     auto array = basicMakeObject<ArrayTypeValue> ();

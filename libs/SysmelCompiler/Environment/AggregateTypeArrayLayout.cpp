@@ -9,6 +9,16 @@ namespace Environment
 
 static BootstrapTypeRegistration<AggregateTypeArrayLayout> AggregateTypeArrayLayoutTypeRegistration;
 
+bool AggregateTypeArrayLayout::supportsSequentialConstruction() const
+{
+    return true;
+}
+
+uint64_t AggregateTypeArrayLayout::getSlotCount() const
+{
+    return size;
+}
+
 uint64_t AggregateTypeArrayLayout::getMemorySize()
 {
     return memorySize;

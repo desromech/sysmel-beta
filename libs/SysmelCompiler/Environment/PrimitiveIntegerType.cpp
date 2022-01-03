@@ -113,6 +113,11 @@ uint8_t UInt8::unwrapAsUInt8() const
     return value;
 }
 
+uint64_t UInt8::unwrapAsUInt64() const
+{
+    return value;
+}
+
 LargeInteger UInt8::unwrapAsLargeInteger() const
 {
     return LargeInteger{value};
@@ -166,6 +171,11 @@ uint16_t UInt16::unwrapAsUInt16() const
     return value;
 }
 
+uint64_t UInt16::unwrapAsUInt64() const
+{
+    return value;
+}
+
 LargeInteger UInt16::unwrapAsLargeInteger() const
 {
     return LargeInteger{value};
@@ -215,6 +225,11 @@ AnyValuePtr UInt32::__instantiateWithLiteralValue__(const AnyValuePtr &value)
 }
 
 uint32_t UInt32::unwrapAsUInt32() const
+{
+    return value;
+}
+
+uint64_t UInt32::unwrapAsUInt64() const
 {
     return value;
 }
