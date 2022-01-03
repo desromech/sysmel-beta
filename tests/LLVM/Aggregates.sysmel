@@ -1,0 +1,57 @@
+
+public class ArrayTestCase superclass: TestCase; definition: {
+    public method run => Void := {
+        let a := Int32[4](3, 4, 5, 6).
+        self assert: a[0] equals: 3.
+        self assert: a[1] equals: 4.
+        self assert: a[2] equals: 5.
+        self assert: a[3] equals: 6.
+
+        let b := Int32[](0, 1, 2, 3).
+        self assert: b[0] equals: 0.
+        self assert: b[1] equals: 1.
+        self assert: b[2] equals: 2.
+        self assert: b[3] equals: 3.
+
+        let c mutable := a.
+        self assert: c[0] equals: 3.
+        self assert: c[1] equals: 4.
+        self assert: c[2] equals: 5.
+        self assert: c[3] equals: 6.
+    }.
+}.
+
+public class TupleTestCase superclass: TestCase; definition: {
+    public method run => Void := {
+        let a := (Int32(1), Float32(42.5)).
+        self assert: a[0] equals: 1.
+        self assert: a[1] equals: 42.5.
+
+        let b mutable := a.
+        self assert: b[0] equals: 1.
+        self assert: b[1] equals: 42.5.
+    }.
+}.
+
+public class VariantTestCase superclass: TestCase; definition: {
+    public method run => Void := {
+        let a type: Int32 | Float32 := Int32(5).
+        self assert: a typeSelector equals: 0.
+        self assert: (a get: Int32) equals: 5.
+
+        let b mutable := a.
+        self assert: a typeSelector equals: 0.
+        self assert: (a get: Int32) equals: 5.
+
+        let c type: Int32 | Float32 := Float32(42.5).
+        self assert: c typeSelector equals: 1.
+        self assert: (c get: Float32) equals: 42.5.
+    }.
+}.
+
+public externC function main() => Int32 := {
+    ArrayTestCase() run.
+    TupleTestCase() run.
+    VariantTestCase() run.
+    0
+}.
