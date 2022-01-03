@@ -64,6 +64,7 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     static MethodCategories __instanceMacroMethods__();
+    static MethodCategories __typeMacroMethods__();
 
     virtual bool isVariantTypeValue() const override;
     virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;

@@ -1,4 +1,4 @@
-Boolean8 extend: {
+AnyValue | Boolean8 extendAllWith: {
     public macro method ifTrue: trueBlock ifFalse: falseBlock
         := ``(if: `,self then: `,trueBlock else: `,falseBlock).
 

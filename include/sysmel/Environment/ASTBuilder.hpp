@@ -15,6 +15,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSemanticErrorNode);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTMessageChainMessageNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequenceNode);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTExplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTImplicitCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReinterpretCastNode);
@@ -29,6 +31,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSlotAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTProgramEntityExtensionNode);
 
 /**
  * I am an utility for building AST nodes.
@@ -48,6 +52,7 @@ public:
     ASTMessageChainNodePtr messageChain(const ASTNodePtr &receiver, const ASTNodePtrList &messages);
     ASTMessageChainMessageNodePtr messageChainMessage(const ASTNodePtr &selector, const ASTNodePtrList &arguments);
     ASTMessageSendNodePtr sendToWithArguments(const ASTNodePtr &selector, const ASTNodePtr &receiver, const ASTNodePtrList &arguments);
+    ASTSequenceNodePtr sequence(const ASTNodePtrList &pragmas, const ASTNodePtrList &expressions);
 
     ASTExplicitCastNodePtr explicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType);
     ASTImplicitCastNodePtr implicitCastTo(const ASTNodePtr &expression, const ASTNodePtr &targetType);
@@ -72,6 +77,8 @@ public:
     ASTSlotAccessNodePtr variantSlotAccess(const ASTNodePtr &aggregate, uint64_t slotIndex, TypePtr slotReferenceType, uint64_t typeSelectorSlotIndex, TypePtr typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue, bool isNotPaddedSlotIndex = true);
 
     ASTSemanticErrorNodePtr semanticError(const std::string &message);
+
+    ASTProgramEntityExtensionNodePtr programEntityExtension(const ASTNodePtr &programEntity, const ASTNodePtr &extensionBody);
 
     ASTSourcePositionPtr sourcePosition;
 };

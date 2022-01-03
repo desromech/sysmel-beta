@@ -28,7 +28,7 @@ SExpression ASTProgramEntityExtensionNode::asSExpression() const
         sourcePosition->asSExpression(),
         analyzedType ? analyzedType->asSExpression() : nullptr,
         programEntity->asSExpression(),
-        body->asSExpression(),
+        body ? body->asSExpression() : nullptr,
     }};
 }
 

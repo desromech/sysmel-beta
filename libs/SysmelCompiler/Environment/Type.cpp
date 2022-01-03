@@ -130,16 +130,10 @@ MethodCategories Type::__instanceMacroMethods__()
     return MethodCategories{
         {"accessing", {
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("extend:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
-                auto extensionNode = basicMakeObject<ASTProgramEntityExtensionNode> ();
-                extensionNode->programEntity = macroContext->receiverNode;
-                extensionNode->body = bodyNode;
-                return extensionNode;
+                return macroContext->astBuilder->programEntityExtension(macroContext->receiverNode, bodyNode);
             }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("definition:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &bodyNode) {
-                auto extensionNode = basicMakeObject<ASTProgramEntityExtensionNode> ();
-                extensionNode->programEntity = macroContext->receiverNode;
-                extensionNode->body = bodyNode;
-                return extensionNode;
+                return macroContext->astBuilder->programEntityExtension(macroContext->receiverNode, bodyNode);
             }, MethodFlags::Macro),
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("basicNewValue", [](const MacroInvocationContextPtr &macroContext) {
                 return extractTypeForTypeMacroReceiverNode(macroContext->receiverNode)->expandBasicNewValue(macroContext);

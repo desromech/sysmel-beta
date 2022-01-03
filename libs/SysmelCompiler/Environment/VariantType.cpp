@@ -8,6 +8,8 @@
 #include "Environment/ASTSlotAccessNode.hpp"
 #include "Environment/ASTMakeVariantNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
+#include "Environment/ASTSequenceNode.hpp"
+#include "Environment/ASTProgramEntityExtensionNode.hpp"
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -252,6 +254,26 @@ MethodCategories VariantTypeValue::__instanceMacroMethods__()
                     0, selectorReferenceType, expectedTypeSelector.value(), false);
             }, MethodFlags::Macro)
 
+        }},
+    };
+}
+
+MethodCategories VariantTypeValue::__typeMacroMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("extendAllWith:", [=](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &body) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isMetaType() && decayedType->getInstanceType()->isVariantType());
+                auto variantType = decayedType->getInstanceType().staticAs<VariantType> ();
+                
+                ASTNodePtrList perTypeExtensions;
+                perTypeExtensions.reserve(variantType->elementTypes.size());
+                for(auto &alternative : variantType->elementTypes)
+                    perTypeExtensions.push_back(macroContext->astBuilder->programEntityExtension(alternative->asASTNodeRequiredInPosition(macroContext->astBuilder->sourcePosition), body));
+
+                return macroContext->astBuilder->sequence({}, perTypeExtensions);
+            }, MethodFlags::Macro),
         }},
     };
 }

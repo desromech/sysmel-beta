@@ -4,6 +4,8 @@
 #include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTMessageChainNode.hpp"
 #include "Environment/ASTMessageChainMessageNode.hpp"
+#include "Environment/ASTSequenceNode.hpp"
+
 #include "Environment/ASTExplicitCastNode.hpp"
 #include "Environment/ASTImplicitCastNode.hpp"
 #include "Environment/ASTReinterpretCastNode.hpp"
@@ -18,6 +20,8 @@
 
 #include "Environment/ASTFieldVariableAccessNode.hpp"
 #include "Environment/ASTSlotAccessNode.hpp"
+
+#include "Environment/ASTProgramEntityExtensionNode.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -89,6 +93,15 @@ ASTMessageSendNodePtr ASTBuilder::sendToWithArguments(const ASTNodePtr &selector
     node->selector = selector;
     node->receiver = receiver;
     node->arguments = arguments;
+    return node;
+}
+
+ASTSequenceNodePtr ASTBuilder::sequence(const ASTNodePtrList &pragmas, const ASTNodePtrList &expressions)
+{
+    auto node = basicMakeObject<ASTSequenceNode> ();
+    node->sourcePosition = sourcePosition;
+    node->pragmas = pragmas;
+    node->expressions = expressions;
     return node;
 }
 
@@ -246,6 +259,15 @@ ASTSemanticErrorNodePtr ASTBuilder::semanticError(const std::string &message)
     auto node = basicMakeObject<ASTSemanticErrorNode> ();
     node->sourcePosition = sourcePosition;
     node->errorMessage = message;
+    return node;
+}
+
+ASTProgramEntityExtensionNodePtr ASTBuilder::programEntityExtension(const ASTNodePtr &programEntity, const ASTNodePtr &extensionBody)
+{
+    auto node = basicMakeObject<ASTProgramEntityExtensionNode> ();
+    node->sourcePosition = sourcePosition;
+    node->programEntity = programEntity;
+    node->body = extensionBody;
     return node;
 }
 
