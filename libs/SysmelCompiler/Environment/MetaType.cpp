@@ -40,9 +40,19 @@ TypePtr MetaType::getMetaType()
     return selfFromThis();
 }
 
+std::string MetaType::getValidNameString() const
+{
+    return "__Meta__";
+}
+
+std::string MetaType::getValidNameStringIncludingTemplateName() const
+{
+    return "__Meta__";
+}
+
 std::string MetaType::getQualifiedName() const
 {
-    return thisType->getQualifiedName() + "::__type__";
+    return thisType->getQualifiedName() + "::__Meta__";
 }
 
 } // End of namespace Environment

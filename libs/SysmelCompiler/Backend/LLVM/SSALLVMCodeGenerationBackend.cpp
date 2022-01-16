@@ -1,6 +1,7 @@
 #include "Backend/LLVM/SSALLVMCodeGenerationBackend.hpp"
 #include "Backend/LLVM/SSALLVMModuleVisitor.hpp"
 #include "Backend/LLVM/SSALLVMValueVisitor.hpp"
+#include "Backend/LLVM/SSALLVMDebugValueVisitor.hpp"
 #include "Backend/LLVM/LLVMLiteralValueVisitor.hpp"
 #include "Backend/LLVM/LLVMDebugTypeVisitor.hpp"
 #include "Backend/LLVM/LLVMTypeVisitor.hpp"
@@ -22,6 +23,7 @@
 
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/SSAProgramEntity.hpp"
 
 #include <mutex>
 #include <fstream>
@@ -422,6 +424,22 @@ void SSALLVMCodeGenerationBackend::setTypeTranslation(const TypePtr &type, llvm:
 void SSALLVMCodeGenerationBackend::setDebugTypeTranslation(const TypePtr &type, llvm::DIType *translatedType)
 {
     debugTypeMap[type] = translatedType;
+}
+
+llvm::DIScope *SSALLVMCodeGenerationBackend::getOrCreateDIScopeForSSAProgramEntity(const SSAProgramEntityPtr &ssaProgramEntity)
+{
+    if(!ssaProgramEntity)
+        return nullptr;
+
+    auto it = diScopeMap.find(ssaProgramEntity);
+    if(it != diScopeMap.end())
+        return it->second;
+
+    auto visitor = basicMakeObject<SSALLVMDebugValueVisitor> ();
+    visitor->backend = this;
+    auto result = visitor->translateDIScope(ssaProgramEntity);
+    diScopeMap.insert({ssaProgramEntity, result});
+    return result;
 }
 
 llvm::Constant *SSALLVMCodeGenerationBackend::translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType)

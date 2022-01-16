@@ -31,7 +31,9 @@ public:
     /// This method returns the meta type.
     virtual TypePtr getMetaType() override;
 
-    std::string getQualifiedName() const override;
+    virtual std::string getValidNameString() const override;
+    virtual std::string getValidNameStringIncludingTemplateName() const override;
+    virtual std::string getQualifiedName() const override;
 protected:
     TypePtr thisType;
 };

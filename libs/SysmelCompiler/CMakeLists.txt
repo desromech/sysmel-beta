@@ -328,6 +328,7 @@ set(LLVMBackend_Sources
     LLVMLiteralValueVisitor.cpp
     LLVMTypeVisitor.cpp
     SSALLVMCodeGenerationBackend.cpp
+    SSALLVMDebugValueVisitor.cpp
     SSALLVMModuleVisitor.cpp
     SSALLVMValueVisitor.cpp
 )

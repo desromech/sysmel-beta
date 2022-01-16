@@ -37,6 +37,7 @@ void SimpleType::setSupertypeAndImplicitMetaType(const TypePtr &newSupertype)
     auto newMeta = basicMakeObject<MetaType> ();
     metaType = newMeta;
     newMeta->setThisType(selfFromThis());
+    recordChildProgramEntityDefinition(metaType);
 
     setSupertype(newSupertype);
     newMeta->setSupertype(newSupertype->getType());

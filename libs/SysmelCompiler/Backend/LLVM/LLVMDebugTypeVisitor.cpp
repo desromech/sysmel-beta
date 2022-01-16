@@ -24,6 +24,8 @@
 #include "Environment/UnionType.hpp"
 #include "Environment/TupleType.hpp"
 
+#include "Environment/SSAProgramEntity.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -59,7 +61,28 @@ llvm::DIType *LLVMDebugTypeVisitor::visitType(const TypePtr &type)
 
 AnyValuePtr LLVMDebugTypeVisitor::visitMetaType(const MetaTypePtr &type)
 {    
-    return wrapLLVMDebugType(backend->getDIBuilder()->createPointerType(nullptr, 0, 0, llvm::None, type->getQualifiedName()));
+    llvm::DIScope* scope = nullptr;
+
+    auto builder = backend->getDIBuilder();
+
+    auto parentProgramEntity = type->getParentProgramEntity();
+    if(parentProgramEntity)
+        scope = backend->getOrCreateDIScopeForSSAProgramEntity(staticObjectCast<SSAProgramEntity> (parentProgramEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty())));
+
+    auto name = type->getValidNameStringIncludingTemplateName();
+    auto line = 0;
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+    auto metaType = builder->createStructType(
+        scope, name, nullptr, line,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, nullptr, 
+        builder->getOrCreateArray({}),
+        0, nullptr,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+
+    return wrapLLVMDebugType(metaType);
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitDecoratedType(const DecoratedTypePtr &type)
@@ -146,7 +169,13 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
 {
     auto sourcePosition = type->getSourceDefinitionPosition();
     auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
-    auto scope = file;
+    llvm::DIScope* scope = nullptr;
+
+    auto parentProgramEntity = type->getParentProgramEntity();
+    if(parentProgramEntity)
+        scope = backend->getOrCreateDIScopeForSSAProgramEntity(staticObjectCast<SSAProgramEntity> (parentProgramEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty())));
+    if(!scope)
+        scope = file;
 
     auto builder = backend->getDIBuilder();
     auto name = type->getValidNameStringIncludingTemplateName();

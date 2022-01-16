@@ -15,6 +15,20 @@ bool SSATypeProgramEntity::isSSATypeProgramEntity() const
     return true;
 }
 
+std::string SSATypeProgramEntity::getValidNameString() const
+{
+    if(value->isMetaType())
+        return "__Meta__";
+    return SuperType::getValidNameString();
+}
+
+std::string SSATypeProgramEntity::getValidNameStringIncludingTemplateName() const
+{
+    if(value->isMetaType())
+        return "__Meta__";
+    return SuperType::getValidNameString();
+}
+
 AnyValuePtr SSATypeProgramEntity::accept(const SSAValueVisitorPtr &visitor)
 {
     return visitor->visitTypeProgramEntity(selfFromThis());

@@ -18,6 +18,9 @@ public:
 
     virtual bool isSSATypeProgramEntity() const override;
 
+    virtual std::string getValidNameString() const override;
+    virtual std::string getValidNameStringIncludingTemplateName() const override;
+
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
     const TypePtr &getValue() const;

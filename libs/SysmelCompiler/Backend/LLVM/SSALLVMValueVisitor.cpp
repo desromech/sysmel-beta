@@ -863,22 +863,7 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     llvm::DISubprogram *subprogram = nullptr;
     if(backend->getDIBuilder())
     {
-        auto sourceLocation = function->getDefinitionSourcePosition();
-        auto file = backend->getOrCreateDIFileForSourcePosition(sourceLocation);
-        auto scope = file;
-        int scopeLine = sourceLocation->getLine();
-
-        auto flags = llvm::DINode::FlagPrototyped;
-        auto spFlags = llvm::DISubprogram::SPFlagZero;
-        if(!mainCodeRegion->isEmpty())
-            spFlags = llvm::DISubprogram::SPFlagDefinition;
-
-        subprogram = backend->getDIBuilder()->createFunction(
-            scope, function->getValidNameString(), llvm::StringRef(),
-            file, sourceLocation->getLine(),
-            backend->getOrCreateDIFunctionType(function->getFunctionalType()), scopeLine,
-            flags, spFlags
-        );
+        subprogram = llvm::cast<llvm::DISubprogram> (backend->getOrCreateDIScopeForSSAProgramEntity(function));
         currentFunction->setSubprogram(subprogram);
     }
 
@@ -886,7 +871,7 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     translateMainCodeRegion(mainCodeRegion);
 
     // Finalize the debug info.
-    if(subprogram)
+    if(subprogram && !mainCodeRegion->isEmpty())
         backend->getDIBuilder()->finalizeSubprogram(subprogram);
 
     // Verify the function.

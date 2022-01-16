@@ -53,8 +53,9 @@ namespace Sysmel
 namespace Environment
 {
 
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler)
-SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAProgramEntity);
 }
 
 namespace LLVM
@@ -122,6 +123,8 @@ public:
     llvm::DISubroutineType *getOrCreateDIFunctionType(const FunctionalTypePtr &functionalType);
     llvm::DILocation *getDILocationFor(const ASTSourcePositionPtr &sourcePosition, llvm::DIScope *scope);
 
+    llvm::DIScope *getOrCreateDIScopeForSSAProgramEntity(const SSAProgramEntityPtr &ssaProgramEntity);
+
 protected:
     void initializePrimitiveTypeMap();
     void initializeDebugInfoBuilding();
@@ -143,6 +146,7 @@ protected:
     std::unordered_map<TypePtr, llvm::DIType*> debugTypeMap;
     std::unordered_map<std::string, llvm::DIFile*> debugFileMap;
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;
+    std::unordered_map<AnyValuePtr, llvm::DIScope*> diScopeMap;
     std::unordered_map<VirtualTablePtr, llvm::Constant*> translatedVirtualTables;
     std::map<std::pair<uint32_t, std::string>, llvm::Constant*> internedStringConstants;
 };
