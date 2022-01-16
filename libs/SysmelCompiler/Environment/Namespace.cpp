@@ -104,7 +104,7 @@ AnyValuePtr Namespace::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, con
     return it != bindings.end() ? it->second.second : nullptr;
 }
 
-AnyValuePtr Namespace::lookupLocalSelector(const AnyValuePtr &selector)
+AnyValuePtr Namespace::lookupExistentLocalSelector(const AnyValuePtr &selector)
 {
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }

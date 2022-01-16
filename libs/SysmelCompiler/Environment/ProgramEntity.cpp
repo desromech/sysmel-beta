@@ -154,10 +154,15 @@ AnyValuePtr ProgramEntity::lookupSelector(const AnyValuePtr &selector)
     return lookupLocalSelector(selector);
 }
 
-AnyValuePtr ProgramEntity::lookupLocalSelector(const AnyValuePtr &selector)
+AnyValuePtr ProgramEntity::lookupExistentLocalSelector(const AnyValuePtr &selector)
 {
     (void)selector;
     return nullptr;
+}
+
+AnyValuePtr ProgramEntity::lookupLocalSelector(const AnyValuePtr &selector)
+{
+    return lookupExistentLocalSelector(selector);
 }
 
 AnyValuePtr ProgramEntity::lookupLocalMacroFallbackSelector(const AnyValuePtr &selector)

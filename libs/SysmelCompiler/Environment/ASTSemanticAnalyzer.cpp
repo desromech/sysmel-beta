@@ -1916,7 +1916,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
         return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} overrides reserved name.", {{name->printString()}}));
 
     // Check for a previous method with the same selector.
-    auto previousMethod = ownerEntity->lookupLocalSelector(name);
+    auto previousMethod = ownerEntity->lookupExistentLocalSelector(name);
     if(previousMethod)
     {
         if(!previousMethod->isCompiledMethod())

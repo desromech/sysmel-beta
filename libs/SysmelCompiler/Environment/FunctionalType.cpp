@@ -97,7 +97,7 @@ bool FunctionalType::matchesDefinitionSignature(bool hasReceiver, bool hasConstR
 
 bool FunctionalType::matchesSignature(const TypePtr &testReceiverType, const TypePtrList &testArgumentTypes, const TypePtr &testResultType) const
 {
-    return getReceiverType() == testReceiverType && arguments == testArgumentTypes && result == testResultType;
+    return getReceiverType() == testReceiverType && arguments == testArgumentTypes && (result == testResultType || !testResultType);
 }
 
 TypePtr FunctionalType::getParamsType() const

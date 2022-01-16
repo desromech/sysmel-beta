@@ -115,6 +115,9 @@ public:
     virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector);
 
     /// This method performs the lookup for a message with the specified selector only in this type.
+    virtual AnyValuePtr lookupExistentLocalSelector(const AnyValuePtr &selector);
+
+    /// This method performs the lookup for a message with the specified selector only in this type. This might trigger the generation of implicit methods.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
     /// This method performs the lookup of an overriden parent method with the specified selector and argument types.

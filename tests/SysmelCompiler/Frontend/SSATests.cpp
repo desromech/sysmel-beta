@@ -160,7 +160,7 @@ R"(
             (region () () #Boolean8 ((basicBlock 2
               (
                 (call 9 #Int32
-                  (function #conv #"reference.load")
+                  (function #conv #"reference.load.value")
                   (local 5))
                 (call 10 #Boolean8
                   (function #< #"integer.less-than.signed")
@@ -172,10 +172,10 @@ R"(
                 (region () () #Void ((basicBlock 4
                   (
                     (call 13 #Int32
-                      (function #conv #"reference.load")
+                      (function #conv #"reference.load.value")
                       (local 2))
                     (call 14 #Int32
-                      (function #conv #"reference.load")
+                      (function #conv #"reference.load.value")
                       (local 5))
                     (call 15 #Int32
                       (function #+ #"integer.add")
@@ -195,7 +195,7 @@ R"(
             (region () () #Void ((basicBlock 6
               (
                 (call 20 #Int32
-                  (function #conv #"reference.load")
+                  (function #conv #"reference.load.value")
                   (local 5))
                 (call 21 #Int32
                   (function #+ #"integer.add")
@@ -209,7 +209,7 @@ R"(
                 (returnFromRegion 23 #Void
                   (constantLiteralValue void #Void)))))))
           (call 24 #Int32
-            (function #conv #"reference.load")
+            (function #conv #"reference.load.value")
             (local 2))
           (returnFromFunction 25 #Void (local 24))))))
       (region () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
@@ -254,10 +254,10 @@ R"(
                 (region () () #Void ((basicBlock 3
                   (
                     (call 10 #Int32
-                      (function #conv #"reference.load")
+                      (function #conv #"reference.load.value")
                       (local 2))
                     (call 11 #Int32
-                      (function #conv #"reference.load")
+                      (function #conv #"reference.load.value")
                       (local 5))
                     (call 12 #Int32
                       (function #+ #"integer.add")
@@ -277,7 +277,7 @@ R"(
             (region () () #Boolean8 ((basicBlock 5
               (
                 (call 17 #Int32
-                  (function #conv #"reference.load")
+                  (function #conv #"reference.load.value")
                   (local 5))
                 (call 18 #Boolean8
                   (function #< #"integer.less-than.signed")
@@ -287,7 +287,7 @@ R"(
             (region () () #Void ((basicBlock 6
               (
                 (call 20 #Int32
-                  (function #conv #"reference.load")
+                  (function #conv #"reference.load.value")
                   (local 5))
                 (call 21 #Int32
                   (function #+ #"integer.add")
@@ -301,7 +301,7 @@ R"(
                 (returnFromRegion 23 #Void
                   (constantLiteralValue void #Void)))))))
           (call 24 #Int32
-            (function #conv #"reference.load")
+            (function #conv #"reference.load.value")
             (local 2))
           (returnFromFunction 25 #Void (local 24))))))
       (region () () #Void ((basicBlock 7 ((returnFromRegion 26 #Void
@@ -394,7 +394,7 @@ public function getFirst(s: TestStruct) => Int8
             (refType #Int8 #generic)
             (local 0))
           (call 3 #Int8
-            (function #conv #"reference.load")
+            (function #conv #"reference.load.value")
             (local 2))
           (returnFromFunction 4 #Void (local 3))))))
       (region () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void
@@ -418,7 +418,7 @@ public function getSecond(s: TestStruct) => Int32
             (refType #Int32 #generic)
             (local 0))
           (call 3 #Int32
-            (function #conv #"reference.load")
+            (function #conv #"reference.load.value")
             (local 2))
           (returnFromFunction 4 #Void (local 3))))))
       (region () () #Void ((basicBlock 2 ((returnFromRegion 5 #Void

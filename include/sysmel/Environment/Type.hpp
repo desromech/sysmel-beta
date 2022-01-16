@@ -112,6 +112,9 @@ public:
     virtual AnyValuePtr lookupSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup for a message with the specified selector only in this type.
+    virtual AnyValuePtr lookupExistentLocalSelector(const AnyValuePtr &selector) override;
+
+    /// This method performs the lookup for a message with the specified selector only in this type. This might trigger the generation of implicit methods.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup of the doesNotUnderstand: macro
@@ -439,7 +442,7 @@ protected:
     virtual void evaluateAllPendingBodyBlockCodeFragments();
 
     /// This method ensures the creation of the implicit life-time methods.
-    virtual void ensureImplicitLifeTimeMethodsAreCreated();
+    virtual void ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector);
 
     /// Lookup for a valid specific lifetime method.
     AnyValuePtr lookupValidLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);

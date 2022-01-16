@@ -47,7 +47,7 @@ public:
 protected:
     virtual void buildLayout();
     virtual void computeObjectLifetimeTriviality();
-    virtual void ensureImplicitLifeTimeMethodsAreCreated() override;
+    virtual void ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector);
 
     AggregateTypeLayoutPtr layout;
     bool hasTrivialInitialization_ = true;
@@ -56,8 +56,6 @@ protected:
     bool hasTrivialFinalization_ = true;
     bool hasTrivialAssignCopyingFrom_ = true;
     bool hasTrivialAssignMovingFrom_ = true;
-
-    bool implicitLifetimeMethodsCreated = false;
 };
 
 /**

@@ -123,25 +123,48 @@ void AggregateType::computeObjectLifetimeTriviality()
     hasTrivialAssignMovingFrom_ = hasTrivialAssignMovingFrom_ && SuperType::hasTrivialAssignMovingFrom() && supertype->hasTrivialAssignMovingFrom() && layout->hasTrivialAssignMovingFrom();
 }
 
-void AggregateType::ensureImplicitLifeTimeMethodsAreCreated()
+void AggregateType::ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector)
 {
-    if(implicitLifetimeMethodsCreated)
-        return;
+    getLayout();
 
-    addMethodCategories(MethodCategories{
-        {"assignment", {
-            makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.copy.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {asConstReceiverType()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
-                self->copyAssignValue(newValue);
-                return self;
-            }),
-            makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.move.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {tempRef()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
-                self->moveAssignValue(newValue);
-                return self;
-            }),
-        }}
-    });
+    if(selector == "initialize")
+    {
 
-    implicitLifetimeMethodsCreated = true;
+    }
+    else if(selector == "initializeCopyingFrom:")
+    {
+    }
+    else if(selector == "initializeMovingFrom:")
+    {
+    }
+    else if(selector == ":=")
+    {
+        // Implicit copy assignment.
+        if(validAnyValue(lookupLifetimeMethod(":=", {asConstReceiverType()}, nullptr))->isUndefined())
+        {
+            addMethodCategories(MethodCategories{
+                {"assignment", {
+                    makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.copy.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {asConstReceiverType()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
+                        self->copyAssignValue(newValue);
+                        return self;
+                    }, MethodFlags::Trivial)
+                }}
+            });
+        }
+
+        // Implicit move assignment.
+        if(validAnyValue(lookupLifetimeMethod(":=", {tempRef()}, nullptr))->isUndefined())
+        {
+            addMethodCategories(MethodCategories{
+                {"assignment", {
+                    makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.move.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {tempRef()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
+                        self->moveAssignValue(newValue);
+                        return self;
+                    }, MethodFlags::Trivial),
+                }}
+            });
+        }
+    }
 }
 
 void AggregateType::buildLayout()

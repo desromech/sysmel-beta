@@ -39,7 +39,7 @@ public:
     virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
     
     virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector) override;
-    virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector) override;
+    virtual AnyValuePtr lookupExistentLocalSelector(const AnyValuePtr &selector) override;
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector) override;
 
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;

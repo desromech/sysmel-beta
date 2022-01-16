@@ -258,7 +258,28 @@ AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
     if(isMetaType())
         getInstanceType()->evaluateAllPendingBodyBlockCodeFragments();
     evaluateAllPendingBodyBlockCodeFragments();
-    ensureImplicitLifeTimeMethodsAreCreated();
+
+    if(validAnyValue(selector)->isLiteralSymbol())
+    {
+        auto selectorValue = selector->asString();
+        if(selectorValue == "initialize")
+            getInitializeMethod();
+        else if(selectorValue == "initializeCopyingFrom:")
+            getInitializeCopyingFromMethod();
+        else if(selectorValue == "initializeMovingFrom:")
+            getInitializeMovingFromMethod();
+        else if(selectorValue == ":=")
+        {
+            getAssignCopyingFromMethod();
+            getAssignMovingFromMethod();
+        }
+    }
+
+    return lookupExistentLocalSelector(selector);
+}
+
+AnyValuePtr Type::lookupExistentLocalSelector(const AnyValuePtr &selector)
+{
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
@@ -1272,14 +1293,15 @@ SSAValuePtr Type::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
     return ssaTypeProgramEntity;
 }
 
-void Type::ensureImplicitLifeTimeMethodsAreCreated()
+void Type::ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector)
 {
+    (void)selector;
 }
 
 AnyValuePtr Type::lookupValidLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
 {
     evaluateAllPendingBodyBlockCodeFragments();
-    ensureImplicitLifeTimeMethodsAreCreated();
+    ensureImplicitLifeTimeMethodsWithSelectorAreCreated(selector);
     return lookupLifetimeMethod(selector, argumentTypes, resultType);
 }
 
