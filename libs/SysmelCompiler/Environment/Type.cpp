@@ -31,6 +31,8 @@
 #include "Environment/SpecificMethod.hpp"
 #include "Environment/FieldVariable.hpp"
 
+#include "Environment/IdentifierLookupScope.hpp"
+
 #include "Environment/DecoratedType.hpp"
 #include "Environment/PointerType.hpp"
 #include "Environment/ReferenceType.hpp"
@@ -340,11 +342,19 @@ AnyValuePtr Type::lookupMacroFallbackSelector(const AnyValuePtr &selector)
 
 AnyValuePtr Type::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
 {
-    (void)accessingScope;
     auto it = bindings.find(symbol);
     if(it != bindings.end())
-    {
         return it->second.second;
+
+    if(accessingScope->isProgramEntityScope() && symbol->isLiteralSymbol())
+    {
+        auto symbolValue = symbol->asString();
+        if(symbolValue == "SelfType" || symbolValue == "self")
+            return selfFromThis();
+        else if(symbolValue == "meta")
+            return getMetaType();
+        else if(symbolValue == "InstanceType")
+            return getInstanceType();
     }
 
     if(supertype)

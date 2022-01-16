@@ -17,6 +17,11 @@ ProgramEntityScopePtr ProgramEntityScope::make(const IdentifierLookupScopePtr &p
     return result;
 }
 
+bool ProgramEntityScope::isProgramEntityScope() const
+{
+    return true;
+}
+
 AnyValuePtr ProgramEntityScope::lookupSymbolLocally(const AnyValuePtr &symbol)
 {
     return programEntity->lookupLocalSymbolFromScope(symbol, selfFromThis());

@@ -23,6 +23,8 @@ public:
 
     static ProgramEntityScopePtr make(const IdentifierLookupScopePtr &parent, const ProgramEntityPtr &programEntity);
 
+    virtual bool isProgramEntityScope() const override;
+
     virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol) override;
 
 private:

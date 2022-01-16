@@ -9,6 +9,7 @@
 #include "Environment/ASTIdentifierReferenceNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/StringUtilities.hpp"
+#include "Environment/IdentifierLookupScope.hpp"
 #include "Environment/Type.hpp"
 
 namespace Sysmel
@@ -111,8 +112,13 @@ AnyValuePtr ProgramEntity::lookupExportedSymbolFromScope(const AnyValuePtr &symb
 
 AnyValuePtr ProgramEntity::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
 {
-    (void)symbol;
-    (void)accessingScope;
+    if(accessingScope->isProgramEntityScope() && symbol->isLiteralSymbol())
+    {
+        auto symbolValue = symbol->asString();
+        if(symbolValue == "self")
+            return selfFromThis();
+    }
+
     return nullptr;
 }
 

@@ -2487,8 +2487,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
 AnyValuePtr ASTSemanticAnalyzer::visitReinterpretCastNode(const ASTReinterpretCastNodePtr &node)
 {
     auto analyzedNode = shallowCloneObject(node);
-    analyzedNode->expression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
     analyzedNode->targetType = evaluateTypeExpression(node->targetType);
+    if(analyzedNode->targetType->isReferenceLikeType())
+        analyzedNode->expression = analyzeNodeIfNeededWithTemporaryAutoType(node->expression);
+    else
+        analyzedNode->expression = analyzeNodeIfNeededWithAutoType(node->expression);
+
     if(analyzedNode->isASTErrorNode())
         return analyzedNode->expression;
     if(analyzedNode->isASTErrorNode())

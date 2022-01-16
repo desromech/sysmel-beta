@@ -24,6 +24,9 @@ public:
     /// Is this a local lexical scope?
     virtual bool isLexicalScope() const;
 
+    /// Is this a program entity scope?
+    virtual bool isProgramEntityScope() const;
+
     /// This method performs a symbol lookup locally.
     virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol);
 

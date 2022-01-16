@@ -18,6 +18,11 @@ bool IdentifierLookupScope::isLexicalScope() const
     return false;
 }
 
+bool IdentifierLookupScope::isProgramEntityScope() const
+{
+    return false;
+}
+
 AnyValuePtr IdentifierLookupScope::lookupSymbolLocally(const AnyValuePtr &)
 {
     return nullptr;

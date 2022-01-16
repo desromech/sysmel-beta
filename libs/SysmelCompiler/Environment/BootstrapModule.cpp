@@ -9,6 +9,9 @@
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/ReferenceType.hpp"
+#include "Environment/TemporaryReferenceType.hpp"
+#include "Environment/DecoratedType.hpp"
 #include "Environment/Namespace.hpp"
 #include "Environment/SSAModule.hpp"
 #include <sstream>
@@ -54,6 +57,11 @@ void BootstrapModule::initialize()
     // Special case: short-circuit any value type with the type.
     // We are skipping over BootstrapType because not everying is going to be one of them.
     AnyValue::__staticType__()->getType()->setSupertype(Type::__staticType__());
+
+    // Special cases: suppress the supertype lookup of reference and decorated types. We want them to collapse.
+    DecoratedTypeValue::__staticType__()->setSupertype(nullptr);
+    ReferenceTypeValue::__staticType__()->setSupertype(nullptr);
+    TemporaryReferenceTypeValue::__staticType__()->setSupertype(nullptr);
 
     // Register each type with its supertype.
     for(const auto &type : bootstrapDefinedTypeTable)

@@ -3,6 +3,7 @@
 #include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/MethodDictionary.hpp"
+#include "Environment/IdentifierLookupScope.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/Error.hpp"
 #include "Environment/SSANamespace.hpp"
@@ -100,6 +101,13 @@ AnyValuePtr Namespace::lookupExportedSymbolFromScope(const AnyValuePtr &symbol, 
 
 AnyValuePtr Namespace::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
 {
+    if(accessingScope->isProgramEntityScope() && symbol->isLiteralSymbol())
+    {
+        auto symbolValue = symbol->asString();
+        if(symbolValue == "self")
+            return selfFromThis();
+    }
+
     auto it = bindings.find(symbol);
     return it != bindings.end() ? it->second.second : nullptr;
 }
