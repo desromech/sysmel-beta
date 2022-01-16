@@ -1,5 +1,6 @@
 #include "Environment/DerivedType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -23,6 +24,18 @@ void DerivedType::setBaseType(const TypePtr &newBaseType)
 {
     baseType = newBaseType;
 }
+
+MethodCategories DerivedTypeValue::__typeMethods__()
+{
+    return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<TypePtr (TypePtr)> ("baseType", [](const TypePtr &type) -> TypePtr {
+                return type->isDerivedType() ? type.staticAs<DerivedType> ()->getBaseType() : Type::getVoidType();
+            }, MethodFlags::Pure),
+        }}
+    };
+}
+
 
 bool DerivedTypeValue::isDerivedTypeValue() const
 {

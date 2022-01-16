@@ -153,7 +153,7 @@ void ReferenceType::addSpecializedInstanceMethods()
         }, MethodFlags::Pure));
     }
 
-    addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> ("reference.load", selfFromThis(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
+    addConversion(makeIntrinsicConversionWithSignature<AnyValuePtr (ReferenceTypeValuePtr)> (baseType->isReturnedByReference() ? "reference.load.aggregate" : "reference.load.value", selfFromThis(), baseType, {}, [=](const ReferenceTypeValuePtr &self) {
         return validAnyValue(self->baseValue)->accessVariableAsValueWithType(baseType);
     }));
 

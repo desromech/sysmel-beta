@@ -87,12 +87,12 @@ void FieldVariable::setSlotIndex(uint32_t newSlotIndex)
     slotIndex = newSlotIndex;
 }
 
-uint32_t FieldVariable::getOffset() const
+uint64_t FieldVariable::getOffset() const
 {
     return offset;
 }
 
-void FieldVariable::setOffset(uint32_t newOffset)
+void FieldVariable::setOffset(uint64_t newOffset)
 {
     offset = newOffset;
 }

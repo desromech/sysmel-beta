@@ -849,6 +849,8 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
             return rule;
     }
 
+    evaluateAllPendingBodyBlockCodeFragments();
+
     // Find a conversion method here.
     for(auto &conversion : conversions)
     {
@@ -886,6 +888,8 @@ TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodeP
         if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
             return rule;
     }
+
+    evaluateAllPendingBodyBlockCodeFragments();
 
     // Find a conversion method here.
     for(auto &conversion : conversions)

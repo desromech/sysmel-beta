@@ -1209,6 +1209,23 @@ SUITE(SysmelCompileTimeEvaluation)
         });
     }
 
+    TEST(StructInNamespace)
+    {
+        RuntimeContext::createForScripting()->activeDuring([&](){
+            ScriptModule::create()->activeDuring([&](){
+                auto structDeclaration = evaluateString("namespace TestNamespace definition: {public struct TestStruct}. TestNamespace TestStruct");
+                CHECK(structDeclaration->isStructureType());
+                
+                auto structDefinition = evaluateString("namespace TestNamespace definition: {public struct TestStruct definition: {}}. TestNamespace TestStruct");
+                CHECK(structDefinition->isStructureType());
+                CHECK_EQUAL(structDeclaration, structDefinition);
+                CHECK_EQUAL(Module::getActive(), structDefinition.staticAs<StructureType> ()->getDefinitionModule());
+
+                Module::getActive()->analyzeAllPendingProgramEntities();
+            });
+        });
+    }
+
     TEST(Union)
     {
         RuntimeContext::createForScripting()->activeDuring([&](){

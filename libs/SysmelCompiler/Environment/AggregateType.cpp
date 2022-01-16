@@ -7,6 +7,7 @@
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
 #include "Environment/StringUtilities.hpp"
 #include <sstream>
 
@@ -124,6 +125,23 @@ void AggregateType::computeObjectLifetimeTriviality()
 
 void AggregateType::ensureImplicitLifeTimeMethodsAreCreated()
 {
+    if(implicitLifetimeMethodsCreated)
+        return;
+
+    addMethodCategories(MethodCategories{
+        {"assignment", {
+            makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.copy.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {asConstReceiverType()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
+                self->copyAssignValue(newValue);
+                return self;
+            }),
+            makeIntrinsicMethodBindingWithSignature<AggregateTypeValuePtr (AggregateTypeValuePtr, AnyValuePtr)> ("aggregate.move.assignment.trivial", ":=", asReceiverType(), asConstReceiverType(), {tempRef()}, [=](const AggregateTypeValuePtr &self, const AnyValuePtr &newValue) {
+                self->moveAssignValue(newValue);
+                return self;
+            }),
+        }}
+    });
+
+    implicitLifetimeMethodsCreated = true;
 }
 
 void AggregateType::buildLayout()

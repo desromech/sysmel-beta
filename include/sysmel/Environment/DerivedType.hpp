@@ -38,6 +38,8 @@ public:
 
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
+    static MethodCategories __typeMethods__();
+
     virtual bool isDerivedTypeValue() const override;
 
     DerivedTypePtr type;

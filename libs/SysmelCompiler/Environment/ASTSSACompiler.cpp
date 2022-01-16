@@ -270,13 +270,36 @@ SSAValuePtr ASTSSACompiler::findLocalVariableMapping(const AnyValuePtr &binding)
 
 AnyValuePtr ASTSSACompiler::visitCallNode(const ASTCallNodePtr &node)
 {
+    // Return by reference hidden pointer.
+    auto &resultType = node->analyzedType;
+    auto isReturningByReference = resultType->isReturnedByReference();
+
     auto functionValue = visitNodeForValue(node->function);
     SSAValuePtrList arguments;
-    arguments.reserve(node->arguments.size());
+    arguments.reserve((isReturningByReference ? 1 : 0) + node->arguments.size());
+
+    // Hidden result pointer.
+    SSAValuePtr resultByReference;
+    if(isReturningByReference)
+    {
+        resultByReference = builder->localVariable(resultType->tempRef(), resultType);
+        arguments.push_back(resultByReference);
+    }
+
     for(auto &arg : node->arguments)
         arguments.push_back(visitNodeForValue(arg));
 
-    return builder->call(node->analyzedType, functionValue, arguments);
+    // Perform the call.
+    auto callResult = builder->call(node->analyzedType, functionValue, arguments);
+    
+    // Implicit finalization of result.
+    if(isReturningByReference)
+    {
+        addFinalizationFor(resultByReference, resultType);
+        return resultByReference;
+    }
+
+    return callResult;
 }
 
 AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node)
@@ -442,24 +465,50 @@ AnyValuePtr ASTSSACompiler::visitMessageSendNode(const ASTMessageSendNodePtr &no
     if(node->selector)
         selectorValue = visitNodeForValue(node->selector);
 
+    auto &resultType = node->analyzedType;
+    bool isReturningByReference = resultType->isReturnedByReference();
+    bool isDirectCallPassingReceiver = node->analyzedBoundMessageIsDirect && node->receiver && !node->receiver->analyzedType->isVoidType();
+
     SSAValuePtrList arguments;
-    arguments.reserve(node->arguments.size());
+    arguments.reserve((isReturningByReference ? 1 : 0) + (isDirectCallPassingReceiver ? 1 : 0) + node->arguments.size());
+
+    // Return by reference hidden pointer.
+    SSAValuePtr resultByReference;
+    if(isReturningByReference)
+    {
+        resultByReference = builder->localVariable(resultType->tempRef(), resultType);
+        arguments.push_back(resultByReference);
+    }
+
+    // Direct call this pointer.
+    if(isDirectCallPassingReceiver)
+        arguments.push_back(receiverValue);
+    
+    // Explicit arguments.
     for(auto &arg : node->arguments)
         arguments.push_back(visitNodeForValue(arg));
 
     // Replace the direct message sends by call.
     sysmelAssert(node->receiver || node->analyzedBoundMessageIsDirect);
+    SSAValuePtr sendResult;
     if(node->analyzedBoundMessageIsDirect)
     {
-        if(node->receiver && !node->receiver->analyzedType->isVoidType())
-            arguments.insert(arguments.begin(), receiverValue);
-
-        return builder->call(node->analyzedType, node->analyzedBoundMessage->asSSAValueRequiredInPosition(node->sourcePosition), arguments);
+        sendResult = builder->call(node->analyzedType, node->analyzedBoundMessage->asSSAValueRequiredInPosition(node->sourcePosition), arguments);
+    }
+    else
+    {
+        sendResult = builder->sendMessage(node->analyzedType, node->calledMessageType,
+            selectorValue, receiverValue, arguments, 
+            node->useVirtualTable, node->virtualTableSlotIndex, node->virtualTableEntrySlotIndex);
     }
 
-    return builder->sendMessage(node->analyzedType, node->calledMessageType,
-        selectorValue, receiverValue, arguments, 
-        node->useVirtualTable, node->virtualTableSlotIndex, node->virtualTableEntrySlotIndex);
+    if(isReturningByReference)
+    {
+        addFinalizationFor(resultByReference, resultType);
+        return resultByReference;
+    }
+
+    return sendResult;
 }
 
 AnyValuePtr ASTSSACompiler::visitSequenceNode(const ASTSequenceNodePtr &node)
@@ -669,7 +718,8 @@ AnyValuePtr ASTSSACompiler::visitIfNode(const ASTIfNodePtr &node)
     auto trueRegion = buildRegionForNode(node->trueExpression);
     auto falseRegion = buildRegionForNode(node->falseExpression);
     auto result = builder->ifTrueIfFalse(node->analyzedType, condition, trueRegion, falseRegion);
-    if(node->trueExpression->analyzedType->isControlFlowEscapeType() && node->falseExpression->analyzedType->isControlFlowEscapeType())
+    if(node->trueExpression && node->trueExpression->analyzedType->isControlFlowEscapeType()
+        && node->falseExpression && node->falseExpression->analyzedType->isControlFlowEscapeType())
         return builder->unreachableInstruction();
 
     return result;

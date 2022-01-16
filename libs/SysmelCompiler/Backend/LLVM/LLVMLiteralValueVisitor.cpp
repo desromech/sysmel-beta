@@ -11,6 +11,7 @@
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/ArrayType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
 #include "Environment/TupleType.hpp"
@@ -132,6 +133,22 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLike
     }
 
     sysmelAssert("unsupported pointer type value constant" && false);
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitArrayTypeValue(const ArrayTypeValuePtr &value)
+{
+    auto arrayType = value->getType().staticAs<ArrayType> ();
+    auto resultType = llvm::cast<llvm::ArrayType> (backend->translateType(value->getType()));
+    
+    auto slotType = arrayType->elementType;
+    auto slotCount = value->slots.size();
+
+    std::vector<llvm::Constant*> slots;
+    slots.reserve(slotCount);
+    for(size_t i = 0; i < slotCount; ++i)
+        slots.push_back(backend->translateLiteralValueWithExpectedType(value->slots[i], slotType));
+    
+    return wrapLLVMConstant(llvm::ConstantArray::get(resultType, slots));
 }
 
 llvm::Constant *LLVMLiteralValueVisitor::translateSequentialStructAggregateTypeValue(const AggregateTypeValuePtr &value)

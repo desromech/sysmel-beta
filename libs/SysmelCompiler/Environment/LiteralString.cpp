@@ -18,6 +18,12 @@ TypePtr WrapperTypeFor<std::string>::apply()
 MethodCategories LiteralString::__instanceMethods__()
 {
     return MethodCategories{
+        {"accessing", {
+            makeMethodBinding<size_t (std::string)> ("size", [](const std::string &self) {
+                return self.size();
+            }, MethodFlags::Pure),
+        }},
+
         {"string operations", {
             makeMethodBinding<std::string (std::string, std::string)> ("--", [](const std::string &a, const std::string &b) {
                 return a + b;

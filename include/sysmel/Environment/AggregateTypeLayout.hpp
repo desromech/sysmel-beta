@@ -56,6 +56,9 @@ public:
 
     /// Gets the index for a non-padding slot
     virtual uint64_t getIndexForNonPaddingSlot(uint64_t slotIndex);
+
+    /// Gets the offset for the specified slot index.
+    virtual uint64_t getOffsetForSlotIndex(uint32_t slotIndex);
 };
 
 } // End of namespace Environment

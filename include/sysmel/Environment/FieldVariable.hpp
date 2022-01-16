@@ -35,12 +35,12 @@ public:
     uint32_t getSlotIndex() const;
     void setSlotIndex(uint32_t newSlotIndex);
 
-    uint32_t getOffset() const;
-    void setOffset(uint32_t newOffset);
+    uint64_t getOffset() const;
+    void setOffset(uint64_t newOffset);
 
 protected:
     uint32_t slotIndex = 0;
-    uint32_t offset = 0;
+    uint64_t offset = 0;
 };
 
 /**

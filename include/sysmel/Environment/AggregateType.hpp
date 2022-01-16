@@ -56,6 +56,8 @@ protected:
     bool hasTrivialFinalization_ = true;
     bool hasTrivialAssignCopyingFrom_ = true;
     bool hasTrivialAssignMovingFrom_ = true;
+
+    bool implicitLifetimeMethodsCreated = false;
 };
 
 /**

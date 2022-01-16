@@ -49,9 +49,43 @@ public class VariantTestCase superclass: TestCase; definition: {
     }.
 }.
 
+struct TestStruct definition: {
+    public field intField type: Int32.
+    public field floatField type: Float32.
+}.
+
+public class StructureTestCase superclass: TestCase; definition: {
+    public method run => Void := {
+        let a := TestStruct(1, 42.5).
+        self assert: a intField equals: 1.
+        self assert: a floatField equals: 42.5.
+
+        let b mutable := a.
+        self assert: b intField equals: 1.
+        self assert: b floatField equals: 42.5.
+
+        let c mutable type: TestStruct.
+        self assert: c intField equals: 0.
+        self assert: c floatField equals: 0.
+
+        c := a.
+        self assert: c intField equals: 1.
+        self assert: c floatField equals: 42.5.
+
+        c := TestStruct().
+        self assert: c intField equals: 0.
+        self assert: c floatField equals: 0.
+
+        c := b.
+        self assert: c intField equals: 1.
+        self assert: c floatField equals: 42.5.
+    }.
+}.
+
 public externC function main() => Int32 := {
     ArrayTestCase() run.
     TupleTestCase() run.
     VariantTestCase() run.
+    StructureTestCase() run.
     0
 }.

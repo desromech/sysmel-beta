@@ -6,6 +6,7 @@
 #include "Environment/PrimitiveBooleanType.hpp"
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/LiteralString.hpp"
+#include "Environment/Undefined.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/ValueAsVoidTypeConversionRule.hpp"
 #include "Environment/NotInCompileTimeError.hpp"
@@ -84,6 +85,11 @@ void PointerType::addSpecializedInstanceMethods()
             }, MethodFlags::Pure));
         }
     }
+
+    // nil -> pointer.
+    addConstructor(makeIntrinsicConstructorWithSignature<PointerTypeValuePtr (PointerTypePtr, UndefinedPtr)> ("pointer.null", getType(), selfFromThis(), {Undefined::__staticType__()}, [=](const PointerTypePtr &self, const UndefinedPtr &) {
+        return self->makeWithValue(nullptr);
+    }, MethodFlags::Pure));
 
     auto booleanType = Boolean8::__staticType__();
     addMethodCategories(MethodCategories{

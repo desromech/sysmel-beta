@@ -110,7 +110,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitArrayType(const ArrayTypePtr &type)
         builder->getOrCreateSubrange(0, type->size)
     };
     
-    return wrapLLVMDebugType(builder->createVectorType(size, uint32_t(alignment), elementType, builder->getOrCreateArray(subscripts)));
+    return wrapLLVMDebugType(builder->createArrayType(size, uint32_t(alignment), elementType, builder->getOrCreateArray(subscripts)));
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type)

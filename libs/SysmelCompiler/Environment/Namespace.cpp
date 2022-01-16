@@ -57,6 +57,9 @@ void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntit
         signalNewWithMessage<Error> ("Expected a new symbol binding.");
 
     bindings[symbol] = std::make_pair(visibility, binding);
+
+    if(symbol->isLiteralSymbol() && visibility == ProgramEntityVisibility::Public)
+        binding->addPublicAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
 }
 
 ASTNodePtr Namespace::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

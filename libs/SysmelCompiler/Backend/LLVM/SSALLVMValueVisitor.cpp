@@ -444,6 +444,18 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateFRem(context.arguments[0], context.arguments[1]);
     }},
 
+    // Aggregate
+    {"aggregate.copy.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        context.builder->CreateStore(context.builder->CreateLoad(context.arguments[1]), context.arguments[0]);
+        return context.arguments[0];
+    }},
+    {"aggregate.move.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        context.builder->CreateStore(context.builder->CreateLoad(context.arguments[1]), context.arguments[0]);
+        return context.arguments[0];
+    }},
+
     // Array
     {"array.element", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
@@ -683,7 +695,11 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     }},
 
     // Reference
-    {"reference.load", +[](const IntrinsicGenerationContext &context) {
+    {"reference.load.aggregate", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 2);
+        return context.builder->CreateStore(context.builder->CreateLoad(context.arguments[1]), context.arguments[0]);
+    }},
+    {"reference.load.value", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateLoad(context.arguments[0]);
     }},

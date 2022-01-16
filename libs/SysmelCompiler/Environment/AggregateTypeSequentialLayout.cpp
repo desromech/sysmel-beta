@@ -250,5 +250,10 @@ uint64_t AggregateTypeSequentialLayout::getIndexForNonPaddingSlot(uint64_t slotI
     return nonPaddingSlotIndices[slotIndex];
 }
 
+uint64_t AggregateTypeSequentialLayout::getOffsetForSlotIndex(uint32_t slotIndex)
+{
+    return slotIndex < offsets.size() ? offsets[slotIndex] : 0;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -64,7 +64,7 @@ TypePtr AggregateTypeArrayLayout::getTypeForSlotAndOffset(int64_t, int64_t)
     return elementType;
 }
 
-TypePtr AggregateTypeArrayLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
+TypePtr AggregateTypeArrayLayout::getTypeForNonPaddingSlot(int64_t)
 {
     return elementType;
 }

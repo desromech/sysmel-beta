@@ -75,6 +75,7 @@ void AggregateTypeLayout::addFieldVariable(const FieldVariablePtr &field)
     // TODO: Support bit fields.
     auto slotIndex = addSlotWithType(field->getValueType());
     field->setSlotIndex(slotIndex);
+    field->setOffset(getOffsetForSlotIndex(slotIndex));
 }
 
 uint32_t AggregateTypeLayout::addSlotWithType(const TypePtr &)
@@ -103,6 +104,11 @@ uint64_t AggregateTypeLayout::getIndexForNonPaddingSlot(uint64_t slotIndex)
 {
     (void)slotIndex;
     SysmelSelfSubclassResponsibility();
+}
+
+uint64_t AggregateTypeLayout::getOffsetForSlotIndex(uint32_t)
+{
+    return 0;
 }
 
 } // End of namespace Environment

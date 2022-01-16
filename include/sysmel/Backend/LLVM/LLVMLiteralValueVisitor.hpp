@@ -41,6 +41,7 @@ public:
 
     virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value) override;
 
+    virtual AnyValuePtr visitArrayTypeValue(const ArrayTypeValuePtr &value) override;
     llvm::Constant *translateSequentialStructAggregateTypeValue(const AggregateTypeValuePtr &value);
     virtual AnyValuePtr visitTupleTypeValue(const TupleTypeValuePtr &value) override;
     virtual AnyValuePtr visitClassTypeValue(const ClassTypeValuePtr &value) override;
