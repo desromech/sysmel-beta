@@ -78,7 +78,7 @@ bool TupleType::isNullableType() const
     return false;
 }
 
-std::string TupleType::printString() const
+std::string TupleType::getQualifiedName() const
 {
     sysmelAssert(!elementTypes.empty());
 

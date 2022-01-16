@@ -31,7 +31,7 @@ public:
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
     virtual AggregateTypeValuePtr makeRawValueInstance() override;
 
-    virtual std::string printString() const override;
+    virtual std::string getQualifiedName() const override;
     virtual SExpression asSExpression() const override;
 
     virtual TypePtr asTupleType() override;

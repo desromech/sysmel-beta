@@ -45,9 +45,9 @@ AnyValuePtr ClosureType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitClosureType(selfFromThis());
 }
 
-std::string ClosureType::printString() const
+std::string ClosureType::getQualifiedName() const
 {
-    return "(" + SuperType::printString() + ") closure";
+    return "(" + SuperType::getQualifiedName() + ") closure";
 }
 
 SExpression ClosureType::asSExpression() const

@@ -41,7 +41,13 @@ AnyValuePtr ProgramEntity::getValidName() const
 
 std::string ProgramEntity::getValidNameString() const
 {
-    return validAnyValue(getName())->asString();
+    auto nameValue = validAnyValue(getName());
+    return nameValue->isUndefined() ? std::string() : nameValue->asString();
+}
+
+ProgramEntityPtr ProgramEntity::getMainTemplateInstanceChild() const
+{
+    return nullptr;
 }
 
 std::string ProgramEntity::getQualifiedName() const
@@ -52,11 +58,20 @@ std::string ProgramEntity::getQualifiedName() const
     if(parent)
     {
         result = parent->getQualifiedName();
+
+        if(validAnyValue(getName())->isAnonymousNameSymbol() && parent->getMainTemplateInstanceChild().get() == this)
+            return result;
+
         result += "::";
     }
 
     result += getValidNameString();
     return result;
+}
+
+std::string ProgramEntity::printString() const
+{
+    return getQualifiedName();
 }
 
 SExpression ProgramEntity::asSExpression() const

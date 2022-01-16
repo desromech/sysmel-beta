@@ -91,11 +91,11 @@ TypePtr TemporaryReferenceType::asDecayedType()
     return baseType->asDecayedType();
 }
 
-std::string TemporaryReferenceType::printString() const
+std::string TemporaryReferenceType::getQualifiedName() const
 {
     if(hasGenericAddressSpace())
-        return baseType->printString() + " tempRef";
-    return "(" + baseType->printString() + " tempRefFor: " + addressSpace->printString();
+        return baseType->getQualifiedName() + " tempRef";
+    return "(" + baseType->getQualifiedName() + " tempRefFor: " + addressSpace->printString();
 }
 
 SExpression TemporaryReferenceType::asSExpression() const

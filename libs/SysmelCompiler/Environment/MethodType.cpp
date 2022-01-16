@@ -61,9 +61,9 @@ AnyValuePtr MethodType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitMethodType(selfFromThis());
 }
 
-std::string MethodType::printString() const
+std::string MethodType::getQualifiedName() const
 {
-    return "((" + SuperType::printString() + ") methodWithReceiver: " + receiverType->printString() + ")";
+    return "((" + SuperType::getQualifiedName() + ") methodWithReceiver: " + receiverType->getQualifiedName() + ")";
 }
 
 SExpression MethodType::asSExpression() const

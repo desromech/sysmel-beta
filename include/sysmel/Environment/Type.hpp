@@ -41,7 +41,6 @@ public:
     Type();
     
     virtual bool isType() const override;
-    virtual std::string printString() const override;
     virtual void setName(const AnyValuePtr &newName);
     virtual AnyValuePtr getName() const override;
 

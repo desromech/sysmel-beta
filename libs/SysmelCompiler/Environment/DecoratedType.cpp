@@ -169,10 +169,10 @@ void DecoratedType::addSpecializedInstanceMethods()
 {
 }
 
-std::string DecoratedType::printString() const
+std::string DecoratedType::getQualifiedName() const
 {
     std::ostringstream out;
-    out << baseType->printString();
+    out << baseType->getQualifiedName();
     if(isConstDecoratedType())
         out << " const";
 

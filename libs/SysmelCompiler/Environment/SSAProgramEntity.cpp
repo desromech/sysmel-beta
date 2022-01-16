@@ -28,7 +28,8 @@ void SSAProgramEntity::setName(const AnyValuePtr &newName)
 
 std::string SSAProgramEntity::getValidNameString() const
 {
-    return validAnyValue(name)->asString();
+    auto nameValue = validAnyValue(getName());
+    return nameValue->isUndefined() ? std::string() : nameValue->asString();
 }
 
 void SSAProgramEntity::addChild(const SSAProgramEntityPtr &)

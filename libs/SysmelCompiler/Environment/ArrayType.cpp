@@ -101,13 +101,13 @@ uint64_t ArrayType::getMemoryAlignment()
     return elementType->getMemoryAlignment();
 }
 
-std::string ArrayType::printString() const
+std::string ArrayType::getQualifiedName() const
 {
     if(size == 0)
-        return elementType->printString() + "[]";
+        return elementType->getQualifiedName() + "[]";
     
     std::ostringstream out;
-    out << elementType->printString();
+    out << elementType->getQualifiedName();
     out << "[" << size << ']';
     return out.str();
 }

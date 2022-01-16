@@ -90,7 +90,7 @@ bool VariantType::isNullableType() const
     return false;
 }
 
-std::string VariantType::printString() const
+std::string VariantType::getQualifiedName() const
 {
     sysmelAssert(!elementTypes.empty());
 

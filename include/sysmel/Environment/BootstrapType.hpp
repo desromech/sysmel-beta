@@ -38,7 +38,7 @@ public:
     void initializeWithMetadata(const StaticBootstrapDefinedTypeMetadata *theStaticMetadata);
     void addDefaultTypeConversionRules() override;
 
-    virtual std::string printString() const override;
+    virtual std::string getQualifiedName() const override;
     virtual SExpression asSExpression() const override;
     
     virtual AnyValuePtr basicNewValue() override;

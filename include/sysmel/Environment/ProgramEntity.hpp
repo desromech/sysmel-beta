@@ -49,8 +49,10 @@ public:
     virtual ModulePtr getDefinitionModule();
     virtual AnyValuePtr getName() const;
     virtual AnyValuePtr getValidName() const;
+    virtual ProgramEntityPtr getMainTemplateInstanceChild() const;
     virtual std::string getValidNameString() const;
     virtual std::string getQualifiedName() const;
+    virtual std::string printString() const override;
     virtual SExpression asSExpression() const override;
 
     virtual SSAValuePtr asProgramEntitySSAValue();

@@ -106,14 +106,14 @@ uint64_t PrimitiveVectorType::getMemoryAlignment()
     return elementType->getMemoryAlignment()*alignmentFactor;
 }
 
-std::string PrimitiveVectorType::printString() const
+std::string PrimitiveVectorType::getQualifiedName() const
 {
     if(name && !name->isAnonymousNameSymbol())
-        return SuperType::printString();
+        return SuperType::getQualifiedName();
 
     std::ostringstream out;
     out << '(';
-    out << elementType->printString();
+    out << elementType->getQualifiedName();
     out << " primitiveVectorWithElements: " << elements << ')';
     return out.str();
 }

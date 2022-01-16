@@ -108,11 +108,11 @@ TypePtr ReferenceType::asConstOrConstReferenceType()
     return baseType->withConst()->refFor(addressSpace);
 }
 
-std::string ReferenceType::printString() const
+std::string ReferenceType::getQualifiedName() const
 {
     if(hasGenericAddressSpace())
-        return baseType->printString() + " ref";
-    return "(" + baseType->printString() + " refFor: " + addressSpace->printString();
+        return baseType->getQualifiedName() + " ref";
+    return "(" + baseType->getQualifiedName() + " refFor: " + addressSpace->printString();
 }
 
 SExpression ReferenceType::asSExpression() const

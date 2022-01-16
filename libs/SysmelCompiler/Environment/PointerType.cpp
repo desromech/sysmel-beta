@@ -46,11 +46,11 @@ bool PointerType::isPointerType() const
     return true;
 }
 
-std::string PointerType::printString() const
+std::string PointerType::getQualifiedName() const
 {
     if(hasGenericAddressSpace())
-        return baseType->printString() + " pointer";
-    return "(" + baseType->printString() + " pointerFor: " + addressSpace->printString();
+        return baseType->getQualifiedName() + " pointer";
+    return "(" + baseType->getQualifiedName() + " pointerFor: " + addressSpace->printString();
 }
 
 SExpression PointerType::asSExpression() const

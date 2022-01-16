@@ -37,7 +37,7 @@ TypePtr FunctionalType::getReceiverType() const
     return Type::getVoidType();
 }
 
-std::string FunctionalType::printString() const
+std::string FunctionalType::getQualifiedName() const
 {
     std::ostringstream out;
     out << '(';
@@ -51,11 +51,11 @@ std::string FunctionalType::printString() const
         {
             if(i > 0)
                 out << ", ";
-            out << arguments[i]->printString();
+            out << arguments[i]->getQualifiedName();
         }
     }
     out << ") => ";
-    out << result->printString();
+    out << result->getQualifiedName();
 
     return out.str();
 }

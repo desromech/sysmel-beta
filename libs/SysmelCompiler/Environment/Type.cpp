@@ -207,13 +207,6 @@ void Type::setName(const AnyValuePtr &newName)
     name = newName;
 }
 
-std::string Type::printString() const
-{
-    if(name)
-        return name->asString();
-    return "an anonymous type";
-}
-
 AnyValuePtr Type::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
 {
     return visitor->visitType(selfFromThis());

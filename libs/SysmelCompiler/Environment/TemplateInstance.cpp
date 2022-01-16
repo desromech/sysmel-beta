@@ -6,6 +6,7 @@
 #include "Environment/LexicalScope.hpp"
 #include "Environment/SSATemplateInstance.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include <sstream>
 
 namespace Sysmel
 {
@@ -17,6 +18,31 @@ static BootstrapTypeRegistration<TemplateInstance> templateInstanceTypeRegistrat
 bool TemplateInstance::isTemplateInstance() const
 {
     return true;
+}
+
+ProgramEntityPtr TemplateInstance::getMainTemplateInstanceChild() const
+{
+    return children.empty() ? nullptr : children.front();
+}
+
+std::string TemplateInstance::getQualifiedName() const
+{
+    std::ostringstream out;
+    out << getParentProgramEntity()->getQualifiedName();
+    out << '(';
+    bool isFirst = true;
+    for(auto &[key, value] : argumentBindings)
+    {
+        if(isFirst)
+            isFirst = false;
+        else
+            out << ", ";
+        out << validAnyValue(value)->printString();
+    }
+
+    out << ')';
+
+    return out.str();
 }
 
 void TemplateInstance::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)

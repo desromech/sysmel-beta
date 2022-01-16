@@ -33,7 +33,7 @@ public:
     virtual TypePtr withDecorations(TypeDecorationFlags decorations) override;
     virtual TypePtr asDecayedType() override;
 
-    virtual std::string printString() const override;
+    virtual std::string getQualifiedName() const override;
     virtual SExpression asSExpression() const override;
 
     virtual PointerLikeTypeValuePtr makeWithValue(const AnyValuePtr &value) override;

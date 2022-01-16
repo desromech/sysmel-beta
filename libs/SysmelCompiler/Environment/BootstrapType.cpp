@@ -115,7 +115,7 @@ void BootstrapType::addDefaultTypeConversionRules()
     staticMetadata->addTypeConversionRules(selfFromThis());
 }
 
-std::string BootstrapType::printString() const
+std::string BootstrapType::getQualifiedName() const
 {
     return staticMetadata->typeName;
 }
