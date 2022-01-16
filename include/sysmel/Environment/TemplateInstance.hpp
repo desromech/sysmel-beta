@@ -26,6 +26,7 @@ public:
 
     virtual ProgramEntityPtr getMainTemplateInstanceChild() const override;
     virtual std::string getQualifiedName() const override;
+    std::string getInstanceNameWithArguments() const;
 
     virtual void recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild) override;
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;

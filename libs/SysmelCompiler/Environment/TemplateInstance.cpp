@@ -45,6 +45,26 @@ std::string TemplateInstance::getQualifiedName() const
     return out.str();
 }
 
+std::string TemplateInstance::getInstanceNameWithArguments() const
+{
+    std::ostringstream out;
+    out << getParentProgramEntity()->getValidNameStringIncludingTemplateName();
+    out << '(';
+    bool isFirst = true;
+    for(auto &[key, value] : argumentBindings)
+    {
+        if(isFirst)
+            isFirst = false;
+        else
+            out << ", ";
+        out << validAnyValue(value)->printString();
+    }
+
+    out << ')';
+
+    return out.str();
+}
+
 void TemplateInstance::recordChildProgramEntityDefinition(const ProgramEntityPtr &newChild)
 {
     children.push_back(newChild);

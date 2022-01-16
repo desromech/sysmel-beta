@@ -22,6 +22,7 @@ public:
 
     virtual TypePtr getValueType() const override;
     virtual SSAProgramEntityPtr getMainTemplateInstanceChild() const override;
+    std::string getInstanceNameWithArguments();
 
     virtual SExpression asSExpression() const override;
     virtual SExpression asFullDefinitionSExpression() const override;

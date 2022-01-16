@@ -2,6 +2,7 @@
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/TemplateInstance.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include <sstream>
 
 namespace Sysmel
 {
@@ -35,6 +36,24 @@ SExpression SSATemplateInstance::asSExpression() const
     return SExpressionList{{
         SExpressionIdentifier{{"templateInstance"}},
     }};
+}
+
+std::string SSATemplateInstance::getInstanceNameWithArguments()
+{
+    std::ostringstream out;
+    out << getParent()->getValidNameStringIncludingTemplateName();
+    out << '(';
+    bool isFirst = true;
+    for(auto & arg : arguments)
+    {
+        if(isFirst)
+            isFirst = false;
+        else
+            out << ", ";
+        out << validAnyValue(arg)->printString();
+    }
+    out << ')';
+    return out.str();
 }
 
 SExpression SSATemplateInstance::asFullDefinitionSExpression() const

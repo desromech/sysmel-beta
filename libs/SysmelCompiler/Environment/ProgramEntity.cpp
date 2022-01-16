@@ -4,6 +4,7 @@
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/FieldVariable.hpp"
+#include "Environment/TemplateInstance.hpp"
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/ASTBuilder.hpp"
 #include "Environment/ASTIdentifierReferenceNode.hpp"
@@ -42,6 +43,20 @@ AnyValuePtr ProgramEntity::getValidName() const
 std::string ProgramEntity::getValidNameString() const
 {
     auto nameValue = validAnyValue(getName());
+    return nameValue->isUndefined() ? std::string() : nameValue->asString();
+}
+
+std::string ProgramEntity::getValidNameStringIncludingTemplateName() const
+{
+    auto nameValue = validAnyValue(getName());
+
+    if(nameValue->isUndefined())
+    {
+        auto myParent = getParentProgramEntity();
+        if(myParent && myParent->getMainTemplateInstanceChild().get() == this)
+            return myParent.staticAs<TemplateInstance> ()->getInstanceNameWithArguments();
+    }
+
     return nameValue->isUndefined() ? std::string() : nameValue->asString();
 }
 

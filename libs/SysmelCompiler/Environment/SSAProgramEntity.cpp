@@ -1,6 +1,7 @@
 #include "Environment/SSAProgramEntity.hpp"
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/SSAFunction.hpp"
+#include "Environment/SSATemplateInstance.hpp"
 #include "Environment/UnsupportedOperation.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -29,6 +30,20 @@ void SSAProgramEntity::setName(const AnyValuePtr &newName)
 std::string SSAProgramEntity::getValidNameString() const
 {
     auto nameValue = validAnyValue(getName());
+    return nameValue->isUndefined() ? std::string() : nameValue->asString();
+}
+
+std::string SSAProgramEntity::getValidNameStringIncludingTemplateName() const
+{
+    auto nameValue = validAnyValue(getName());
+
+    if(nameValue->isUndefined())
+    {
+        auto myParent = getParent();
+        if(myParent && myParent->getMainTemplateInstanceChild().get() == this)
+            return myParent.staticAs<SSATemplateInstance> ()->getInstanceNameWithArguments();
+    }
+
     return nameValue->isUndefined() ? std::string() : nameValue->asString();
 }
 

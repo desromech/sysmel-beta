@@ -23,7 +23,9 @@ public:
 
     virtual AnyValuePtr getName() const override;
     void setName(const AnyValuePtr &newName);
+
     std::string getValidNameString() const;
+    std::string getValidNameStringIncludingTemplateName() const;
 
     virtual void addChild(const SSAProgramEntityPtr &child);
     virtual SSAProgramEntityPtr getMainTemplateInstanceChild() const;

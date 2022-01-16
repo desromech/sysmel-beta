@@ -149,7 +149,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     auto scope = file;
 
     auto builder = backend->getDIBuilder();
-    auto name = type->getValidNameString();
+    auto name = type->getValidNameStringIncludingTemplateName();
     auto line = sourcePosition->getLine();
     auto size = type->getMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
