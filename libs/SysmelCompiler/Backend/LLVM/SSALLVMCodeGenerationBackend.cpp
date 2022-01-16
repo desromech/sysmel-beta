@@ -154,6 +154,8 @@ void SSALLVMCodeGenerationBackend::initializePrimitiveTypeMap()
     };
 
     unsignedIntegerTypeSet = {
+        Boolean8::__staticType__(),
+
         UInt8::__staticType__(),
         UInt16::__staticType__(),
         UInt32::__staticType__(),

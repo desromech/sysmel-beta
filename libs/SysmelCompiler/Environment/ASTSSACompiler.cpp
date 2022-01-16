@@ -749,8 +749,8 @@ AnyValuePtr ASTSSACompiler::visitReturnNode(const ASTReturnNodePtr &node)
     else
         resultValue = builder->literal(getVoidConstant());
 
-    
-    return builder->returnFromFunction(resultValue);
+    returnValueFromFunction(resultValue);
+    return builder->literal(getVoidConstant());
 }
 
 AnyValuePtr ASTSSACompiler::visitContinueNode(const ASTContinueNodePtr &)
