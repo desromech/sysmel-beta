@@ -491,7 +491,7 @@ void PrimitiveVectorType::addSpecializedInstanceMethods()
 
             addMethodCategories({
                 {"arithmetic", {
-                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const PrimitiveVectorTypeValuePtr &self){
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (PrimitiveVectorTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {}, [=](const PrimitiveVectorTypeValuePtr &self){
                         auto result = basicMakeObject<PrimitiveVectorTypeValue> ();
                         result->type = resultType;
                         result->elements.reserve(elements);

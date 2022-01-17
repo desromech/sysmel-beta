@@ -146,7 +146,11 @@ AnyValuePtr ProgramEntity::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
     {
         auto symbolValue = symbol->asString();
         if(symbolValue == "self")
+        {
+            if(isSpecificMethod())
+                return getParentProgramEntity()->asSelfForStaticMethod();
             return selfFromThis();
+        }
     }
 
     return nullptr;
@@ -307,6 +311,11 @@ void ProgramEntity::addPublicInstanceAccessingMethodsWithSymbolOnto(const AnyVal
 {
     (void)symbol;
     (void)type;
+}
+
+AnyValuePtr ProgramEntity::asSelfForStaticMethod()
+{
+    return selfFromThis();
 }
 
 ProgramEntityPtr ProgramEntity::getParentProgramEntity() const

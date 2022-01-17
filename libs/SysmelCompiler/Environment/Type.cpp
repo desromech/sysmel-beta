@@ -248,6 +248,11 @@ TypePtr Type::asReceiverType()
     return selfFromThis();
 }
 
+AnyValuePtr Type::asSelfForStaticMethod()
+{
+    return getInstanceType();
+}
+
 AnyValuePtr Type::lookupLocalSelector(const AnyValuePtr &selector)
 {
     if(isMetaType())

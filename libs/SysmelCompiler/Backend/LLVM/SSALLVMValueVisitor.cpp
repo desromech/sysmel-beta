@@ -153,6 +153,14 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateTrunc(context.arguments.back(), context.resultType);
     }},
+    {"integer.conversion.unsigned.to-float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateUIToFP(context.arguments.back(), context.resultType);
+    }},
+    {"integer.conversion.signed.to-float", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateSIToFP(context.arguments.back(), context.resultType);
+    }},
 
     {"integer.equals", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
@@ -343,6 +351,24 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     }},
 
     // Floats
+    {"float.conversion.to-signed", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateFPToSI(context.arguments.back(), context.resultType);
+    }},
+    {"float.conversion.to-unsigned", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateFPToUI(context.arguments.back(), context.resultType);
+    }},
+
+    {"float.conversion.extend", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateFPExt(context.arguments.back(), context.resultType);
+    }},
+    {"float.conversion.truncate", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.builder->CreateFPTrunc(context.arguments.back(), context.resultType);
+    }},
+
     {"float.equals", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
         return context.self->coerceI1IntoBoolean8(context.builder->CreateFCmpUEQ(context.arguments[0], context.arguments[1]));
@@ -377,6 +403,13 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         sysmelAssert(context.arguments.size() == 1);
         return context.builder->CreateFNeg(context.arguments[0]);
     }},
+    {"float.reciprocal", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        auto x = context.arguments[0];
+        auto floatType = x->getType();
+        auto one = llvm::ConstantFP::get(floatType, 1);
+        return context.builder->CreateFDiv(one, x);
+    }},
 
     {"float.sign", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 1);
@@ -384,11 +417,11 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         auto floatType = x->getType();
         return context.builder->CreateSelect(
             context.builder->CreateFCmpULT(x, llvm::ConstantFP::get(floatType, 0)),
-            llvm::ConstantInt::get(floatType, -1),
+            llvm::ConstantFP::get(floatType, -1),
             context.builder->CreateSelect(
                 context.builder->CreateFCmpUGT(x, llvm::ConstantFP::get(floatType, 0)),
-                llvm::ConstantInt::get(floatType, 1),
-                llvm::ConstantInt::get(floatType, 0)
+                llvm::ConstantFP::get(floatType, 1),
+                llvm::ConstantFP::get(floatType, 0)
             )
         ); 
     }},
@@ -399,7 +432,7 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         return context.builder->CreateSelect(
             context.builder->CreateFCmpUGE(x, llvm::ConstantFP::get(floatType, 0)),
             x,
-            context.builder->CreateNeg(x)
+            context.builder->CreateFNeg(x)
         );
     }},
     {"float.min", +[](const IntrinsicGenerationContext &context) {

@@ -178,7 +178,7 @@ struct IntrinsicPrimitiveIntegerMethods
     {
         typedef ObjectPtr<SourceType> SourceTypePtr;
 
-        ctors.push_back(makeIntrinsicConstructor<PrimitiveIntegerPtr (TypePtr, SourceTypePtr)> ("float.conversion.to-integer", +[](const TypePtr &, const SourceTypePtr &value){
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveIntegerPtr (TypePtr, SourceTypePtr)> (IsSigned ? "float.conversion.to-signed" : "float.conversion.to-unsigned", +[](const TypePtr &, const SourceTypePtr &value){
             return makeValue(ValueType(value->value));
         }, MethodFlags::Pure | MethodFlags::Explicit));
     }

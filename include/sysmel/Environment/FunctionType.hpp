@@ -44,6 +44,7 @@ public:
     virtual bool isFunctionTypeValue() const override;
 
     virtual TypePtr getType() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
     
     virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
     virtual SSAValuePtr asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;

@@ -1,6 +1,8 @@
 #include "Backend/LLVM/LLVMLiteralValueVisitor.hpp"
 #include "Backend/LLVM/SSALLVMValueVisitor.hpp"
 
+#include "Environment/ASTSourcePosition.hpp"
+
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/ValueBox.hpp"
@@ -11,6 +13,7 @@
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/FunctionType.hpp"
 #include "Environment/ArrayType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
@@ -104,6 +107,12 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveVectorTypeValue(const Primiti
         elements.push_back(backend->translateLiteralValueWithExpectedType(value->elements[i], expectedElementType));
 
     return wrapLLVMConstant(llvm::ConstantVector::get(elements));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitFunctionTypeValue(const FunctionTypeValuePtr &value)
+{
+    auto functionValue = backend->translateGlobalValue(value->functionalImplementation->asSSAValueRequiredInPosition(ASTSourcePosition::empty()));
+    return wrapLLVMConstant(llvm::cast<llvm::Constant> (functionValue));
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value)

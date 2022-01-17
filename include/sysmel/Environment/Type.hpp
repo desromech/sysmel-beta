@@ -98,6 +98,8 @@ public:
     /// Converts this type into a specific receiver type.
     virtual TypePtr asReceiverType() override;
 
+    virtual AnyValuePtr asSelfForStaticMethod() override;
+
     /// This method performs the lookup for a macro message with the specified selector.
     virtual AnyValuePtr lookupMacroSelector(const AnyValuePtr &selector) override;
 

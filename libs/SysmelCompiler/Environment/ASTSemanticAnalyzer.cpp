@@ -1564,7 +1564,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
 
     // Concretize the default visibility.
     if(analyzedNode->visibility == ProgramEntityVisibility::Default)
-        analyzedNode->visibility = ProgramEntityVisibility::LexicalScope;
+    {
+        if(!environment->programEntityForPublicDefinitions || !environment->programEntityForPublicDefinitions->isTemplateInstance())
+            analyzedNode->visibility = ProgramEntityVisibility::LexicalScope;
+    }
 
     // TODO: Use the current expected type to assist the function type inference.
 
@@ -1684,10 +1687,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         compiledMethod->addMethodFlags(analyzedNode->methodFlags);
         ownerEntity->recordChildProgramEntityDefinition(compiledMethod);
 
-        if(isLocalDefinition)
-            environment->lexicalScope->setSymbolBinding(name, compiledMethod);
-        else
-            ownerEntity->bindProgramEntityWithVisibility(compiledMethod, analyzedNode->visibility);
+        if(name)
+        {
+            if(isLocalDefinition)
+                environment->lexicalScope->setSymbolBinding(name, compiledMethod);
+            else
+                ownerEntity->bindProgramEntityWithVisibility(compiledMethod, analyzedNode->visibility);
+        }
     }
     else
     {

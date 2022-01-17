@@ -50,6 +50,9 @@ enum class MethodFlags : uint32_t
     NotInCompileTime = 1<<16,
     CompileTime = 1<<17,
 
+    // Optimizations
+    Inline = 1<<18,
+
     VirtualSendFlags = Virtual | Abstract | Override,
 };
 

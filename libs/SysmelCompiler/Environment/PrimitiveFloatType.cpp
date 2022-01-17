@@ -1,5 +1,7 @@
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/PrimitiveBooleanType.hpp"
+#include "Environment/PrimitiveCharacterType.hpp"
+#include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/ASTBuilder.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
@@ -58,9 +60,46 @@ struct IntrinsicPrimitiveFloatMethods
         return nullptr;
     }
 
+    template<typename SourceType>
+    static void addUnsignedIntegerConstructor(AnyValuePtrList &ctors)
+    {
+        typedef ObjectPtr<SourceType> SourceTypePtr;
+
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveFloatPtr (TypePtr, SourceTypePtr)> ("integer.conversion.unsigned.to-float", +[](const TypePtr &, const SourceTypePtr &value){
+            return makeValue(ValueType(value->value));
+        }, MethodFlags::Pure | MethodFlags::Explicit));
+    }
+
+    template<typename SourceType>
+    static void addSignedIntegerConstructor(AnyValuePtrList &ctors)
+    {
+        typedef ObjectPtr<SourceType> SourceTypePtr;
+
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveFloatPtr (TypePtr, SourceTypePtr)> ("integer.conversion.signed.to-float", +[](const TypePtr &, const SourceTypePtr &value){
+            return makeValue(ValueType(value->value));
+        }, MethodFlags::Pure | MethodFlags::Explicit));
+    }
+
+    template<typename SourceType>
+    static void addFloatConstructor(AnyValuePtrList &ctors)
+    {
+        typedef ObjectPtr<SourceType> SourceTypePtr;
+        typedef typename SourceType::ValueType SourceValueType;
+
+        static constexpr auto SourceValueTypeSize = sizeof(SourceValueType);
+        static constexpr auto DestinationValueTypeSize = sizeof(ValueType);
+
+        if(SourceValueTypeSize == DestinationValueTypeSize)
+            return;
+
+        ctors.push_back(makeIntrinsicConstructor<PrimitiveFloatPtr (TypePtr, SourceTypePtr)> (SourceValueTypeSize < DestinationValueTypeSize ? "float.conversion.extend" : "float.conversion.truncate", +[](const TypePtr &, const SourceTypePtr &value){
+            return makeValue(ValueType(value->value));
+        }, MethodFlags::Pure | MethodFlags::Explicit));
+    }
+
     static AnyValuePtrList constructors()
     {
-        return AnyValuePtrList{
+        auto ctors = AnyValuePtrList{
             makeConstructor<PrimitiveFloatPtr (TypePtr, LiteralIntegerPtr)> (+[](const TypePtr &, const LiteralIntegerPtr &value){
                 return makeValue(ValueType(value->unwrapAsLargeInteger().asDouble()));
             }, MethodFlags::Explicit | MethodFlags::Pure),
@@ -73,6 +112,24 @@ struct IntrinsicPrimitiveFloatMethods
                 return makeValue(ValueType(value->unwrapAsFloat64()));
             }, MethodFlags::Explicit | MethodFlags::Pure),
         };
+
+        addUnsignedIntegerConstructor<UInt8> (ctors);
+        addUnsignedIntegerConstructor<UInt16> (ctors);
+        addUnsignedIntegerConstructor<UInt32> (ctors);
+        addUnsignedIntegerConstructor<UInt64> (ctors);
+
+        addUnsignedIntegerConstructor<Char8> (ctors);
+        addUnsignedIntegerConstructor<Char16> (ctors);
+        addUnsignedIntegerConstructor<Char32> (ctors);
+
+        addSignedIntegerConstructor<Int8> (ctors);
+        addSignedIntegerConstructor<Int16> (ctors);
+        addSignedIntegerConstructor<Int32> (ctors);
+        addSignedIntegerConstructor<Int64> (ctors);
+
+        addFloatConstructor<Float32> (ctors);
+        addFloatConstructor<Float64> (ctors);
+        return ctors;
     }
 
     static MethodCategories instanceMethods()
@@ -110,6 +167,9 @@ struct IntrinsicPrimitiveFloatMethods
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.neg", "negated", +[](const PrimitiveFloatPtr &v) {
                     return makeValue(-v->value);
+                }, MethodFlags::Pure),
+                makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.reciprocal", "reciprocal", +[](const PrimitiveFloatPtr &v) {
+                    return makeValue(1.0 / v->value);
                 }, MethodFlags::Pure),
 
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.sign", "sign", +[](const PrimitiveFloatPtr &v) {

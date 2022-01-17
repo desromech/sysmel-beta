@@ -52,6 +52,8 @@ static std::unordered_map<std::string, MethodFlags> methodFlagsMap = {
     {"returnsTwice", MethodFlags::ReturnsTwice},
     {"static", MethodFlags::Static},
     {"virtual", MethodFlags::Virtual},
+    {"notInCompiletime", MethodFlags::NotInCompileTime},
+    {"inline", MethodFlags::Inline},
 };
 
 static std::unordered_map<std::string, CallingConvention> callingConventionMap = {

@@ -1,6 +1,7 @@
 #include "Environment/ClosureType.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -81,6 +82,11 @@ bool ClosureTypeValue::isClosureTypeValue() const
 TypePtr ClosureTypeValue::getType() const
 {
     return type;
+}
+
+AnyValuePtr ClosureTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitClosureTypeValue(selfFromThis());
 }
 
 AnyValuePtr ClosureTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)

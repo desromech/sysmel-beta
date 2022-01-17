@@ -41,6 +41,7 @@ public:
     virtual bool isClosureTypeValue() const override;
 
     virtual TypePtr getType() const override;
+    virtual AnyValuePtr acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor) override;
 
     virtual AnyValuePtr applyWithArguments(const std::vector<AnyValuePtr> &arguments) override;
 

@@ -3,6 +3,7 @@
 #include "Environment/MethodType.hpp"
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
+#include "Environment/LiteralValueVisitor.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -100,6 +101,11 @@ bool FunctionTypeValue::isFunctionTypeValue() const
 TypePtr FunctionTypeValue::getType() const
 {
     return type;
+}
+
+AnyValuePtr FunctionTypeValue::acceptLiteralValueVisitor(const LiteralValueVisitorPtr &visitor)
+{
+    return visitor->visitFunctionTypeValue(selfFromThis());
 }
 
 AnyValuePtr FunctionTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)

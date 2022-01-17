@@ -144,6 +144,9 @@ public:
     /// Retrieves the parent program entity.
     ProgramEntityPtr getParentProgramEntity() const;
 
+    /// Converts me into a self value appropiate for a specific method.
+    virtual AnyValuePtr asSelfForStaticMethod();
+
     /// Sets the parent program entity.
     void setParentProgramEntity(const ProgramEntityPtr &newParent);
     

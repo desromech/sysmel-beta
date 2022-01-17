@@ -37,6 +37,9 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveFloatType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveMatrixTypeValue);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureTypeValue);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(FunctionTypeValue);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(DecoratedTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(EnumTypeValue);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PointerLikeTypeValue);
@@ -89,12 +92,16 @@ public:
     virtual AnyValuePtr visitPrimitiveIntegerType(const PrimitiveIntegerTypePtr &value);
     virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value);
 
+    virtual AnyValuePtr visitClosureTypeValue(const ClosureTypeValuePtr &value);
+    virtual AnyValuePtr visitFunctionTypeValue(const FunctionTypeValuePtr &value);
+
     virtual AnyValuePtr visitDecoratedTypeValue(const DecoratedTypeValuePtr &value);
     virtual AnyValuePtr visitEnumTypeValue(const EnumTypeValuePtr &value);
     virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value);
     virtual AnyValuePtr visitPointerTypeValue(const PointerTypeValuePtr &value);
     virtual AnyValuePtr visitReferenceTypeValue(const ReferenceTypeValuePtr &value);
     virtual AnyValuePtr visitTemporaryReferenceTypeValue(const TemporaryReferenceTypeValuePtr &value);
+
     virtual AnyValuePtr visitAggregateTypeValue(const AggregateTypeValuePtr &value);
     virtual AnyValuePtr visitArrayTypeValue(const ArrayTypeValuePtr &value);
     virtual AnyValuePtr visitTupleTypeValue(const TupleTypeValuePtr &value);

@@ -16,6 +16,8 @@
 #include "Environment/PrimitiveCharacterType.hpp"
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
+#include "Environment/FunctionType.hpp"
+#include "Environment/ClosureType.hpp"
 #include "Environment/DecoratedType.hpp"
 #include "Environment/EnumType.hpp"
 #include "Environment/PointerType.hpp"
@@ -156,6 +158,16 @@ AnyValuePtr LiteralValueVisitor::visitPrimitiveIntegerType(const PrimitiveIntege
 AnyValuePtr LiteralValueVisitor::visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value)
 {
     return visitPrimitiveScalarType(value);
+}
+
+AnyValuePtr LiteralValueVisitor::visitClosureTypeValue(const ClosureTypeValuePtr &value)
+{
+    return visitAnyValue(value);
+}
+
+AnyValuePtr LiteralValueVisitor::visitFunctionTypeValue(const FunctionTypeValuePtr &value)
+{
+    return visitAnyValue(value);
 }
 
 AnyValuePtr LiteralValueVisitor::visitDecoratedTypeValue(const DecoratedTypeValuePtr &value)
