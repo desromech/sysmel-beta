@@ -24,6 +24,7 @@ public:
 protected:
     virtual ASTNodePtr concretizeMetaBuilder() override;
 
+    bool bitMask = false;
     ASTNodePtr valueTypeNode;
     ASTNodePtr valuesNode;
 };

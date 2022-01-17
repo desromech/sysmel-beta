@@ -26,6 +26,7 @@ public:
 
     virtual AnyValuePtr visitMetaType(const MetaTypePtr &type) override;
     virtual AnyValuePtr visitDecoratedType(const DecoratedTypePtr &type) override;
+    virtual AnyValuePtr visitEnumType(const EnumTypePtr &type) override;
 
     virtual AnyValuePtr visitPointerType(const PointerTypePtr &type) override;
     virtual AnyValuePtr visitReferenceType(const ReferenceTypePtr &type) override;

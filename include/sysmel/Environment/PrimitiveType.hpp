@@ -25,7 +25,6 @@ public:
     static constexpr bool __isImmutableType__ = true;
 
     virtual bool isPrimitiveTypeValue() const override;
-    virtual bool isPureCompileTimeLiteralValue() const override;
 };
 
 } // End of namespace Environment

@@ -2129,6 +2129,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
         enumType = basicMakeObject<EnumType> ();
         enumType->setName(name);
         enumType->setBaseType(AnyValue::__staticType__());
+        enumType->setBitMask(node->bitMask);
         enumType->setSupertypeAndImplicitMetaType(EnumTypeValue::__staticType__());
         enumType->setVisibility(node->visibility);
         enumType->setExternalLanguageMode(node->externalLanguageMode);

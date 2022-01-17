@@ -179,6 +179,11 @@ void EnumType::evaluateAllPendingBodyBlockCodeFragments()
     SuperType::evaluateAllPendingBodyBlockCodeFragments();
 }
 
+void EnumType::setBitMask(bool newBitMask)
+{
+    bitMask = newBitMask;
+}
+
 void EnumType::addValue(const ASTNodePtr &position, const AnyValuePtr &key, const AnyValuePtr &value)
 {
     rawValues[key] = validAnyValue(value);

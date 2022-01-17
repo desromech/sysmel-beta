@@ -12,7 +12,15 @@ static BootstrapTypeRegistration<EnumMetaBuilder> typeMetaBuilderTypeRegistratio
 
 ASTNodePtr EnumMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &selector, const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
-    if(node->arguments.size() == 1)
+    if(node->arguments.size() == 0)
+    {
+        if(selector == "bitMask")
+        {
+            bitMask = true;
+            return node->receiver;
+        }
+    }
+    else if(node->arguments.size() == 1)
     {
         if(selector == "valueType:")
         {
@@ -37,6 +45,7 @@ ASTNodePtr EnumMetaBuilder::concretizeMetaBuilder()
 
     result->name = nameNode;
     result->body = bodyNode;
+    result->bitMask = bitMask;
     result->valueType = valueTypeNode;
     result->values = valuesNode;
     return result;

@@ -13,10 +13,5 @@ bool PrimitiveType::isPrimitiveTypeValue() const
     return true;
 }
 
-bool PrimitiveType::isPureCompileTimeLiteralValue() const
-{
-    return true;
-}
-
 } // End of namespace Environment
 } // End of namespace Sysmel

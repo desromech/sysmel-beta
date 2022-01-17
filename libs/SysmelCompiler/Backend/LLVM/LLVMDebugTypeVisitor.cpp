@@ -17,6 +17,7 @@
 #include "Environment/ArrayType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
 
+#include "Environment/AggregateTypeVariantLayout.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
 #include "Environment/StructureType.hpp"
@@ -98,6 +99,37 @@ AnyValuePtr LLVMDebugTypeVisitor::visitDecoratedType(const DecoratedTypePtr &typ
         result = backend->getDIBuilder()->createQualifiedType(llvm::dwarf::DW_TAG_const_type, result);
 
     return wrapLLVMDebugType(result);
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitEnumType(const EnumTypePtr &type)
+{
+    auto sourcePosition = type->getSourceDefinitionPosition();
+    auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
+    llvm::DIScope* scope = nullptr;
+
+    auto parentProgramEntity = type->getParentProgramEntity();
+    if(parentProgramEntity)
+        scope = backend->getOrCreateDIScopeForSSAProgramEntity(staticObjectCast<SSAProgramEntity> (parentProgramEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty())));
+    if(!scope)
+        scope = file;
+
+    auto builder = backend->getDIBuilder();
+    auto name = type->getValidNameStringIncludingTemplateName();
+    auto line = sourcePosition->getLine();
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+
+    auto baseType = backend->translateDIType(type->getBaseType());
+
+    std::vector<llvm::Metadata*> elements;
+
+    auto enumType = backend->getDIBuilder()->createEnumerationType(
+        scope, name, file, line,
+        size, alignment,
+        builder->getOrCreateArray(elements), baseType,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+    return wrapLLVMDebugType(enumType);
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitPointerType(const PointerTypePtr &type)
@@ -279,15 +311,54 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
 {
     auto builder = backend->getDIBuilder();
 
-    auto name = type->getQualifiedName();
+    auto layout = type->getLayout().staticAs<AggregateTypeVariantLayout> ();
+
+    auto scope = nullptr;
+    auto file = nullptr;
     auto line = 0;
-    auto size = type->getMemorySize()*8;
+
+    auto name = type->getQualifiedName();
+    auto size = type->getAlignedMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
+
+    auto discriminantOffset = layout->getOffsetForSlotIndex(0)*8;
+    auto elementOffset = layout->getOffsetForSlotIndex(layout->getElementMemorySlotIndex())*8;
+
+    auto discriminatorType = layout->getDataTypeIndexType();
+    auto discriminatorLLVMType = backend->translateType(discriminatorType);
+    auto discriminator = builder->createMemberType(
+        nullptr, "typeSelector", nullptr, 0,
+        discriminatorType->getMemorySize()*8, discriminatorType->getMemoryAlignment()*8,
+        discriminantOffset, llvm::DINode::FlagArtificial, backend->translateDIType(discriminatorType)
+    );
+
+    std::vector<llvm::Metadata*> elements;
+    elements.reserve(type->elementTypes.size());
+    for(size_t i = 0; i < type->elementTypes.size(); ++i)
+    {
+        auto discriminantConstant = llvm::ConstantInt::get(discriminatorLLVMType, i);
+
+        auto elementType = type->elementTypes[i];
+        auto elementDebugType = backend->translateDIType(elementType);
+        auto elementName = elementType->getQualifiedName();
+        elements.push_back(builder->createVariantMemberType(nullptr, elementName, nullptr, 0,
+            elementType->getMemorySize()*8, elementType->getMemoryAlignment()*8, elementOffset,
+            discriminantConstant, llvm::DINode::FlagArtificial, elementDebugType
+        ));
+    }
+
+    llvm::Metadata* typeElements[] = {builder->createVariantPart(
+        nullptr, "", nullptr, 0,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, discriminator, builder->getOrCreateArray(elements),
+        backend->getNameMangler()->mangleTypeInfo(type)
+    )};
+
     auto variantType = builder->createStructType(
-        nullptr, name, nullptr, line,
+        scope, name, file, line,
         size, uint32_t(alignment),
         llvm::DINode::FlagTypePassByReference, nullptr, 
-        builder->getOrCreateArray({}),
+        builder->getOrCreateArray(typeElements),
         0, nullptr,
         backend->getNameMangler()->mangleTypeInfo(type)
     );

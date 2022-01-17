@@ -129,5 +129,17 @@ TypePtr AggregateTypeVariantLayout::getTypeForNonPaddingSlot(int64_t slotIndex)
     return getTypeForSlotAndOffset(slotIndex, 0);
 }
 
+uint64_t AggregateTypeVariantLayout::getOffsetForSlotIndex(uint32_t slotIndex)
+{    switch(slotIndex)
+    {
+    case 0: return 0;
+    case 1: return paddingSize > 0 ? paddingOffset : elementMemoryOffset;
+    case 2: return paddingSize > 0 ? elementMemoryOffset : endPaddingOffset;
+    case 3: return paddingSize > 0 && endPaddingSize > 0 ? endPaddingOffset : 0;
+    default:
+        return 0;
+    }
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

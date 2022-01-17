@@ -40,6 +40,8 @@ public:
     virtual void enqueuePendingValueTypeCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
     virtual void enqueuePendingValuesCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment);
 
+    void setBitMask(bool newBitMask);
+
     void addValue(const ASTNodePtr &position, const AnyValuePtr &key, const AnyValuePtr &value);
     AnyValuePtr lookupRawValue(const AnyValuePtr &symbol);
 
@@ -54,6 +56,7 @@ protected:
     void evaluatePendingValueTypeCodeFragments();
     void evaluatePendingValuesFragments();
 
+    bool bitMask = false;
     bool hasEvaluatedValueType = false;
     DeferredCompileTimeCodeFragmentPtrList pendingValueTypeCodeFragments;
     DeferredCompileTimeCodeFragmentPtrList pendingValuesCodeFragments;

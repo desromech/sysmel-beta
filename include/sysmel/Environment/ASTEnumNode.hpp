@@ -23,6 +23,7 @@ public:
 
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
+    bool bitMask = false;
     ASTNodePtr valueType;
     ASTNodePtr values;
 };

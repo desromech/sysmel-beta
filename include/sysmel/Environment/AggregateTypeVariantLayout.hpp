@@ -38,6 +38,8 @@ public:
     virtual TypePtr getTypeForSlotAndOffset(int64_t slotIndex, int64_t slotOffset) override;
     virtual TypePtr getTypeForNonPaddingSlot(int64_t slotIndex) override;
 
+    virtual uint64_t getOffsetForSlotIndex(uint32_t slotIndex) override;
+
     const TypePtr &getDataTypeIndexType() const
     {
         return dataTypeIndexType;

@@ -220,6 +220,23 @@ MethodCategories LiteralInteger::__instanceMethods__()
             }, MethodFlags::Pure),
         }},
 
+
+        {"bitwise", {
+            makeMethodBinding<LargeInteger (LargeInteger)> ("bitInvert", +[](const LargeInteger &v) {
+                return LargeInteger{1} - v;
+            }, MethodFlags::Pure),
+            makeMethodBinding<LargeInteger (LargeInteger)> ("pre-~", +[](const LargeInteger &v) {
+                return LargeInteger{1} - v;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<LargeInteger (LargeInteger, uint32_t)> ("<<", +[](const LargeInteger &a, uint32_t b) {
+                return a << b;
+            }, MethodFlags::Pure),
+            makeMethodBinding<LargeInteger (LargeInteger, uint32_t)> (">>", +[](const LargeInteger &a, uint32_t b) {
+                return a >> b;
+            }, MethodFlags::Pure),
+        }},
+
         {"math functions", {
             makeMethodBinding<LargeInteger (LargeInteger)> ("factorial", +[](const LargeInteger &value) {
                 return value.factorial();
