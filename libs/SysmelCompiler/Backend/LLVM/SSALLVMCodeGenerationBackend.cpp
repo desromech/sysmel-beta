@@ -68,6 +68,9 @@ static llvm::CodeGenOpt::Level optimizationLevelToCodeGen(OptimizationLevel leve
     switch(level)
     {
     case OptimizationLevel::O3: return llvm::CodeGenOpt::Aggressive;
+    case OptimizationLevel::O2: return llvm::CodeGenOpt::Default;
+    case OptimizationLevel::O1: return llvm::CodeGenOpt::Less;
+    case OptimizationLevel::O0: return llvm::CodeGenOpt::None;
     default: return llvm::CodeGenOpt::Default;
     }
 }
