@@ -23,6 +23,7 @@
 #include "Environment/ClassType.hpp"
 #include "Environment/UnionType.hpp"
 #include "Environment/TupleType.hpp"
+#include "Environment/VariantType.hpp"
 
 #include "Environment/SSAProgramEntity.hpp"
 
@@ -256,14 +257,42 @@ AnyValuePtr LLVMDebugTypeVisitor::visitUnionType(const UnionTypePtr &type)
 
 AnyValuePtr LLVMDebugTypeVisitor::visitTupleType(const TupleTypePtr &type)
 {
-    (void)type;
-    return wrapLLVMDebugType(backend->translateDIType(Type::getUIntPointerType()));
+    auto builder = backend->getDIBuilder();
+
+    auto name = type->getQualifiedName();
+    auto line = 0;
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+    auto variantType = builder->createStructType(
+        nullptr, name, nullptr, line,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, nullptr, 
+        builder->getOrCreateArray({}),
+        0, nullptr,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+
+    return wrapLLVMDebugType(variantType);
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
 {
-    (void)type;
-    return wrapLLVMDebugType(backend->translateDIType(Type::getUIntPointerType()));
+    auto builder = backend->getDIBuilder();
+
+    auto name = type->getQualifiedName();
+    auto line = 0;
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+    auto variantType = builder->createStructType(
+        nullptr, name, nullptr, line,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, nullptr, 
+        builder->getOrCreateArray({}),
+        0, nullptr,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+
+    return wrapLLVMDebugType(variantType);
 }
 
 } // End of namespace Environment

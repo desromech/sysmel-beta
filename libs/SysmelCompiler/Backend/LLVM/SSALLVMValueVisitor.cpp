@@ -715,7 +715,8 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
     }},
     {"reference.copy.assignment.trivial", +[](const IntrinsicGenerationContext &context) {
         sysmelAssert(context.arguments.size() == 2);
-        return context.builder->CreateStore(context.arguments[1], context.arguments[0]);
+        context.builder->CreateStore(context.arguments[1], context.arguments[0]);
+        return context.arguments[0];
     }},
 
     // CVarArg
