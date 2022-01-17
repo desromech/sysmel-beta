@@ -318,7 +318,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
     auto line = 0;
 
     auto name = type->getQualifiedName();
-    auto size = type->getAlignedMemorySize()*8;
+    auto size = type->getMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
 
     auto discriminantOffset = layout->getOffsetForSlotIndex(0)*8;
@@ -340,17 +340,17 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
 
         auto elementType = type->elementTypes[i];
         auto elementDebugType = backend->translateDIType(elementType);
-        auto elementName = elementType->getQualifiedName();
+        auto elementName = "";
         elements.push_back(builder->createVariantMemberType(nullptr, elementName, nullptr, 0,
             elementType->getMemorySize()*8, elementType->getMemoryAlignment()*8, elementOffset,
-            discriminantConstant, llvm::DINode::FlagArtificial, elementDebugType
+            discriminantConstant, llvm::DINode::FlagZero, elementDebugType
         ));
     }
 
     llvm::Metadata* typeElements[] = {builder->createVariantPart(
         nullptr, "", nullptr, 0,
         size, uint32_t(alignment),
-        llvm::DINode::FlagTypePassByReference, discriminator, builder->getOrCreateArray(elements),
+        llvm::DINode::FlagZero, discriminator, builder->getOrCreateArray(elements),
         backend->getNameMangler()->mangleTypeInfo(type)
     )};
 
