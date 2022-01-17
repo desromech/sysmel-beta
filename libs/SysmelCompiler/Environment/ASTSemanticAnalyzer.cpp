@@ -774,8 +774,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallN
 AnyValuePtr ASTSemanticAnalyzer::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
     auto analyzedNode = shallowCloneObject(node);
-    analyzedNode->analyzedScope = basicMakeObject<LexicalScope> ();
-    analyzedNode->analyzedScope->parent = environment->lexicalScope;
+    analyzedNode->analyzedScope = LexicalScope::makeWithParent(environment->lexicalScope, node->sourcePosition);
 
     auto newEnvironment = environment->copyWithLexicalScope(analyzedNode->analyzedScope);
     analyzedNode->body = withEnvironmentDoAnalysis(newEnvironment, [&]() {
@@ -2071,7 +2070,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitNamespaceNode(const ASTNamespaceNodePtr &n
 
     // Analyze the body.
     if(analyzedNode->body)
-        analyzedNode->body = withEnvironmentDoAnalysis(environment->copyForPublicProgramEntityBody(namespaceEntity), [&]() {
+        analyzedNode->body = withEnvironmentDoAnalysis(environment->copyForPublicProgramEntityBody(namespaceEntity, analyzedNode->body->sourcePosition), [&]() {
             return analyzeNodeIfNeededWithExpectedType(analyzedNode->body, Type::getVoidType());
         });
 
@@ -2143,7 +2142,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
     // Defer the values.
     if(analyzedNode->values)
     {
-        enumType->enqueuePendingValuesCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->values, environment->copyForPublicProgramEntityBody(enumType)));
+        enumType->enqueuePendingValuesCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->values, environment->copyForPublicProgramEntityBody(enumType, analyzedNode->values->sourcePosition)));
         analyzedNode->values.reset();
     }
 
@@ -2151,7 +2150,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitEnumNode(const ASTEnumNodePtr &node)
     if(analyzedNode->body)
     {
         enumType->setSourceDefinitionPosition(node->sourcePosition);
-        enumType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(enumType)));
+        enumType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(enumType, analyzedNode->body->sourcePosition)));
         analyzedNode->body.reset();
     }
 
@@ -2206,7 +2205,7 @@ AnyValuePtr ASTSemanticAnalyzer::analyzeAndEvaluateValueForEnumType(const AnyVal
         enumScope->parent = environment->lexicalScope;
         enumScope->enumType = enumType;
 
-        auto valueEnvironment = environment->copyWithLexicalScope(LexicalScope::makeWithParent(enumScope));
+        auto valueEnvironment = environment->copyWithLexicalScope(LexicalScope::makeWithParent(enumScope, valueNode->sourcePosition));
         auto analyzedValueNode = withEnvironmentDoAnalysis(valueEnvironment, [&](){
             return analyzeNodeIfNeededWithExpectedType(valueNode, baseType);
         });
@@ -2281,7 +2280,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitClassNode(const ASTClassNodePtr &node)
     if(analyzedNode->body)
     {
         classType->setSourceDefinitionPosition(node->sourcePosition);
-        classType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(classType)));
+        classType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(classType, analyzedNode->body->sourcePosition)));
         analyzedNode->body.reset();
     }
 
@@ -2346,7 +2345,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitStructNode(const ASTStructNodePtr &node)
     if(analyzedNode->body)
     {
         structureType->setSourceDefinitionPosition(node->sourcePosition);
-        structureType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(structureType)));
+        structureType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(structureType, analyzedNode->body->sourcePosition)));
         analyzedNode->body.reset();
     }
 
@@ -2410,7 +2409,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitUnionNode(const ASTUnionNodePtr &node)
     if(analyzedNode->body)
     {
         unionType->setSourceDefinitionPosition(node->sourcePosition);
-        unionType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(unionType)));
+        unionType->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(unionType, analyzedNode->body->sourcePosition)));
         analyzedNode->body.reset();
     }
 
@@ -2435,7 +2434,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitProgramEntityExtensionNode(const ASTProgra
 
     if(analyzedNode->body)
     {
-        analyzedNode->analyzedProgramEntity->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(analyzedNode->analyzedProgramEntity)));
+        analyzedNode->analyzedProgramEntity->enqueuePendingBodyBlockCodeFragment(DeferredCompileTimeCodeFragment::make(analyzedNode->body, environment->copyForPublicProgramEntityBody(analyzedNode->analyzedProgramEntity, analyzedNode->body->sourcePosition)));
         analyzedNode->body.reset();
     }
 

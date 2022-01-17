@@ -9,6 +9,8 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
+
 typedef std::function<void (SSAValuePtr&)> SSAInstructionParameterIterationBlock;
 typedef std::function<void (const SSAValuePtr&)> SSAInstructionConstParameterIterationBlock;
 typedef std::function<void (const SSACodeRegionPtr&)> SSAInstructionRegionIterationBlock;
@@ -49,9 +51,13 @@ public:
     const ASTSourcePositionPtr &getSourcePosition() const;
     void setSourcePosition(const ASTSourcePositionPtr &newSourcePosition);
 
+    const LexicalScopePtr &getLexicalScope() const;
+    void setLexicalScope(const LexicalScopePtr &newLexicalScope);
+
 protected:
 
     ASTSourcePositionPtr sourcePosition;
+    LexicalScopePtr lexicalScope;
 
     SSABasicBlockPtr parent;
     SSAInstructionPtr previousInstruction;

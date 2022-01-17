@@ -1,5 +1,6 @@
 #include "Environment/LanguageSupport.hpp"
 #include "Environment/ASTNode.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
@@ -54,7 +55,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
     auto result = basicMakeObject<ASTAnalysisEnvironment> ();
     result->languageSupport = selfFromThis();
     result->programEntityForPublicDefinitions = Module::getActive()->getGlobalNamespace();
-    result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions));
+    result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(createDefaultTopLevelLexicalScope(), result->programEntityForPublicDefinitions), ASTSourcePosition::empty());
     result->defaultTemplateArgumentType = Type::getAnyValueType();
     if(Module::getActive()->isScriptModule())
     {
@@ -69,7 +70,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createDefaultAnalysisEnvironment()
 
 LexicalScopePtr LanguageSupport::createDefaultTopLevelLexicalScope()
 {
-    return basicMakeObject<LexicalScope> ();
+    return LexicalScope::makeEmpty(ASTSourcePosition::empty());
 }
 
 ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnvironment()
@@ -83,7 +84,7 @@ ASTAnalysisEnvironmentPtr LanguageSupport::createMakeLiteralArrayAnalysisEnviron
 
 LexicalScopePtr LanguageSupport::createMakeLiteralArrayTopLevelLexicalScope()
 {
-    return basicMakeObject<LexicalScope> ();
+    return LexicalScope::makeEmpty(ASTSourcePosition::empty());
 }
 
 ASTNodePtr LanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)

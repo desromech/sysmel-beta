@@ -1,4 +1,5 @@
 #include "Environment/IdentifierLookupScope.hpp"
+#include "Environment/ASTSourcePosition.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -47,6 +48,11 @@ bool IdentifierLookupScope::isNameReserved(const AnyValuePtr &symbol)
         return true;
 
     return parent ? parent->isNameReserved(symbol) : false;
+}
+
+ASTSourcePositionPtr IdentifierLookupScope::getSourcePosition() const
+{
+    return ASTSourcePosition::empty();
 }
 
 } // End of namespace Environment

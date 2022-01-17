@@ -82,6 +82,7 @@ protected:
 
     ASTAnalysisEnvironmentPtr definitionEnvironment;
     ASTNodePtr analyzedBodyNode;
+    ASTAnalysisEnvironmentPtr analyzedBodyEnvironment;
     SSAFunctionPtr ssaCompiledFunction;
 
     ProgramEntityPtrList children;

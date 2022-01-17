@@ -10,6 +10,7 @@ namespace Environment
 {
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
 
 /**
  * I am the base interface for any object is specifically defined in the compiler domain.
@@ -21,6 +22,9 @@ public:
 
     void setSourcePosition(const ASTSourcePositionPtr &sourcePosition);
     const ASTSourcePositionPtr &getSourcePosition() const;
+
+    const LexicalScopePtr &getLexicalScope() const;
+    void setLexicalScope(const LexicalScopePtr &newLexicalScope);
 
     void setCodeRegion(const SSACodeRegionPtr &region);
     const SSACodeRegionPtr &getCodeRegion() const;
@@ -81,6 +85,7 @@ protected:
     SSABasicBlockPtr currentBasicBlock;
     SSAInstructionPtr currentPosition;
     ASTSourcePositionPtr currentSourcePosition;
+    LexicalScopePtr currentLexicalScope;
 };
 
 } // End of namespace Environment

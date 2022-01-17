@@ -1,6 +1,8 @@
 #include "Environment/ASTSSACompiler.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
+#include "Environment/ASTAnalysisEnvironment.hpp"
+
 #include "Environment/ASTNode.hpp"
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTCleanUpScopeNode.hpp"
@@ -193,7 +195,7 @@ SSAValuePtr ASTSSACompiler::makeAggregateWithElements(const AggregateTypePtr &ag
     return result;
 }
 
-void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node)
+void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node, const ASTAnalysisEnvironmentPtr &nodeEnvironment)
 {
     currentMethod = method;
     currentSSAFunction = ssaFunction;
@@ -211,11 +213,13 @@ void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SS
 
     builder = basicMakeObject<SSABuilder> ();
     builder->setSourcePosition(node->sourcePosition);
+    builder->setLexicalScope(nodeEnvironment->lexicalScope);
     builder->setCodeRegion(currentCodeRegion);
     builder->makeBasicBlockHere();
 
     cleanUpBuilder = basicMakeObject<SSABuilder> ();
     cleanUpBuilder->setSourcePosition(node->sourcePosition);
+    cleanUpBuilder->setLexicalScope(nodeEnvironment->lexicalScope);
     cleanUpBuilder->setCodeRegion(currentCleanUpCodeRegion);
     cleanUpBuilder->makeBasicBlockHere();
 
@@ -308,11 +312,13 @@ AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &
     auto cleanUpRegion = builder->makeCodeRegionWithSignature({}, Type::getVoidType());
 
     auto newBuilder = basicMakeObject<SSABuilder> ();
+    newBuilder->setLexicalScope(builder->getLexicalScope());
     newBuilder->setSourcePosition(node->sourcePosition);
     newBuilder->setCodeRegion(bodyRegion);
     newBuilder->makeBasicBlockHere();
 
     auto newCleanUpBuilder = basicMakeObject<SSABuilder> ();
+    newCleanUpBuilder->setLexicalScope(cleanUpBuilder->getLexicalScope());
     newCleanUpBuilder->setSourcePosition(node->sourcePosition);
     newCleanUpBuilder->setCodeRegion(cleanUpRegion);
     newCleanUpBuilder->makeBasicBlockHere();
@@ -367,7 +373,17 @@ AnyValuePtr ASTSSACompiler::visitClosureNode(const ASTClosureNodePtr &node)
 
 AnyValuePtr ASTSSACompiler::visitLexicalScopeNode(const ASTLexicalScopeNodePtr &node)
 {
-    return visitNodeForValue(node->body);
+    auto oldScope = builder->getLexicalScope();
+    auto oldCleanUp = cleanUpBuilder->getLexicalScope();
+
+    builder->setLexicalScope(node->analyzedScope);
+    cleanUpBuilder->setLexicalScope(node->analyzedScope);
+
+    auto result = visitNodeForValue(node->body);
+    
+    builder->setLexicalScope(oldScope);
+    cleanUpBuilder->setLexicalScope(oldCleanUp);
+    return result;
 }
 
 AnyValuePtr ASTSSACompiler::visitLiteralValueNode(const ASTLiteralValueNodePtr &node)

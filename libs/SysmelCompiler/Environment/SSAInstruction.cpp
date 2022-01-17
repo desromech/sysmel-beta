@@ -126,5 +126,15 @@ void SSAInstruction::setSourcePosition(const ASTSourcePositionPtr &newSourcePosi
     sourcePosition = newSourcePosition;
 }
 
+const LexicalScopePtr &SSAInstruction::getLexicalScope() const
+{
+    return lexicalScope;
+}
+
+void SSAInstruction::setLexicalScope(const LexicalScopePtr &newLexicalScope)
+{
+    lexicalScope = newLexicalScope;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

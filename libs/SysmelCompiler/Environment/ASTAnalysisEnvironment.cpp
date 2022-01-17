@@ -26,12 +26,12 @@ ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyWithCleanUpcope(const Clea
     return result;
 }
 
-ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyForPublicProgramEntityBody(const ProgramEntityPtr &publicProgramEntity)
+ASTAnalysisEnvironmentPtr ASTAnalysisEnvironment::copyForPublicProgramEntityBody(const ProgramEntityPtr &publicProgramEntity, const ASTSourcePositionPtr &sourcePosition)
 {
     auto result = basicMakeObject<ASTAnalysisEnvironment> (*this);
     result->programEntityForPublicDefinitions = publicProgramEntity;
     result->cleanUpScope = CleanUpScope::makeWithParent(cleanUpScope);
-    result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(lexicalScope, publicProgramEntity));
+    result->lexicalScope = LexicalScope::makeWithParent(ProgramEntityScope::make(lexicalScope, publicProgramEntity), sourcePosition);
     result->continueLevelCount = 0;
     result->breakLevelCount = 0;
     return result;

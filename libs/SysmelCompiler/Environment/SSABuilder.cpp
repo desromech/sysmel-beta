@@ -58,6 +58,16 @@ const ASTSourcePositionPtr &SSABuilder::getSourcePosition() const
     return currentSourcePosition;
 }
 
+const LexicalScopePtr &SSABuilder::getLexicalScope() const
+{
+    return currentLexicalScope;
+}
+
+void SSABuilder::setLexicalScope(const LexicalScopePtr &newLexicalScope)
+{
+    currentLexicalScope = newLexicalScope;
+}
+
 void SSABuilder::setCodeRegion(const SSACodeRegionPtr &region)
 {
     currentRegion = region;
@@ -153,6 +163,7 @@ SSABreakInstructionPtr SSABuilder::breakInstruction()
 {
     auto instruction = basicMakeObject<SSABreakInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     addInstruction(instruction);
     return instruction;   
 }
@@ -161,6 +172,7 @@ SSACallInstructionPtr SSABuilder::call(const TypePtr &resultType, const SSAValue
 {
     auto instruction = basicMakeObject<SSACallInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(resultType);
     instruction->setFunction(function);
     instruction->setArguments(arguments);
@@ -172,6 +184,7 @@ SSAContinueInstructionPtr SSABuilder::continueInstruction()
 {
     auto instruction = basicMakeObject<SSAContinueInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     addInstruction(instruction);
     return instruction;   
 }
@@ -180,6 +193,7 @@ SSADeclareLocalVariableInstructionPtr SSABuilder::declareLocalVariable(const SSA
 {
     auto instruction = basicMakeObject<SSADeclareLocalVariableInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValue(value);
     instruction->setVariable(variable);
     addInstruction(instruction);
@@ -190,6 +204,7 @@ SSADoWithCleanupInstructionPtr SSABuilder::doWithCleanUp(const SSACodeRegionPtr 
 {
     auto instruction = basicMakeObject<SSADoWithCleanupInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setBodyRegion(bodyRegion);
     instruction->setCleanUpRegion(cleanUpRegion);
     addInstruction(instruction);
@@ -201,6 +216,7 @@ SSADoWhileInstructionPtr SSABuilder::doWhileContinueWith(const SSACodeRegionPtr 
 {
     auto instruction = basicMakeObject<SSADoWhileInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setConditionRegion(conditionRegion);
     instruction->setBodyRegion(bodyRegion);
     instruction->setContinueRegion(continueRegion);
@@ -212,6 +228,7 @@ SSAGetAggregateFieldReferenceInstructionPtr SSABuilder::getAggregateFieldReferen
 {
     auto instruction = basicMakeObject<SSAGetAggregateFieldReferenceInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(valueType);
     instruction->setAggregate(aggregate);
     instruction->setFieldVariable(field);
@@ -223,6 +240,7 @@ SSAGetAggregateSlotReferenceInstructionPtr SSABuilder::getAggregateSlotReference
 {
     auto instruction = basicMakeObject<SSAGetAggregateSlotReferenceInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(valueType);
     instruction->setAggregate(aggregate);
     instruction->setSlotIndex(slotIndex);
@@ -234,6 +252,7 @@ SSAIfInstructionPtr SSABuilder::ifTrueIfFalse(const TypePtr &resultType, const S
 {
     auto instruction = basicMakeObject<SSAIfInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(resultType);
     instruction->setCondition(condition);
     instruction->setTrueRegion(trueRegion);
@@ -250,6 +269,7 @@ SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
 
     auto instruction = basicMakeObject<SSALoadInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(resultType);
     instruction->setReference(reference);
     addInstruction(instruction);
@@ -263,6 +283,7 @@ SSALocalVariableInstructionPtr SSABuilder::localVariable(const TypePtr &referenc
 
     auto instruction = basicMakeObject<SSALocalVariableInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setVariableReferenceType(referenceType);
     instruction->setVariableValueType(valueType);
     addInstruction(instruction);
@@ -273,6 +294,7 @@ SSAMakeClosureInstructionPtr SSABuilder::makeClosure(const SSAValuePtr &closureI
 {
     auto instruction = basicMakeObject<SSAMakeClosureInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setClosureImplementation(closureImplementation);
     instruction->setCapturedValues(capturedValues);
     addInstruction(instruction);
@@ -283,6 +305,7 @@ SSAMakeVectorInstructionPtr SSABuilder::makeVector(const TypePtr &vectorType, co
 {
     auto instruction = basicMakeObject<SSAMakeVectorInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(vectorType);
     instruction->setElements(elements);
     addInstruction(instruction);
@@ -293,6 +316,7 @@ SSAReturnFromFunctionInstructionPtr SSABuilder::returnFromFunction(const SSAValu
 {
     auto instruction = basicMakeObject<SSAReturnFromFunctionInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValue(normalizeValue(value));
     addInstruction(instruction);
     return instruction;
@@ -302,6 +326,7 @@ SSAReturnFromRegionInstructionPtr SSABuilder::returnFromRegion(const SSAValuePtr
 {
     auto instruction = basicMakeObject<SSAReturnFromRegionInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValue(normalizeValue(value));
     addInstruction(instruction);
     return instruction;
@@ -311,6 +336,7 @@ SSASendMessageInstructionPtr SSABuilder::sendMessage(const TypePtr &resultType, 
 {
     auto instruction = basicMakeObject<SSASendMessageInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(resultType);
     instruction->setCalledFunctionalType(calledFunctionType);
     instruction->setSelector(selector);
@@ -325,6 +351,7 @@ SSAStoreInstructionPtr SSABuilder::storeValueIn(const SSAValuePtr &value, const 
 {
     auto instruction = basicMakeObject<SSAStoreInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValue(value);
     instruction->setReference(reference);
     addInstruction(instruction);
@@ -335,6 +362,7 @@ SSAUnreachableInstructionPtr SSABuilder::unreachableInstruction()
 {
     auto instruction = basicMakeObject<SSAUnreachableInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     addInstruction(instruction);
     return instruction;   
 }
@@ -343,6 +371,7 @@ SSAVectorSwizzleInstructionPtr SSABuilder::vectorSwizzle(const TypePtr &resultTy
 {
     auto instruction = basicMakeObject<SSAVectorSwizzleInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setValueType(resultType);
     instruction->setVector(vector);
     instruction->setSelectedElements(selectedElements);
@@ -354,6 +383,7 @@ SSAWhileInstructionPtr SSABuilder::whileDoContinueWith(const SSACodeRegionPtr &c
 {
     auto instruction = basicMakeObject<SSAWhileInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setConditionRegion(conditionRegion);
     instruction->setBodyRegion(bodyRegion);
     instruction->setContinueRegion(continueRegion);
@@ -365,6 +395,7 @@ SSABitcastInstructionPtr SSABuilder::bitcast(const TypePtr &targetType, const SS
 {
     auto instruction = basicMakeObject<SSABitcastInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setTargetType(targetType);
     instruction->setValue(value);
     addInstruction(instruction);
@@ -375,6 +406,7 @@ SSAUpcastInstructionPtr SSABuilder::upcast(const TypePtr &targetType, const SSAV
 {
     auto instruction = basicMakeObject<SSAUpcastInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setTargetType(targetType);
     instruction->setValue(value);
     addInstruction(instruction);
@@ -385,6 +417,7 @@ SSADowncastInstructionPtr SSABuilder::downcast(const TypePtr &targetType, const 
 {
     auto instruction = basicMakeObject<SSADowncastInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setTargetType(targetType);
     instruction->setValue(value);
     addInstruction(instruction);
@@ -395,6 +428,7 @@ SSAEnableLocalFinalizationPtr SSABuilder::enableLocalFinalization(const SSAValue
 {
     auto instruction = basicMakeObject<SSAEnableLocalFinalization> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setLocalVariable(localVariable);
     addInstruction(instruction);
     return instruction;
@@ -404,6 +438,7 @@ SSALocalFinalizationPtr SSABuilder::localFinalization(const SSAValuePtr &localVa
 {
     auto instruction = basicMakeObject<SSALocalFinalization> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setLocalVariable(localVariable);
     instruction->setFinalizationRegion(finalizationCodeRegion);
     addInstruction(instruction);
@@ -414,6 +449,7 @@ SSACheckExpectedTypeSelectorValueInstructionPtr SSABuilder::checkExpectedTypeSel
 {
     auto instruction = basicMakeObject<SSACheckExpectedTypeSelectorValueInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
     instruction->setAggregate(aggregate);
     instruction->setTypeSelectorIndex(typeSelectorSlotIndex);
     instruction->setTypeSelectorReferenceType(typeSelectorSlotReferenceType);

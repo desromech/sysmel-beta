@@ -9,15 +9,20 @@ namespace Environment
 
 static BootstrapTypeRegistration<LexicalScope> LexicalScopeRegistration;
 
-LexicalScopePtr LexicalScope::makeEmpty()
+LexicalScopePtr LexicalScope::makeEmpty(const ASTSourcePositionPtr &sourcePosition)
 {
-    return basicMakeObject<LexicalScope> ();
+    sysmelAssert(sourcePosition);
+    auto result = basicMakeObject<LexicalScope> ();
+    result->sourcePosition = sourcePosition;
+    return result;
 }
 
-LexicalScopePtr LexicalScope::makeWithParent(const IdentifierLookupScopePtr &parent)
+LexicalScopePtr LexicalScope::makeWithParent(const IdentifierLookupScopePtr &parent, const ASTSourcePositionPtr &sourcePosition)
 {
+    sysmelAssert(sourcePosition);
     auto result = basicMakeObject<LexicalScope> ();
     result->parent = parent;
+    result->sourcePosition = sourcePosition;
     return result;
 }
 
@@ -58,6 +63,11 @@ AnyValuePtr LexicalScope::lookupSymbolRecursively(const AnyValuePtr &symbol)
 void LexicalScope::setSymbolBinding(const AnyValuePtr &symbol, const AnyValuePtr &binding)
 {
     boundSymbols[symbol] = binding;
+}
+
+ASTSourcePositionPtr LexicalScope::getSourcePosition() const
+{
+    return sourcePosition;
 }
 
 } // End of namespace Environment

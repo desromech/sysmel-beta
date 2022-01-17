@@ -10,6 +10,8 @@
 
 #include "Environment/ArgumentVariable.hpp"
 
+#include "Environment/LexicalScope.hpp"
+
 #include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/SSAFunction.hpp"
 #include "Environment/SSACodeRegion.hpp"
@@ -1136,7 +1138,7 @@ void SSALLVMValueVisitor::declareDebugArgument(const SSACodeRegionArgumentPtr &a
     if(!variable)
         return;
 
-    auto debugVariable = translateDebugLocalVariable(variable);   
+    auto debugVariable = translateDebugLocalVariable(variable, nullptr);   
     if(!debugVariable)
         return;
 
@@ -1161,21 +1163,31 @@ void SSALLVMValueVisitor::declareDebugCapture(const SSACodeRegionCapturePtr &cap
     (void)capturePointer;
 }
 
-llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const VariablePtr &variable)
+llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const VariablePtr &variable, const LexicalScopePtr &lexicalScope)
 {
     auto sourcePosition = variable->getDefinitionPosition();
     auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
     auto line = sourcePosition->getLine();
     auto debugType = backend->translateDIType(variable->getValueType());
 
+    auto scope = backend->getOrCreateDIScopeForIdentifierLookupScope(lexicalScope);
+    if(!scope)
+        scope = currentFunction->getSubprogram();
+
     // Arguments
-    auto scope = currentFunction->getSubprogram();
     if(variable->isArgumentVariable())
     {
-        auto argumentIndex = variable.staticAs<ArgumentVariable> ()->argumentIndex;
+        auto argumentVariable = variable.staticAs<ArgumentVariable> ();
+        auto argumentIndex = argumentVariable->argumentIndex;
+        auto flags = llvm::DINode::FlagZero;
+        if(argumentVariable->isImplicit)
+            flags |= llvm::DINode::FlagArtificial;
+        if(argumentVariable->isReceiver)
+            flags |= llvm::DINode::FlagObjectPointer;
+
         return backend->getDIBuilder()->createParameterVariable(
             scope, variable->getValidNameString(), 1 + argumentIndex,
-            file, line, debugType
+            file, line, debugType, false, flags
         );
     }
 
@@ -1190,7 +1202,7 @@ llvm::DILocalVariable *SSALLVMValueVisitor::translateDebugLocalVariable(const Va
 
 void SSALLVMValueVisitor::translateInstruction(const SSAInstructionPtr &instruction)
 {
-    withSourcePositionDo(instruction->getSourcePosition(), [&]{
+    withSourcePositionAndLexicalScopeDo(instruction->getSourcePosition(), instruction->getLexicalScope(), [&]{
         auto instructionValue = visitValueForLLVM(instruction);
         localTranslatedValueMap.insert({instruction, instructionValue});
     });
@@ -1301,12 +1313,16 @@ AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSAD
     auto variable = instruction->getVariable();
     if(diBuilder && variable && !validAnyValue(variable->getName())->isHiddenNameSymbol())
     {
-        auto diVariable = translateDebugLocalVariable(variable);
+        auto diVariable = translateDebugLocalVariable(variable, instruction->getLexicalScope());
         if(diVariable)
         {
             auto address = value;
             auto refType = variable->getReferenceType()->asUndecoratedType();
-            auto scope = currentFunction->getSubprogram();
+            
+            auto scope = backend->getOrCreateDIScopeForIdentifierLookupScope(instruction->getLexicalScope());
+            if(!scope)
+                scope = currentFunction->getSubprogram();
+
             auto location = backend->getDILocationFor(instruction->getSourcePosition(), scope);
             if(!address->getType()->isPointerTy() || (!refType->isReferenceLikeType() && !refType->isPassedByReference()))
             {
@@ -1879,13 +1895,17 @@ llvm::Value *SSALLVMValueVisitor::findLocalFinalizationFlagFor(const SSAValuePtr
     return localTranslatedFinalizationEnabledFlagMap.find(localVariable)->second;
 }
 
-void SSALLVMValueVisitor::withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock)
+void SSALLVMValueVisitor::withSourcePositionAndLexicalScopeDo(const ASTSourcePositionPtr &sourcePosition, const LexicalScopePtr &lexicalScope, const std::function<void()> &aBlock)
 {
     if(!backend->getDIBuilder() || !builder)
         return aBlock();
 
     auto oldLocation = builder->getCurrentDebugLocation();
-    auto newLocation = backend->getDILocationFor(sourcePosition, currentFunction->getSubprogram());
+    auto scope = backend->getOrCreateDIScopeForIdentifierLookupScope(lexicalScope);
+    if(!scope)
+        scope = currentFunction->getSubprogram();
+
+    auto newLocation = backend->getDILocationFor(sourcePosition, scope);
     builder->SetCurrentDebugLocation(newLocation);
 
     doWithEnsure([&]{

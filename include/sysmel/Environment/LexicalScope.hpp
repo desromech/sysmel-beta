@@ -21,8 +21,8 @@ class SYSMEL_COMPILER_LIB_EXPORT LexicalScope : public SubtypeOf<IdentifierLooku
 public:
     static constexpr char const __typeName__[] = "LexicalScope";
 
-    static LexicalScopePtr makeEmpty();
-    static LexicalScopePtr makeWithParent(const IdentifierLookupScopePtr &parent);
+    static LexicalScopePtr makeEmpty(const ASTSourcePositionPtr &sourcePosition);
+    static LexicalScopePtr makeWithParent(const IdentifierLookupScopePtr &parent, const ASTSourcePositionPtr &sourcePosition);
 
     virtual bool isLexicalScope() const override;
 
@@ -34,7 +34,12 @@ public:
     void lockForNewDefinitions();
 
     void useNamespace(const ProgramEntityPtr &namespaceProgramEntity);
+
+    virtual ASTSourcePositionPtr getSourcePosition() const override;
+
 private:
+    ASTSourcePositionPtr sourcePosition;
+
     bool lockedForNewDefinitions;
     std::unordered_map<AnyValuePtr, AnyValuePtr> boundSymbols;
     std::vector<ProgramEntityPtr> usedNamespaces;

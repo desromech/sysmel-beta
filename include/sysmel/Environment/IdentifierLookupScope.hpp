@@ -39,6 +39,9 @@ public:
     /// Is the name reserved so that it cannot be overriden?
     virtual bool isNameReserved(const AnyValuePtr &symbol);
 
+    /// Gets the scope source position.
+    virtual ASTSourcePositionPtr getSourcePosition() const;
+
     IdentifierLookupScopePtr parent;
 };
 

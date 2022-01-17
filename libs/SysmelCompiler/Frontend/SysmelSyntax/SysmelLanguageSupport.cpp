@@ -455,7 +455,7 @@ void SysmelLanguageSupport::initialize()
     SuperType::initialize();
 
     {
-        keywordScope = Environment::basicMakeObject<LexicalScope> ();
+        keywordScope = LexicalScope::makeEmpty(ASTSourcePosition::empty());
         keywordScope->setSymbolBinding(internSymbol("true"), getTrueConstant());
         keywordScope->setSymbolBinding(internSymbol("false"), getFalseConstant());
         keywordScope->setSymbolBinding(internSymbol("nil"), getNilConstant());
@@ -463,7 +463,7 @@ void SysmelLanguageSupport::initialize()
     }
 
     {
-        topLevelScope = Environment::basicMakeObject<LexicalScope> ();
+        topLevelScope = LexicalScope::makeEmpty(ASTSourcePosition::empty());
         topLevelScope->parent = keywordScope;
 
         // Use the language namespace.

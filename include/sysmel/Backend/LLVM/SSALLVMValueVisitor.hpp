@@ -118,12 +118,11 @@ protected:
     llvm::Value *createLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
     llvm::Value *findLocalFinalizationFlagFor(const SSAValuePtr &localVariable);
 
-    void withSourcePositionDo(const ASTSourcePositionPtr &sourcePosition, const std::function<void()> &aBlock);
+    void withSourcePositionAndLexicalScopeDo(const ASTSourcePositionPtr &sourcePosition, const LexicalScopePtr &lexicalScope, const std::function<void()> &aBlock);
 
     void declareDebugArgument(const SSACodeRegionArgumentPtr &argument);
     void declareDebugCapture(const SSACodeRegionCapturePtr &capture, llvm::Value *capturePointer);
-    void declareDebugLocalVariable(const SSALocalVariableInstruction &localVariable);
-    llvm::DILocalVariable *translateDebugLocalVariable(const VariablePtr &variable);
+    llvm::DILocalVariable *translateDebugLocalVariable(const VariablePtr &variable, const LexicalScopePtr &lexicalScope);
 
     llvm::Function *currentFunction = nullptr;
     SSAFunctionPtr currentFunctionBeingTranslated;

@@ -112,7 +112,7 @@ void TemplateInstance::addArgumentBinding(const AnyValuePtr &name, const AnyValu
 
 void TemplateInstance::evaluateDefinitionFragment(const TemplateDefinitionFragment &fragment)
 {
-    auto scope = LexicalScope::makeWithParent(fragment.environment->lexicalScope);
+    auto scope = LexicalScope::makeWithParent(fragment.environment->lexicalScope, fragment.position);
     for(auto &[key, argumentValue] : argumentBindings)
         scope->setSymbolBinding(key, validAnyValue(argumentValue));
 

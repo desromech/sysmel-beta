@@ -27,6 +27,11 @@ public:
 
     virtual AnyValuePtr lookupSymbolLocally(const AnyValuePtr &symbol) override;
 
+    const ProgramEntityPtr &getProgramEntity() const
+    {
+        return programEntity;
+    }
+
 private:
     ProgramEntityPtr programEntity;
 };

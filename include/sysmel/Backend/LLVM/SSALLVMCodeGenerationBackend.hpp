@@ -56,6 +56,8 @@ namespace Environment
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(NameMangler);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(VirtualTable);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(SSAProgramEntity);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(IdentifierLookupScope);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
 }
 
 namespace LLVM
@@ -124,6 +126,8 @@ public:
     llvm::DILocation *getDILocationFor(const ASTSourcePositionPtr &sourcePosition, llvm::DIScope *scope);
 
     llvm::DIScope *getOrCreateDIScopeForSSAProgramEntity(const SSAProgramEntityPtr &ssaProgramEntity);
+    llvm::DIScope *getOrCreateDIScopeForIdentifierLookupScope(const IdentifierLookupScopePtr &scope);
+    llvm::DIScope *getOrCreateDIScopeWithFile(llvm::DIScope *scope, llvm::DIFile *file);
 
 protected:
     void initializePrimitiveTypeMap();
@@ -148,6 +152,7 @@ protected:
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;
     std::unordered_map<AnyValuePtr, llvm::DIScope*> diScopeMap;
     std::unordered_map<VirtualTablePtr, llvm::Constant*> translatedVirtualTables;
+    std::map<std::pair<llvm::DIScope*, llvm::DIFile*>, llvm::DIScope*> scopesWithExtraFiles;
     std::map<std::pair<uint32_t, std::string>, llvm::Constant*> internedStringConstants;
 };
 

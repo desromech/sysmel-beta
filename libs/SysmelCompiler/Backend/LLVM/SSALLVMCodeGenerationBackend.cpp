@@ -21,6 +21,9 @@
 
 #include "Environment/VirtualTable.hpp"
 
+#include "Environment/LexicalScope.hpp"
+#include "Environment/ProgramEntityScope.hpp"
+
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/StringUtilities.hpp"
 #include "Environment/SSAProgramEntity.hpp"
@@ -340,7 +343,11 @@ llvm::DILocation *SSALLVMCodeGenerationBackend::getDILocationFor(const ASTSource
     if(!sourcePosition || sourcePosition->isASTEmptySourcePosition())
         return nullptr;
 
-    return llvm::DILocation::get(*context, sourcePosition->getLine(), sourcePosition->getColumn(), scope ? scope : diCompileUnit);
+    llvm::DIScope *validScope = scope ? scope : diCompileUnit;
+    auto expectedFile = getOrCreateDIFileForSourcePosition(sourcePosition);
+    auto scopeWithFile = getOrCreateDIScopeWithFile(validScope, expectedFile);
+
+    return llvm::DILocation::get(*context, sourcePosition->getLine(), sourcePosition->getColumn(), scopeWithFile);
 }
 
 llvm::Value *SSALLVMCodeGenerationBackend::findGlobalValueTranslation(const SSAValuePtr &value)
@@ -426,6 +433,39 @@ void SSALLVMCodeGenerationBackend::setDebugTypeTranslation(const TypePtr &type, 
     debugTypeMap[type] = translatedType;
 }
 
+llvm::DIScope *SSALLVMCodeGenerationBackend::getOrCreateDIScopeForIdentifierLookupScope(const IdentifierLookupScopePtr &scope)
+{
+    if(!scope)
+        return nullptr;
+    
+    auto it = diScopeMap.find(scope);
+    if(it != diScopeMap.end())
+        return it->second;
+
+    llvm::DIScope *result = nullptr;
+    if(scope->isProgramEntityScope())
+    {
+        auto programEntity = scope.staticAs<ProgramEntityScope>()->getProgramEntity();
+
+        result = getOrCreateDIScopeForSSAProgramEntity(staticObjectCast<SSAProgramEntity> (programEntity->asSSAValueRequiredInPosition(ASTSourcePosition::empty())));
+    }
+    else if(scope->isLexicalScope())
+    {
+        auto parentScope = getOrCreateDIScopeForIdentifierLookupScope(scope->parent);
+        auto scopePosition = scope->getSourcePosition();
+        auto file = getOrCreateDIFileForSourcePosition(scopePosition);
+
+        result = diBuilder->createLexicalBlock(parentScope, file, scopePosition->getLine(), scopePosition->getColumn());
+    }
+    else
+    {
+        result = getOrCreateDIScopeForIdentifierLookupScope(scope->parent);
+    }
+
+    diScopeMap.insert({scope, result});
+    return result;
+}
+
 llvm::DIScope *SSALLVMCodeGenerationBackend::getOrCreateDIScopeForSSAProgramEntity(const SSAProgramEntityPtr &ssaProgramEntity)
 {
     if(!ssaProgramEntity)
@@ -440,6 +480,20 @@ llvm::DIScope *SSALLVMCodeGenerationBackend::getOrCreateDIScopeForSSAProgramEnti
     auto result = visitor->translateDIScope(ssaProgramEntity);
     diScopeMap.insert({ssaProgramEntity, result});
     return result;
+}
+
+llvm::DIScope *SSALLVMCodeGenerationBackend::getOrCreateDIScopeWithFile(llvm::DIScope *scope, llvm::DIFile *file)
+{
+    if(!scope || scope->getFile() == file)
+        return scope;
+
+    auto it = scopesWithExtraFiles.find({scope, file});
+    if(it != scopesWithExtraFiles.end())
+        return it->second;
+    
+    auto scopeWithFile = diBuilder->createLexicalBlockFile(scope, file);
+    scopesWithExtraFiles.insert({{scope, file}, scopeWithFile});
+    return scopeWithFile;
 }
 
 llvm::Constant *SSALLVMCodeGenerationBackend::translateLiteralValueWithExpectedType(const AnyValuePtr &literal, const TypePtr &expectedType)

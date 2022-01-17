@@ -30,7 +30,7 @@ public:
 
     SSAValuePtr visitNodeForValue(const ASTNodePtr &node);
 
-    void compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node);
+    void compileMethodBody(const CompiledMethodPtr &method, const SSAFunctionPtr &ssaFunction, const ASTNodePtr &node, const ASTAnalysisEnvironmentPtr &nodeEnvironment);
 
     virtual AnyValuePtr visitCallNode(const ASTCallNodePtr &node) override;
     virtual AnyValuePtr visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &node) override;

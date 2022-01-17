@@ -16,6 +16,7 @@
 #include "Environment/ASTAnalysisEnvironment.hpp"
 #include "Environment/CleanUpScope.hpp"
 #include "Environment/LexicalScope.hpp"
+#include "Environment/ProgramEntityScope.hpp"
 #include "Environment/ReceiverMemberLookupScope.hpp"
 #include "Environment/CompileTimeCleanUpScope.hpp"
 
@@ -66,7 +67,7 @@ void CompiledMethod::setDefinition(const ASTNodePtr &node, const ASTNodePtr &bod
 ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
 {
     auto result = definitionEnvironment->copyWithCleanUpcope(CleanUpScope::makeEmpty());
-    IdentifierLookupScopePtr parentScope = definitionEnvironment->lexicalScope;
+    IdentifierLookupScopePtr parentScope = ProgramEntityScope::make(definitionEnvironment->lexicalScope, selfFromThis());
 
     if(receiverArgument)
     {
@@ -77,7 +78,7 @@ ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
         parentScope = receiverScope;
     }
 
-    auto lexicalScope = LexicalScope::makeWithParent(parentScope);
+    auto lexicalScope = LexicalScope::makeWithParent(parentScope, definitionPosition);
     result->lexicalScope = lexicalScope;
     result->returnTargetMethod = selfFromThis();
     result->localDefinitionsOwner = selfFromThis();
@@ -135,6 +136,7 @@ void CompiledMethod::createImplicitReceiverArgumentVariableWithType(const TypePt
 
     receiverArgument = basicMakeObject<ArgumentVariable> ();
     receiverArgument->isImplicit = true;
+    receiverArgument->isReceiver = true;
     recordChildProgramEntityDefinition(receiverArgument);
     receiverArgument->setType(receiverType);
 }
@@ -171,7 +173,8 @@ ASTNodePtr CompiledMethod::analyzeDefinitionWith(const ASTSemanticAnalyzerPtr &a
     if(analyzedBodyNode)
         return analyzedBodyNode;
 
-    analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(createSemanticAnalysisEnvironment(), [&]() {
+    analyzedBodyEnvironment = createSemanticAnalysisEnvironment();
+    analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(analyzedBodyEnvironment, [&]() {
         return analyzer->analyzeNodeIfNeededWithExpectedType(definitionBodyNode, functionalType->getResultType());
     });
 
@@ -294,7 +297,7 @@ SSAValuePtr CompiledMethod::asSSAValueRequiredInPosition(const ASTSourcePosition
             mainCodeRegion->getArgument(i + argumentsOffset)->setDefinitionPosition(arguments[i]->getDefinitionPosition());
 
         auto compiler = basicMakeObject<ASTSSACompiler> ();
-        compiler->compileMethodBody(selfFromThis(), ssaCompiledFunction, analyzedBodyNode);
+        compiler->compileMethodBody(selfFromThis(), ssaCompiledFunction, analyzedBodyNode, analyzedBodyEnvironment);
     }
 
     return ssaCompiledFunction;
