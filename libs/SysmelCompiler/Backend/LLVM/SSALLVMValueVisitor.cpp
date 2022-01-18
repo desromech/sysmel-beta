@@ -1358,7 +1358,7 @@ AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSAD
                 scope = currentFunction->getSubprogram();
 
             auto location = backend->getDILocationFor(instruction->getSourcePosition(), scope);
-            if(!address->getType()->isPointerTy() || (!refType->isReferenceLikeType() && !refType->isPassedByReference()))
+            if(!refType->isPassedByReference())
             {
                 address = allocaBuilder->CreateAlloca(value->getType());
                 builder->CreateStore(value, address);
