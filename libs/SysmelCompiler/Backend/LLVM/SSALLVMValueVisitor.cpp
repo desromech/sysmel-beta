@@ -1352,13 +1352,15 @@ AnyValuePtr SSALLVMValueVisitor::visitDeclareLocalVariableInstruction(const SSAD
         {
             auto address = value;
             auto refType = variable->getReferenceType()->asUndecoratedType();
+            auto valueType = variable->getValueType();
             
             auto scope = backend->getOrCreateDIScopeForIdentifierLookupScope(instruction->getLexicalScope());
             if(!scope)
                 scope = currentFunction->getSubprogram();
 
             auto location = backend->getDILocationFor(instruction->getSourcePosition(), scope);
-            if(!refType->isPassedByReference())
+            if((!refType->isReferenceLikeType() && !refType->isPassedByReference())
+                || valueType->isReferenceLikeType())
             {
                 address = allocaBuilder->CreateAlloca(value->getType());
                 builder->CreateStore(value, address);
