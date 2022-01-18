@@ -47,7 +47,7 @@ public:
 protected:
     virtual void buildLayout();
     virtual void computeObjectLifetimeTriviality();
-    virtual void ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector);
+    virtual void ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const std::string &selector) override;
 
     AggregateTypeLayoutPtr layout;
     bool hasTrivialInitialization_ = true;

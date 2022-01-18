@@ -19,8 +19,8 @@ MethodCategories LiteralString::__instanceMethods__()
 {
     return MethodCategories{
         {"accessing", {
-            makeMethodBinding<size_t (std::string)> ("size", [](const std::string &self) {
-                return self.size();
+            makeMethodBinding<uint64_t (std::string)> ("size", [](const std::string &self) {
+                return uint64_t(self.size());
             }, MethodFlags::Pure),
         }},
 
