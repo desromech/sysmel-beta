@@ -14,8 +14,11 @@ set(Environment_Sources
     ArithmeticError.cpp
     ArrayType.cpp
     Assert.cpp
+    ASTAlternativesPatternNode.cpp
     ASTAnalysisEnvironment.cpp
+    ASTAnyValuePatternNode.cpp
     ASTArgumentDefinitionNode.cpp
+    ASTBindingPatternNode.cpp
     ASTBreakNode.cpp
     ASTBuilder.cpp
     ASTCallNode.cpp
@@ -57,9 +60,12 @@ set(Environment_Sources
     ASTMessageSendNode.cpp
     ASTMethodNode.cpp
     ASTNamespace.cpp
+    ASTNeverPatternNode.cpp
     ASTNode.cpp
     ASTParseErrorNode.cpp
     ASTParseErrorValidator.cpp
+    ASTPatternNode.cpp
+    ASTPredicatedPatternNode.cpp
     ASTPragmaNode.cpp
     ASTProgramEntityExtensionNode.cpp
     ASTProgramEntityNode.cpp
@@ -68,6 +74,7 @@ set(Environment_Sources
     ASTQuasiQuoteNode.cpp
     ASTQuasiUnquoteNode.cpp
     ASTQuoteNode.cpp
+    ASTRangePatternNode.cpp
     ASTQuasiQuotePatternExpansionNode.cpp
     ASTQuasiQuotePatternExpansionArgumentNode.cpp
     ASTReinterpretCastNode.cpp
@@ -75,6 +82,7 @@ set(Environment_Sources
     ASTSemanticAnalyzer.cpp
     ASTSemanticErrorNode.cpp
     ASTSequenceNode.cpp
+    ASTSequencePatternNode.cpp
     ASTSlotAccessNode.cpp
     ASTSourceCode.cpp
     ASTSourceCodePosition.cpp
@@ -90,6 +98,7 @@ set(Environment_Sources
     ASTUpcastTypeConversionNode.cpp
     ASTValueAsReferenceReinterpretConversionNode.cpp
     ASTValueAsVoidTypeConversionNode.cpp
+    ASTValuePatternNode.cpp
     ASTVariableAccessNode.cpp
     ASTVariableNode.cpp
     ASTVectorSwizzleNode.cpp

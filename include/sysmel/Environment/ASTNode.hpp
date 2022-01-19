@@ -89,6 +89,16 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReinterpretCastNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuotePatternExpansionNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTQuasiQuotePatternExpansionArgumentNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPatternNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAlternativesPatternNode); // x | y
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTAnyValuePatternNode); // _
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBindingPatternNode); // let x [type:] [:= value]
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTNeverPatternNode); // Impossible to match pattern
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPredicatedPatternNode); // when:
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTRangePatternNode); // to:
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequencePatternNode);  // x ()
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTValuePatternNode); // Anything else.
+
 typedef std::function<void (const ASTNodePtr &)> ASTIterationBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -110,6 +120,8 @@ public:
     virtual bool isPureCompileTimeEvaluableNode() const;
 
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr parseAsPatternNode();
+    virtual ASTNodePtr parseAsBindingPatternNode();
     
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     virtual ASTNodePtr asInlinedBlockBodyNode();

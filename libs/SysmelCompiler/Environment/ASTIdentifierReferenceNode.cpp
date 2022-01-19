@@ -1,6 +1,8 @@
 #include "Environment/ASTIdentifierReferenceNode.hpp"
 #include "Environment/ASTArgumentDefinitionNode.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTAnyValuePatternNode.hpp"
+#include "Environment/ASTBindingPatternNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
 #include "Environment/Type.hpp"
@@ -45,6 +47,26 @@ ASTNodePtr ASTIdentifierReferenceNode::parseAsArgumentNodeWith(const ASTSemantic
     result->identifier = nameNode;
 
     return result;
+}
+
+ASTNodePtr ASTIdentifierReferenceNode::parseAsPatternNode()
+{
+    if(validAnyValue(identifier)->isAnonymousNameSymbol())
+    {
+        auto pattern = basicMakeObject<ASTAnyValuePatternNode> ();
+        pattern->sourcePosition = sourcePosition;
+        return pattern;
+    }
+    
+    return SuperType::parseAsPatternNode();
+}
+
+ASTNodePtr ASTIdentifierReferenceNode::parseAsBindingPatternNode()
+{
+    auto bindingPattern = basicMakeObject<ASTBindingPatternNode> ();
+    bindingPattern->sourcePosition = sourcePosition;
+    bindingPattern->identifier = identifier;
+    return bindingPattern;
 }
 
 } // End of namespace Environment

@@ -25,6 +25,8 @@ public:
 
     virtual CompilationErrorPtr asCompilationError();
 
+    virtual ASTNodePtr parseAsPatternNode() override;
+
     std::string errorMessage;
 };
 

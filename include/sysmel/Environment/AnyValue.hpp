@@ -620,6 +620,33 @@ public:
     /// Is this object an AST slot access node?
     virtual bool isASTSlotAccessNode() const;
 
+    /// Is this object an AST pattern node?
+    virtual bool isASTPatternNode() const;
+
+    /// Is this object an AST any pattern node?
+    virtual bool isASTAnyValuePatternNode() const;
+
+    /// Is this object an AST binding pattern node?
+    virtual bool isASTBindingPatternNode() const;
+
+    /// Is this object an AST never pattern node?
+    virtual bool isASTNeverPatternNode() const;
+
+    /// Is this object an AST range pattern node?
+    virtual bool isASTRangePatternNode() const;
+
+    /// Is this object an AST sequence node?
+    virtual bool isASTSequencePatternNode() const;
+
+    /// Is this object an AST alternatives pattern node?
+    virtual bool isASTAlternativesPatternNode() const;
+
+    /// Is this object an AST predicated pattern node?
+    virtual bool isASTPredicatedPatternNode() const;
+
+    /// Is this object an AST value pattern node?
+    virtual bool isASTValuePatternNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 

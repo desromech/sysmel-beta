@@ -22,6 +22,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr parseAsPatternNode() override;
+    virtual ASTNodePtr parseAsBindingPatternNode() override;
 
     AnyValuePtr identifier;
     AnyValuePtr binding;

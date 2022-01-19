@@ -2,6 +2,7 @@
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTValuePatternNode.hpp"
 #include "Environment/LiteralString.hpp"
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/MacroInvocationContext.hpp"
@@ -23,6 +24,12 @@ MethodCategories ASTNode::__instanceMethods__()
                 return self->sourcePosition;
             }, MethodFlags::Pure),
         }},
+
+        {"converting", {
+            makeMethodBinding<ASTSourcePositionPtr (ASTNodePtr)> ("parseAsPatternNode", [](const ASTNodePtr &self) {
+                return self->parseAsPatternNode();
+            }, MethodFlags::Pure),
+        }},
     };
 }
 
@@ -34,6 +41,19 @@ ASTNode::ASTNode()
 AnyValuePtr ASTNode::accept(const ASTVisitorPtr &)
 {
     SysmelSelfSubclassResponsibility();
+}
+
+ASTNodePtr ASTNode::parseAsPatternNode()
+{
+    auto result = basicMakeObject<ASTValuePatternNode> ();
+    result->sourcePosition = sourcePosition;
+    result->expectedValue = selfFromThis();
+    return result;
+}
+
+ASTNodePtr ASTNode::parseAsBindingPatternNode()
+{
+    return parseAsPatternNode();
 }
 
 bool ASTNode::isASTNode() const

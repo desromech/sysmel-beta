@@ -1,4 +1,5 @@
 #include "Environment/ASTMakeTupleNode.hpp"
+#include "Environment/ASTSequencePatternNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
 #include "Environment/Type.hpp"
@@ -40,6 +41,17 @@ void ASTMakeTupleNode::childrenDo(const ASTIterationBlock &aBlock)
     SuperType::childrenDo(aBlock);
     for(auto &el : elements)
         aBlock(el);
+}
+
+ASTNodePtr ASTMakeTupleNode::parseAsPatternNode()
+{
+    auto sequencePattern = basicMakeObject<ASTSequencePatternNode> ();
+    sequencePattern->sourcePosition = sourcePosition;
+    sequencePattern->elements.reserve(elements.size());
+    for(auto &el : elements)
+        sequencePattern->elements.push_back(el->parseAsPatternNode());
+    
+    return sequencePattern;
 }
 
 } // End of namespace Environment

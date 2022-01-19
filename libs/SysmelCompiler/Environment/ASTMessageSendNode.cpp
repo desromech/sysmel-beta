@@ -3,6 +3,14 @@
 #include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
+
+#include "Environment/ASTIdentifierReferenceNode.hpp"
+#include "Environment/ASTAnyValuePatternNode.hpp"
+#include "Environment/ASTAlternativesPatternNode.hpp"
+#include "Environment/ASTBindingPatternNode.hpp"
+#include "Environment/ASTRangePatternNode.hpp"
+#include "Environment/ASTPredicatedPatternNode.hpp"
+
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -99,6 +107,111 @@ ASTNodePtr ASTMessageSendNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzer
     }
 
     return SuperType::parseAsArgumentNodeWith(semanticAnalyzer);
+}
+
+ASTNodePtr ASTMessageSendNode::parseAsPatternNode()
+{
+    if(selector->isASTLiteralSymbolValue())
+    {
+        auto selectorValue = selector.staticAs<ASTLiteralValueNode> ()->value;
+
+        if(arguments.empty())
+        {
+            if(receiver && receiver->isASTIdentifierReferenceNode())
+            {
+                auto identifier = receiver.staticAs<ASTIdentifierReferenceNode> ();
+                if(validAnyValue(identifier->identifier)->asString() == "let")
+                {
+                    auto binding = basicMakeObject<ASTBindingPatternNode> ();
+                    binding->sourcePosition = sourcePosition;
+                    binding->identifier = selectorValue;
+                    return binding;
+                }
+            }
+        }
+        else if(arguments.size() == 1)
+        {
+            auto selectorString = selectorValue->asString();
+            if(receiver)
+            {
+                if(selectorString == ":=" || selectorString == "type:")
+                {
+                    // Speculatively attempt to parse as a binding pattern node.
+                    auto receiverBindingPattern = receiver->parseAsBindingPatternNode();
+                    if(!receiverBindingPattern->isASTBindingPatternNode())
+                        return SuperType::parseAsPatternNode();
+
+                    auto bindingPatternNode = shallowCloneObject(staticObjectCast<ASTBindingPatternNode> (receiverBindingPattern));
+                    bindingPatternNode->sourcePosition = sourcePosition;
+                    if(selectorString == "type:")
+                        bindingPatternNode->expectedType = arguments[0]->parseAsPatternNode();
+                    else // if(selectorString == ":=")
+                        bindingPatternNode->expectedValue = arguments[0]->parseAsPatternNode();
+                    return bindingPatternNode;
+                }
+                else if(selectorString == "to:" || selectorString == "until:")
+                {
+                    auto range = basicMakeObject<ASTRangePatternNode> ();
+                    range->sourcePosition = sourcePosition;
+                    range->startNode = receiver->parseAsPatternNode();
+                    range->endNode = arguments[0]->parseAsPatternNode();
+                    range->isInclusive = selectorString == "to:";
+                    return range;
+                }
+                else if(selectorString == "|")
+                {
+                    auto previousAlternative = receiver->parseAsPatternNode();
+                    auto nextAlternative = arguments[0]->parseAsPatternNode();
+
+                    auto alternatives = basicMakeObject<ASTAlternativesPatternNode> ();
+                    alternatives->sourcePosition = sourcePosition;
+
+                    // Add the previous alternatives.
+                    if(previousAlternative->isASTAlternativesPatternNode())
+                        alternatives->alternatives = previousAlternative.staticAs<ASTAlternativesPatternNode> ()->alternatives;
+                    else
+                        alternatives->alternatives.push_back(previousAlternative);
+
+                    // Add next alternatives
+                    if(nextAlternative->isASTAlternativesPatternNode())
+                    {
+                        auto &nextAlternatives = nextAlternative.staticAs<ASTAlternativesPatternNode> ()->alternatives;
+                        alternatives->alternatives.insert(alternatives->alternatives.end(), nextAlternatives.begin(), nextAlternatives.end());
+                    }
+                    else
+                    {
+                        alternatives->alternatives.push_back(nextAlternative);
+                    }
+
+                    return alternatives;
+                }
+            }
+
+            // Predicated pattern
+            if(selectorString == "when:")
+            {
+                ASTNodePtr receiverPattern;
+                if(receiver)
+                {
+                    receiverPattern = receiver->parseAsPatternNode();
+                }
+                else
+                {
+                    auto anyPattern = basicMakeObject<ASTAnyValuePatternNode> ();
+                    anyPattern->sourcePosition = sourcePosition;
+                    receiverPattern = anyPattern;
+                }
+
+                auto predicatedPattern = basicMakeObject<ASTPredicatedPatternNode> ();
+                predicatedPattern->sourcePosition = sourcePosition;
+                predicatedPattern->expectedPattern = receiverPattern;
+                predicatedPattern->predicate = arguments[0];
+                return predicatedPattern;
+            }
+        }
+    }
+
+    return SuperType::parseAsPatternNode();
 }
 
 void ASTMessageSendNode::childrenDo(const ASTIterationBlock &aBlock)

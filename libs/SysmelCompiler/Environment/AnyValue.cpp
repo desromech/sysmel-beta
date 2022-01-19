@@ -549,6 +549,51 @@ bool AnyValue::isASTSlotAccessNode() const
     return false;
 }
 
+bool AnyValue::isASTPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTAnyValuePatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTBindingPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTNeverPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTRangePatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTSequencePatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTAlternativesPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTPredicatedPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTValuePatternNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;

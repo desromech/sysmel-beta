@@ -27,6 +27,7 @@ public:
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr parseAsPatternNode() override;
 
     bool isPureCompileTimeLiteralMessage() const;
 

@@ -35,5 +35,11 @@ CompilationErrorPtr ASTErrorNode::asCompilationError()
     result->setMessageText(errorMessage);
     return result;
 }
+
+ASTNodePtr ASTErrorNode::parseAsPatternNode()
+{
+    return selfFromThis();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

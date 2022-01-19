@@ -14,6 +14,7 @@ set(FrontendTests_Sources
     ScannerTests.cpp
     ItaniumNameManglerTests.cpp
     ParserTests.cpp
+    PatternNodeTests.cpp
     EvaluationTests.cpp
     SSATests.cpp
 )

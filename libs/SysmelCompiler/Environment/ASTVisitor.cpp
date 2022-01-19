@@ -26,6 +26,15 @@
 #include "Environment/ASTDowncastTypeConversionNode.hpp"
 #include "Environment/ASTValueAsReferenceReinterpretConversionNode.hpp"
 
+#include "Environment/ASTAlternativesPatternNode.hpp"
+#include "Environment/ASTAnyValuePatternNode.hpp"
+#include "Environment/ASTBindingPatternNode.hpp"
+#include "Environment/ASTNeverPatternNode.hpp"
+#include "Environment/ASTPredicatedPatternNode.hpp"
+#include "Environment/ASTRangePatternNode.hpp"
+#include "Environment/ASTSequencePatternNode.hpp"
+#include "Environment/ASTValuePatternNode.hpp"
+
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -370,6 +379,52 @@ AnyValuePtr ASTVisitor::visitBreakNode(const ASTBreakNodePtr &)
 {
     SysmelSelfSubclassResponsibility();
 }
+
+AnyValuePtr ASTVisitor::visitPatternNode(const ASTPatternNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitAlternativesPatternNode(const ASTAlternativesPatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitAnyValuePatternNode(const ASTAnyValuePatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitBindingPatternNode(const ASTBindingPatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitNeverPatternNode(const ASTNeverPatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitPredicatedPatternNode(const ASTPredicatedPatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitRangePatternNode(const ASTRangePatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitSequencePatternNode(const ASTSequencePatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
+AnyValuePtr ASTVisitor::visitValuePatternNode(const ASTValuePatternNodePtr &node)
+{
+    return visitPatternNode(node);
+}
+
 
 } // End of namespace Environment
 } // End of namespace Sysmel

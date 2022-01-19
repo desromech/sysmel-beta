@@ -1,6 +1,7 @@
 #include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
+#include "Environment/ASTSequencePatternNode.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -42,6 +43,15 @@ void ASTCallNode::childrenDo(const ASTIterationBlock &aBlock)
     if(function) aBlock(function);
     for(auto &arg : arguments)
         aBlock(arg);
+}
+
+ASTNodePtr ASTCallNode::parseAsPatternNode()
+{
+    auto result = basicMakeObject<ASTSequencePatternNode> ();
+    result->sourcePosition = sourcePosition;
+    result->expectedSequenceType = function;
+    result->elements = arguments;
+    return result;
 }
 
 } // End of namespace Environment

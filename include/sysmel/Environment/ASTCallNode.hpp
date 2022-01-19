@@ -22,6 +22,8 @@ public:
     virtual SExpression asSExpression() const override;
 
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+    
+    virtual ASTNodePtr parseAsPatternNode() override;
 
     ASTNodePtr function;
     ASTNodePtrList arguments;
