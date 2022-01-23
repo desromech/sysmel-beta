@@ -50,7 +50,11 @@
 
 #include "Environment/SSACheckExpectedTypeSelectorValueInstruction.hpp"
 
+#include "Environment/SSAEvaluatePatternInstruction.hpp"
+
 #include "Environment/BootstrapTypeRegistration.hpp"
+
+#include "Environment/LiteralBoolean.hpp"
 
 #include "Environment/ControlFlowUtilities.hpp"
 #include "Environment/ValueBox.hpp"
@@ -813,6 +817,17 @@ llvm::Value *SSALLVMValueVisitor::translateValue(const SSAValuePtr &value)
     return result;
 }
 
+llvm::Value *SSALLVMValueVisitor::translateBooleanValue(const SSAValuePtr &value)
+{
+    if(value->isSSAConstantLiteralValue() && value->getValueType()->isSubtypeOf(LiteralBoolean::__staticType__()))
+    {
+        bool constantValue = value.staticAs<SSAConstantLiteralValue> ()->getValue()->unwrapAsBoolean();
+        return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*backend->getContext()), constantValue);
+    }
+
+    return coerceBooleanIntoI1(translateValue(value));
+}
+
 AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 {
     if(currentFunction)
@@ -1481,7 +1496,7 @@ AnyValuePtr SSALLVMValueVisitor::visitGetAggregateSlotReferenceInstruction(const
 
 AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &instruction)
 {
-    auto condition = translateValue(instruction->getCondition());
+    auto condition = translateBooleanValue(instruction->getCondition());
     auto thenRegion = instruction->getTrueRegion();
     auto elseRegion = instruction->getFalseRegion();
     auto resultType = instruction->getValueType();
@@ -1495,7 +1510,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "ifResult", mergeBlock);
 
     // Condition.
-    builder->CreateCondBr(coerceBooleanIntoI1(condition), thenBlock, elseBlock);
+    builder->CreateCondBr(condition, thenBlock, elseBlock);
     builder->SetInsertPoint(thenBlock);
 
     // Then block
@@ -1872,6 +1887,69 @@ AnyValuePtr SSALLVMValueVisitor::visitCheckExpectedTypeSelectorValueInstruction(
     mergeBlock->insertInto(currentFunction);
     builder->SetInsertPoint(mergeBlock);
 
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvaluatePatternInstructionPtr &instruction)
+{
+    auto patternSuccess = llvm::BasicBlock::Create(*backend->getContext(), "patternSuccess");
+    auto patternFailure = llvm::BasicBlock::Create(*backend->getContext(), "patternFailure");
+    auto merge = llvm::BasicBlock::Create(*backend->getContext(), "patternMerge");
+
+    {
+        auto oldPatternFailBlock = currentPatternFailBlock;
+        currentPatternFailBlock = patternFailure;
+
+        doWithEnsure([&](){
+            translateCodeRegionWithArguments(instruction->getPatternRegion(), {});
+        }, [&](){
+            currentPatternFailBlock = oldPatternFailBlock;
+        });
+
+        if(!isLastTerminator())
+            builder->CreateBr(patternSuccess);
+    }
+
+    // Pattern success.
+    patternSuccess->insertInto(currentFunction);
+    builder->SetInsertPoint(patternSuccess);
+
+    auto &patternSuccessRegion = instruction->getSuccessRegion();
+    if(patternSuccessRegion)
+        translateCodeRegionWithArguments(patternSuccessRegion, {});
+
+    if(!isLastTerminator())
+        builder->CreateBr(merge);
+
+    // Pattern failure.
+    patternFailure->insertInto(currentFunction);
+    builder->SetInsertPoint(patternFailure);
+
+    auto &patternFailureRegion = instruction->getFailureRegion();
+    if(patternFailureRegion)
+        translateCodeRegionWithArguments(patternFailureRegion, {});
+
+    if(!isLastTerminator())
+        builder->CreateBr(merge);
+
+    // Merge
+    merge->insertInto(currentFunction);
+    builder->SetInsertPoint(merge);
+
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitFailPatternInstruction(const SSAFailPatternInstructionPtr &)
+{
+    sysmelAssert(currentPatternFailBlock);
+    builder->CreateBr(currentPatternFailBlock);
+    return wrapLLVMValue(makeVoidValue());
+}
+
+AnyValuePtr SSALLVMValueVisitor::visitTrapInstruction(const SSATrapInstructionPtr &)
+{
+    builder->CreateIntrinsic(llvm::Intrinsic::trap, {}, {});
+    builder->CreateUnreachable();
     return wrapLLVMValue(makeVoidValue());
 }
 

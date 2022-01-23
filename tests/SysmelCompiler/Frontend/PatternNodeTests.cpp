@@ -119,35 +119,53 @@ R"(
                 // Binding
                 CHECK(checkStringEvaluationASTIsSameTo("`'(let x) parseAsPatternNode",
 R"(
-(bindingPattern #x nil nil)
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  nil
+  nil)
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(let x type: SomeType) parseAsPatternNode",
 R"(
-(bindingPattern #x (valuePattern
-  (identifier nil #SomeType nil)) nil)
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  (valuePattern
+    (identifier nil #SomeType nil))
+  nil)
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(let x type: SomeType := 5) parseAsPatternNode",
 R"(
-(bindingPattern #x (valuePattern
-  (identifier nil #SomeType nil)) (valuePattern
-  (literal 5 #LiteralPositiveInteger)))
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  (valuePattern
+    (identifier nil #SomeType nil))
+  (valuePattern
+    (literal 5 #LiteralPositiveInteger)))
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(let x := 5) parseAsPatternNode",
 R"(
-(bindingPattern #x nil (valuePattern
-  (literal 5 #LiteralPositiveInteger)))
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  nil
+  (valuePattern
+    (literal 5 #LiteralPositiveInteger)))
 )"));
 
                 CHECK(checkStringEvaluationASTIsSameTo("`'(x type: SomeType := 5) parseAsPatternNode",
 R"(
-(bindingPattern #x (valuePattern
-  (identifier nil #SomeType nil)) (valuePattern
-  (literal 5 #LiteralPositiveInteger)))
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  (valuePattern
+    (identifier nil #SomeType nil))
+  (valuePattern
+    (literal 5 #LiteralPositiveInteger)))
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(x := 5) parseAsPatternNode",
 R"(
-(bindingPattern #x nil (valuePattern
-  (literal 5 #LiteralPositiveInteger)))
+(bindingPattern
+  (literal #x #LiteralSymbol)
+  nil
+  (valuePattern
+    (literal 5 #LiteralPositiveInteger)))
 )"));
 
                 // Sequence

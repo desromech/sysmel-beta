@@ -56,6 +56,16 @@ ASTNodePtr ASTNode::parseAsBindingPatternNode()
     return parseAsPatternNode();
 }
 
+ASTNodePtr ASTNode::optimizePatternNodeForExpectedTypeWith(const TypePtr &, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "Not a pattern node that can be optimized.");
+}
+
+ASTNodePtr ASTNode::expandPatternNodeForExpectedTypeWith(const TypePtr &, const ASTNodePtr &, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "Not a pattern node that can be expanded.");
+}
+
 bool ASTNode::isASTNode() const
 {
     return true;
@@ -93,6 +103,16 @@ bool ASTNode::isASTIdentifierSymbolValue() const
 }
 
 bool ASTNode::isASTLiteralTypeNode() const
+{
+    return false;
+}
+
+bool ASTNode::isAlwaysMatchingPattern() const
+{
+    return false;
+}
+
+bool ASTNode::isNeverMatchingPattern() const
 {
     return false;
 }

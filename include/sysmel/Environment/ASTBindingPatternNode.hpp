@@ -21,7 +21,13 @@ public:
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 
-    AnyValuePtr identifier;
+    virtual bool isAlwaysMatchingPattern() const;
+    virtual bool isNeverMatchingPattern() const;
+    
+    virtual ASTNodePtr optimizePatternNodeForExpectedTypeWith(const TypePtr &type, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr expandPatternNodeForExpectedTypeWith(const TypePtr &type, const ASTNodePtr &patternValueNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+    ASTNodePtr identifier;
     ASTNodePtr expectedType;
     ASTNodePtr expectedValue;
 };

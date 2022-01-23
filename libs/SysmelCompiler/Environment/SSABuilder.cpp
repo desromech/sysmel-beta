@@ -36,6 +36,10 @@
 
 #include "Environment/SSACheckExpectedTypeSelectorValueInstruction.hpp"
 
+#include "Environment/SSAEvaluatePatternInstruction.hpp"
+#include "Environment/SSAFailPatternInstruction.hpp"
+#include "Environment/SSATrapInstruction.hpp"
+
 #include "Environment/Type.hpp"
 #include "Environment/PointerLikeType.hpp"
 
@@ -454,6 +458,38 @@ SSACheckExpectedTypeSelectorValueInstructionPtr SSABuilder::checkExpectedTypeSel
     instruction->setTypeSelectorIndex(typeSelectorSlotIndex);
     instruction->setTypeSelectorReferenceType(typeSelectorSlotReferenceType);
     instruction->setExpectedTypeSelector(expectedTypeSelectorValue);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAEvaluatePatternInstructionPtr SSABuilder::evaluatePattern(const TypePtr &resultType, SSACodeRegionPtr &patternRegion, const SSACodeRegionPtr &successRegion, const SSACodeRegionPtr &failureRegion)
+{
+    auto instruction = basicMakeObject<SSAEvaluatePatternInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
+    instruction->setValueType(resultType);
+    instruction->setPatternRegion(patternRegion);
+    instruction->setSuccessRegion(successRegion);
+    instruction->setFailureRegion(failureRegion);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSAFailPatternInstructionPtr SSABuilder::failPattern()
+{
+    auto instruction = basicMakeObject<SSAFailPatternInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
+    addInstruction(instruction);
+    return instruction;
+}
+
+SSATrapInstructionPtr SSABuilder::trap(TrapReason reason)
+{
+    auto instruction = basicMakeObject<SSATrapInstruction> ();
+    instruction->setSourcePosition(currentSourcePosition);
+    instruction->setLexicalScope(currentLexicalScope);
+    instruction->setReason(reason);
     addInstruction(instruction);
     return instruction;
 }

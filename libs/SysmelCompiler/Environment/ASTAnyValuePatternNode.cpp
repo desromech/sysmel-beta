@@ -27,5 +27,22 @@ SExpression ASTAnyValuePatternNode::asSExpression() const
     }};
 }
 
+bool ASTAnyValuePatternNode::isAlwaysMatchingPattern() const
+{
+    return true;
+}
+
+ASTNodePtr ASTAnyValuePatternNode::optimizePatternNodeForExpectedTypeWith(const TypePtr &type, const ASTSemanticAnalyzerPtr &)
+{
+    auto result = shallowCloneObject(selfFromThis());
+    result->analyzedType = type;
+    return result;
+}
+
+ASTNodePtr ASTAnyValuePatternNode::expandPatternNodeForExpectedTypeWith(const TypePtr &, const ASTNodePtr &patternValueNode, const ASTSemanticAnalyzerPtr &)
+{
+    return patternValueNode;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

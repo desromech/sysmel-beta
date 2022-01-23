@@ -99,6 +99,16 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTRangePatternNode); // to:
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSequencePatternNode);  // x ()
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTValuePatternNode); // Anything else.
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTDestructuringBindingNode); // let[...] and let(...)
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPatternMatchingNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPatternMatchingCaseNode);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTEvaluatePatternWithValueNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFailPatternNode);
+
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTTrapNode); // Runtime error (e.g out of bounds, not matching pattern)
+
+
 typedef std::function<void (const ASTNodePtr &)> ASTIterationBlock;
 /**
  * I am the interface for all of the language independent AST nodes.
@@ -119,10 +129,16 @@ public:
     virtual bool isPureCompileTimeLiteralValueNode() const;
     virtual bool isPureCompileTimeEvaluableNode() const;
 
+    virtual bool isAlwaysMatchingPattern() const;
+    virtual bool isNeverMatchingPattern() const;
+
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual ASTNodePtr parseAsPatternNode();
     virtual ASTNodePtr parseAsBindingPatternNode();
-    
+
+    virtual ASTNodePtr optimizePatternNodeForExpectedTypeWith(const TypePtr &type, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr expandPatternNodeForExpectedTypeWith(const TypePtr &type, const ASTNodePtr &patternValueNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
     virtual ASTNodePtr asASTNodeRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition) override;
     virtual ASTNodePtr asInlinedBlockBodyNode();
 

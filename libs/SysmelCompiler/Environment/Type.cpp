@@ -88,6 +88,22 @@ MethodCategories Type::__instanceMethods__()
             }, MethodFlags::Pure),
         }},
 
+        {"pattern matching", {
+            makeMethodBinding<bool (const TypePtr &)> ("isSequencePatternType", +[](const TypePtr &){
+                return false;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &){
+                return 0;
+            }, MethodFlags::Pure),
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMaxSize", +[](const TypePtr &){
+                return 0;
+            }, MethodFlags::Pure),
+            makeMethodBinding<TypePtr (const TypePtr &, uint64_t)> ("sequencePatternTypeAt:", +[](const TypePtr &, uint64_t){
+                return TypePtr();
+            }, MethodFlags::Pure),
+        }},
+
         {"type composition", {
             makeMethodBinding("array", &Type::arrayWithoutSize, MethodFlags::Pure),
             makeMethodBinding("array:", &Type::arrayWithSize, MethodFlags::Pure),
@@ -1349,6 +1365,11 @@ void Type::setSourceDefinitionPosition(const ASTSourcePositionPtr &position)
 
 void Type::ensureVirtualTableLayoutComputation()
 {
+}
+
+bool Type::matchesValueTypeInPattern(const TypePtr &typeToMatch)
+{
+    return asDecayedType() == typeToMatch->asDecayedType();
 }
 
 } // End of namespace Environment

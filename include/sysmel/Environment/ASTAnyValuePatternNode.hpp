@@ -20,6 +20,11 @@ public:
     virtual bool isASTAnyValuePatternNode() const override;
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
+
+    virtual bool isAlwaysMatchingPattern() const override;
+    
+    virtual ASTNodePtr optimizePatternNodeForExpectedTypeWith(const TypePtr &type, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr expandPatternNodeForExpectedTypeWith(const TypePtr &type, const ASTNodePtr &patternValueNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 };
 
 } // End of namespace Environment

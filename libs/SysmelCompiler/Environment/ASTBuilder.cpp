@@ -21,6 +21,8 @@
 #include "Environment/ASTFieldVariableAccessNode.hpp"
 #include "Environment/ASTSlotAccessNode.hpp"
 
+#include "Environment/ASTFailPatternNode.hpp"
+
 #include "Environment/ASTProgramEntityExtensionNode.hpp"
 
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -31,6 +33,13 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<ASTBuilder> ASTBuilderTypeRegistration;
+
+ASTBuilderPtr ASTBuilder::withSourcePosition(const ASTSourcePositionPtr &sourcePosition)
+{
+    auto result = basicMakeObject<ASTBuilder> ();
+    result->sourcePosition = sourcePosition;
+    return result;
+}
 
 bool ASTBuilder::isASTBuilder() const
 {
@@ -268,6 +277,13 @@ ASTProgramEntityExtensionNodePtr ASTBuilder::programEntityExtension(const ASTNod
     node->sourcePosition = sourcePosition;
     node->programEntity = programEntity;
     node->body = extensionBody;
+    return node;
+}
+
+ASTFailPatternNodePtr ASTBuilder::failPattern()
+{
+    auto node = basicMakeObject<ASTFailPatternNode> ();
+    node->sourcePosition = sourcePosition;
     return node;
 }
 

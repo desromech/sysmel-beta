@@ -20,7 +20,11 @@ public:
     static constexpr char const __typeName__[] = "LetMetaBuilder";
 
 protected:
+    virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
     virtual ASTNodePtr concretizeMetaBuilder() override;
+
+    ASTNodePtr bindingPatternNode;
 };
 
 } // End of namespace Environment

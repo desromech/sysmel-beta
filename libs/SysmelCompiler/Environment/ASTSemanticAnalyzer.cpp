@@ -60,6 +60,17 @@
 #include "Environment/ASTBreakNode.hpp"
 #include "Environment/ASTContinueNode.hpp"
 
+#include "Environment/ASTPatternNode.hpp"
+
+#include "Environment/ASTDestructuringBindingNode.hpp"
+
+#include "Environment/ASTPatternMatchingNode.hpp"
+#include "Environment/ASTPatternMatchingCaseNode.hpp"
+#include "Environment/ASTFailPatternNode.hpp"
+#include "Environment/ASTEvaluatePatternWithValueNode.hpp"
+
+#include "Environment/ASTTrapNode.hpp"
+
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/ASTBuilder.hpp"
 
@@ -101,6 +112,7 @@
 #include "Environment/TypeConversionRule.hpp"
 
 #include "Environment/MessageChainReceiverName.hpp"
+#include "Environment/PatternMatchingValueName.hpp"
 
 #include "Environment/LiteralArray.hpp"
 #include "Environment/LiteralAssociation.hpp"
@@ -121,7 +133,7 @@ namespace Environment
 
 static BootstrapTypeRegistration<ASTSemanticAnalyzer> ASTSemanticAnalyzerTypeRegistration;
 
-static TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
+TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node)
 {
     sysmelAssert(node->isASTLiteralTypeNode());
     return staticObjectCast<Type> (
@@ -312,7 +324,7 @@ ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const A
         node->receiver = analyzeNodeIfNeededWithAutoType(node->receiver);
     for(auto &arg : node->arguments)
         arg = analyzeNodeIfNeededWithAutoType(arg);
-    return node;
+    return optimizeAnalyzedMessageSend(node);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeMessageSendNodeViaDNUMacro(const ASTMessageSendNodePtr &node, const AnyValuePtr &dnuMacro)
@@ -360,7 +372,7 @@ ASTNodePtr ASTSemanticAnalyzer::evaluateTypeExpression(const ASTNodePtr &node)
 ASTNodePtr ASTSemanticAnalyzer::evaluateLiteralExpressionInCompileTime(const ASTNodePtr &node)
 {
     return guardCompileTimeEvaluationForNode(node, [&](){
-        return analyzeNodeIfNeededWithCurrentExpectedType(evaluateInCompileTime(node)->asASTNodeRequiredInPosition(node->sourcePosition));
+        return analyzeNodeIfNeededWithCurrentExpectedType(validAnyValue(evaluateInCompileTime(node))->asASTNodeRequiredInPosition(node->sourcePosition));
     });
 }
 
@@ -2458,9 +2470,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNode
         return targetTypeNode;
 
     auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = staticObjectCast<Type> (
-        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
-    );
+    auto targetType = unwrapTypeFromLiteralValue(targetTypeNode);
 
     auto typeConversionRule = sourceType->findExplicitTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
@@ -2479,9 +2489,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitImplicitCastNode(const ASTImplicitCastNode
         return targetTypeNode;
 
     auto sourceType = analyzedExpression->analyzedType;
-    auto targetType = staticObjectCast<Type> (
-        targetTypeNode.staticAs<ASTLiteralValueNode> ()->value
-    );
+    auto targetType = unwrapTypeFromLiteralValue(targetTypeNode);
 
     auto typeConversionRule = sourceType->findImplicitTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
@@ -2676,6 +2684,106 @@ AnyValuePtr ASTSemanticAnalyzer::visitBreakNode(const ASTBreakNodePtr &node)
     return analyzedNode;
 }
 
+AnyValuePtr ASTSemanticAnalyzer::visitPatternNode(const ASTPatternNodePtr &node)
+{
+    return recordSemanticErrorInNode(node, "Invalid location for a pattern node.");
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node)
+{
+    if(!node->valueNode)
+        return recordSemanticErrorInNode(node, "Destructuring binding requires a value to destructure.");
+
+    auto evaluatePatternNode = basicMakeObject<ASTEvaluatePatternWithValueNode> ();
+    evaluatePatternNode->sourcePosition = node->sourcePosition;
+    evaluatePatternNode->patternNode = node->patternNode->parseAsBindingPatternNode();
+    evaluatePatternNode->valueNode = node->valueNode;
+
+    auto trapNode = basicMakeObject<ASTTrapNode> ();
+    trapNode->sourcePosition = node->sourcePosition;
+    trapNode->reason = TrapReason::PatternMatchingFailure;
+    evaluatePatternNode->failureAction = trapNode;
+
+    return analyzeNodeIfNeededWithCurrentExpectedType(evaluatePatternNode);
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    if(!analyzedNode->valueNode)
+        return recordSemanticErrorInNode(analyzedNode, "Value to evaluate pattern node is required.");
+
+    if(!analyzedNode->patternNode)
+        return recordSemanticErrorInNode(analyzedNode, "A pattern to evaluate is required here.");
+
+    analyzedNode->valueNode = analyzeNodeIfNeededWithTemporaryAutoType(analyzedNode->valueNode);
+    if(analyzedNode->valueNode->isASTErrorNode())
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // Optimize the pattern node.
+    auto decayedType = analyzedNode->valueNode->analyzedType->asDecayedType();
+    analyzedNode->patternNode = analyzedNode->patternNode->optimizePatternNodeForExpectedTypeWith(decayedType, selfFromThis());
+    if(analyzedNode->patternNode->isASTErrorNode())
+    {
+        analyzedNode->analyzedType = Type::getCompilationErrorValueType();
+        return analyzedNode;
+    }
+
+    // Remove the never matching pattern.
+    if(analyzedNode->patternNode->isNeverMatchingPattern())
+    {
+        if(!node->introduceNewLexicalScope)
+            return recordSemanticErrorInNode(analyzedNode, "Pattern is never matching.");
+        return analyzeNodeIfNeededWithCurrentExpectedType(analyzedNode->failureAction);
+    }
+    
+    // Introduce a variable for the pattern
+    auto patternValueName = basicMakeObject<PatternMatchingValueName> ();
+    patternValueName->sourcePosition = node->sourcePosition;
+
+    auto patternValueVariable = basicMakeObject<ASTLocalVariableNode> ();
+    patternValueVariable->sourcePosition = node->sourcePosition;
+    patternValueVariable->name = patternValueName->asASTNodeRequiredInPosition(node->sourcePosition);
+    patternValueVariable->initialValue = analyzedNode->valueNode;
+    patternValueVariable->typeInferenceMode = TypeInferenceMode::TemporaryReference;
+    analyzedNode->valueNode = analyzeNodeIfNeededWithAutoType(patternValueVariable);
+
+    // Expand the pattern.
+    auto patternValueIdentifier = basicMakeObject<ASTIdentifierReferenceNode> ();
+    patternValueIdentifier->sourcePosition = node->sourcePosition;
+    patternValueIdentifier->identifier = patternValueName;
+
+    auto expandedPattern = analyzedNode->patternNode->expandPatternNodeForExpectedTypeWith(decayedType, patternValueIdentifier, selfFromThis());
+    analyzedNode->patternEvaluationNode = analyzeNodeIfNeededWithAutoType(expandedPattern);
+
+    // Analyze the success action.
+    if(analyzedNode->successAction)
+        analyzedNode->successAction = analyzeNodeIfNeededWithAutoType(analyzedNode->successAction);
+
+    // Analyze the fail action.
+    if(analyzedNode->failureAction)
+        analyzedNode->failureAction = analyzeNodeIfNeededWithAutoType(analyzedNode->failureAction);
+
+    analyzedNode->analyzedType = Type::getVoidType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitFailPatternNode(const ASTFailPatternNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    analyzedNode->analyzedType = Type::getControlFlowEscapeType();
+    return analyzedNode;
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitTrapNode(const ASTTrapNodePtr &node)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    analyzedNode->analyzedType = Type::getControlFlowEscapeType();
+    return analyzedNode;
+}
 
 } // End of namespace Environment
 } // End of namespace Sysmel

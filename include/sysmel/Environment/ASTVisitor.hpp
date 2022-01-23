@@ -103,6 +103,14 @@ public:
     virtual AnyValuePtr visitRangePatternNode(const ASTRangePatternNodePtr &node);
     virtual AnyValuePtr visitSequencePatternNode(const ASTSequencePatternNodePtr &node);
     virtual AnyValuePtr visitValuePatternNode(const ASTValuePatternNodePtr &node);
+
+    virtual AnyValuePtr visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node);
+    virtual AnyValuePtr visitPatternMatchingNode(const ASTPatternMatchingNodePtr &node);
+    virtual AnyValuePtr visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &node);
+
+    virtual AnyValuePtr visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node);
+    virtual AnyValuePtr visitFailPatternNode(const ASTFailPatternNodePtr &node);
+    virtual AnyValuePtr visitTrapNode(const ASTTrapNodePtr &node);
 };
 
 } // End of namespace Environment

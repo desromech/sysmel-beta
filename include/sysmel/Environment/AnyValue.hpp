@@ -647,6 +647,24 @@ public:
     /// Is this object an AST value pattern node?
     virtual bool isASTValuePatternNode() const;
 
+    /// Is this object an AST destructuring binding node?
+    virtual bool isASTDestructuringBindingNode() const;
+
+    /// Is this object an AST pattern matching node?
+    virtual bool isASTPatternMatchingNode() const;
+
+    /// Is this object an AST pattern matching case node?
+    virtual bool isASTPatternMatchingCaseNode() const;
+
+    /// Is this object an AST evaluate pattern with value node?
+    virtual bool isASTEvaluatePatternWithValueNode() const;
+
+    /// Is this object an AST fail pattern node?
+    virtual bool isASTFailPatternNode() const;
+
+    /// Is this object an AST trap node?
+    virtual bool isASTTrapNode() const;
+
     /// Is this object an identifier lookup scope?
     virtual bool isIdentifierLookupScope() const;
 
@@ -1132,6 +1150,15 @@ public:
 
     /// Is this a SSA check expected type selector value instruction?
     virtual bool isSSACheckExpectedTypeSelectorValueInstruction() const;
+
+    /// Is this a SSA evaluate pattern instruction?
+    virtual bool isSSAEvaluatePatternInstruction() const;
+
+    /// Is this a SSA fail pattern instruction?
+    virtual bool isSSAFailPatternInstruction() const;
+
+    /// Is this a SSA trap instruction?
+    virtual bool isSSATrapInstruction() const;
 
     /// Convert the object into a string.
     virtual std::string asString() const;

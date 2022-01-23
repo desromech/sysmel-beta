@@ -594,6 +594,36 @@ bool AnyValue::isASTValuePatternNode() const
     return false;
 }
 
+bool AnyValue::isASTDestructuringBindingNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTPatternMatchingNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTPatternMatchingCaseNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTEvaluatePatternWithValueNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTFailPatternNode() const
+{
+    return false;
+}
+
+bool AnyValue::isASTTrapNode() const
+{
+    return false;
+}
+
 bool AnyValue::isIdentifierLookupScope() const
 {
     return false;
@@ -1400,6 +1430,21 @@ bool AnyValue::isSSALocalFinalization() const
 }
 
 bool AnyValue::isSSACheckExpectedTypeSelectorValueInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAEvaluatePatternInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSAFailPatternInstruction() const
+{
+    return false;
+}
+
+bool AnyValue::isSSATrapInstruction() const
 {
     return false;
 }

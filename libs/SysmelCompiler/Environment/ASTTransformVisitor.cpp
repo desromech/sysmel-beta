@@ -76,6 +76,24 @@
 #include "Environment/ASTImplicitCastNode.hpp"
 #include "Environment/ASTReinterpretCastNode.hpp"
 
+#include "Environment/ASTPatternNode.hpp"
+#include "Environment/ASTAlternativesPatternNode.hpp"
+#include "Environment/ASTAnyValuePatternNode.hpp"
+#include "Environment/ASTBindingPatternNode.hpp"
+#include "Environment/ASTNeverPatternNode.hpp"
+#include "Environment/ASTPredicatedPatternNode.hpp"
+#include "Environment/ASTRangePatternNode.hpp"
+#include "Environment/ASTSequencePatternNode.hpp"
+#include "Environment/ASTValuePatternNode.hpp"
+
+#include "Environment/ASTDestructuringBindingNode.hpp"
+#include "Environment/ASTPatternMatchingNode.hpp"
+#include "Environment/ASTPatternMatchingCaseNode.hpp"
+
+#include "Environment/ASTEvaluatePatternWithValueNode.hpp"
+#include "Environment/ASTFailPatternNode.hpp"
+#include "Environment/ASTTrapNode.hpp"
+
 #include "Environment/SubclassResponsibility.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -583,6 +601,110 @@ AnyValuePtr ASTTransformVisitor::visitContinueNode(const ASTContinueNodePtr &nod
 }
 
 AnyValuePtr ASTTransformVisitor::visitBreakNode(const ASTBreakNodePtr &node)
+{
+    return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitPatternNode(const ASTPatternNodePtr &node)
+{
+    return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitAlternativesPatternNode(const ASTAlternativesPatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNodeList(result->alternatives);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitAnyValuePatternNode(const ASTAnyValuePatternNodePtr &node)
+{
+    return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitBindingPatternNode(const ASTBindingPatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->expectedType);
+    transformChildNode(result->expectedValue);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitNeverPatternNode(const ASTNeverPatternNodePtr &node)
+{
+    return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitPredicatedPatternNode(const ASTPredicatedPatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->expectedPattern);
+    transformChildNode(result->predicate);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitRangePatternNode(const ASTRangePatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(result->startNode);
+    transformChildNode(result->endNode);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitSequencePatternNode(const ASTSequencePatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNodeList(result->elements);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitValuePatternNode(const ASTValuePatternNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(node->expectedValue);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(node->patternNode);
+    transformChildNode(node->valueNode);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitPatternMatchingNode(const ASTPatternMatchingNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(node->patternNodes);
+    transformChildNode(node->valueNode);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(node->patternNode);
+    transformChildNode(node->actionNode);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node)
+{
+    auto result = shallowCloneObject(node);
+    transformChildNode(node->valueNode);
+    transformChildNode(node->patternNode);
+    transformChildNode(node->successAction);
+    transformChildNode(node->failureAction);
+    return result;
+}
+
+AnyValuePtr ASTTransformVisitor::visitFailPatternNode(const ASTFailPatternNodePtr &node)
+{
+    return node;
+}
+
+AnyValuePtr ASTTransformVisitor::visitTrapNode(const ASTTrapNodePtr &node)
 {
     return node;
 }

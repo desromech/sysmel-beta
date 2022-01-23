@@ -20,6 +20,13 @@ public:
     virtual bool isASTPatternNode() const override;
 
     virtual ASTNodePtr parseAsPatternNode() override;
+
+    virtual ASTNodePtr optimizePatternNodeForExpectedTypeWith(const TypePtr &type, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
+    virtual ASTNeverPatternNodePtr asNeverPatternNode();
+
+    std::pair<ASTNodePtr, ASTNodePtr> expandHiddenBindingWithExpandedType(const ASTNodePtr &valueNode, const TypePtr &valueType, const TypePtr &expectedType, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
 };
 
 } // End of namespace Environment

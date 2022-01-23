@@ -96,6 +96,23 @@ public:
     virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
     virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
     
+    virtual AnyValuePtr visitPatternNode(const ASTPatternNodePtr &node) override;
+    virtual AnyValuePtr visitAlternativesPatternNode(const ASTAlternativesPatternNodePtr &node) override;
+    virtual AnyValuePtr visitAnyValuePatternNode(const ASTAnyValuePatternNodePtr &node) override;
+    virtual AnyValuePtr visitBindingPatternNode(const ASTBindingPatternNodePtr &node) override;
+    virtual AnyValuePtr visitNeverPatternNode(const ASTNeverPatternNodePtr &node) override;
+    virtual AnyValuePtr visitPredicatedPatternNode(const ASTPredicatedPatternNodePtr &node) override;
+    virtual AnyValuePtr visitRangePatternNode(const ASTRangePatternNodePtr &node) override;
+    virtual AnyValuePtr visitSequencePatternNode(const ASTSequencePatternNodePtr &node) override;
+    virtual AnyValuePtr visitValuePatternNode(const ASTValuePatternNodePtr &node) override;
+
+    virtual AnyValuePtr visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node) override;
+    virtual AnyValuePtr visitPatternMatchingNode(const ASTPatternMatchingNodePtr &node) override;
+    virtual AnyValuePtr visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &node) override;
+
+    virtual AnyValuePtr visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node) override;
+    virtual AnyValuePtr visitFailPatternNode(const ASTFailPatternNodePtr &node) override;
+    virtual AnyValuePtr visitTrapNode(const ASTTrapNodePtr &node) override;
 };
 
 } // End of namespace Environment

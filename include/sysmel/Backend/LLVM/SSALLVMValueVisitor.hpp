@@ -62,6 +62,7 @@ public:
     llvm::Value *visitValueForLLVM(const SSAValuePtr &value);
 
     llvm::Value *translateValue(const SSAValuePtr &value);
+    llvm::Value *translateBooleanValue(const SSAValuePtr &value);
     virtual AnyValuePtr visitFunction(const SSAFunctionPtr &value) override;
     virtual AnyValuePtr visitGlobalVariable(const SSAGlobalVariablePtr &value) override;
     virtual AnyValuePtr visitConstantLiteralValue(const SSAConstantLiteralValuePtr &value) override;
@@ -94,6 +95,10 @@ public:
     virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction) override;
 
     virtual AnyValuePtr visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction) override;
+
+    virtual AnyValuePtr visitEvaluatePatternInstruction(const SSAEvaluatePatternInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitFailPatternInstruction(const SSAFailPatternInstructionPtr &instruction) override;
+    virtual AnyValuePtr visitTrapInstruction(const SSATrapInstructionPtr &instruction) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;
 
@@ -128,6 +133,7 @@ protected:
     SSAFunctionPtr currentFunctionBeingTranslated;
     SSACodeRegionPtr currentCodeRegion;
     llvm::BasicBlock *currentCodeRegionReturnBlock = nullptr;
+    llvm::BasicBlock *currentPatternFailBlock = nullptr;
     llvm::PHINode *currentCodeRegionResultPHI = nullptr;
     
     std::unique_ptr<llvm::IRBuilder<>> builder;

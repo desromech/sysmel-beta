@@ -20,6 +20,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(CompilationError);
 
 typedef std::function<ASTNodePtr ()> ASTNodeSemanticAnalysisBlock;
 
+SYSMEL_COMPILER_LIB_EXPORT TypePtr unwrapTypeFromLiteralValue(const ASTNodePtr &node);
+
 /**
  * I am the interface for all of the language independent AST nodes.
  */
@@ -126,6 +128,15 @@ public:
     virtual AnyValuePtr visitReturnNode(const ASTReturnNodePtr &node) override;
     virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
     virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
+
+    virtual AnyValuePtr visitPatternNode(const ASTPatternNodePtr &node) override;
+
+    virtual AnyValuePtr visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node) override;
+
+    virtual AnyValuePtr visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node) override;
+
+    virtual AnyValuePtr visitFailPatternNode(const ASTFailPatternNodePtr &node) override;
+    virtual AnyValuePtr visitTrapNode(const ASTTrapNodePtr &node) override;
 
     ASTNodePtr addImplicitCastTo(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType=false);
     ASTNodePtr addImplicitCastToOneOf(const ASTNodePtr &node, const TypePtrList &expectedTypeSet, bool isReceiverType=false);

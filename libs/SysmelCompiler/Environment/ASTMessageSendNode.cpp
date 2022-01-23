@@ -124,7 +124,7 @@ ASTNodePtr ASTMessageSendNode::parseAsPatternNode()
                 {
                     auto binding = basicMakeObject<ASTBindingPatternNode> ();
                     binding->sourcePosition = sourcePosition;
-                    binding->identifier = selectorValue;
+                    binding->identifier = selector;
                     return binding;
                 }
             }

@@ -5,6 +5,8 @@
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 #include "Environment/ASTBuilder.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
+#include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTSemanticErrorNode.hpp"
 #include "Environment/ASTSlotAccessNode.hpp"
 #include "Environment/ReferenceType.hpp"
@@ -184,10 +186,35 @@ void TupleType::buildLayout()
     layout->finishGroup();
 }
 
+MethodCategories TupleTypeValue::__typeMethods__()
+{
+    return MethodCategories{
+        {"pattern matching", {
+            makeMethodBinding<bool (const TypePtr &)> ("isSequencePatternType", +[](const TypePtr &){
+                return true;
+            }, MethodFlags::Pure),
+
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &){
+                return 0;
+            }, MethodFlags::Pure),
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMaxSize", +[](const TypePtr &tupleType){
+                return tupleType.staticAs<TupleType>()->elementTypes.size();
+            }, MethodFlags::Pure),
+            makeMethodBinding<TypePtr (const TypePtr &, uint64_t)> ("sequencePatternTypeAt:", +[](const TypePtr &tupleType, uint64_t i){
+                return i < tupleType.staticAs<TupleType>()->elementTypes.size() ? tupleType.staticAs<TupleType>()->elementTypes[i] : nullptr;
+            }, MethodFlags::Pure),
+        }}
+    };
+}
+
 MethodCategories TupleTypeValue::__instanceMacroMethods__()
 {
     return MethodCategories{
         {"accessing", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("__sequencePatternAt__:", [=](const MacroInvocationContextPtr &macroContext, ASTNodePtr index) -> ASTNodePtr {
+               return macroContext->astBuilder->sendToWithArguments(macroContext->astBuilder->literalSymbol("[]"), macroContext->receiverNode, {index});
+            }, MethodFlags::Macro),
+
             makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, uint64_t)> ("[]", [=](const MacroInvocationContextPtr &macroContext, int64_t slotIndex) -> ASTNodePtr {
                 auto decayedType = macroContext->selfType->asDecayedType();
                 sysmelAssert(decayedType->isTupleType());
@@ -200,7 +227,16 @@ MethodCategories TupleTypeValue::__instanceMacroMethods__()
                 auto referenceType = elementType->refForMemberOfReceiverWithType(macroContext->selfType);
                 return macroContext->astBuilder->slotAccess(macroContext->receiverNode, slotIndex, referenceType, true);
             }, MethodFlags::Macro)
-        }}
+        }},
+
+        {"pattern matching", {
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> ("__sequencePatternSize__", [=](const MacroInvocationContextPtr &macroContext) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isTupleType());
+
+                return macroContext->astBuilder->literal(wrapValue(uint64_t(decayedType.staticAs<TupleType> ()->elementTypes.size())));
+            }, MethodFlags::Macro),
+        }},
     };
 }
 

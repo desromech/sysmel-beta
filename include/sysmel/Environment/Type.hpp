@@ -432,6 +432,9 @@ public:
 
     virtual void ensureVirtualTableLayoutComputation();
 
+    /// Does this type match the specified value type?
+    virtual bool matchesValueTypeInPattern(const TypePtr &typeToMatch);
+
 protected:
     // Utility method for expanding type macros.
     static TypePtr extractTypeForTypeMacroReceiverNode(const ASTNodePtr &receiverNode);

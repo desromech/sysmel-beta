@@ -43,6 +43,10 @@
 #include "Environment/ASTDoWhileNode.hpp"
 #include "Environment/ASTReturnNode.hpp"
 
+#include "Environment/ASTEvaluatePatternWithValueNode.hpp"
+#include "Environment/ASTFailPatternNode.hpp"
+#include "Environment/ASTTrapNode.hpp"
+
 #include "Environment/CompiledMethod.hpp"
 #include "Environment/SSAFunction.hpp"
 #include "Environment/SSACodeRegion.hpp"
@@ -75,6 +79,10 @@
 #include "Environment/SSABitcastInstruction.hpp"
 #include "Environment/SSADowncastInstruction.hpp"
 #include "Environment/SSAUpcastInstruction.hpp"
+
+#include "Environment/SSAEvaluatePatternInstruction.hpp"
+#include "Environment/SSAFailPatternInstruction.hpp"
+#include "Environment/SSATrapInstruction.hpp"
 
 #include "Environment/FunctionalType.hpp"
 #include "Environment/AggregateType.hpp"
@@ -777,6 +785,29 @@ AnyValuePtr ASTSSACompiler::visitContinueNode(const ASTContinueNodePtr &)
 AnyValuePtr ASTSSACompiler::visitBreakNode(const ASTBreakNodePtr &)
 {
     return builder->breakInstruction();
+}
+
+AnyValuePtr ASTSSACompiler::visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node)
+{
+    auto patternValue = visitNodeForValue(node->valueNode);
+
+    auto patternRegion = buildRegionForNode(node->patternEvaluationNode);
+    SSACodeRegionPtr successRegion, failureRegion;
+    if(node->successAction)
+        successRegion = buildRegionForNode(node->successAction);
+    if(node->failureAction)
+        failureRegion = buildRegionForNode(node->failureAction);
+    return builder->evaluatePattern(node->analyzedType, patternRegion, successRegion, failureRegion);
+}
+
+AnyValuePtr ASTSSACompiler::visitFailPatternNode(const ASTFailPatternNodePtr &)
+{
+    return builder->failPattern();
+}
+
+AnyValuePtr ASTSSACompiler::visitTrapNode(const ASTTrapNodePtr &node)
+{
+    return builder->trap(node->reason);
 }
 
 void ASTSSACompiler::buildRegionForSourcePositionWith(const SSACodeRegionPtr &region, const ASTSourcePositionPtr &sourcePosition, const ASTSSACodeRegionBuildingBlock &aBlock)

@@ -74,6 +74,10 @@ public:
     virtual AnyValuePtr visitContinueNode(const ASTContinueNodePtr &node) override;
     virtual AnyValuePtr visitBreakNode(const ASTBreakNodePtr &node) override;
 
+    virtual AnyValuePtr visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node) override;
+    virtual AnyValuePtr visitFailPatternNode(const ASTFailPatternNodePtr &node) override;
+    virtual AnyValuePtr visitTrapNode(const ASTTrapNodePtr &node) override;
+
     void buildRegionForSourcePositionWith(const SSACodeRegionPtr &region, const ASTSourcePositionPtr &sourcePosition, const ASTSSACodeRegionBuildingBlock &aBlock);
     void buildRegionForNodeWith(const SSACodeRegionPtr &region, const ASTNodePtr &node, const ASTSSACodeRegionBuildingBlock &aBlock);
     SSACodeRegionPtr buildRegionForNode(const ASTNodePtr &node);

@@ -70,6 +70,10 @@ public:
     virtual AnyValuePtr visitLocalFinalization(const SSALocalFinalizationPtr &instruction);
 
     virtual AnyValuePtr visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction);
+
+    virtual AnyValuePtr visitEvaluatePatternInstruction(const SSAEvaluatePatternInstructionPtr &instruction);
+    virtual AnyValuePtr visitFailPatternInstruction(const SSAFailPatternInstructionPtr &instruction);
+    virtual AnyValuePtr visitTrapInstruction(const SSATrapInstructionPtr &instruction);
 };
 
 } // End of namespace Environment

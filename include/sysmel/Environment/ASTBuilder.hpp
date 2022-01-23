@@ -28,6 +28,8 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTReturnNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBreakNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFailPatternNode);
+
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSlotAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(FieldVariable);
@@ -43,6 +45,8 @@ public:
     static constexpr char const __typeName__[] = "ASTBuilder";
 
     virtual bool isASTBuilder() const override;
+
+    static ASTBuilderPtr withSourcePosition(const ASTSourcePositionPtr &sourcePosition);
 
     ASTIdentifierReferenceNodePtr identifier(const AnyValuePtr &identifier);
     ASTIdentifierReferenceNodePtr identifierWithBinding(const AnyValuePtr &identifier, const AnyValuePtr &binding);
@@ -79,6 +83,8 @@ public:
     ASTSemanticErrorNodePtr semanticError(const std::string &message);
 
     ASTProgramEntityExtensionNodePtr programEntityExtension(const ASTNodePtr &programEntity, const ASTNodePtr &extensionBody);
+
+    ASTFailPatternNodePtr failPattern();
 
     ASTSourcePositionPtr sourcePosition;
 };

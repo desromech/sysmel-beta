@@ -425,6 +425,35 @@ AnyValuePtr ASTVisitor::visitValuePatternNode(const ASTValuePatternNodePtr &node
     return visitPatternNode(node);
 }
 
+AnyValuePtr ASTVisitor::visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitPatternMatchingNode(const ASTPatternMatchingNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitFailPatternNode(const ASTFailPatternNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr ASTVisitor::visitTrapNode(const ASTTrapNodePtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
 
 } // End of namespace Environment
 } // End of namespace Sysmel

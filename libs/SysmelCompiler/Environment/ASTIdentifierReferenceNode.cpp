@@ -65,7 +65,7 @@ ASTNodePtr ASTIdentifierReferenceNode::parseAsBindingPatternNode()
 {
     auto bindingPattern = basicMakeObject<ASTBindingPatternNode> ();
     bindingPattern->sourcePosition = sourcePosition;
-    bindingPattern->identifier = identifier;
+    bindingPattern->identifier = validAnyValue(identifier)->asASTNodeRequiredInPosition(sourcePosition);
     return bindingPattern;
 }
 

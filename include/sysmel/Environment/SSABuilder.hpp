@@ -3,6 +3,7 @@
 #pragma once
 
 #include "SSAValue.hpp"
+#include "TrapReason.hpp"
 
 namespace Sysmel
 {
@@ -79,6 +80,10 @@ public:
     SSALocalFinalizationPtr localFinalization(const SSAValuePtr &localVariable, const SSACodeRegionPtr &finalizationCodeRegion);
 
     SSACheckExpectedTypeSelectorValueInstructionPtr checkExpectedTypeSelectorValue(const SSAValuePtr &aggregate, uint64_t typeSelectorSlotIndex, const TypePtr &typeSelectorSlotReferenceType, uint64_t expectedTypeSelectorValue);
+
+    SSAEvaluatePatternInstructionPtr evaluatePattern(const TypePtr &resultType, SSACodeRegionPtr &patternRegion, const SSACodeRegionPtr &successRegion, const SSACodeRegionPtr &failureRegion);
+    SSAFailPatternInstructionPtr failPattern();
+    SSATrapInstructionPtr trap(TrapReason reason);
 
 protected:
     SSACodeRegionPtr currentRegion;

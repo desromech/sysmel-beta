@@ -259,5 +259,20 @@ AnyValuePtr SSAValueVisitor::visitCheckExpectedTypeSelectorValueInstruction(cons
     SysmelSelfSubclassResponsibility();
 }
 
+AnyValuePtr SSAValueVisitor::visitEvaluatePatternInstruction(const SSAEvaluatePatternInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitFailPatternInstruction(const SSAFailPatternInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
+AnyValuePtr SSAValueVisitor::visitTrapInstruction(const SSATrapInstructionPtr &)
+{
+    SysmelSelfSubclassResponsibility();
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

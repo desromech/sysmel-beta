@@ -30,12 +30,15 @@ set(Environment_Sources
     ASTCompileTimeEvaluationErrorNode.cpp
     ASTCompileTimeEvaluator.cpp
     ASTContinueNode.cpp
+    ASTDestructuringBindingNode.cpp
     ASTDoWhileNode.cpp
     ASTDowncastTypeConversionNode.cpp
     ASTEmptySourcePosition.cpp
     ASTEnumNode.cpp
     ASTErrorNode.cpp
+    ASTEvaluatePatternWithValueNode.cpp
     ASTExplicitCastNode.cpp
+    ASTFailPatternNode.cpp
     ASTFieldVariableAccessNode.cpp
     ASTFieldVariableNode.cpp
     ASTFunctionalNode.cpp
@@ -64,6 +67,8 @@ set(Environment_Sources
     ASTNode.cpp
     ASTParseErrorNode.cpp
     ASTParseErrorValidator.cpp
+    ASTPatternMatchingCaseNode.cpp
+    ASTPatternMatchingNode.cpp
     ASTPatternNode.cpp
     ASTPredicatedPatternNode.cpp
     ASTPragmaNode.cpp
@@ -92,6 +97,7 @@ set(Environment_Sources
     ASTStructNode.cpp
     ASTTemplateNode.cpp
     ASTTransformVisitor.cpp
+    ASTTrapNode.cpp
     ASTTypeConversionNode.cpp
     ASTTypeNode.cpp
     ASTUnionNode.cpp
@@ -209,6 +215,7 @@ set(Environment_Sources
     PaddingType.cpp
     ParseError.cpp
     PatternMatchingMethod.cpp
+    PatternMatchingValueName.cpp
     PointerLikeType.cpp
     PointerType.cpp
     Pragma.cpp
@@ -260,6 +267,8 @@ set(Environment_Sources
     SSADoWithCleanupInstruction.cpp
     SSADowncastInstruction.cpp
     SSAEnableLocalFinalization.cpp
+    SSAEvaluatePatternInstruction.cpp
+    SSAFailPatternInstruction.cpp
     SSAFunction.cpp
     SSAGlobalValue.cpp
     SSAGlobalVariable.cpp
@@ -283,6 +292,7 @@ set(Environment_Sources
     SSAStoreInstruction.cpp
     SSATemplate.cpp
     SSATemplateInstance.cpp
+    SSATrapInstruction.cpp
     SSATypeProgramEntity.cpp
     SSAUnreachableInstruction.cpp
     SSAUpcastInstruction.cpp
@@ -298,6 +308,7 @@ set(Environment_Sources
     TemplateInstance.cpp
     TemplateMetaBuilder.cpp
     TemporaryReferenceType.cpp
+    TrapReason.cpp
     TupleType.cpp
     Type.cpp
     TypeVisitor.cpp
