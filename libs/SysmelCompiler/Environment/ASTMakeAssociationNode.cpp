@@ -1,4 +1,5 @@
 #include "Environment/ASTMakeAssociationNode.hpp"
+#include "Environment/ASTPatternMatchingCaseNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
 #include "Environment/Type.hpp"
@@ -37,6 +38,15 @@ void ASTMakeAssociationNode::childrenDo(const ASTIterationBlock &aBlock)
     SuperType::childrenDo(aBlock);
     if(key) aBlock(key);
     if(value) aBlock(value);
+}
+
+ASTNodePtr ASTMakeAssociationNode::parseAsPatternMatchingCaseWith(const ASTSemanticAnalyzerPtr &)
+{
+    auto result = basicMakeObject<ASTPatternMatchingCaseNode> ();
+    result->sourcePosition = sourcePosition;
+    result->patternNode = key ? key->parseAsPatternNode() : nullptr;
+    result->actionNode = value;
+    return result;
 }
 
 } // End of namespace Environment

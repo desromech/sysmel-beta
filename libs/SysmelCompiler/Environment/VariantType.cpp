@@ -197,6 +197,11 @@ std::optional<uint64_t> VariantType::findTypeSelectorIndexFor(const TypePtr &exp
     return std::nullopt;
 }
 
+bool VariantType::matchesExpectedValueTypeInPattern(const TypePtr &typeToMatch)
+{
+    return findTypeSelectorIndexFor(typeToMatch->asDecayedType()).has_value();
+}
+
 VariantTypeValuePtr VariantType::makeWithValueAndSelector(const AnyValuePtr &value, uint64_t selectorIndex)
 {
     auto variantLayout = getLayout().staticAs<AggregateTypeVariantLayout> ();
@@ -252,8 +257,25 @@ MethodCategories VariantTypeValue::__instanceMacroMethods__()
 
                 return macroContext->astBuilder->variantSlotAccess(macroContext->receiverNode, slotIndex, referenceType,
                     0, selectorReferenceType, expectedTypeSelector.value(), false);
-            }, MethodFlags::Macro)
+            }, MethodFlags::Macro),
 
+            makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr, uint64_t)> ("uncheckedGetWithTypeSelector:", [=](const MacroInvocationContextPtr &macroContext, uint64_t expectedTypeSelector) -> ASTNodePtr {
+                auto decayedType = macroContext->selfType->asDecayedType();
+                sysmelAssert(decayedType->isVariantType());
+
+                auto variantType = decayedType.staticAs<VariantType> ();
+                if(expectedTypeSelector >= variantType->elementTypes.size())
+                    return macroContext->astBuilder->semanticError(formatString("Variant does not contain requested type selector {0}.", {castToString(expectedTypeSelector)}));
+
+                auto accessedType = variantType->elementTypes[expectedTypeSelector];
+                auto layout = variantType->getLayout().staticAs<AggregateTypeVariantLayout> ();
+                auto slotIndex = layout->getElementMemorySlotIndex();
+                
+                auto selectorReferenceType = layout->getDataTypeIndexType()->refForMemberOfReceiverWithType(macroContext->selfType);
+                auto referenceType = accessedType->refForMemberOfReceiverWithType(macroContext->selfType);
+
+                return macroContext->astBuilder->slotAccess(macroContext->receiverNode, slotIndex, referenceType, false);
+            }, MethodFlags::Macro)
         }},
     };
 }

@@ -19,6 +19,8 @@ class SYSMEL_COMPILER_LIB_EXPORT LetMetaBuilder : public SubtypeOf<VariableMetaB
 public:
     static constexpr char const __typeName__[] = "LetMetaBuilder";
 
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
 protected:
     virtual ASTNodePtr analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 

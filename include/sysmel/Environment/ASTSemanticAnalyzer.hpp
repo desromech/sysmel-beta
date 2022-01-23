@@ -132,6 +132,8 @@ public:
     virtual AnyValuePtr visitPatternNode(const ASTPatternNodePtr &node) override;
 
     virtual AnyValuePtr visitDestructuringBindingNode(const ASTDestructuringBindingNodePtr &node) override;
+    virtual AnyValuePtr visitPatternMatchingNode(const ASTPatternMatchingNodePtr &node) override;
+    virtual AnyValuePtr visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &node) override;
 
     virtual AnyValuePtr visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node) override;
 

@@ -9,6 +9,8 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS_AND_LIST(ASTPatternMatchingCaseNode)
+
 /**
  * I am a specific case in a pattern matching.
  */

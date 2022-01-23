@@ -25,7 +25,7 @@ public:
 
     virtual ASTNeverPatternNodePtr asNeverPatternNode();
 
-    std::pair<ASTNodePtr, ASTNodePtr> expandHiddenBindingWithExpandedType(const ASTNodePtr &valueNode, const TypePtr &valueType, const TypePtr &expectedType, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    std::pair<ASTNodePtr, ASTNodePtr> expandHiddenBindingWithExpandedType(const ASTNodePtr &valueNode, const TypePtr &valueType, const TypePtr &expectedType, const ASTSemanticAnalyzerPtr &semanticAnalyzer, const ASTNodePtr &nameNode = nullptr);
 
 };
 

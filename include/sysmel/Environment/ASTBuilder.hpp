@@ -29,6 +29,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTBreakNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTContinueNode);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFailPatternNode);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTPatternMatchingNode);
 
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTFieldVariableAccessNode);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ASTSlotAccessNode);
@@ -64,12 +65,15 @@ public:
 
     ASTIfNodePtr ifThen(const ASTNodePtr &condition, const ASTNodePtr &trueExpression);
     ASTIfNodePtr ifThenElse(const ASTNodePtr &condition, const ASTNodePtr &trueExpression, const ASTNodePtr &falseExpression);
+    ASTIfNodePtr ifElse(const ASTNodePtr &condition, const ASTNodePtr &falseExpression);
 
     ASTWhileNodePtr whileDo(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression);
     ASTWhileNodePtr whileDoContinueWith(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression, const ASTNodePtr &continueExpression);
 
     ASTDoWhileNodePtr doWhile(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition);
     ASTDoWhileNodePtr doWhileContinueWith(const ASTNodePtr &bodyExpression, const ASTNodePtr &condition, const ASTNodePtr &continueExpression);
+
+    ASTPatternMatchingNodePtr patternMatchingWithCases(const ASTNodePtr &valueExpression, const ASTNodePtr &cases);
 
     ASTReturnNodePtr returnValue(const ASTNodePtr &expression);
     ASTReturnNodePtr returnVoid();

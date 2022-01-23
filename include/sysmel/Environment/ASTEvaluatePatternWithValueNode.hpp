@@ -9,6 +9,8 @@ namespace Sysmel
 namespace Environment
 {
 
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(LexicalScope);
+
 /**
  * I am node that is used for evaluating a pattern matching pattern with a specific value.
  * I am typically used for implementing destructuring binding and pattern matching.
@@ -23,11 +25,14 @@ public:
     virtual SExpression asSExpression() const override;
     
     bool introduceNewLexicalScope = false;
+    LexicalScopePtr patternScope;
+
     ASTNodePtr patternNode;
     ASTNodePtr valueNode;
     ASTNodePtr patternEvaluationNode;
     ASTNodePtr successAction;
     ASTNodePtr failureAction;
+
 };
 
 } // End of namespace Environment

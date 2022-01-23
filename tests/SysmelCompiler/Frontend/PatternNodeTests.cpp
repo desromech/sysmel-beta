@@ -128,16 +128,14 @@ R"(
 R"(
 (bindingPattern
   (literal #x #LiteralSymbol)
-  (valuePattern
-    (identifier nil #SomeType nil))
+  (identifier nil #SomeType nil)
   nil)
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(let x type: SomeType := 5) parseAsPatternNode",
 R"(
 (bindingPattern
   (literal #x #LiteralSymbol)
-  (valuePattern
-    (identifier nil #SomeType nil))
+  (identifier nil #SomeType nil)
   (valuePattern
     (literal 5 #LiteralPositiveInteger)))
 )"));
@@ -154,8 +152,7 @@ R"(
 R"(
 (bindingPattern
   (literal #x #LiteralSymbol)
-  (valuePattern
-    (identifier nil #SomeType nil))
+  (identifier nil #SomeType nil)
   (valuePattern
     (literal 5 #LiteralPositiveInteger)))
 )"));

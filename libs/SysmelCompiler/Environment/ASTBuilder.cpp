@@ -22,6 +22,7 @@
 #include "Environment/ASTSlotAccessNode.hpp"
 
 #include "Environment/ASTFailPatternNode.hpp"
+#include "Environment/ASTPatternMatchingNode.hpp"
 
 #include "Environment/ASTProgramEntityExtensionNode.hpp"
 
@@ -160,6 +161,15 @@ ASTIfNodePtr ASTBuilder::ifThenElse(const ASTNodePtr &condition, const ASTNodePt
     return node;
 }
 
+ASTIfNodePtr ASTBuilder::ifElse(const ASTNodePtr &condition, const ASTNodePtr &falseExpression)
+{
+    auto node = basicMakeObject<ASTIfNode> ();
+    node->sourcePosition = sourcePosition;
+    node->condition = condition;
+    node->falseExpression = falseExpression;
+    return node;
+}
+
 ASTWhileNodePtr ASTBuilder::whileDo(const ASTNodePtr &condition, const ASTNodePtr &bodyExpression)
 {
     auto node = basicMakeObject<ASTWhileNode> ();
@@ -195,6 +205,15 @@ ASTDoWhileNodePtr ASTBuilder::doWhileContinueWith(const ASTNodePtr &bodyExpressi
     node->bodyExpression = bodyExpression;
     node->condition = condition;
     node->continueExpression = continueExpression;
+    return node;
+}
+
+ASTPatternMatchingNodePtr ASTBuilder::patternMatchingWithCases(const ASTNodePtr &valueExpression, const ASTNodePtr &cases)
+{
+    auto node = basicMakeObject<ASTPatternMatchingNode>();
+    node->sourcePosition = sourcePosition;
+    node->valueNode = valueExpression;
+    node->patternNodes = cases;
     return node;
 }
 

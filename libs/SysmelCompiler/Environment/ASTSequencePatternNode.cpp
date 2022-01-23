@@ -58,7 +58,7 @@ ASTNodePtr ASTSequencePatternNode::optimizePatternNodeForExpectedTypeWith(const 
             return result->expectedSequenceType;
 
         sequenceType = unwrapTypeFromLiteralValue(result->expectedSequenceType);
-        if(!sequenceType->matchesValueTypeInPattern(type->asDecayedType()))
+        if(!type->matchesExpectedValueTypeInPattern(sequenceType))
             return asNeverPatternNode();
     }
     else
@@ -101,7 +101,7 @@ ASTNodePtr ASTSequencePatternNode::expandPatternNodeForExpectedTypeWith(const Ty
     auto sequenceNode = basicMakeObject<ASTSequenceNode> ();
     sequenceNode->sourcePosition = sourcePosition;
 
-    auto [binding, identifier] = expandHiddenBindingWithExpandedType(patternValueNode, analyzedType, valueType, semanticAnalyzer);
+    auto [binding, identifier] = expandHiddenBindingWithExpandedType(patternValueNode, valueType, analyzedType, semanticAnalyzer);
     sequenceNode->expressions.push_back(binding);
 
     // Check the size.
@@ -110,9 +110,9 @@ ASTNodePtr ASTSequencePatternNode::expandPatternNodeForExpectedTypeWith(const Ty
     {
         auto sequenceSize = builder->sendToWithArguments(builder->literalSymbol("__sequencePatternSize__"), identifier, {});
         auto expectedSize = builder->literal(wrapValue(uint64_t(elements.size())));
-        auto hasNotExpectedSize = builder->sendToWithArguments(builder->literalSymbol("~="), sequenceSize, {expectedSize});
+        auto hasNotExpectedSize = builder->sendToWithArguments(builder->literalSymbol("="), sequenceSize, {expectedSize});
 
-        auto sizeCheck = builder->ifThen(hasNotExpectedSize, builder->failPattern());
+        auto sizeCheck = builder->ifElse(hasNotExpectedSize, builder->failPattern());
         sequenceNode->expressions.push_back(sizeCheck);
     }
 
@@ -131,6 +131,8 @@ ASTNodePtr ASTSequencePatternNode::expandPatternNodeForExpectedTypeWith(const Ty
         auto expandedElementPattern = elementPattern->expandPatternNodeForExpectedTypeWith(elementType, elementMessage, semanticAnalyzer);
         sequenceNode->expressions.push_back(expandedElementPattern);
     }
+
+    sequenceNode->expressions.push_back(identifier);
 
     return sequenceNode;
 }

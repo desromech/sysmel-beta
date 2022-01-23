@@ -42,8 +42,10 @@ public:
     virtual ASTNodePtr analyzeFallbackValueConstructionWithArguments(const ASTNodePtr &node, const ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     std::optional<uint64_t> findTypeSelectorIndexFor(const TypePtr &expecedType);
+    virtual bool matchesExpectedValueTypeInPattern(const TypePtr &typeToMatch) override;
 
     VariantTypeValuePtr makeWithValueAndSelector(const AnyValuePtr &value, uint64_t selectorIndex);
+
 
     TypePtrList elementTypes;
     std::unordered_map<TypePtr, uint64_t> typeToSelectorMap;

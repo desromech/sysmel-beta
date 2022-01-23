@@ -144,7 +144,7 @@ ASTNodePtr ASTMessageSendNode::parseAsPatternNode()
                     auto bindingPatternNode = shallowCloneObject(staticObjectCast<ASTBindingPatternNode> (receiverBindingPattern));
                     bindingPatternNode->sourcePosition = sourcePosition;
                     if(selectorString == "type:")
-                        bindingPatternNode->expectedType = arguments[0]->parseAsPatternNode();
+                        bindingPatternNode->expectedType = arguments[0];
                     else // if(selectorString == ":=")
                         bindingPatternNode->expectedValue = arguments[0]->parseAsPatternNode();
                     return bindingPatternNode;

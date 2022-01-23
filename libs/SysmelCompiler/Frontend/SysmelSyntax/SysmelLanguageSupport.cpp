@@ -64,6 +64,7 @@
 #include "Environment/ASTReturnNode.hpp"
 #include "Environment/ASTBreakNode.hpp"
 #include "Environment/ASTContinueNode.hpp"
+#include "Environment/ASTPatternMatchingNode.hpp"
 
 #include <fstream>
 
@@ -290,7 +291,7 @@ public:
 
         convertedNode->messages.reserve(node.messages.size());
         for(auto &message : node.messages)
-            convertedNode->messages.push_back(std::any_cast<Environment::ASTMessageChainMessageNodePtr> (visitNode(*message)));
+            convertedNode->messages.push_back(std::any_cast<ResultType> (visitNode(*message)));
 
         return ResultType(convertedNode);
     }
@@ -306,7 +307,7 @@ public:
         for(auto &arg : node.arguments)
             convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
 
-        return convertedNode;
+        return ResultType(convertedNode);
     }
 
     virtual std::any visitCallNode(ASTCallNode &node) override
@@ -513,6 +514,10 @@ void SysmelLanguageSupport::initialize()
 
         topLevelScope->setSymbolBinding(internSymbol("return:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr)> ("return:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &valueExpression) {
             return macroContext->astBuilder->returnValue(valueExpression);
+        }, MethodFlags::Macro));
+
+        topLevelScope->setSymbolBinding(internSymbol("match:withPatterns:"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr, ASTNodePtr, ASTNodePtr)> ("return:", [](const MacroInvocationContextPtr &macroContext, const ASTNodePtr &valueExpression, const ASTNodePtr &casesExpression) {
+            return macroContext->astBuilder->patternMatchingWithCases(valueExpression, casesExpression);
         }, MethodFlags::Macro));
 
         topLevelScope->setSymbolBinding(internSymbol("break"), makeBootstrapMethod<ASTNodePtr (MacroInvocationContextPtr)> ("break", [](const MacroInvocationContextPtr &macroContext) {

@@ -23,6 +23,8 @@ public:
 
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
+    virtual ASTNodePtr parseAsPatternMatchingCaseWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+
     ASTNodePtr key;
     ASTNodePtr value;
 };

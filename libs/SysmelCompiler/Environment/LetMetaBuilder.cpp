@@ -1,7 +1,9 @@
 #include "Environment/LetMetaBuilder.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
+#include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTDestructuringBindingNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
+#include "Environment/ASTSequencePatternNode.hpp"
 #include "Environment/ASTLocalVariableNode.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -11,6 +13,24 @@ namespace Environment
 {
 
 static BootstrapTypeRegistration<LetMetaBuilder> letMetaBuilderTypeRegistration;
+
+ASTNodePtr LetMetaBuilder::analyzeCallNode(const ASTCallNodePtr &callNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    if(!bindingPatternNode)
+    {
+        auto sequencePattern = basicMakeObject<ASTSequencePatternNode> ();
+        sequencePattern->sourcePosition = callNode->sourcePosition;
+        sequencePattern->elements.reserve(callNode->arguments.size());
+        for(auto &arg : callNode->arguments)
+            sequencePattern->elements.push_back(arg->parseAsBindingPatternNode());
+
+        bindingPatternNode = sequencePattern;
+        return callNode->function;
+    }
+
+    return SuperType::analyzeCallNode(callNode, semanticAnalyzer);
+
+}
 
 ASTNodePtr LetMetaBuilder::analyzeMessageSendNodeWithSelector(const std::string &selectorValue, const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {

@@ -63,6 +63,8 @@ public:
     static TypePtr getCompilationErrorValueType();
     static TypePtr getCVarArgsType();
 
+    static TypePtr computeConditionCoercionType(const TypePtr &first, const TypePtr &second);
+
     bool isUndefinedType() const;
     bool isVoidType() const;
     bool isAutoType() const;
@@ -433,7 +435,7 @@ public:
     virtual void ensureVirtualTableLayoutComputation();
 
     /// Does this type match the specified value type?
-    virtual bool matchesValueTypeInPattern(const TypePtr &typeToMatch);
+    virtual bool matchesExpectedValueTypeInPattern(const TypePtr &typeToMatch);
 
 protected:
     // Utility method for expanding type macros.

@@ -122,6 +122,11 @@ ASTNodePtr ASTNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semant
     return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "This is not a valid argument argument specification.");
 }
 
+ASTNodePtr ASTNode::parseAsPatternMatchingCaseWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "Not a valid pattern matching case.");
+}
+
 std::string ASTNode::printString() const
 {
     return sexpressionToPrettyString(asSExpression());

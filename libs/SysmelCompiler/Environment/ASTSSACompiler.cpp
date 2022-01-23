@@ -797,7 +797,12 @@ AnyValuePtr ASTSSACompiler::visitEvaluatePatternWithValueNode(const ASTEvaluateP
         successRegion = buildRegionForNode(node->successAction);
     if(node->failureAction)
         failureRegion = buildRegionForNode(node->failureAction);
-    return builder->evaluatePattern(node->analyzedType, patternRegion, successRegion, failureRegion);
+    
+    auto result = builder->evaluatePattern(node->analyzedType, patternRegion, successRegion, failureRegion);
+    if(node->successAction && node->successAction->analyzedType->isControlFlowEscapeType()
+        && node->failureAction && node->failureAction->analyzedType->isControlFlowEscapeType())
+        return builder->unreachableInstruction();
+    return result;
 }
 
 AnyValuePtr ASTSSACompiler::visitFailPatternNode(const ASTFailPatternNodePtr &)

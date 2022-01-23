@@ -2,6 +2,7 @@
 #include "Environment/Type.hpp"
 #include "Environment/ASTNeverPatternNode.hpp"
 #include "Environment/ASTLocalVariableNode.hpp"
+#include "Environment/ASTSequenceNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
@@ -59,7 +60,7 @@ ASTNodePtr ASTBindingPatternNode::optimizePatternNodeForExpectedTypeWith(const T
             return result->expectedType;
 
         bindingType = unwrapTypeFromLiteralValue(result->expectedType);
-        if(!type->matchesValueTypeInPattern(bindingType))
+        if(!type->matchesExpectedValueTypeInPattern(bindingType))
             return asNeverPatternNode();
     }
 
@@ -97,7 +98,20 @@ ASTNodePtr ASTBindingPatternNode::expandPatternNodeForExpectedTypeWith(const Typ
         return localVariableNode;
     }
 
-    sysmelAssert("TODO: Implement this case" && false);
+    auto [binding, bindingIdentifier] = expandHiddenBindingWithExpandedType(patternValueNode, type, analyzedType, semanticAnalyzer, identifier);
+    if(!expectedValue)
+        return binding;
+
+    auto sequenceNode = basicMakeObject<ASTSequenceNode> ();
+    sequenceNode->sourcePosition = sourcePosition;
+    sequenceNode->expressions = ASTNodePtrList{
+        binding,
+        expectedValue->expandPatternNodeForExpectedTypeWith(analyzedType, bindingIdentifier, semanticAnalyzer),
+        bindingIdentifier
+    };
+
+    sequenceNode->expressions.push_back(binding);
+    return sequenceNode;
 }
 
 } // End of namespace Environment

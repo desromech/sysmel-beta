@@ -1108,6 +1108,11 @@ llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACode
         result = llvm::UndefValue::get(resultTranslatedType);
     else
         result = simplifyDegeneratePhi(resultPhi);
+
+    // If there are no predecessors, then this is unreachable.
+    if(llvm::pred_empty(mergeBlock))
+        builder->CreateUnreachable();
+
     return result;
 }
 
@@ -1172,7 +1177,8 @@ void SSALLVMValueVisitor::translateBasicBlockInto(size_t index, const SSABasicBl
     }
 
     sourceBasicBlock->instructionsDo([&](const SSAInstructionPtr &instruction){
-        translateInstruction(instruction);
+        if(!isLastTerminator())
+            translateInstruction(instruction);
     });
     sysmelAssert(isLastTerminator());
 }
@@ -1910,33 +1916,51 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
             builder->CreateBr(patternSuccess);
     }
 
+    const auto &resultType = instruction->getValueType();
+    llvm::PHINode *phiNode = nullptr;
+    if(!resultType->isVoidType())
+        phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "patternResult", merge);
+
     // Pattern success.
     patternSuccess->insertInto(currentFunction);
     builder->SetInsertPoint(patternSuccess);
 
     auto &patternSuccessRegion = instruction->getSuccessRegion();
+    llvm::Value *successResult = nullptr;
     if(patternSuccessRegion)
-        translateCodeRegionWithArguments(patternSuccessRegion, {});
+        successResult = translateCodeRegionWithArguments(patternSuccessRegion, {});
 
     if(!isLastTerminator())
+    {
         builder->CreateBr(merge);
+        if(successResult && phiNode)
+            phiNode->addIncoming(successResult, builder->GetInsertBlock());
+    }
 
     // Pattern failure.
     patternFailure->insertInto(currentFunction);
     builder->SetInsertPoint(patternFailure);
 
     auto &patternFailureRegion = instruction->getFailureRegion();
+    llvm::Value *failureResult = nullptr;
     if(patternFailureRegion)
-        translateCodeRegionWithArguments(patternFailureRegion, {});
+        failureResult = translateCodeRegionWithArguments(patternFailureRegion, {});
 
     if(!isLastTerminator())
+    {
         builder->CreateBr(merge);
+        if(failureResult && phiNode)
+            phiNode->addIncoming(failureResult, builder->GetInsertBlock());
+    }
 
     // Merge
     merge->insertInto(currentFunction);
     builder->SetInsertPoint(merge);
 
-    return wrapLLVMValue(makeVoidValue());
+    if(phiNode)
+        return wrapLLVMValue(simplifyDegeneratePhi(phiNode));
+    else
+        return wrapLLVMValue(makeVoidValue());
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitFailPatternInstruction(const SSAFailPatternInstructionPtr &)

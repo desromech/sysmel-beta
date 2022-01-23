@@ -163,6 +163,23 @@ MethodCategories Type::__instanceMacroMethods__()
     };
 }
 
+TypePtr Type::computeConditionCoercionType(const TypePtr &first, const TypePtr &second)
+{
+    auto firstDecayed = first->asDecayedType();
+    auto secondDecayed = second->asDecayedType();
+
+    if(firstDecayed == secondDecayed)
+        return firstDecayed;
+    else if(firstDecayed->isControlFlowEscapeType() && secondDecayed->isControlFlowEscapeType())
+        return getControlFlowEscapeType();
+    else if(firstDecayed->isControlFlowEscapeType())
+        return secondDecayed;
+    else if(secondDecayed->isControlFlowEscapeType())
+        return firstDecayed;
+    else
+        return getVoidType();
+}
+
 bool Type::isUndefinedType() const
 {
     return isSubtypeOf(getUndefinedType());
@@ -1367,7 +1384,7 @@ void Type::ensureVirtualTableLayoutComputation()
 {
 }
 
-bool Type::matchesValueTypeInPattern(const TypePtr &typeToMatch)
+bool Type::matchesExpectedValueTypeInPattern(const TypePtr &typeToMatch)
 {
     return asDecayedType() == typeToMatch->asDecayedType();
 }

@@ -2562,9 +2562,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
 
     if(analyzedNode->trueExpression && analyzedNode->falseExpression)
     {
-        // TODO: Compute a proper coercion type.
-        if(analyzedNode->trueExpression->analyzedType == analyzedNode->falseExpression->analyzedType)
-            analyzedNode->analyzedType = analyzedNode->trueExpression->analyzedType;
+        auto trueType = analyzedNode->trueExpression->analyzedType;
+        auto falseType = analyzedNode->falseExpression->analyzedType;
+        auto coercionType = Type::computeConditionCoercionType(trueType, falseType);
+        analyzedNode->analyzedType = coercionType;
+
+        // Apply the type coercion.
+        if(!trueType->isControlFlowEscapeType())
+            analyzedNode->trueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->trueExpression, coercionType);
+        if(!falseType->isControlFlowEscapeType())
+            analyzedNode->falseExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->falseExpression, coercionType);
     }
     return analyzedNode;
 }
@@ -2707,6 +2714,88 @@ AnyValuePtr ASTSemanticAnalyzer::visitDestructuringBindingNode(const ASTDestruct
     return analyzeNodeIfNeededWithCurrentExpectedType(evaluatePatternNode);
 }
 
+AnyValuePtr ASTSemanticAnalyzer::visitPatternMatchingNode(const ASTPatternMatchingNodePtr &node)
+{
+    if(!node->patternNodes || !node->patternNodes->isASTMakeDictionaryNode())
+        return recordSemanticErrorInNode(node, "Expected a dictionary of patterns.");
+
+    auto patternNodes = node->patternNodes.staticAs<ASTMakeDictionaryNode> ();
+    ASTPatternMatchingCaseNodePtrList cases;
+    cases.reserve(patternNodes->elements.size());
+
+    bool hasError = false;
+    ASTNodePtr errorNode;
+    for(auto &pattern : patternNodes->elements)
+    {
+        auto parsedPattern = pattern->parseAsPatternMatchingCaseWith(selfFromThis());
+        if(!parsedPattern->isASTPatternMatchingCaseNode() && !parsedPattern->isASTErrorNode())
+            parsedPattern = recordSemanticErrorInNode(parsedPattern, "Expected a pattern matching case.");
+
+        if(parsedPattern->isASTErrorNode())
+        {
+            if(!hasError)
+                errorNode = parsedPattern;
+            hasError = true;
+            continue;
+        }
+        
+        cases.push_back(staticObjectCast<ASTPatternMatchingCaseNode> (parsedPattern));
+    }
+    
+    // Propagate the error.
+    if(hasError)
+        return errorNode;
+
+    // Introduce a variable for the pattern
+    auto patternValueName = basicMakeObject<PatternMatchingValueName> ();
+    patternValueName->sourcePosition = node->sourcePosition;
+
+    auto patternValueVariable = basicMakeObject<ASTLocalVariableNode> ();
+    patternValueVariable->sourcePosition = node->sourcePosition;
+    patternValueVariable->name = patternValueName->asASTNodeRequiredInPosition(node->sourcePosition);
+    patternValueVariable->initialValue = node->valueNode;
+    patternValueVariable->typeInferenceMode = TypeInferenceMode::TemporaryReference;
+
+    auto patternValueIdentifier = basicMakeObject<ASTIdentifierReferenceNode> ();
+    patternValueIdentifier->sourcePosition = node->sourcePosition;
+    patternValueIdentifier->identifier = patternValueName;
+
+    // Start failing with a trap.
+    ASTNodePtr resultingNode;
+    {
+        auto trap = basicMakeObject<ASTTrapNode> ();
+        trap->sourcePosition = node->sourcePosition;
+        trap->reason = TrapReason::PatternMatchingFailure;
+        resultingNode = trap;
+    }
+
+    // Construct the cases in reverse order.
+    for(size_t i = 0; i < cases.size(); ++i)
+    {
+        auto &nextCaseNode = cases[cases.size() - i - 1];
+
+        auto expandedCase = basicMakeObject<ASTEvaluatePatternWithValueNode> ();
+        expandedCase->sourcePosition = nextCaseNode->sourcePosition;
+        expandedCase->introduceNewLexicalScope = true;
+        expandedCase->valueNode = patternValueIdentifier;
+        expandedCase->patternNode = nextCaseNode->patternNode;
+        expandedCase->successAction = nextCaseNode->actionNode;
+        expandedCase->failureAction = resultingNode;
+
+        resultingNode = expandedCase;
+    }
+
+    auto sequence = basicMakeObject<ASTSequenceNode> ();
+    sequence->sourcePosition = node->sourcePosition;
+    sequence->expressions = {patternValueVariable, resultingNode};
+    return analyzeNodeIfNeededWithCurrentExpectedType(sequence);
+}
+
+AnyValuePtr ASTSemanticAnalyzer::visitPatternMatchingCaseNode(const ASTPatternMatchingCaseNodePtr &node)
+{
+    return recordSemanticErrorInNode(node, "Invalid location for a pattern matching case node.");
+}
+
 AnyValuePtr ASTSemanticAnalyzer::visitEvaluatePatternWithValueNode(const ASTEvaluatePatternWithValueNodePtr &node)
 {
     auto analyzedNode = shallowCloneObject(node);
@@ -2735,39 +2824,52 @@ AnyValuePtr ASTSemanticAnalyzer::visitEvaluatePatternWithValueNode(const ASTEval
     // Remove the never matching pattern.
     if(analyzedNode->patternNode->isNeverMatchingPattern())
     {
-        if(!node->introduceNewLexicalScope)
+        // Mark the never patterns as errors.
+        if(analyzedNode->patternNode->isASTNeverPatternNode())
             return recordSemanticErrorInNode(analyzedNode, "Pattern is never matching.");
         return analyzeNodeIfNeededWithCurrentExpectedType(analyzedNode->failureAction);
     }
-    
-    // Introduce a variable for the pattern
-    auto patternValueName = basicMakeObject<PatternMatchingValueName> ();
-    patternValueName->sourcePosition = node->sourcePosition;
-
-    auto patternValueVariable = basicMakeObject<ASTLocalVariableNode> ();
-    patternValueVariable->sourcePosition = node->sourcePosition;
-    patternValueVariable->name = patternValueName->asASTNodeRequiredInPosition(node->sourcePosition);
-    patternValueVariable->initialValue = analyzedNode->valueNode;
-    patternValueVariable->typeInferenceMode = TypeInferenceMode::TemporaryReference;
-    analyzedNode->valueNode = analyzeNodeIfNeededWithAutoType(patternValueVariable);
 
     // Expand the pattern.
-    auto patternValueIdentifier = basicMakeObject<ASTIdentifierReferenceNode> ();
-    patternValueIdentifier->sourcePosition = node->sourcePosition;
-    patternValueIdentifier->identifier = patternValueName;
+    auto patternEnvironment = environment;
+    if(analyzedNode->introduceNewLexicalScope)
+    {
+        analyzedNode->patternScope = LexicalScope::makeWithParent(environment->lexicalScope, analyzedNode->sourcePosition);
+        patternEnvironment = environment->copyWithLexicalScope(analyzedNode->patternScope);
+    }
 
-    auto expandedPattern = analyzedNode->patternNode->expandPatternNodeForExpectedTypeWith(decayedType, patternValueIdentifier, selfFromThis());
-    analyzedNode->patternEvaluationNode = analyzeNodeIfNeededWithAutoType(expandedPattern);
+    analyzedNode->patternEvaluationNode = withEnvironmentDoAnalysis(patternEnvironment, [&](){
+        auto expandedPattern = analyzedNode->patternNode->expandPatternNodeForExpectedTypeWith(decayedType, analyzedNode->valueNode, selfFromThis());
+        return analyzeNodeIfNeededWithExpectedType(expandedPattern, Type::getVoidType());
+    });
 
     // Analyze the success action.
     if(analyzedNode->successAction)
-        analyzedNode->successAction = analyzeNodeIfNeededWithAutoType(analyzedNode->successAction);
+    {
+        analyzedNode->successAction = withEnvironmentDoAnalysis(patternEnvironment, [&](){
+            return analyzeNodeIfNeededWithAutoType(analyzedNode->successAction);
+        });
+    }
 
     // Analyze the fail action.
     if(analyzedNode->failureAction)
         analyzedNode->failureAction = analyzeNodeIfNeededWithAutoType(analyzedNode->failureAction);
 
     analyzedNode->analyzedType = Type::getVoidType();
+    if(analyzedNode->successAction && analyzedNode->failureAction)
+    {
+        auto successType = analyzedNode->successAction->analyzedType;
+        auto failureType = analyzedNode->failureAction->analyzedType;
+        auto coercionType = Type::computeConditionCoercionType(successType, failureType);
+        analyzedNode->analyzedType = coercionType;
+
+        // Apply the type coercion.
+        if(!successType->isControlFlowEscapeType())
+            analyzedNode->successAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->successAction, coercionType);
+        if(!failureType->isControlFlowEscapeType())
+            analyzedNode->failureAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->failureAction, coercionType);
+    }
+
     return analyzedNode;
 }
 

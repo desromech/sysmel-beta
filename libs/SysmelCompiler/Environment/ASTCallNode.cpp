@@ -50,7 +50,9 @@ ASTNodePtr ASTCallNode::parseAsPatternNode()
     auto result = basicMakeObject<ASTSequencePatternNode> ();
     result->sourcePosition = sourcePosition;
     result->expectedSequenceType = function;
-    result->elements = arguments;
+    result->elements.reserve(arguments.size());
+    for(auto &arg : arguments)
+        result->elements.push_back(arg->parseAsPatternNode());
     return result;
 }
 

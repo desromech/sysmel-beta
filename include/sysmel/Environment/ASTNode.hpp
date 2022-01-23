@@ -133,6 +133,7 @@ public:
     virtual bool isNeverMatchingPattern() const;
 
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual ASTNodePtr parseAsPatternMatchingCaseWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual ASTNodePtr parseAsPatternNode();
     virtual ASTNodePtr parseAsBindingPatternNode();
 
