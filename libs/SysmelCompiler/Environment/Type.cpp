@@ -602,7 +602,11 @@ uint64_t Type::getMemoryAlignment()
 
 uint64_t Type::getAlignedMemorySize()
 {
-    return alignedTo(getMemorySize(), getMemoryAlignment());
+    auto alignment = getMemoryAlignment();
+    auto memorySize = getMemorySize();
+    if(alignment == 0)
+        return 0;
+    return alignedTo(memorySize, alignment);
 }
 
 ASTNodePtr Type::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)

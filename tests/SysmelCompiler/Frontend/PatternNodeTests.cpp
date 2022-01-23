@@ -188,23 +188,29 @@ R"(
 R"(
 (sequencePattern
   (identifier nil #SomeType nil)
-  (literal 1 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 1 #LiteralPositiveInteger)))
 )"));
 
                 CHECK(checkStringEvaluationASTIsSameTo("`'(SomeType(1, 2)) parseAsPatternNode",
 R"(
 (sequencePattern
   (identifier nil #SomeType nil)
-  (literal 1 #LiteralPositiveInteger)
-  (literal 2 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 1 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 2 #LiteralPositiveInteger)))
 )"));
                 CHECK(checkStringEvaluationASTIsSameTo("`'(SomeType(1, 2, 3)) parseAsPatternNode",
 R"(
 (sequencePattern
   (identifier nil #SomeType nil)
-  (literal 1 #LiteralPositiveInteger)
-  (literal 2 #LiteralPositiveInteger)
-  (literal 3 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 1 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 2 #LiteralPositiveInteger))
+  (valuePattern
+    (literal 3 #LiteralPositiveInteger)))
 )"));
 
 

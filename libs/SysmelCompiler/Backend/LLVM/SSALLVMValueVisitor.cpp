@@ -5,6 +5,7 @@
 #include "Environment/FunctionalType.hpp"
 #include "Environment/FieldVariable.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/NameMangler.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 
@@ -888,9 +889,10 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
         currentFunction->setDLLStorageClass(convertDLLStorageClass(function->getDllLinkageMode()));
 
     // Make the argument used for returning by reference with sret.
+    auto declaredFunctionType = function->getValueType().staticAs<FunctionalType> ();
     if(mainCodeRegion->isReturningByReference())
     {
-        auto structureResultType = backend->translateType(function->getValueType().staticAs<FunctionalType> ()->getResultType());
+        auto structureResultType = backend->translateType(declaredFunctionType->getResultType());
         currentFunction->getArg(0)->addAttr(llvm::Attribute::getWithStructRetType(*backend->getContext(), structureResultType));
     }
     
@@ -900,6 +902,16 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     else if(backend->isUnsignedIntegerType(mainCodeRegion->getResultType()))
         currentFunction->addAttribute(0, llvm::Attribute::ZExt);
 
+    TypePtrList declaredArguments;
+    {
+        auto receiverType = declaredFunctionType->getReceiverType();
+        if(receiverType && !receiverType->isVoidType())
+            declaredArguments.push_back(receiverType);
+        for(size_t i = 0; i < declaredFunctionType->getArgumentCount(); ++i)
+            declaredArguments.push_back(declaredFunctionType->getArgument(i));
+    }
+
+    sysmelAssert(declaredArguments.size() == (argumentCount - firstArgumentIndex + (hasCVarArgs ? 1 : 0)));
     for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
     {
         auto argType = mainCodeRegion->getArgument(i)->getValueType();
@@ -908,6 +920,24 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
             currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::SExt);
         else if(backend->isUnsignedIntegerType(argType))
             currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::ZExt);
+
+        auto declaredArgumentType = declaredArguments[i - firstArgumentIndex];
+
+        if(argType->isPointerLikeType())
+        {
+            auto baseType = argType.staticAs<PointerLikeType> ()->getBaseType()->asDecayedType();
+            currentFunction->getArg(paramIndex)->addAttr(llvm::Attribute::getWithAlignment(*backend->getContext(), llvm::Align(baseType->getMemoryAlignment())));
+
+            if(argType->isReferenceLikeType())
+            {
+                auto alignedMemorySize = baseType->getAlignedMemorySize();
+                if(alignedMemorySize > 0)
+                    currentFunction->getArg(paramIndex)->addAttr(llvm::Attribute::getWithDereferenceableBytes(*backend->getContext(), alignedMemorySize));
+            }
+
+            if(declaredArgumentType->isPassedByReference())
+                currentFunction->getArg(paramIndex)->addAttr(llvm::Attribute::getWithByRefType(*backend->getContext(), backend->translateType(declaredArgumentType)));
+        }
     }
 
     // Make the debug information

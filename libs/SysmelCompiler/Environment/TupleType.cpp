@@ -194,8 +194,8 @@ MethodCategories TupleTypeValue::__typeMethods__()
                 return true;
             }, MethodFlags::Pure),
 
-            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &){
-                return 0;
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &tupleType){
+                return tupleType.staticAs<TupleType>()->elementTypes.size();
             }, MethodFlags::Pure),
             makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMaxSize", +[](const TypePtr &tupleType){
                 return tupleType.staticAs<TupleType>()->elementTypes.size();
