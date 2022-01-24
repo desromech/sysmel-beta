@@ -3,6 +3,7 @@
 #include "Environment/AmbiguousMatchingPatternsFound.hpp"
 #include "Environment/NotMatchingPatternFound.hpp"
 
+#include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include <limits>
@@ -169,6 +170,47 @@ AnyValuePtr PatternMatchingMethod::asMethodMatchingSignature(const TypePtr &rece
     }
     
     return nullptr;
+}
+
+ASTNodePtr PatternMatchingMethod::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    auto analyzedNode = shallowCloneObject(node);
+    ensureArgumentsAreAnalyzed(analyzedNode->arguments, semanticAnalyzer);
+
+    std::vector<MethodPtr> matchingCandidates;
+    PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+
+    for(const auto &pattern : patterns)
+    {
+        auto result = pattern->matchPatternForAnalyzingCallNode(analyzedNode, semanticAnalyzer);
+        if(!result.matchingMethod)
+            continue;
+
+        if(result.matchingRank < bestRank)
+        {
+            matchingCandidates.clear();
+            matchingCandidates.push_back(result.matchingMethod);
+            bestRank = result.matchingRank;
+        }
+        else if(result.matchingRank == bestRank)
+        {
+            matchingCandidates.push_back(result.matchingMethod);
+        }
+    }
+
+    if(matchingCandidates.size() != 1)
+    {
+        if(matchingCandidates.empty())
+        {
+            return semanticAnalyzer->recordSemanticErrorInNode(node, "Failed to find matching pattern.");
+        }
+        else if(matchingCandidates.size() > 1)
+        {
+            return semanticAnalyzer->recordSemanticErrorInNode(node, "Ambiguous matching patterns.");
+        }
+    }
+
+    return matchingCandidates.front()->analyzeCallNode(node, semanticAnalyzer);
 }
 
 } // End of namespace Environment

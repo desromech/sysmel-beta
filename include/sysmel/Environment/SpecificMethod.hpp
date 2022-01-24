@@ -35,6 +35,8 @@ public:
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex) override;
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
     virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual MethodPatternMatchingResult matchPatternForAnalyzingCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+
     virtual AnyValuePtr asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
     virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
 
@@ -42,6 +44,7 @@ public:
 
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
     virtual ASTNodePtr analyzeIdentifierReferenceNode(const ASTIdentifierReferenceNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual SExpression asSExpression() const override;
 
@@ -86,6 +89,9 @@ public:
     void setVirtualTableEntry(uint32_t newVirtualTableSlotIndex, uint32_t newVirtualTableEntrySlotIndex);
     uint32_t getVirtualTableSlotIndex() const;
     uint32_t getVirtualTableEntrySlotIndex() const;
+
+    virtual bool canOverloadBinding(const AnyValuePtr &existentBinding) const override;
+    virtual ProgramEntityPtr makeOverloadedBindingWith(const AnyValuePtr &existentBinding) override;
 
 protected:
     FunctionalTypePtr functionalType;

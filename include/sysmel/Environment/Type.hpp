@@ -120,6 +120,9 @@ public:
     /// This method performs the lookup for a message with the specified selector only in this type. This might trigger the generation of implicit methods.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector) override;
 
+    /// This method performs the lookup for a message with the specified selector only in this type.
+    virtual AnyValuePtr lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType = nullptr, MethodFlags signatureMethodFlags = MethodFlags::None);
+
     /// This method performs the lookup of the doesNotUnderstand: macro
     virtual AnyValuePtr lookupDoesNotUnderstandMacro();
 
@@ -253,6 +256,7 @@ public:
 
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
+    virtual void replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 
     /// This method add a new method into the method dictionary with the specified selector.
     virtual void addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
@@ -452,9 +456,6 @@ protected:
 
     /// Lookup for a valid specific lifetime method.
     AnyValuePtr lookupValidLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
-
-    /// Lookup for a specific lifetime method.
-    AnyValuePtr lookupLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);
 
     /// Has a trivial lifetime method?
     bool hasTrivialLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType);

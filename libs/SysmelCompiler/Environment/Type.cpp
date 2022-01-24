@@ -721,6 +721,14 @@ void Type::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValueP
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
+void Type::replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
+{
+    recordPotentialSpecialMethod(method);
+    if(!macroMethodDictionary)
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
+    macroMethodDictionary->replaceMethodWithSelector(method, selector);
+}
+
 void Type::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     recordPotentialSpecialMethod(method);
@@ -1347,15 +1355,15 @@ AnyValuePtr Type::lookupValidLifetimeMethod(const std::string &selector, const T
 {
     evaluateAllPendingBodyBlockCodeFragments();
     ensureImplicitLifeTimeMethodsWithSelectorAreCreated(selector);
-    return lookupLifetimeMethod(selector, argumentTypes, resultType);
+    return lookupExistentLocalMethodWithSignature(internSymbol(selector), argumentTypes, resultType);
 }
 
-AnyValuePtr Type::lookupLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
+AnyValuePtr Type::lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType, MethodFlags signatureMethodFlags)
 {
     if(!methodDictionary)
         return nullptr;
 
-    auto method = methodDictionary->lookupSelector(internSymbol(selector));
+    auto method = methodDictionary->lookupSelector(selector);
     if(!method)
         return nullptr;
 
@@ -1364,7 +1372,7 @@ AnyValuePtr Type::lookupLifetimeMethod(const std::string &selector, const TypePt
 
 bool Type::hasTrivialLifetimeMethod(const std::string &selector, const TypePtrList &argumentTypes, const TypePtr &resultType)
 {
-    auto method = lookupLifetimeMethod(selector, argumentTypes, resultType);
+    auto method = lookupExistentLocalMethodWithSignature(internSymbol(selector), argumentTypes, resultType);
     if(!method || method->isUndefined())
         return true;
 

@@ -54,13 +54,23 @@ void Namespace::recordChildProgramEntityDefinition(const ProgramEntityPtr &newCh
 void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
 {
     sysmelAssert(symbol && !symbol->isAnonymousNameSymbol());
-    if(bindings.find(symbol) != bindings.end())
-        signalNewWithMessage<Error> ("Expected a new symbol binding.");
+    ProgramEntityPtr newBinding = binding;
+    {
+        auto existentIt = bindings.find(symbol);
+        if(existentIt != bindings.end())
+        {
+            auto existentBinding = existentIt->second;
+            if(binding->canOverloadBinding(existentBinding.second))
+                newBinding = binding->makeOverloadedBindingWith(existentBinding.second);
+            else
+                signalNewWithMessage<Error> ("Expected a new symbol binding.");
+        }
+    }
 
-    bindings[symbol] = std::make_pair(visibility, binding);
+    bindings[symbol] = std::make_pair(visibility, newBinding);
 
     if(symbol->isLiteralSymbol() && visibility == ProgramEntityVisibility::Public)
-        binding->addPublicAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
+        newBinding->addPublicAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
 }
 
 ASTNodePtr Namespace::analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
@@ -117,6 +127,18 @@ AnyValuePtr Namespace::lookupExistentLocalSelector(const AnyValuePtr &selector)
     return methodDictionary ? methodDictionary->lookupSelector(selector) : AnyValuePtr();
 }
 
+AnyValuePtr Namespace::lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType, MethodFlags signatureMethodFlags)
+{
+    if(!methodDictionary)
+        return nullptr;
+
+    auto method = methodDictionary->lookupSelector(selector);
+    if(!method)
+        return nullptr;
+
+    return method->asMethodMatchingSignature(Type::getVoidType(), argumentTypes, resultType);
+}
+
 AnyValuePtr Namespace::lookupLocalMacroSelector(const AnyValuePtr &selector)
 {
     return macroMethodDictionary ? macroMethodDictionary->lookupSelector(selector) : AnyValuePtr();
@@ -134,6 +156,14 @@ void Namespace::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyV
     macroMethodDictionary->addMethodWithSelector(method, selector);
 }
 
+
+void Namespace::replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
+{
+    if(!macroMethodDictionary)
+        macroMethodDictionary = basicMakeObject<MethodDictionary> ();
+    macroMethodDictionary->replaceMethodWithSelector(method, selector);
+}
+    
 void Namespace::addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     if(!methodDictionary)

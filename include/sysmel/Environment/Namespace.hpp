@@ -40,9 +40,12 @@ public:
     
     virtual AnyValuePtr lookupLocalMacroSelector(const AnyValuePtr &selector) override;
     virtual AnyValuePtr lookupExistentLocalSelector(const AnyValuePtr &selector) override;
+    virtual AnyValuePtr lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType = nullptr, MethodFlags signatureMethodFlags = MethodFlags::None) override;
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector) override;
 
     virtual void addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
+    virtual void replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
+
     virtual void addMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
     virtual void addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector) override;
 

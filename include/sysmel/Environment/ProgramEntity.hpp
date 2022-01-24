@@ -4,6 +4,7 @@
 
 #include "CompilerObject.hpp"
 #include "ProgramEntityVisibility.hpp"
+#include "MethodFlags.hpp"
 #include <utility>
 
 namespace Sysmel
@@ -78,6 +79,12 @@ public:
     /// This method adds the method in the specified categories.
     virtual void addMacroMethodCategories(const MethodCategories &categories);
 
+    /// This method adds a macro method into the method dictionary with the specified selector.
+    virtual void replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector);
+
+    /// This method replace the method in the specified categories.
+    virtual void replaceMacroMethodCategories(const MethodCategories &categories);
+
     /// This method add a new macro method into the method dictionary with the specified selector.
     virtual void addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector);
 
@@ -120,6 +127,9 @@ public:
     /// This method performs the lookup for a message with the specified selector only in this type.
     virtual AnyValuePtr lookupExistentLocalSelector(const AnyValuePtr &selector);
 
+    /// This method performs the lookup for a message with the specified selector only in this type.
+    virtual AnyValuePtr lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType = nullptr, MethodFlags signatureMethodFlags = MethodFlags::None);
+
     /// This method performs the lookup for a message with the specified selector only in this type. This might trigger the generation of implicit methods.
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector);
 
@@ -134,6 +144,12 @@ public:
 
     /// Does this program entity support the definition of virtual methods?
     virtual bool canHaveVirtualMethods() const;
+
+    /// Does this program entity support overloading?
+    virtual bool canOverloadBinding(const AnyValuePtr &existentBinding) const;
+
+    /// Does this program entity support overloading?
+    virtual ProgramEntityPtr makeOverloadedBindingWith(const AnyValuePtr &existentBinding);
 
     /// This makes accessor for public the program entity.
     virtual void addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity);

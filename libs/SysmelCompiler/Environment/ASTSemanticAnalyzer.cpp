@@ -1627,6 +1627,12 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     bool isLocalDefinition = analyzedNode->isRegisteredInLexicalScope();
     auto ownerEntity = isLocalDefinition ? environment->localDefinitionsOwner : environment->programEntityForPublicDefinitions;
 
+    // Create the function type.
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        argumentTypes.push_back(arg->analyzedType);
+
     // Check the name.
     if(name)
     {
@@ -1645,16 +1651,24 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         else
         {
             auto boundSymbol = ownerEntity->lookupLocalSymbolFromScope(name, environment->lexicalScope);
-            if(boundSymbol)
+            if(!validAnyValue(boundSymbol)->isUndefined())
             {
-                if(!boundSymbol->isCompiledMethod())
-                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-function definition in its parent program entity ({2}).",
+                if(!boundSymbol->isMethod())
+                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-function or pattern function definition in its parent program entity ({2}).",
                         {{name->printString(), boundSymbol->printString()}}));
 
-                compiledMethod = staticObjectCast<CompiledMethod> (boundSymbol);
-                if((compiledMethod->getMethodFlags() & analyzedNode->methodFlags) != analyzedNode->methodFlags)
-                    return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} has conflicting method flags with previous definition ({2}).",
-                        {{name->printString(), compiledMethod->printString()}}));
+                auto matchingMethod = boundSymbol->asMethodMatchingSignature(Type::getVoidType(), argumentTypes, nullptr);
+                if(!validAnyValue(matchingMethod)->isUndefined())
+                {
+                    if(!matchingMethod->isCompiledMethod())
+                        return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} overrides previous non-function definition in its parent program entity ({2}).",
+                            {{name->printString(), boundSymbol->printString()}}));
+
+                    compiledMethod = staticObjectCast<CompiledMethod> (matchingMethod);
+                    if((compiledMethod->getMethodFlags() & analyzedNode->methodFlags) != analyzedNode->methodFlags)
+                        return recordSemanticErrorInNode(analyzedNode, formatString("Function {1} has conflicting method flags with previous definition ({2}).",
+                            {{name->printString(), compiledMethod->printString()}}));
+                }
             }
         }
     }
@@ -1670,11 +1684,6 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
         return analyzedNode;
     }
 
-    // Create the function type.
-    TypePtrList argumentTypes;
-    argumentTypes.reserve(analyzedNode->arguments.size());
-    for(const auto &arg : analyzedNode->arguments)
-        argumentTypes.push_back(arg->analyzedType);
     auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
 
     // Create the compiled method if missing.
@@ -1709,7 +1718,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitFunctionNode(const ASTFunctionNodePtr &nod
     }
     else
     {
-        // TODO: Validate the signature for matching types.
+        // Validate the result type.
+        if(resultType != compiledMethod->getFunctionalType()->getResultType())
+            return recordSemanticErrorInNode(analyzedNode, "Mismatching result type in method definition vs declaration.");
     }
 
     // Set the definition body.
@@ -1932,8 +1943,14 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     if(isNameReserved(name))
         return recordSemanticErrorInNode(analyzedNode, formatString("Method {1} overrides reserved name.", {{name->printString()}}));
 
+    // Create the function type.
+    TypePtrList argumentTypes;
+    argumentTypes.reserve(analyzedNode->arguments.size());
+    for(const auto &arg : analyzedNode->arguments)
+        argumentTypes.push_back(arg->analyzedType);
+
     // Check for a previous method with the same selector.
-    auto previousMethod = ownerEntity->lookupExistentLocalSelector(name);
+    auto previousMethod = ownerEntity->lookupExistentLocalMethodWithSignature(name, argumentTypes, nullptr, node->methodFlags);
     if(previousMethod)
     {
         if(!previousMethod->isCompiledMethod())
@@ -1962,19 +1979,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     else if(!ownerEntity->canHaveVirtualMethods() && hasVirtualSend)
         return recordSemanticErrorInNode(analyzedNode, formatString("{0} cannot have virtual methods.", {ownerEntity->printString()}));
 
-    // Create the function type.
-    TypePtrList argumentTypes;
-    argumentTypes.reserve(analyzedNode->arguments.size());
-    for(const auto &arg : analyzedNode->arguments)
-        argumentTypes.push_back(arg->analyzedType);
-    auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
-
     // Find the parent method and check the virtuality semantics.
     auto parentMethod = ownerEntity->lookupParentOverridenMethod(name, hasConstReceiver, argumentTypes);
     if(parentMethod && parentMethod->hasVirtualSendSemantics() && !isOverride)
         return recordSemanticErrorInNode(analyzedNode, formatString("Override is required for this method", {ownerEntity->printString()}));
     
     // Create the compiled method if missing.
+    auto resultType = unwrapTypeFromLiteralValue(analyzedNode->resultType);
     if(!compiledMethod)
     {
         compiledMethod = basicMakeObject<CompiledMethod> ();
@@ -1993,7 +2004,9 @@ AnyValuePtr ASTSemanticAnalyzer::visitMethodNode(const ASTMethodNodePtr &node)
     }
     else
     {
-        // TODO: Validate the signature for matching types.
+        // Validate the result type.
+        if(resultType != compiledMethod->getFunctionalType()->getResultType())
+            return recordSemanticErrorInNode(analyzedNode, "Mismatching result type in method definition vs declaration.");
     }
 
     // Set the definition body.

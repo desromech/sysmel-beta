@@ -17,6 +17,9 @@ class SYSMEL_COMPILER_LIB_EXPORT PatternMatchingMethod : public SubtypeOf<Method
 public:
     static constexpr char const __typeName__[] = "PatternMatchingMethod";
 
+    static constexpr bool __isDynamicCompileTimeType__ = false;
+    static constexpr bool __isLiteralValueMessageAnalyzer__ = true;
+
     PatternMatchingMethod(const AnyValuePtr &initialName);
 
     virtual bool isPatternMatchingMethod() const override;
@@ -25,9 +28,11 @@ public:
 
     virtual AnyValuePtr runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver) override;
     virtual ASTNodePtr analyzeMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
     virtual AnyValuePtr asMethodMatchingDefinitionSignature(bool hasReceiver, bool hasConstReceiver, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
     virtual AnyValuePtr asMethodMatchingSignature(const TypePtr &receiverType, const TypePtrList &argumentTypes, const TypePtr &resultType) override;
+
 
 protected:
     void ensureArgumentsAreAnalyzed(ASTNodePtrList &arguments, const ASTSemanticAnalyzerPtr &semanticAnalyzer);

@@ -45,5 +45,12 @@ MethodPatternMatchingResult Method::matchPatternForAnalyzingMessageSendNode(cons
     return MethodPatternMatchingResult{};
 }
 
+MethodPatternMatchingResult Method::matchPatternForAnalyzingCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    (void)node;
+    (void)semanticAnalyzer;
+    return MethodPatternMatchingResult{};
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

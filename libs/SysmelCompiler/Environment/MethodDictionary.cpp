@@ -58,5 +58,10 @@ void MethodDictionary::addMethodWithSelector(const AnyValuePtr &method, const An
     signalNew<CannotOverloadPatternMatchingMethod> ();
 }
 
+void MethodDictionary::replaceMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
+{
+    dictionary[selector] = method;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

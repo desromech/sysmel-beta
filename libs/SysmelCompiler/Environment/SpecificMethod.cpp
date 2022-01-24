@@ -1,5 +1,6 @@
 #include "Environment/SpecificMethod.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
+#include "Environment/ASTCallNode.hpp"
 #include "Environment/ASTIdentifierReferenceNode.hpp"
 #include "Environment/ASTLocalImmutableAccessNode.hpp"
 #include "Environment/ASTErrorNode.hpp"
@@ -9,6 +10,7 @@
 #include "Environment/FunctionType.hpp"
 #include "Environment/MethodType.hpp"
 #include "Environment/ClosureType.hpp"
+#include "Environment/PatternMatchingMethod.hpp"
 #include "Environment/MacroInvocationContext.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <iostream>
@@ -101,6 +103,29 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
         if(totalRank < 0)
             return MethodPatternMatchingResult{};
     }
+
+    for(size_t i = 0; i < node->arguments.size(); ++i)
+    {
+        auto expectedArgumentType = functionalType->getArgument(i);
+        auto argumentRank = semanticAnalyzer->rankForMatchingTypeWithNode(expectedArgumentType, node->arguments[i]);
+        if(argumentRank < 0)
+            return MethodPatternMatchingResult{};
+        totalRank += argumentRank;
+    }
+
+    return MethodPatternMatchingResult{selfFromThis(), totalRank};
+}
+
+MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    // Make sure the argument count matches.
+    if(node->arguments.size() != functionalType->getArgumentCount())
+        return MethodPatternMatchingResult{};
+
+    PatternMatchingRank totalRank = 0;
+
+    if(!functionalType->getReceiverType()->isVoidType())
+        return MethodPatternMatchingResult{};
 
     for(size_t i = 0; i < node->arguments.size(); ++i)
     {
@@ -244,6 +269,14 @@ ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierRef
     }
     
     return asFunctionalValue()->analyzeIdentifierReferenceNode(node, semanticAnalyzer);
+}
+
+ASTNodePtr SpecificMethod::analyzeCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    auto newCallNode = shallowCloneObject(node);
+    auto newCallNodeFunctionalValue = asFunctionalValue();
+    newCallNode->function = validAnyValue(newCallNodeFunctionalValue)->asASTNodeRequiredInPosition(node->sourcePosition);
+    return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(newCallNode);
 }
 
 FunctionalTypeValuePtr SpecificMethod::asFunctionalValue()
@@ -413,6 +446,29 @@ uint32_t SpecificMethod::getVirtualTableEntrySlotIndex() const
 {
     return virtualTableEntrySlotIndex;
 }
+
+bool SpecificMethod::canOverloadBinding(const AnyValuePtr &existentBinding) const
+{
+    return validAnyValue(existentBinding)->isMethod();
+}
+
+ProgramEntityPtr SpecificMethod::makeOverloadedBindingWith(const AnyValuePtr &existentBinding)
+{
+    sysmelAssert(existentBinding);
+    if(existentBinding->isPatternMatchingMethod())
+    {
+        auto existentPatternMethod = staticObjectCast<PatternMatchingMethod> (existentBinding);
+        existentPatternMethod->addPattern(selfFromThis());
+        return existentPatternMethod;
+    }
+
+    sysmelAssert(existentBinding->isSpecificMethod());
+    auto patternMatchingMethod = basicMakeObject<PatternMatchingMethod> (getName());
+    patternMatchingMethod->addPattern(staticObjectCast<Method> (existentBinding));
+    patternMatchingMethod->addPattern(selfFromThis());
+    return patternMatchingMethod;
+}
+
 
 } // End of namespace Environment
 } // End of namespace Sysmel

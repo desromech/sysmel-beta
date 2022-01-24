@@ -140,7 +140,7 @@ void AggregateType::ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const st
     else if(selector == ":=")
     {
         // Implicit copy assignment.
-        if(validAnyValue(lookupLifetimeMethod(":=", {asConstReceiverType()}, nullptr))->isUndefined())
+        if(validAnyValue(lookupExistentLocalMethodWithSignature(internSymbol(":="), {asConstReceiverType()}, nullptr))->isUndefined())
         {
             addMethodCategories(MethodCategories{
                 {"assignment", {
@@ -153,7 +153,7 @@ void AggregateType::ensureImplicitLifeTimeMethodsWithSelectorAreCreated(const st
         }
 
         // Implicit move assignment.
-        if(validAnyValue(lookupLifetimeMethod(":=", {tempRef()}, nullptr))->isUndefined())
+        if(validAnyValue(lookupExistentLocalMethodWithSignature(internSymbol(":="), {tempRef()}, nullptr))->isUndefined())
         {
             addMethodCategories(MethodCategories{
                 {"assignment", {

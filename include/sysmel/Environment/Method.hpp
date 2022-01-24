@@ -31,8 +31,10 @@ public:
     virtual void setName(const AnyValuePtr &newName);
 
     virtual TypePtr getExpectedTypeForAnalyzingArgumentWithIndex(size_t argumentIndex);
+
     virtual MethodPatternMatchingResult matchPatternForRunWithIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver);
     virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
+    virtual MethodPatternMatchingResult matchPatternForAnalyzingCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
 protected:
     AnyValuePtr name;

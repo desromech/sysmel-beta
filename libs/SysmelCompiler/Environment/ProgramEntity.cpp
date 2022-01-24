@@ -200,6 +200,15 @@ AnyValuePtr ProgramEntity::lookupExistentLocalSelector(const AnyValuePtr &select
     return nullptr;
 }
 
+AnyValuePtr ProgramEntity::lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType, MethodFlags signatureMethodFlags)
+{
+    (void)selector;
+    (void)argumentTypes;
+    (void)resultType;
+    (void)signatureMethodFlags;
+    return nullptr;
+}
+
 AnyValuePtr ProgramEntity::lookupLocalSelector(const AnyValuePtr &selector)
 {
     return lookupExistentLocalSelector(selector);
@@ -239,7 +248,7 @@ void ProgramEntity::addFieldVariables(const FieldVariablePtrList &fields)
         addFieldVariable(field);
 }
 
-void ProgramEntity::addMacroMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+void ProgramEntity::addMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     (void)selector;
     (void)method;
@@ -252,6 +261,22 @@ void ProgramEntity::addMacroMethodCategories(const MethodCategories &categories)
     {
         for(auto &[selector, method] : methods)
             addMacroMethodWithSelector(method, selector);
+    }
+}
+
+void ProgramEntity::replaceMacroMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
+{
+    (void)selector;
+    (void)method;
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot define macro method {0} in {1}.", {{method->printString(), printString()}}));
+}
+
+void ProgramEntity::replaceMacroMethodCategories(const MethodCategories &categories)
+{
+    for(auto &[category, methods] : categories)
+    {
+        for(auto &[selector, method] : methods)
+            replaceMacroMethodWithSelector(method, selector);
     }
 }
 
@@ -271,7 +296,7 @@ void ProgramEntity::addMethodCategories(const MethodCategories &categories)
     }
 }
 
-void ProgramEntity::addMacroFallbackMethodWithSelector(const AnyValuePtr &selector, const AnyValuePtr &method)
+void ProgramEntity::addMacroFallbackMethodWithSelector(const AnyValuePtr &method, const AnyValuePtr &selector)
 {
     (void)selector;
     (void)method;
@@ -297,10 +322,20 @@ bool ProgramEntity::canHaveVirtualMethods() const
     return false;
 }
 
+bool ProgramEntity::canOverloadBinding(const AnyValuePtr &) const
+{
+    return false;
+}
+
+ProgramEntityPtr ProgramEntity::makeOverloadedBindingWith(const AnyValuePtr &existentBinding)
+{
+    signalNewWithMessage<UnsupportedOperation> (formatString("Cannot define macro overloaded binding with {0} and {1}.", {{printString(), validAnyValue(existentBinding)->printString()}}));
+}
+
 void ProgramEntity::addPublicAccessingMethodsWithSymbolOnto(const AnyValuePtr &symbol, const ProgramEntityPtr &programEntity)
 {
     auto self = selfFromThis();
-    programEntity->addMacroMethodCategories({{"accessing", {
+    programEntity->replaceMacroMethodCategories({{"accessing", {
         makeMethodBinding<ASTNodePtr (MacroInvocationContextPtr)> (symbol, [=](const MacroInvocationContextPtr &macroContext) {
             return macroContext->astBuilder->identifierWithBinding(symbol, self);
         }, MethodFlags::Macro),
