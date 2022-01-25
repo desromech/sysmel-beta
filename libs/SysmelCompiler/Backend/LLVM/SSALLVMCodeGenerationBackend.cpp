@@ -314,8 +314,8 @@ llvm::DISubroutineType *SSALLVMCodeGenerationBackend::getOrCreateDIFunctionType(
 {
     sysmelAssert(diBuilder);
     {
-        auto it = debugTypeMap.find(functionalType);
-        if(it != debugTypeMap.end())
+        auto it = debugFunctionTypeMap.find(functionalType);
+        if(it != debugFunctionTypeMap.end())
             return llvm::cast<llvm::DISubroutineType> (it->second);
     }
 
@@ -336,7 +336,7 @@ llvm::DISubroutineType *SSALLVMCodeGenerationBackend::getOrCreateDIFunctionType(
         elementTypes.push_back(translateDIType(functionalType->getArgument(i)));
 
     auto functionType = diBuilder->createSubroutineType(diBuilder->getOrCreateTypeArray(elementTypes));
-    debugTypeMap.insert({functionalType, functionType});
+    debugFunctionTypeMap.insert({functionalType, functionType});
 
     return functionType;
 }

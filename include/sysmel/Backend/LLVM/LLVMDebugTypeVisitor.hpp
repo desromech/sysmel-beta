@@ -33,6 +33,7 @@ public:
     virtual AnyValuePtr visitTemporaryReferenceType(const TemporaryReferenceTypePtr &type) override;
 
     virtual AnyValuePtr visitFunctionalType(const FunctionalTypePtr &type) override;
+    virtual AnyValuePtr visitClosureType(const ClosureTypePtr &type) override;
 
     virtual AnyValuePtr visitArrayType(const ArrayTypePtr &type) override;
     virtual AnyValuePtr visitPrimitiveVectorType(const PrimitiveVectorTypePtr &type) override;

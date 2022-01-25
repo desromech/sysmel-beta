@@ -10,6 +10,7 @@
 #include "Environment/DecoratedType.hpp"
 #include "Environment/EnumType.hpp"
 #include "Environment/FunctionalType.hpp"
+#include "Environment/ClosureType.hpp"
 #include "Environment/PointerType.hpp"
 #include "Environment/ReferenceType.hpp"
 #include "Environment/TemporaryReferenceType.hpp"
@@ -153,6 +154,29 @@ AnyValuePtr LLVMDebugTypeVisitor::visitTemporaryReferenceType(const TemporaryRef
 AnyValuePtr LLVMDebugTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
 {
     return wrapLLVMDebugType(backend->getOrCreateDIFunctionType(type));
+}
+
+AnyValuePtr LLVMDebugTypeVisitor::visitClosureType(const ClosureTypePtr &type)
+{
+    auto name = type->getValidNameStringIncludingTemplateName();
+    auto builder = backend->getDIBuilder();
+    auto size = type->getMemorySize()*8;
+    auto alignment = type->getMemoryAlignment()*8;
+    auto closureType = builder->createStructType(
+        nullptr, name, nullptr, 0,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, nullptr, 
+        builder->getOrCreateArray({}),
+        0, nullptr,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+
+    auto closurePointerType = builder->createPointerType(closureType, 
+        type->getMemorySize()*8, type->getMemoryAlignment()*8);
+    backend->setDebugTypeTranslation(type, closurePointerType);
+
+    //auto closureFunctionType = backend->getOrCreateDIFunctionType(type);
+    return wrapLLVMDebugType(closurePointerType);
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitArrayType(const ArrayTypePtr &type)

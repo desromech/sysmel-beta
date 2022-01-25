@@ -148,6 +148,7 @@ protected:
     std::unordered_set<TypePtr> unsignedIntegerTypeSet;
     std::unordered_map<TypePtr, std::function<llvm::DIType*(const TypePtr &type)>> basicDebugTypeConstructors;
     std::unordered_map<TypePtr, llvm::DIType*> debugTypeMap;
+    std::unordered_map<TypePtr, llvm::DIType*> debugFunctionTypeMap;
     std::unordered_map<std::string, llvm::DIFile*> debugFileMap;
     std::unordered_map<SSAValuePtr, llvm::Value*> globalValueMap;
     std::unordered_map<AnyValuePtr, llvm::DIScope*> diScopeMap;
