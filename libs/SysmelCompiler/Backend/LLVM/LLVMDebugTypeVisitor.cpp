@@ -190,7 +190,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &fie
     auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
     const auto &valueType = field->getValueType();
     return backend->getDIBuilder()->createMemberType(
-        nullptr, name, file, sourcePosition->getLine(),
+        parent, name, file, sourcePosition->getLine(),
         uint32_t(valueType->getMemorySize()*8),
         uint32_t(valueType->getMemoryAlignment()*8),
         field->getOffset()*8, llvm::DINode::FlagPublic,
@@ -200,6 +200,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &fie
 
 llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const AggregateTypeWithFieldsPtr &type, unsigned int tag)
 {
+    (void)tag;
     auto sourcePosition = type->getSourceDefinitionPosition();
     auto file = backend->getOrCreateDIFileForSourcePosition(sourcePosition);
     llvm::DIScope* scope = nullptr;
@@ -215,11 +216,43 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
     auto line = sourcePosition->getLine();
     auto size = type->getMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
-    auto declaration = builder->createReplaceableCompositeType(tag,
-        name, scope, file, line, 0,
-        size, uint32_t(alignment));
-    backend->setDebugTypeTranslation(type, declaration);
 
+    llvm::DICompositeType *result = nullptr;
+    if(type->isStructureType())
+    {
+        result = builder->createStructType(
+            scope, name, file, line,
+            size, uint32_t(alignment),
+            llvm::DINode::FlagZero, nullptr, 
+            builder->getOrCreateArray({}),
+            0, nullptr,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
+    else if(type->isClassType())
+    {
+        result = builder->createClassType(
+            scope, name, file, line,
+            size, uint32_t(alignment), 0,
+            llvm::DINode::FlagZero, nullptr,
+            builder->getOrCreateArray({}),
+            nullptr, nullptr,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
+    else if(type->isUnionType())
+    {
+        result = builder->createUnionType(
+            scope, name, file, line,
+            size, uint32_t(alignment),
+            llvm::DINode::FlagZero,
+            builder->getOrCreateArray({}),
+            0,
+            backend->getNameMangler()->mangleTypeInfo(type)
+        );
+    }
+    backend->setDebugTypeTranslation(type, result);
+    
     std::vector<llvm::Metadata*> elements;
     elements.reserve(type->getFieldCount());
     for(auto &field : type->getFields())
@@ -227,48 +260,12 @@ llvm::DIType *LLVMDebugTypeVisitor::translateAggregateTypeWithFields(const Aggre
         if(validAnyValue(field->getName())->isHiddenNameSymbol())
             continue;
 
-        elements.push_back(translateFieldOf(field, declaration));
+        elements.push_back(translateFieldOf(field, result));
     }
 
-    llvm::DICompositeType *definition = nullptr;
-    
-    if(type->isStructureType())
-    {
-        definition = builder->createStructType(
-            scope, name, file, line,
-            size, uint32_t(alignment),
-            llvm::DINode::FlagZero, nullptr, 
-            builder->getOrCreateArray(elements),
-            0, nullptr,
-            backend->getNameMangler()->mangleTypeInfo(type)
-        );
-    }
-    else if(type->isClassType())
-    {
-        definition = builder->createClassType(
-            scope, name, file, line,
-            size, uint32_t(alignment), 0,
-            llvm::DINode::FlagZero, nullptr,
-            builder->getOrCreateArray(elements),
-            nullptr, nullptr,
-            backend->getNameMangler()->mangleTypeInfo(type)
-        );
-    }
-    else if(type->isUnionType())
-    {
-        definition = builder->createUnionType(
-            scope, name, file, line,
-            size, uint32_t(alignment),
-            llvm::DINode::FlagZero,
-            builder->getOrCreateArray(elements),
-            0,
-            backend->getNameMangler()->mangleTypeInfo(type)
-        );
-    }
-    
-    auto result = builder->replaceTemporary(llvm::TempDINode(declaration), definition);
+
+    builder->replaceArrays(result, builder->getOrCreateArray(elements));
     backend->setDebugTypeTranslation(type, result);
-    builder->retainType(result);
     return result;
 }
 
@@ -295,7 +292,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitTupleType(const TupleTypePtr &type)
     auto line = 0;
     auto size = type->getMemorySize()*8;
     auto alignment = type->getMemoryAlignment()*8;
-    auto variantType = builder->createStructType(
+    auto tupleType = builder->createStructType(
         nullptr, name, nullptr, line,
         size, uint32_t(alignment),
         llvm::DINode::FlagTypePassByReference, nullptr, 
@@ -303,8 +300,9 @@ AnyValuePtr LLVMDebugTypeVisitor::visitTupleType(const TupleTypePtr &type)
         0, nullptr,
         backend->getNameMangler()->mangleTypeInfo(type)
     );
+    backend->setDebugTypeTranslation(type, tupleType);
 
-    return wrapLLVMDebugType(variantType);
+    return wrapLLVMDebugType(tupleType);
 }
 
 AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
@@ -332,6 +330,23 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
         discriminantOffset, llvm::DINode::FlagArtificial, backend->translateDIType(discriminatorType)
     );
 
+    auto variantType = builder->createStructType(
+        scope, name, file, line,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagTypePassByReference, nullptr, 
+        builder->getOrCreateArray({}),
+        0, nullptr,
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+    backend->setDebugTypeTranslation(type, variantType);
+
+    auto variantPart = builder->createVariantPart(
+        variantType, "", nullptr, 0,
+        size, uint32_t(alignment),
+        llvm::DINode::FlagZero, discriminator, builder->getOrCreateArray({}),
+        backend->getNameMangler()->mangleTypeInfo(type)
+    );
+
     std::vector<llvm::Metadata*> elements;
     elements.reserve(type->elementTypes.size());
     for(size_t i = 0; i < type->elementTypes.size(); ++i)
@@ -341,28 +356,18 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
         auto elementType = type->elementTypes[i];
         auto elementDebugType = backend->translateDIType(elementType);
         auto elementName = "";
-        elements.push_back(builder->createVariantMemberType(nullptr, elementName, nullptr, 0,
+        elements.push_back(builder->createVariantMemberType(variantPart, elementName, nullptr, 0,
             elementType->getMemorySize()*8, elementType->getMemoryAlignment()*8, elementOffset,
             discriminantConstant, llvm::DINode::FlagZero, elementDebugType
         ));
     }
 
-    llvm::Metadata* typeElements[] = {builder->createVariantPart(
-        nullptr, "", nullptr, 0,
-        size, uint32_t(alignment),
-        llvm::DINode::FlagZero, discriminator, builder->getOrCreateArray(elements),
-        backend->getNameMangler()->mangleTypeInfo(type)
-    )};
+    builder->replaceArrays(variantPart, builder->getOrCreateArray(elements));
 
-    auto variantType = builder->createStructType(
-        scope, name, file, line,
-        size, uint32_t(alignment),
-        llvm::DINode::FlagTypePassByReference, nullptr, 
-        builder->getOrCreateArray(typeElements),
-        0, nullptr,
-        backend->getNameMangler()->mangleTypeInfo(type)
-    );
+    llvm::Metadata* typeElements[] = {variantPart};
 
+    builder->replaceArrays(variantType, builder->getOrCreateArray(typeElements));
+    
     return wrapLLVMDebugType(variantType);
 }
 
