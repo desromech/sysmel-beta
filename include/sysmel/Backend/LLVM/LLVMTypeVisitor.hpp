@@ -44,6 +44,7 @@ public:
     virtual AnyValuePtr visitVariantType(const VariantTypePtr &type) override;
 
     llvm::Type *translateArgumentType(const TypePtr &type);
+    llvm::Type *sanitizeTypeForAggregate(llvm::Type *type);
     
     SSALLVMCodeGenerationBackend *backend = nullptr;
 };

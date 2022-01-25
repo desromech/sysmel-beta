@@ -156,10 +156,21 @@ AnyValuePtr LLVMTypeVisitor::translateAggregateTypeWithSequentialLayout(const Ag
     std::vector<llvm::Type*> translatedSlotTypes;
     translatedSlotTypes.reserve(slotTypes.size());
     for(auto &slotType : slotTypes)
-        translatedSlotTypes.push_back(backend->translateType(slotType));
+        translatedSlotTypes.push_back(sanitizeTypeForAggregate(backend->translateType(slotType)));
 
     translatedType->setBody(translatedSlotTypes);
     return wrapLLVMType(translatedType);
+}
+
+llvm::Type *LLVMTypeVisitor::sanitizeTypeForAggregate(llvm::Type *type)
+{
+    if(type->isVectorTy())
+    {
+        auto vectorType = llvm::cast<llvm::FixedVectorType> (type);
+        return llvm::ArrayType::get(vectorType->getElementType(), vectorType->getNumElements());
+    }
+
+    return type;
 }
 
 AnyValuePtr LLVMTypeVisitor::visitClassType(const ClassTypePtr &type)
