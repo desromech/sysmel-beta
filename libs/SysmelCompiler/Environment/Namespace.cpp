@@ -206,6 +206,7 @@ SSAValuePtr Namespace::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &
     if(!ssaNamespace)
     {
         ssaNamespace = basicMakeObject<SSANamespace> ();
+        ssaNamespace->setName(getName());
         auto parentSSAValue = getParentProgramEntity()->asProgramEntitySSAValue();
         if(!parentSSAValue->isSSAModule())
         {

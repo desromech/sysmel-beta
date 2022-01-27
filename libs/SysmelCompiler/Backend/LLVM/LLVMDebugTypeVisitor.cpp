@@ -215,7 +215,7 @@ llvm::DIType *LLVMDebugTypeVisitor::translateFieldOf(const FieldVariablePtr &fie
     const auto &valueType = field->getValueType();
     return backend->getDIBuilder()->createMemberType(
         parent, name, file, sourcePosition->getLine(),
-        uint32_t(valueType->getMemorySize()*8),
+        uint64_t(valueType->getMemorySize()*8),
         uint32_t(valueType->getMemoryAlignment()*8),
         field->getOffset()*8, llvm::DINode::FlagPublic,
         backend->translateDIType(valueType)

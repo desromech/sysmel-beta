@@ -22,6 +22,7 @@ public:
     static constexpr char const __typeName__[] = "SpecificMethod";
 
     virtual bool isSpecificMethod() const override;
+    virtual bool isClosureMethod() const override;
 
     const FunctionalTypePtr &getFunctionalType() const
     {
@@ -94,6 +95,8 @@ public:
     virtual ProgramEntityPtr makeOverloadedBindingWith(const AnyValuePtr &existentBinding) override;
 
 protected:
+    TypePtr adjustMacroInvocationSelfType(const TypePtr &selfType);
+
     FunctionalTypePtr functionalType;
     FunctionalTypeValuePtr functionalValue;
     AnyValuePtr intrinsicName;

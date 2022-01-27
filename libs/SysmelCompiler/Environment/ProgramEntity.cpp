@@ -147,6 +147,8 @@ AnyValuePtr ProgramEntity::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
         auto symbolValue = symbol->asString();
         if(symbolValue == "self")
         {
+            if(isClosureMethod())
+                return nullptr;
             if(isSpecificMethod())
                 return getParentProgramEntity()->asSelfForStaticMethod();
             return selfFromThis();

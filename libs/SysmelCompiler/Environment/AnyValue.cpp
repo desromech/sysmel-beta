@@ -694,6 +694,11 @@ bool AnyValue::isSpecificMethod() const
     return false;
 }
 
+bool AnyValue::isClosureMethod() const
+{
+    return false;
+}
+
 bool AnyValue::isCompileTimeEvaluableMethod() const
 {
     return false;

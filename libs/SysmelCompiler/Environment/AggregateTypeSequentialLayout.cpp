@@ -224,6 +224,8 @@ void AggregateTypeSequentialLayout::addPadding(uint64_t size)
 {
     if(size == 0)
         return;
+
+    offsets.push_back(memorySize);
     slotTypes.push_back(PaddingType::make(size));
     memorySize += size;
 }

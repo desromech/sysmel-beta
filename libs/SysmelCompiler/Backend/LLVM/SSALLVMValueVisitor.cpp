@@ -1544,7 +1544,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     auto mergeBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifMerge");
 
     llvm::PHINode *phiNode = nullptr;
-    if(!resultType->isVoidType())
+    if(!resultType->isVoidType() && !resultType->isReturnedByReference())
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "ifResult", mergeBlock);
 
     // Condition.
@@ -1950,7 +1950,7 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
 
     const auto &resultType = instruction->getValueType();
     llvm::PHINode *phiNode = nullptr;
-    if(!resultType->isVoidType())
+    if(!resultType->isVoidType() && !resultType->isReturnedByReference())
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "patternResult", merge);
 
     // Pattern success.

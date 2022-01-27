@@ -12,6 +12,8 @@
 #include "Environment/ClosureType.hpp"
 #include "Environment/PatternMatchingMethod.hpp"
 #include "Environment/MacroInvocationContext.hpp"
+#include "Environment/ReferenceType.hpp"
+#include "Environment/TemporaryReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include <iostream>
 
@@ -25,6 +27,11 @@ static BootstrapTypeRegistration<SpecificMethod> specificMethodTypeRegistration;
 bool SpecificMethod::isSpecificMethod() const
 {
     return true;
+}
+
+bool SpecificMethod::isClosureMethod() const
+{
+    return functionalType && functionalType->isClosureType();
 }
 
 void SpecificMethod::setMethodSignature(const TypePtr &receiverType, const TypePtr &resultType, const TypePtrList &argumentTypes)
@@ -172,6 +179,7 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
             macroSelector = staticObjectCast<ASTLiteralValueNode> (node->selector)->value;
 
         auto macroInvocationContext = semanticAnalyzer->makeMacroInvocationContextFor(node);
+        macroInvocationContext->selfType = adjustMacroInvocationSelfType(macroInvocationContext->selfType);
 
         AnyValuePtrList macroArguments;
         macroArguments.reserve(node->arguments.size());
@@ -247,6 +255,7 @@ ASTNodePtr SpecificMethod::analyzeIdentifierReferenceNode(const ASTIdentifierRef
     if(isMacroMethod() && functionalType->getArgumentCount() == 0)
     {
         auto macroInvocationContext = semanticAnalyzer->makeMacroInvocationContextFor(node);
+        macroInvocationContext->selfType = adjustMacroInvocationSelfType(macroInvocationContext->selfType);
 
         // Evaluate the macro macro method.
         auto macroResultNode = semanticAnalyzer->guardCompileTimeEvaluationForNode(node, [&]() {
@@ -469,6 +478,19 @@ ProgramEntityPtr SpecificMethod::makeOverloadedBindingWith(const AnyValuePtr &ex
     return patternMatchingMethod;
 }
 
+
+TypePtr SpecificMethod::adjustMacroInvocationSelfType(const TypePtr &selfType)
+{
+    auto parentEntity = getParentProgramEntity();
+    if(validAnyValue(parentEntity)->isType())
+    {
+        auto parentType = parentEntity.staticAs<Type> ();
+        if(parentType->isSubtypeOf(ReferenceTypeValue::__staticType__())
+            || parentType->isSubtypeOf(TemporaryReferenceType::__staticType__()))
+        return selfType;
+    }
+    return selfType->asDecayedType();
+}
 
 } // End of namespace Environment
 } // End of namespace Sysmel

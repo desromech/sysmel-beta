@@ -68,7 +68,7 @@ AnyValuePtr SSALLVMDebugValueVisitor::visitNamespace(const SSANamespacePtr &valu
     auto parentEntity = value->getParent();
 
     // Is this the global namespace?
-    if(validAnyValue(parentEntity)->isUndefined() || !parentEntity->isNamespace())
+    if(validAnyValue(parentEntity)->isUndefined() || !parentEntity->isSSANamespace())
         return wrapLLVMDIScope(nullptr);
 
     auto parentScope = backend->getOrCreateDIScopeForSSAProgramEntity(parentEntity);
