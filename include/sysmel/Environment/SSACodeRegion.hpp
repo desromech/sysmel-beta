@@ -29,6 +29,7 @@ public:
     void setSourcePosition(const ASTSourcePositionPtr &newSourcePosition);
     const ASTSourcePositionPtr &getSourcePosition() const;
 
+    const TypePtr &getDeclaredResultType() const;
     const TypePtr &getResultType() const;
 
     size_t getArgumentCount() const;
@@ -58,6 +59,7 @@ protected:
     SSACodeRegionArgumentPtrList arguments;
     SSACodeRegionCapturePtrList captures;
     TypePtr resultType;
+    TypePtr declaredResultType;
     SSABasicBlockPtrList basicBlocks;
 };
 

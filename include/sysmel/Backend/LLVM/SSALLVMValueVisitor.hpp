@@ -106,7 +106,7 @@ protected:
     static std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGenerationContext&)>> intrinsicGenerators;
 
     void translateMainCodeRegion(const SSACodeRegionPtr &codeRegion);
-    llvm::Value *translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments);
+    llvm::Value *translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments, llvm::Value *optionalResultMemory = nullptr);
 
     void translateBasicBlockInto(size_t index, const SSABasicBlockPtr &sourceBasicBlock, llvm::BasicBlock *targetBasicBlock);
     void translateInstruction(const SSAInstructionPtr &instruction);

@@ -355,7 +355,10 @@ AnyValuePtr ASTSSACompiler::visitCleanUpScopeNode(const ASTCleanUpScopeNodePtr &
         currentCleanUpCodeRegion = oldCleanUpRegion;
     });
 
-    return builder->doWithCleanUp(bodyRegion, cleanUpRegion);
+    auto result = builder->doWithCleanUp(bodyRegion, cleanUpRegion);
+    if(node->analyzedType->isReturnedByReference())
+        addFinalizationFor(result, node->analyzedType);
+    return result;
 }
 
 AnyValuePtr ASTSSACompiler::visitClosureNode(const ASTClosureNodePtr &node)
@@ -731,7 +734,7 @@ SSACodeRegionPtr ASTSSACompiler::buildRegionForNode(const ASTNodePtr &node)
     buildRegionForNodeWith(region, node, [&](){
         auto value = visitNodeForValue(node);
         if(!builder->isLastTerminator())
-            builder->returnFromRegion(value);
+            returnValueFromRegion(value);
     });
     return region;
 }
@@ -745,6 +748,9 @@ AnyValuePtr ASTSSACompiler::visitIfNode(const ASTIfNodePtr &node)
     if(node->trueExpression && node->trueExpression->analyzedType->isControlFlowEscapeType()
         && node->falseExpression && node->falseExpression->analyzedType->isControlFlowEscapeType())
         return builder->unreachableInstruction();
+
+    if(node->analyzedType->isReturnedByReference())
+        addFinalizationFor(result, node->analyzedType);
 
     return result;
 }
@@ -802,6 +808,9 @@ AnyValuePtr ASTSSACompiler::visitEvaluatePatternWithValueNode(const ASTEvaluateP
     if(node->successAction && node->successAction->analyzedType->isControlFlowEscapeType()
         && node->failureAction && node->failureAction->analyzedType->isControlFlowEscapeType())
         return builder->unreachableInstruction();
+
+    if(node->analyzedType->isReturnedByReference())
+        addFinalizationFor(result, node->analyzedType);
     return result;
 }
 

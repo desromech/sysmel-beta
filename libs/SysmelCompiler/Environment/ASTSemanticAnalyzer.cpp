@@ -2571,21 +2571,17 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
     if(analyzedNode->falseExpression)
         analyzedNode->falseExpression = analyzeNodeIfNeededWithAutoType(analyzedNode->falseExpression);
 
-    analyzedNode->analyzedType = Type::getVoidType();
+    // Compute the result coercion type
+    auto trueType = analyzedNode->trueExpression ? analyzedNode->trueExpression->analyzedType : Type::getVoidType();
+    auto falseType = analyzedNode->falseExpression ? analyzedNode->falseExpression->analyzedType : Type::getVoidType();
+    auto coercionType = Type::computeConditionCoercionType(trueType, falseType);
+    analyzedNode->analyzedType = coercionType;
 
-    if(analyzedNode->trueExpression && analyzedNode->falseExpression)
-    {
-        auto trueType = analyzedNode->trueExpression->analyzedType;
-        auto falseType = analyzedNode->falseExpression->analyzedType;
-        auto coercionType = Type::computeConditionCoercionType(trueType, falseType);
-        analyzedNode->analyzedType = coercionType;
-
-        // Apply the type coercion.
-        if(!trueType->isControlFlowEscapeType())
-            analyzedNode->trueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->trueExpression, coercionType);
-        if(!falseType->isControlFlowEscapeType())
-            analyzedNode->falseExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->falseExpression, coercionType);
-    }
+    // Apply the type coercion.
+    if(analyzedNode->trueExpression && !trueType->isControlFlowEscapeType())
+        analyzedNode->trueExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->trueExpression, coercionType);
+    if(analyzedNode->falseExpression && !falseType->isControlFlowEscapeType())
+        analyzedNode->falseExpression = analyzeNodeIfNeededWithExpectedType(analyzedNode->falseExpression, coercionType);
     return analyzedNode;
 }
 
@@ -2868,20 +2864,16 @@ AnyValuePtr ASTSemanticAnalyzer::visitEvaluatePatternWithValueNode(const ASTEval
     if(analyzedNode->failureAction)
         analyzedNode->failureAction = analyzeNodeIfNeededWithAutoType(analyzedNode->failureAction);
 
-    analyzedNode->analyzedType = Type::getVoidType();
-    if(analyzedNode->successAction && analyzedNode->failureAction)
-    {
-        auto successType = analyzedNode->successAction->analyzedType;
-        auto failureType = analyzedNode->failureAction->analyzedType;
-        auto coercionType = Type::computeConditionCoercionType(successType, failureType);
-        analyzedNode->analyzedType = coercionType;
+    auto successType = analyzedNode->successAction ? analyzedNode->successAction->analyzedType : Type::getVoidType();
+    auto failureType = analyzedNode->failureAction ? analyzedNode->failureAction->analyzedType : Type::getVoidType();
+    auto coercionType = Type::computeConditionCoercionType(successType, failureType);
+    analyzedNode->analyzedType = coercionType;
 
-        // Apply the type coercion.
-        if(!successType->isControlFlowEscapeType())
-            analyzedNode->successAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->successAction, coercionType);
-        if(!failureType->isControlFlowEscapeType())
-            analyzedNode->failureAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->failureAction, coercionType);
-    }
+    // Apply the type coercion.
+    if(analyzedNode->successAction && !successType->isControlFlowEscapeType())
+        analyzedNode->successAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->successAction, coercionType);
+    if(analyzedNode->failureAction && !failureType->isControlFlowEscapeType())
+        analyzedNode->failureAction = analyzeNodeIfNeededWithExpectedType(analyzedNode->failureAction, coercionType);
 
     return analyzedNode;
 }

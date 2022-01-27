@@ -33,7 +33,7 @@ AnyValuePtr SSACodeRegion::accept(const SSAValueVisitorPtr &visitor)
 
 void SSACodeRegion::setFunctionalType(const FunctionalTypePtr &functionalType)
 {
-    resultType = functionalType->getResultType();
+    declaredResultType = resultType = functionalType->getResultType();
     if(resultType->isReturnedByReference())
     {
         addResultArgumentWithType(resultType->tempRef());
@@ -50,9 +50,16 @@ void SSACodeRegion::setSignature(const TypePtrList &newArgumentTypes, const Type
 {
     arguments.clear();
     arguments.reserve(newArgumentTypes.size());
+ 
+    declaredResultType = resultType = newResultType;
+    if(resultType->isReturnedByReference())
+    {
+        addResultArgumentWithType(resultType->tempRef());
+        resultType = Type::getVoidType();
+    }
+
     for(auto &argType : newArgumentTypes)
         addArgumentWithType(argType);
-    resultType = newResultType;
 }
 
 void SSACodeRegion::addArgumentWithType(const TypePtr &argumentType)
@@ -92,6 +99,11 @@ void SSACodeRegion::setSourcePosition(const ASTSourcePositionPtr &newSourcePosit
 const ASTSourcePositionPtr &SSACodeRegion::getSourcePosition() const
 {
     return sourcePosition;
+}
+
+const TypePtr &SSACodeRegion::getDeclaredResultType() const
+{
+    return declaredResultType;
 }
 
 const TypePtr &SSACodeRegion::getResultType() const

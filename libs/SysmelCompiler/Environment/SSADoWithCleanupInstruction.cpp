@@ -23,7 +23,7 @@ AnyValuePtr SSADoWithCleanupInstruction::accept(const SSAValueVisitorPtr &visito
 
 TypePtr SSADoWithCleanupInstruction::getValueType() const
 {
-    return bodyRegion->getResultType();
+    return bodyRegion->getDeclaredResultType();
 }
 
 std::string SSADoWithCleanupInstruction::getMnemonic() const

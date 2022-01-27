@@ -1080,14 +1080,18 @@ void SSALLVMValueVisitor::translateMainCodeRegion(const SSACodeRegionPtr &codeRe
     allocaBuilder->CreateBr(translatedBlocks.front());
 }
 
-llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments)
+llvm::Value *SSALLVMValueVisitor::translateCodeRegionWithArguments(const SSACodeRegionPtr &codeRegion, const std::vector<llvm::Value*> &arguments, llvm::Value *optionalResultMemory)
 {
-    sysmelAssert(arguments.size() == codeRegion->getArgumentCount());
+    sysmelAssert(arguments.size() == codeRegion->getArgumentCount() || (optionalResultMemory && codeRegion->isReturningByReference() && arguments.size() + 1 == codeRegion->getArgumentCount()));
     sysmelAssert(!codeRegion->isEmpty());
 
+    auto actualArguments = arguments;
+    if(actualArguments.size() < codeRegion->getArgumentCount() && optionalResultMemory)
+        actualArguments.insert(actualArguments.begin(), optionalResultMemory);
+
     // Map the code region arguments.
-    for(size_t i = 0; i < arguments.size(); ++ i)
-        localTranslatedValueMap.insert({codeRegion->getArgument(i), arguments[i]});
+    for(size_t i = 0; i < actualArguments.size(); ++ i)
+        localTranslatedValueMap.insert({codeRegion->getArgument(i), actualArguments[i]});
 
     // Get the result type.
     auto resultType = codeRegion->getResultType();
@@ -1430,15 +1434,26 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCl
 {
     auto cleanUpRegion = instruction->getCleanUpRegion();
     cleanUpRegionStack.push_back(cleanUpRegion);
+
+    llvm::AllocaInst *resultAlloca = nullptr;
+    auto resultType = instruction->getValueType();
+    if(resultType->isReturnedByReference())
+    {
+        resultAlloca = allocaBuilder->CreateAlloca(backend->translateType(resultType));
+        auto resultAlignment = resultType->getMemoryAlignment();
+        if(resultAlloca)
+            resultAlloca->setAlignment(llvm::Align(resultAlignment));
+    }
+
     auto result = doWithEnsure([&]{
-        return translateCodeRegionWithArguments(instruction->getBodyRegion(), {});
+        return translateCodeRegionWithArguments(instruction->getBodyRegion(), {}, resultAlloca);
     }, [&]{
         cleanUpRegionStack.pop_back();
     });
 
     if(!llvm::pred_empty(builder->GetInsertBlock()))
         translateCodeRegionWithArguments(cleanUpRegion, {});
-    return wrapLLVMValue(result);
+    return wrapLLVMValue(resultAlloca ? resultAlloca : result);
 }
 
 AnyValuePtr SSALLVMValueVisitor::visitDoWhileInstruction(const SSADoWhileInstructionPtr &instruction)
@@ -1547,6 +1562,16 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     if(!resultType->isVoidType() && !resultType->isReturnedByReference())
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "ifResult", mergeBlock);
 
+    llvm::AllocaInst *resultAlloca = nullptr;
+
+    if(resultType->isReturnedByReference())
+    {
+        resultAlloca = allocaBuilder->CreateAlloca(backend->translateType(resultType));
+        auto resultAlignment = resultType->getMemoryAlignment();
+        if(resultAlloca)
+            resultAlloca->setAlignment(llvm::Align(resultAlignment));
+    }
+
     // Condition.
     builder->CreateCondBr(condition, thenBlock, elseBlock);
     builder->SetInsertPoint(thenBlock);
@@ -1556,7 +1581,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     
     llvm::Value *thenResult = nullptr;
     if(thenRegion)
-        thenResult = translateCodeRegionWithArguments(thenRegion, {});
+        thenResult = translateCodeRegionWithArguments(thenRegion, {}, resultAlloca);
 
     if(!isLastTerminator())
     {
@@ -1571,7 +1596,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
 
     llvm::Value *elseResult = nullptr;
     if(elseRegion)
-        elseResult = translateCodeRegionWithArguments(elseRegion, {});
+        elseResult = translateCodeRegionWithArguments(elseRegion, {}, resultAlloca);
 
     if(!isLastTerminator())
     {
@@ -1584,7 +1609,9 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     builder->SetInsertPoint(mergeBlock);
     mergeBlock->insertInto(currentFunction);
 
-    if(phiNode)
+    if(resultAlloca)
+        return wrapLLVMValue(resultAlloca);
+    else if(phiNode)
         return wrapLLVMValue(simplifyDegeneratePhi(phiNode));
     else
         return wrapLLVMValue(makeVoidValue());
@@ -1772,6 +1799,8 @@ AnyValuePtr SSALLVMValueVisitor::visitSendMessageInstruction(const SSASendMessag
 AnyValuePtr SSALLVMValueVisitor::visitStoreInstruction(const SSAStoreInstructionPtr &instruction)
 {
     auto value = translateValue(instruction->getValue());
+    if(instruction->getValue()->getValueType()->isPassedByReference() && value->getType()->isPointerTy())
+        value = builder->CreateLoad(value);
     auto reference = translateValue(instruction->getReference());
     builder->CreateStore(value, reference);
     return wrapLLVMValue(makeVoidValue());
@@ -1953,6 +1982,16 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
     if(!resultType->isVoidType() && !resultType->isReturnedByReference())
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "patternResult", merge);
 
+    llvm::AllocaInst *resultAlloca = nullptr;
+
+    if(resultType->isReturnedByReference())
+    {
+        resultAlloca = allocaBuilder->CreateAlloca(backend->translateType(resultType));
+        auto resultAlignment = resultType->getMemoryAlignment();
+        if(resultAlloca)
+            resultAlloca->setAlignment(llvm::Align(resultAlignment));
+    }
+
     // Pattern success.
     patternSuccess->insertInto(currentFunction);
     builder->SetInsertPoint(patternSuccess);
@@ -1960,7 +1999,7 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
     auto &patternSuccessRegion = instruction->getSuccessRegion();
     llvm::Value *successResult = nullptr;
     if(patternSuccessRegion)
-        successResult = translateCodeRegionWithArguments(patternSuccessRegion, {});
+        successResult = translateCodeRegionWithArguments(patternSuccessRegion, {}, resultAlloca);
 
     if(!isLastTerminator())
     {
@@ -1976,7 +2015,7 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
     auto &patternFailureRegion = instruction->getFailureRegion();
     llvm::Value *failureResult = nullptr;
     if(patternFailureRegion)
-        failureResult = translateCodeRegionWithArguments(patternFailureRegion, {});
+        failureResult = translateCodeRegionWithArguments(patternFailureRegion, {}, resultAlloca);
 
     if(!isLastTerminator())
     {
@@ -1989,7 +2028,9 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
     merge->insertInto(currentFunction);
     builder->SetInsertPoint(merge);
 
-    if(phiNode)
+    if(resultAlloca)
+        return wrapLLVMValue(resultAlloca);
+    else if(phiNode)
         return wrapLLVMValue(simplifyDegeneratePhi(phiNode));
     else
         return wrapLLVMValue(makeVoidValue());
