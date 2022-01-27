@@ -1552,7 +1552,7 @@ AnyValuePtr SSALLVMValueVisitor::visitIfInstruction(const SSAIfInstructionPtr &i
     auto condition = translateBooleanValue(instruction->getCondition());
     auto thenRegion = instruction->getTrueRegion();
     auto elseRegion = instruction->getFalseRegion();
-    auto resultType = instruction->getValueType();
+    auto resultType = instruction->getDeclaredValueType();
 
     auto thenBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifThen");
     auto elseBlock = llvm::BasicBlock::Create(*backend->getContext(), "ifElse");
@@ -1977,7 +1977,7 @@ AnyValuePtr SSALLVMValueVisitor::visitEvaluatePatternInstruction(const SSAEvalua
             builder->CreateBr(patternSuccess);
     }
 
-    const auto &resultType = instruction->getValueType();
+    const auto &resultType = instruction->getDeclaredValueType();
     llvm::PHINode *phiNode = nullptr;
     if(!resultType->isVoidType() && !resultType->isReturnedByReference())
         phiNode = llvm::PHINode::Create(backend->translateType(resultType), 0, "patternResult", merge);

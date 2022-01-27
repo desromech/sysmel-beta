@@ -257,7 +257,7 @@ SSAIfInstructionPtr SSABuilder::ifTrueIfFalse(const TypePtr &resultType, const S
     auto instruction = basicMakeObject<SSAIfInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setLexicalScope(currentLexicalScope);
-    instruction->setValueType(resultType);
+    instruction->setDeclaredValueType(resultType);
     instruction->setCondition(condition);
     instruction->setTrueRegion(trueRegion);
     instruction->setFalseRegion(falseRegion);
@@ -467,7 +467,7 @@ SSAEvaluatePatternInstructionPtr SSABuilder::evaluatePattern(const TypePtr &resu
     auto instruction = basicMakeObject<SSAEvaluatePatternInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
     instruction->setLexicalScope(currentLexicalScope);
-    instruction->setValueType(resultType);
+    instruction->setDeclaredValueType(resultType);
     instruction->setPatternRegion(patternRegion);
     instruction->setSuccessRegion(successRegion);
     instruction->setFailureRegion(failureRegion);

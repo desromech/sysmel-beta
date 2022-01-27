@@ -21,7 +21,9 @@ public:
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
     virtual TypePtr getValueType() const override;
-    void setValueType(const TypePtr &newValueType);
+
+    const TypePtr &getDeclaredValueType() const;
+    void setDeclaredValueType(const TypePtr &newValueType);
 
     virtual std::string getMnemonic() const override;
     virtual void regionsDo(const SSAInstructionRegionIterationBlock &aBlock) const override;
@@ -37,6 +39,7 @@ public:
 
 protected:
     TypePtr valueType;
+    TypePtr declaredValueType;
     SSACodeRegionPtr patternRegion;
     SSACodeRegionPtr successRegion;
     SSACodeRegionPtr failureRegion;

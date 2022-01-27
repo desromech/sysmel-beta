@@ -21,7 +21,9 @@ public:
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
     virtual TypePtr getValueType() const override;
-    void setValueType(const TypePtr &newValueType);
+
+    const TypePtr &getDeclaredValueType() const;
+    void setDeclaredValueType(const TypePtr &newValueType);
 
     virtual std::string getMnemonic() const override;
     
@@ -41,6 +43,7 @@ public:
 
 protected:
     TypePtr valueType;
+    TypePtr declaredValueType;
     SSAValuePtr condition;
     SSACodeRegionPtr trueRegion;
     SSACodeRegionPtr falseRegion;

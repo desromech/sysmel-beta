@@ -1,5 +1,6 @@
 #include "Environment/SSAIfInstruction.hpp"
 #include "Environment/SSAValueVisitor.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -24,9 +25,16 @@ TypePtr SSAIfInstruction::getValueType() const
     return valueType;
 }
 
-void SSAIfInstruction::setValueType(const TypePtr &newValueType)
+const TypePtr &SSAIfInstruction::getDeclaredValueType() const
 {
-    valueType = newValueType;
+    return declaredValueType;
+}
+
+void SSAIfInstruction::setDeclaredValueType(const TypePtr &newValueType)
+{
+    declaredValueType = valueType = newValueType;
+    if(valueType->isReturnedByReference())
+        valueType = valueType->tempRef();
 }
 
 std::string SSAIfInstruction::getMnemonic() const

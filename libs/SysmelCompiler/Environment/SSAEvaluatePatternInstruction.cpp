@@ -1,5 +1,6 @@
 #include "Environment/SSAEvaluatePatternInstruction.hpp"
 #include "Environment/SSAValueVisitor.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -24,9 +25,16 @@ TypePtr SSAEvaluatePatternInstruction::getValueType() const
     return valueType;
 }
 
-void SSAEvaluatePatternInstruction::setValueType(const TypePtr &newValueType)
+const TypePtr &SSAEvaluatePatternInstruction::getDeclaredValueType() const
 {
-    valueType = newValueType;
+    return declaredValueType;
+}
+
+void SSAEvaluatePatternInstruction::setDeclaredValueType(const TypePtr &newValueType)
+{
+    declaredValueType = valueType = newValueType;
+    if(valueType->isReturnedByReference())
+        valueType = valueType->tempRef();
 }
 
 std::string SSAEvaluatePatternInstruction::getMnemonic() const
