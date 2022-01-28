@@ -1217,17 +1217,7 @@ TypePtr Type::appendTypeMakingTuple(const TypePtr &nextType)
 {
     TypePtrList newElementTypes;
     newElementTypes.push_back(selfFromThis());
-
-    if(nextType->isTupleType())
-    {
-        auto &nextTypes = nextType.staticAs<TupleType> ()->elementTypes;
-        newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
-    }
-    else
-    {
-        newElementTypes.push_back(nextType);
-    }
-
+    newElementTypes.push_back(nextType);
     return TupleType::make(newElementTypes);
 }
 

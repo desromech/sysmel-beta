@@ -30,22 +30,13 @@ TypePtr TupleType::make(const TypePtrList &elementTypes)
 
     for(auto &elementType : elementTypes)
     {
-        auto undecoratedType = elementType->asDecayedType();
-        if(undecoratedType->isVoidType())
+        if(elementType->asDecayedType()->isVoidType())
             continue;
 
-        normalizedTypes.push_back(undecoratedType);
+        normalizedTypes.push_back(elementType);
     }
 
-    switch(normalizedTypes.size())
-    {
-    case 0:
-        return Type::getVoidType();
-    case 1:
-        return normalizedTypes[0];
-    default:
-        return makeNormalized(normalizedTypes);
-    }
+    return makeNormalized(normalizedTypes);
 }
 
 TupleTypePtr TupleType::makeNormalized(const TypePtrList &elementTypes)
@@ -84,16 +75,6 @@ std::string TupleType::getQualifiedName() const
 {
     sysmelAssert(!elementTypes.empty());
 
-    bool hasTupleTypeElement = false;
-    for(auto &el : elementTypes)
-    {
-        if(el->isTupleType())
-        {
-            hasTupleTypeElement = true;
-            break;
-        }
-    }
-
     std::ostringstream out;
     out << '(';
     bool first = true;
@@ -102,12 +83,10 @@ std::string TupleType::getQualifiedName() const
         if(first)
             first = false;
         else
-            out << (hasTupleTypeElement ? ", " : " & ");
+            out << " & ";
         out << el->printString();
     }
     out << ')';
-    if(hasTupleTypeElement)
-        out << " tuple";
 
     return out.str();
 }
@@ -155,16 +134,7 @@ TypePtr TupleType::asTupleType()
 TypePtr TupleType::appendTypeMakingTuple(const TypePtr &nextType)
 {
     auto newElementTypes = elementTypes;
-    if(nextType->isTupleType())
-    {
-        auto &nextTypes = staticObjectCast<TupleType> (nextType)->elementTypes;
-        newElementTypes.insert(newElementTypes.end(), nextTypes.begin(), nextTypes.end());
-    }
-    else
-    {
-        newElementTypes.push_back(nextType);
-    }
-
+    newElementTypes.push_back(nextType);
     return TupleType::make(newElementTypes);
 }
 

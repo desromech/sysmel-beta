@@ -448,34 +448,6 @@ SUITE(SysmelCompileTimeEvaluation)
                     CHECK(tupleInstance->isTupleTypeValue());
                     CHECK_EQUAL(tupleInstance->getType(), a);
                 }
-
-                {
-                    auto a = evaluateString("(Int32 & Int64) & Int8");
-                    auto b = evaluateString("Int32 & (Int64 & Int8)");
-                    CHECK(a->isTupleType());
-                    CHECK(b->isTupleType());
-                    CHECK_EQUAL(a, b);
-
-                    auto tupleInstance = evaluateString("Int32(1), Int64(2), Int8(3)");
-                    CHECK(tupleInstance->isTupleTypeValue());
-                    CHECK_EQUAL(tupleInstance->getType(), a);
-
-                    CHECK_EQUAL(1, evaluateStringWithValueOfType<int32_t> ("(Int32(1), Int64(2), Int8(3))[0]"));
-                    CHECK_EQUAL(2, evaluateStringWithValueOfType<int64_t> ("(Int32(1), Int64(2), Int8(3))[1]"));
-                    CHECK_EQUAL(3, evaluateStringWithValueOfType<int8_t> ("(Int32(1), Int64(2), Int8(3))[2]"));
-                }
-
-                {
-                    auto a = evaluateString("Int32 & Int64 & Int8");
-                    auto b = evaluateString("Int32 const & Int64 volatile & Int8 restrict");
-                    CHECK(a->isTupleType());
-                    CHECK(b->isTupleType());
-                    CHECK_EQUAL(a, b);
-
-                    auto tupleInstance = evaluateString("Int32(1), Int64(2), Int8(3)");
-                    CHECK(tupleInstance->isTupleTypeValue());
-                    CHECK_EQUAL(tupleInstance->getType(), a);
-                }
             });
         });
     }
