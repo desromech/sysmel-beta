@@ -268,10 +268,10 @@ public:
     virtual bool isSubtypeOf(const TypePtr &otherType) const;
 
     /// This method computes the rank required for matching the specified type without implicit casting.
-    virtual PatternMatchingRank rankToMatchType(const TypePtr &type);
+    virtual TypeConversionCost rankToMatchType(const TypePtr &type);
 
     /// This method computes the rank required for matching the specified value without implicit casting.
-    virtual PatternMatchingRank rankToMatchValue(const AnyValuePtr &value);
+    virtual TypeConversionCost rankToMatchValue(const AnyValuePtr &value);
 
     /// This method returns the instance type.
     virtual TypePtr getInstanceType();

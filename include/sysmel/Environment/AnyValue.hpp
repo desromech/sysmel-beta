@@ -106,12 +106,6 @@ struct TypeConversionCost
         );
     }
 
-    TypeConversionCost &operator+=(const TypeConversionCost &o)
-    {
-        *this = *this + o;
-        return *this;
-    }
-
     bool operator==(const TypeConversionCost &o) const
     {
         return chainLength == o.chainLength && directCost == o.directCost;
@@ -126,7 +120,7 @@ struct TypeConversionCost
     }
 };
 
-typedef TypeConversionCost PatternMatchingRank;
+typedef std::vector<TypeConversionCost> PatternMatchingRank;
 
 /**
  * I hold the metadata that is required by a bootstrap defined type.

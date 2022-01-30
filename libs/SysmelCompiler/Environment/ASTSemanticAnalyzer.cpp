@@ -304,11 +304,11 @@ AnyValuePtr ASTSemanticAnalyzer::adaptNodeAsMacroArgumentOfType(const ASTNodePtr
     return evaluateInCompileTime(analyzedNode);
 }
 
-PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node)
+TypeConversionCost ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePtr &expectedType, const ASTNodePtr &node, bool isReceiverType)
 {
-    auto typeConversionRule = node->analyzedType->findImplicitTypeConversionRuleForInto(node, expectedType);
+    auto typeConversionRule = node->analyzedType->findImplicitTypeConversionRuleForInto(node, expectedType, isReceiverType);
     if(!typeConversionRule)
-        return PatternMatchingRank{};
+        return TypeConversionCost{};
 
     return typeConversionRule->getConversionCost(node, expectedType);
 }

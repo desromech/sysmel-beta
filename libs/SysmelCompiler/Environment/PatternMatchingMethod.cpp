@@ -42,7 +42,7 @@ AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selecto
         if(!result.matchingMethod)
             continue;
 
-        if(bestRank.isInvalid() || result.matchingRank < bestRank)
+        if(bestRank.empty() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);
@@ -112,7 +112,7 @@ ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNod
         if(!result.matchingMethod)
             continue;
 
-        if(bestRank.isInvalid() || result.matchingRank < bestRank)
+        if(bestRank.empty() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);
@@ -186,7 +186,7 @@ ASTNodePtr PatternMatchingMethod::analyzeCallNode(const ASTCallNodePtr &node, co
         if(!result.matchingMethod)
             continue;
 
-        if(bestRank.isInvalid() || result.matchingRank < bestRank)
+        if(bestRank.empty() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);

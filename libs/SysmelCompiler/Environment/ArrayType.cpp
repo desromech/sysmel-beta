@@ -144,8 +144,19 @@ void ArrayType::addSpecializedInstanceMethods()
     auto elementRefType = elementType->ref();
     auto elementConstRefType = elementType->withConst()->ref();
 
-    auto accessElement = [](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
+    /*auto accessElementSignedIndex = [](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
         auto indexValue = index->unwrapAsInt64();
+        sysmelAssert(self->baseValue && self->baseValue->isArrayTypeValue());
+        auto array = self->baseValue.staticAs<ArrayTypeValue> ();
+        auto elementType = array->getType().staticAs<ArrayType>()->elementType;
+
+        auto offset = indexValue * elementType->getAlignedMemorySize();
+        auto resultRefType = elementType->refForMemberOfReceiverWithType(self->getType());
+        return array->getReferenceToSlotWithType(indexValue, offset, resultRefType);
+    };*/
+
+    auto accessElementUnsignedIndex = [](const ReferenceTypeValuePtr &self, const AnyValuePtr &index) {
+        auto indexValue = index->unwrapAsUInt64();
         sysmelAssert(self->baseValue && self->baseValue->isArrayTypeValue());
         auto array = self->baseValue.staticAs<ArrayTypeValue> ();
         auto elementType = array->getType().staticAs<ArrayType>()->elementType;
@@ -158,10 +169,11 @@ void ArrayType::addSpecializedInstanceMethods()
     addMethodCategories(MethodCategories{
         {"accessing", {
             // []
-            makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
-            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getIntPointerType()}, accessElement, MethodFlags::Pure),
-            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
-            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getUIntPointerType()}, accessElement, MethodFlags::Pure),
+            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getIntPointerType()}, accessElementSignedIndex, MethodFlags::Pure),
+            //makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getIntPointerType()}, accessElementSignedIndex, MethodFlags::Pure),
+
+            makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", receiverType, elementRefType, {Type::getUIntPointerType()}, accessElementUnsignedIndex, MethodFlags::Pure),
+            makeIntrinsicMethodBindingWithSignature<PointerLikeTypeValuePtr (ReferenceTypeValuePtr, AnyValuePtr)> ("array.element", "[]", constReceiverType, elementConstRefType, {Type::getUIntPointerType()}, accessElementUnsignedIndex, MethodFlags::Pure),
         }},
     });
 }

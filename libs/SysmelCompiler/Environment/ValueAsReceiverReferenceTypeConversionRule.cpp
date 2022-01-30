@@ -23,13 +23,15 @@ bool ValueAsReceiverReferenceTypeConversionRule::canBeUsedToConvertNodeFromTo(co
     auto undecoratedSourceType = sourceType->asUndecoratedType();
     return targetType->isReferenceType() &&
         undecoratedSourceType->isPassedByReference() &&
-        undecoratedSourceType->isSubtypeOf(targetType.staticAs<ReferenceType> ()->getBaseType()->asUndecoratedType());
+        undecoratedSourceType->isSubtypeOf(targetType->asDecayedType());
 }
 
 TypeConversionCost ValueAsReceiverReferenceTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
+    if(targetType->isReferenceType() && targetType.staticAs<ReferenceType> ()->getBaseType()->isConstDecoratedType())
+        return TypeConversionCost(DirectTypeConversionCost::ValueAsConstRef);
     return TypeConversionCost(DirectTypeConversionCost::Identity);
 }
 

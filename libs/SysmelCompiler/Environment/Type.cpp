@@ -768,7 +768,7 @@ bool Type::isSubtypeOf(const TypePtr &otherType) const
     return false;
 }
 
-PatternMatchingRank Type::rankToMatchType(const TypePtr &type)
+TypeConversionCost Type::rankToMatchType(const TypePtr &type)
 {
     uint32_t upCastLength = 0;
     for(auto currentType = type; currentType; currentType = currentType->getSupertype())
@@ -776,17 +776,17 @@ PatternMatchingRank Type::rankToMatchType(const TypePtr &type)
         if(currentType.get() == this)
         {
             if(upCastLength == 0)
-                return PatternMatchingRank{DirectTypeConversionCost::Identity};
-            return PatternMatchingRank{DirectTypeConversionCost::Upcast, upCastLength};
+                return TypeConversionCost{DirectTypeConversionCost::Identity};
+            return TypeConversionCost{DirectTypeConversionCost::Upcast, upCastLength};
         }
 
         ++upCastLength;
     }
 
-    return PatternMatchingRank{};
+    return TypeConversionCost{};
 }
 
-PatternMatchingRank Type::rankToMatchValue(const AnyValuePtr &value)
+TypeConversionCost Type::rankToMatchValue(const AnyValuePtr &value)
 {
     return rankToMatchType(value->getType());
 }
@@ -983,18 +983,27 @@ static TypeConversionRulePtr findTypeConversionRule(const ASTNodePtr &node, cons
     std::queue<TypeConversionRulePtr> pendingRulesToEvaluate;
     std::unordered_set<TypePtr> visitedTypes;
 
-    auto&& expandRulesWithType = [&](const TypePtr &type)
+    auto&& expandRulesWithType = [&](const TypePtr &type, const TypePtr &intermediateSourceType, const TypePtr &intermediateTargetType)
     {
         if(visitedTypes.find(type) != visitedTypes.end())
             return;
 
         visitedTypes.insert(type);
         for(auto &rule : ruleExtractionFunction(type))
-            pendingRulesToEvaluate.push(rule);
+        {
+            if(rule->canBeUsedToConvertNodeFromTo(node, intermediateSourceType, intermediateTargetType))
+            {
+                pendingRulesToEvaluate.push(rule);
+            }
+            else
+            {
+                // TODO: Find intermediate type and push it here.
+            }
+        }
     };
 
-    expandRulesWithType(sourceType);
-    expandRulesWithType(targetType);
+    expandRulesWithType(sourceType, sourceType, targetType);
+    expandRulesWithType(targetType, sourceType, targetType);
 
     while(!pendingRulesToEvaluate.empty())
     {
@@ -1138,7 +1147,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
             if(!result.matchingMethod)
                 continue;
 
-            if(bestRank.isInvalid() || result.matchingRank < bestRank)
+            if(bestRank.empty() || result.matchingRank < bestRank)
             {
                 matchingCandidates.clear();
                 matchingCandidates.push_back(result.matchingMethod);
