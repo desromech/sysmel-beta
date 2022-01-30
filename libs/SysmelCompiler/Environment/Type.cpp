@@ -47,6 +47,7 @@
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 
+#include <queue>
 #include <algorithm>
 
 namespace Sysmel
@@ -908,22 +909,10 @@ void Type::addImplicitTypeConversionRule(const TypeConversionRulePtr &rule)
     implicitTypeConversionRules.push_back(rule);
 }
 
-TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType)
+TypeConversionRulePtrList Type::getAllImplicitTypeConversionRules()
 {
-    if(isReceiverType &&
-        ValueAsReceiverReferenceTypeConversionRule::uniqueInstance()->canBeUsedToConvertNodeFromTo(node, selfFromThis(), targetType) )
-    {
-        return ValueAsReceiverReferenceTypeConversionRule::uniqueInstance();
-    }
-
-    auto sourceType = selfFromThis();
-    for(auto & rule : implicitTypeConversionRules)
-    {
-        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
-            return rule;
-    }
-
     evaluateAllPendingBodyBlockCodeFragments();
+    TypeConversionRulePtrList result = implicitTypeConversionRules;
 
     // Find a conversion method here.
     for(auto &conversion : conversions)
@@ -931,13 +920,14 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
         if(conversion->isExplicit())
             continue;
 
-        auto conversionTargetType = conversion->getFunctionalType()->getResultType();
-        if(conversionTargetType == targetType)
-            return ConversionMethodTypeConversionRule::makeFor(sourceType, conversionTargetType, conversion);
+        const auto &conversionType = conversion->getFunctionalType();
+        auto sourceType = conversionType->getReceiverType();
+        auto targetType = conversionType->getResultType();
+        result.push_back(ConversionMethodTypeConversionRule::makeFor(sourceType, targetType, conversion));
     }
 
-    // Find a constructor method in the target.
-    for(auto &targetConstructor : targetType->constructors)
+    // Find the constructor methods here.
+    for(auto &targetConstructor : constructors)
     {
         const auto &constructorType = targetConstructor->getFunctionalType();
         if(constructorType->getArgumentCount() != 1)
@@ -946,46 +936,92 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
         if(targetConstructor->isExplicit())
             continue;
 
-        const auto &constructorSourceType = constructorType->getArgument(0);
-        if(sourceType == constructorSourceType)
-            return ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor);
+        auto sourceType = constructorType->getArgument(0);
+        auto targetType = constructorType->getResultType();
+        result.push_back(ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor));
     }
 
-    return nullptr;
+    return result;
 }
 
-TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+TypeConversionRulePtrList Type::getAllExplicitTypeConversionRules()
 {
-    auto sourceType = selfFromThis();
-    for(auto & rule : explicitTypeConversionRules)
-    {
-        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
-            return rule;
-    }
-
     evaluateAllPendingBodyBlockCodeFragments();
+    TypeConversionRulePtrList result = explicitTypeConversionRules;
 
     // Find a conversion method here.
     for(auto &conversion : conversions)
     {
-        auto conversionTargetType = conversion->getFunctionalType()->getResultType();
-        if(conversionTargetType == targetType)
-            return ConversionMethodTypeConversionRule::makeFor(sourceType, conversionTargetType, conversion);
+        const auto &conversionType = conversion->getFunctionalType();
+        auto sourceType = conversionType->getReceiverType();
+        auto targetType = conversionType->getResultType();
+        result.push_back(ConversionMethodTypeConversionRule::makeFor(sourceType, targetType, conversion));
     }
 
-    // Find a constructor method in the target.
-    for(auto &targetConstructor : targetType->constructors)
+    // Find the constructor methods here.
+    for(auto &targetConstructor : constructors)
     {
         const auto &constructorType = targetConstructor->getFunctionalType();
         if(constructorType->getArgumentCount() != 1)
             continue;
 
-        const auto &constructorSourceType = constructorType->getArgument(0);
-        if(sourceType == constructorSourceType)
-            return ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor);
+        auto sourceType = constructorType->getArgument(0);
+        auto targetType = constructorType->getResultType();
+        result.push_back(ConstructorMethodTypeConversionRule::makeFor(sourceType, targetType, targetConstructor));
     }
-    
+
+    return result;
+}
+
+template<typename FT>
+static TypeConversionRulePtr findTypeConversionRule(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, FT &&ruleExtractionFunction)
+{
+    std::queue<TypeConversionRulePtr> pendingRulesToEvaluate;
+    std::unordered_set<TypePtr> visitedTypes;
+
+    auto&& expandRulesWithType = [&](const TypePtr &type)
+    {
+        if(visitedTypes.find(type) != visitedTypes.end())
+            return;
+
+        visitedTypes.insert(type);
+        for(auto &rule : ruleExtractionFunction(type))
+            pendingRulesToEvaluate.push(rule);
+    };
+
+    expandRulesWithType(sourceType);
+    expandRulesWithType(targetType);
+
+    while(!pendingRulesToEvaluate.empty())
+    {
+        auto rule = pendingRulesToEvaluate.front();
+        pendingRulesToEvaluate.pop();
+
+        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
+            return rule;
+    }
+
     return nullptr;
+}
+
+TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType, bool isReceiverType)
+{
+    if(isReceiverType &&
+        ValueAsReceiverReferenceTypeConversionRule::uniqueInstance()->canBeUsedToConvertNodeFromTo(node, selfFromThis(), targetType) )
+    {
+        return ValueAsReceiverReferenceTypeConversionRule::uniqueInstance();
+    }
+
+    return findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
+        return type->getAllImplicitTypeConversionRules();
+    });
+}
+
+TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
+{
+    return findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
+        return type->getAllExplicitTypeConversionRules();
+    });
 }
 
 bool Type::canBeReinterpretedAsType(const TypePtr &otherType)

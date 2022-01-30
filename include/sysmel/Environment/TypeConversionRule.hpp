@@ -12,6 +12,27 @@ namespace Environment
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(TypeConversionRule);
 
 /**
+ * The cost of a direct type conversion
+ */
+enum class DirectTypeConversionCost : uint32_t
+{
+    Identity = 0,
+    Implicit,
+    Explicit,
+    Chained
+};
+
+/**
+ * The cost of a generic type conversion.
+ */
+struct TypeConversionCost
+{
+    uint32_t chainLength;
+    DirectTypeConversionCost directCost;
+};
+
+
+/**
  * I am an instance of a function type object.
  */
 class SYSMEL_COMPILER_LIB_EXPORT TypeConversionRule : public SubtypeOf<CompilerObject, TypeConversionRule>
