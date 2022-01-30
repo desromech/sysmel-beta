@@ -31,11 +31,11 @@ bool ValueInVariantTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNod
     return decayedTargetType.staticAs<VariantType> ()->includesType(decayedSourceType);
 }
 
-size_t ValueInVariantTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ValueInVariantTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
-    return 5 + (targetType->isVariantType() ? 5 : 0);
+    return TypeConversionCost(DirectTypeConversionCost::ValueInVariant);
 }
 
 ASTNodePtr ValueInVariantTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const

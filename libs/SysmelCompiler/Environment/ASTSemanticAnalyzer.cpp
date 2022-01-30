@@ -308,9 +308,9 @@ PatternMatchingRank ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypeP
 {
     auto typeConversionRule = node->analyzedType->findImplicitTypeConversionRuleForInto(node, expectedType);
     if(!typeConversionRule)
-        return -1;
+        return PatternMatchingRank{};
 
-    return PatternMatchingRank(typeConversionRule->getConversionCost(node, expectedType));
+    return typeConversionRule->getConversionCost(node, expectedType);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node)
@@ -459,7 +459,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
         return addImplicitCastTo(node, expectedTypeSet[0], isReceiverType);
 
     // Is there a single matching type?
-    size_t bestConversionRuleCost = std::numeric_limits<std::size_t>::max();
+    TypeConversionCost bestConversionRuleCost;
     std::vector<std::pair<TypeConversionRulePtr, TypePtr>> bestConversionRules;
     auto &sourceType = node->analyzedType;
     for(auto &expectedType : expectedTypeSet)

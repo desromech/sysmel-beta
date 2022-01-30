@@ -63,7 +63,7 @@ public:
     bool isConstructor() const;
     void makeConstructor();
 
-    bool isExplicit() const;
+    virtual bool isExplicit() const override;
     void makeExplicit();
 
     bool isPure() const;

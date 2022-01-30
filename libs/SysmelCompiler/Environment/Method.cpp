@@ -52,5 +52,15 @@ MethodPatternMatchingResult Method::matchPatternForAnalyzingCallNode(const ASTCa
     return MethodPatternMatchingResult{};
 }
 
+bool Method::isExplicit() const
+{
+    return false;
+}
+
+DirectTypeConversionCost Method::costForUsingAsDirectTypeConversion() const
+{
+    return isExplicit() ? DirectTypeConversionCost::ExplicitUserDefined : DirectTypeConversionCost::ImplicitUserDefined;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

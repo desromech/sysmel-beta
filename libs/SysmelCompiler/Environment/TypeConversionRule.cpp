@@ -19,7 +19,7 @@ bool TypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, co
     return false;
 }
 
-size_t TypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost TypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;

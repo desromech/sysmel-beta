@@ -1,6 +1,7 @@
 #include "Environment/SSADoWithCleanupInstruction.hpp"
 #include "Environment/SSACodeRegion.hpp"
 #include "Environment/SSAValueVisitor.hpp"
+#include "Environment/PointerLikeType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -22,6 +23,15 @@ AnyValuePtr SSADoWithCleanupInstruction::accept(const SSAValueVisitorPtr &visito
 
 
 TypePtr SSADoWithCleanupInstruction::getValueType() const
+{
+    auto declaredType = bodyRegion->getDeclaredResultType();
+    if(declaredType->isReturnedByReference())
+        return declaredType->tempRef();
+        
+    return declaredType;
+}
+
+TypePtr SSADoWithCleanupInstruction::getDeclaredValueType() const
 {
     return bodyRegion->getDeclaredResultType();
 }

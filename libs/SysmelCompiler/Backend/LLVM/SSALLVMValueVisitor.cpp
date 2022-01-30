@@ -1446,7 +1446,7 @@ AnyValuePtr SSALLVMValueVisitor::visitDoWithCleanupInstruction(const SSADoWithCl
     cleanUpRegionStack.push_back(cleanUpRegion);
 
     llvm::AllocaInst *resultAlloca = nullptr;
-    auto resultType = instruction->getValueType();
+    auto resultType = instruction->getDeclaredValueType();
     if(resultType->isReturnedByReference())
     {
         resultAlloca = allocaBuilder->CreateAlloca(backend->translateType(resultType));

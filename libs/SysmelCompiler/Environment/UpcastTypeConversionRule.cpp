@@ -61,11 +61,11 @@ bool UpcastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &no
     return sourceType->isSubtypeOf(targetType);
 }
 
-size_t UpcastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost UpcastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
-    return 1;
+    return TypeConversionCost(DirectTypeConversionCost::Upcast);
 }
 
 ASTNodePtr UpcastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const

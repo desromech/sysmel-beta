@@ -36,6 +36,9 @@ public:
     virtual MethodPatternMatchingResult matchPatternForAnalyzingMessageSendNode(const ASTMessageSendNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual MethodPatternMatchingResult matchPatternForAnalyzingCallNode(const ASTCallNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
 
+    virtual bool isExplicit() const;
+    virtual DirectTypeConversionCost costForUsingAsDirectTypeConversion() const;
+
 protected:
     AnyValuePtr name;
 };

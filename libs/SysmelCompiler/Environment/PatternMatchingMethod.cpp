@@ -34,7 +34,7 @@ void PatternMatchingMethod::addPattern(const MethodPtr &newPattern)
 AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selector, const std::vector<AnyValuePtr> &arguments, const AnyValuePtr &receiver)
 {
     std::vector<MethodPtr> matchingCandidates;
-    PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+    PatternMatchingRank bestRank;
 
     for(const auto &pattern : patterns)
     {
@@ -42,7 +42,7 @@ AnyValuePtr PatternMatchingMethod::runWithArgumentsIn(const AnyValuePtr &selecto
         if(!result.matchingMethod)
             continue;
 
-        if(result.matchingRank < bestRank)
+        if(bestRank.isInvalid() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);
@@ -104,7 +104,7 @@ ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNod
     ensureArgumentsAreAnalyzed(node->arguments, semanticAnalyzer);
 
     std::vector<MethodPtr> matchingCandidates;
-    PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+    PatternMatchingRank bestRank;
 
     for(const auto &pattern : patterns)
     {
@@ -112,7 +112,7 @@ ASTNodePtr PatternMatchingMethod::analyzeMessageSendNode(const ASTMessageSendNod
         if(!result.matchingMethod)
             continue;
 
-        if(result.matchingRank < bestRank)
+        if(bestRank.isInvalid() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);
@@ -178,7 +178,7 @@ ASTNodePtr PatternMatchingMethod::analyzeCallNode(const ASTCallNodePtr &node, co
     ensureArgumentsAreAnalyzed(analyzedNode->arguments, semanticAnalyzer);
 
     std::vector<MethodPtr> matchingCandidates;
-    PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+    PatternMatchingRank bestRank;
 
     for(const auto &pattern : patterns)
     {
@@ -186,7 +186,7 @@ ASTNodePtr PatternMatchingMethod::analyzeCallNode(const ASTCallNodePtr &node, co
         if(!result.matchingMethod)
             continue;
 
-        if(result.matchingRank < bestRank)
+        if(bestRank.isInvalid() || result.matchingRank < bestRank)
         {
             matchingCandidates.clear();
             matchingCandidates.push_back(result.matchingMethod);

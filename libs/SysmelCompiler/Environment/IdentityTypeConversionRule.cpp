@@ -21,11 +21,11 @@ bool IdentityTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &
     return sourceType == targetType;
 }
 
-size_t IdentityTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost IdentityTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
-    return 0;
+    return TypeConversionCost(DirectTypeConversionCost::Identity);
 }
 
 ASTNodePtr IdentityTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const

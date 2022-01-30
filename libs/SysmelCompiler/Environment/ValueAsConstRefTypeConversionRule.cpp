@@ -37,11 +37,11 @@ bool ValueAsConstRefTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNo
     return undecoratedSourceType->isSubtypeOf(targetBaseType->asUndecoratedType());
 }
 
-size_t ValueAsConstRefTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ValueAsConstRefTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
-    return 5;
+    return TypeConversionCost(DirectTypeConversionCost::ValueAsConstRef);
 }
 
 ASTNodePtr ValueAsConstRefTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const

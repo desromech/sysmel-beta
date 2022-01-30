@@ -27,17 +27,17 @@ bool LiteralToTargetTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNo
     return literalValue->canBeConcretizedWithType(targetType);
 }
 
-size_t LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
 {
     sysmelAssert(node->isASTLiteralValueNode());
 
     auto literalValue = staticObjectCast<LiteralValue> (node.staticAs<ASTLiteralValueNode> ()->value);
     if(literalValue->getBestConcreteType() == targetType)
-        return 5;
+        return TypeConversionCost(DirectTypeConversionCost::LiteralBestTarget);
     else if(literalValue->getStandardConcreteType() == targetType)
-        return 10;
+        return TypeConversionCost(DirectTypeConversionCost::LiteralStandardTarget);
     else
-        return 15;
+        return TypeConversionCost(DirectTypeConversionCost::LiteralTarget);
 }
 
 ASTNodePtr LiteralToTargetTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const

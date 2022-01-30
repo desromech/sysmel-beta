@@ -21,6 +21,7 @@ public:
     virtual AnyValuePtr accept(const SSAValueVisitorPtr &visitor) override;
 
     virtual TypePtr getValueType() const override;
+    virtual TypePtr getDeclaredValueType() const;
 
     virtual std::string getMnemonic() const override;
     

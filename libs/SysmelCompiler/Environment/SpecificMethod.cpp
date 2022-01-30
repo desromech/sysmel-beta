@@ -57,7 +57,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
     if(arguments.size() != functionalType->getArgumentCount())
         return MethodPatternMatchingResult{};
 
-    PatternMatchingRank totalRank = 0;
+    PatternMatchingRank totalRank = {DirectTypeConversionCost::Identity};
 
     // TODO: Handle the void receiver type special case.
     if(functionalType->getReceiverType()->isVoidType())
@@ -67,14 +67,14 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForRunWithIn(const AnyVa
     else
     {
         totalRank = functionalType->getReceiverType()->rankToMatchValue(receiver);
-        if(totalRank < 0)
+        if(totalRank.isInvalid())
             return MethodPatternMatchingResult{};
     }
 
     for(size_t i = 0; i < arguments.size(); ++i)
     {
         auto argumentRank = functionalType->getArgument(i)->rankToMatchValue(arguments[i]);
-        if(argumentRank < 0)
+        if(argumentRank.isInvalid())
             return MethodPatternMatchingResult{};
         totalRank += argumentRank;
     }
@@ -93,7 +93,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
     if(node->arguments.size() != functionalType->getArgumentCount())
         return MethodPatternMatchingResult{};
 
-    PatternMatchingRank totalRank = 0;
+    PatternMatchingRank totalRank = {DirectTypeConversionCost::Identity};
 
     // TODO: Handle the void receiver type special case.
     if(functionalType->getReceiverType()->isVoidType())
@@ -107,7 +107,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
             return MethodPatternMatchingResult{};
 
         totalRank = semanticAnalyzer->rankForMatchingTypeWithNode(functionalType->getReceiverType(), node->receiver);
-        if(totalRank < 0)
+        if(totalRank.isInvalid())
             return MethodPatternMatchingResult{};
     }
 
@@ -115,7 +115,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingMessageSendN
     {
         auto expectedArgumentType = functionalType->getArgument(i);
         auto argumentRank = semanticAnalyzer->rankForMatchingTypeWithNode(expectedArgumentType, node->arguments[i]);
-        if(argumentRank < 0)
+        if(argumentRank.isInvalid())
             return MethodPatternMatchingResult{};
         totalRank += argumentRank;
     }
@@ -129,7 +129,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingCallNode(con
     if(node->arguments.size() != functionalType->getArgumentCount())
         return MethodPatternMatchingResult{};
 
-    PatternMatchingRank totalRank = 0;
+    PatternMatchingRank totalRank = {DirectTypeConversionCost::Identity};
 
     if(!functionalType->getReceiverType()->isVoidType())
         return MethodPatternMatchingResult{};
@@ -138,7 +138,7 @@ MethodPatternMatchingResult SpecificMethod::matchPatternForAnalyzingCallNode(con
     {
         auto expectedArgumentType = functionalType->getArgument(i);
         auto argumentRank = semanticAnalyzer->rankForMatchingTypeWithNode(expectedArgumentType, node->arguments[i]);
-        if(argumentRank < 0)
+        if(argumentRank.isInvalid())
             return MethodPatternMatchingResult{};
         totalRank += argumentRank;
     }

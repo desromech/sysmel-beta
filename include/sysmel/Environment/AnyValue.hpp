@@ -56,7 +56,77 @@ typedef std::vector<MethodBinding> MethodBindings;
 typedef std::pair<std::string, MethodBindings> MethodCategory;
 typedef std::vector<MethodCategory> MethodCategories;
 
-typedef int32_t PatternMatchingRank;
+/**
+ * The cost of a direct type conversion
+ */
+enum class DirectTypeConversionCost : uint8_t
+{
+    Invalid = 0,
+    Identity,
+    Upcast,
+    ValueToVoid,
+
+    LiteralBestTarget,
+    LiteralStandardTarget,
+    LiteralTarget,
+
+    ValueAsConstRef,
+
+    ImplicitUserDefined,
+    ExplicitUserDefined,
+
+    ValueInVariant,
+    Downcast,
+};
+
+/**
+ * The cost of a generic type conversion.
+ */
+struct TypeConversionCost
+{
+    TypeConversionCost() = default;
+    TypeConversionCost(DirectTypeConversionCost initialDirectCost)
+        : directCost(initialDirectCost) {}
+    TypeConversionCost(DirectTypeConversionCost initialDirectCost, uint32_t initialChainLength)
+        : directCost(initialDirectCost), chainLength(initialChainLength) {}
+
+    DirectTypeConversionCost directCost = DirectTypeConversionCost::Invalid;
+    uint32_t chainLength = 0;
+
+    bool isInvalid() const
+    {
+        return directCost == DirectTypeConversionCost::Invalid;
+    }
+
+    TypeConversionCost operator+(const TypeConversionCost &o) const
+    {
+        return TypeConversionCost(
+            uint8_t(directCost) > uint8_t(o.directCost) ? directCost : o.directCost,
+            (chainLength > o.chainLength ? chainLength : o.chainLength) + 1
+        );
+    }
+
+    TypeConversionCost &operator+=(const TypeConversionCost &o)
+    {
+        *this = *this + o;
+        return *this;
+    }
+
+    bool operator==(const TypeConversionCost &o) const
+    {
+        return chainLength == o.chainLength && directCost == o.directCost;
+    }
+
+    bool operator<(const TypeConversionCost &o) const
+    {
+        if(chainLength != o.chainLength)
+            return chainLength < o.chainLength;
+
+        return uint8_t(directCost) < uint8_t(o.directCost);
+    }
+};
+
+typedef TypeConversionCost PatternMatchingRank;
 
 /**
  * I hold the metadata that is required by a bootstrap defined type.

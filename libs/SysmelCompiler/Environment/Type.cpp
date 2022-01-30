@@ -770,16 +770,20 @@ bool Type::isSubtypeOf(const TypePtr &otherType) const
 
 PatternMatchingRank Type::rankToMatchType(const TypePtr &type)
 {
-    PatternMatchingRank upCastRank = 0;
+    uint32_t upCastLength = 0;
     for(auto currentType = type; currentType; currentType = currentType->getSupertype())
     {
         if(currentType.get() == this)
-            return upCastRank;
+        {
+            if(upCastLength == 0)
+                return PatternMatchingRank{DirectTypeConversionCost::Identity};
+            return PatternMatchingRank{DirectTypeConversionCost::Upcast, upCastLength};
+        }
 
-        ++upCastRank;
+        ++upCastLength;
     }
 
-    return -1;
+    return PatternMatchingRank{};
 }
 
 PatternMatchingRank Type::rankToMatchValue(const AnyValuePtr &value)
@@ -1126,7 +1130,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
 
         // Find a matching constructor.
         std::vector<MethodPtr> matchingCandidates;
-        PatternMatchingRank bestRank = std::numeric_limits<PatternMatchingRank>::max();
+        PatternMatchingRank bestRank;
 
         for(auto &constructor : constructors)
         {
@@ -1134,7 +1138,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
             if(!result.matchingMethod)
                 continue;
 
-            if(result.matchingRank < bestRank)
+            if(bestRank.isInvalid() || result.matchingRank < bestRank)
             {
                 matchingCandidates.clear();
                 matchingCandidates.push_back(result.matchingMethod);

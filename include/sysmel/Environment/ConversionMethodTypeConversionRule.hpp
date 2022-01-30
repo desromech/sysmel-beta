@@ -22,7 +22,7 @@ public:
     static TypeConversionRulePtr makeFor(const TypePtr &sourceType, const TypePtr &destinationType, const MethodPtr &method);
 
     virtual bool canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const override;
-    virtual size_t getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const override;
+    virtual TypeConversionCost getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const override;
     virtual ASTNodePtr convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const override;
 
     TypePtr sourceType;
