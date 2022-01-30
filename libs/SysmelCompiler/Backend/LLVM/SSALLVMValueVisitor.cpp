@@ -774,6 +774,16 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         sysmelAssert(context.arguments.size() <= 2);
         return context.builder->CreateFPExt(context.arguments.back(), context.builder->getDoubleTy());
     }},
+
+    // Enum
+    {"enum.wrap", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() <= 2);
+        return context.arguments.back();
+    }},
+    {"enum.unwrap", +[](const IntrinsicGenerationContext &context) {
+        sysmelAssert(context.arguments.size() == 1);
+        return context.arguments.back();
+    }},
 };
 
 static llvm::GlobalValue::DLLStorageClassTypes convertDLLStorageClass(DllLinkageMode mode)

@@ -428,13 +428,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 {
                     auto a = evaluateString("Int32 & Void");
                     auto b = evaluateString("Void & Int32");
-                    CHECK_EQUAL(a, Int32::__staticType__());
-                    CHECK_EQUAL(b, Int32::__staticType__());
                     CHECK_EQUAL(a, b);
-                }
-
-                {
-                    CHECK_EQUAL(Type::getVoidType(), evaluateString("Void & Void"));
                 }
 
                 {

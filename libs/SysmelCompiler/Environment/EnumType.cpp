@@ -106,6 +106,73 @@ void EnumType::addSpecializedMethods()
             }
         }
     });
+
+    // Unary intrinsics.
+    if(bitMask)
+    {
+        std::string scalarSelectors[] = {
+            "bitInvert", "pre-~"
+        };
+
+        for(const auto &scalarSelector : scalarSelectors)
+        {
+            auto scalarSelectorSymbol = internSymbol(scalarSelector);
+            auto scalarMethod = baseType->lookupSelector(scalarSelectorSymbol);
+            if(!validAnyValue(scalarMethod)->isSpecificMethod())
+                continue;
+            
+            auto intrinsicName = scalarMethod.staticAs<SpecificMethod> ()->getIntrinsicName();
+            if(validAnyValue(intrinsicName)->isUndefined())
+                continue;
+
+            auto resultType = selfFromThis();
+
+            addMethodCategories({
+                {"arithmetic", {
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {}, [=](const EnumTypeValuePtr &self){
+                        auto result = basicMakeObject<EnumTypeValue> ();
+                        result->type = resultType;
+                        result->baseValue = self->baseValue->performWithArguments(scalarSelectorSymbol, {});
+                        return result;
+                    }, MethodFlags::Pure),
+                }}
+            });
+        }
+    }
+
+    // Binary intrinsics.
+    if(bitMask)
+    {
+        std::string scalarSelectors[] = {
+            "|", "bitOr:", "&", "bitAnd:", "^", "bitXor:", "<<", ">>",
+        };
+
+        for(const auto &scalarSelector : scalarSelectors)
+        {
+            auto scalarSelectorSymbol = internSymbol(scalarSelector);
+            auto scalarMethod = baseType->lookupSelector(scalarSelectorSymbol);
+            if(!validAnyValue(scalarMethod)->isSpecificMethod())
+                continue;
+            
+            auto intrinsicName = scalarMethod.staticAs<SpecificMethod> ()->getIntrinsicName();
+            if(validAnyValue(intrinsicName)->isUndefined())
+                continue;
+
+            auto scalarResultType = scalarMethod.staticAs<SpecificMethod> ()->getFunctionalType()->getResultType();
+            auto resultType = selfFromThis();
+
+            addMethodCategories({
+                {"arithmetic", {
+                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr, EnumTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const EnumTypeValuePtr &self, const EnumTypeValuePtr &other){
+                        auto result = basicMakeObject<EnumTypeValue> ();
+                        result->type = resultType;
+                        result->baseValue = self->baseValue->performWithArguments(scalarSelectorSymbol, {other->baseValue});
+                        return result;
+                    }, MethodFlags::Pure),
+                }}
+            });
+        }
+    }
 }
 
 void EnumType::enqueuePendingValueTypeCodeFragment(const DeferredCompileTimeCodeFragmentPtr &codeFragment)

@@ -13,6 +13,7 @@
 #include "Environment/PrimitiveIntegerType.hpp"
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/PrimitiveVectorType.hpp"
+#include "Environment/EnumType.hpp"
 #include "Environment/FunctionType.hpp"
 #include "Environment/ArrayType.hpp"
 #include "Environment/ClassType.hpp"
@@ -107,6 +108,11 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPrimitiveVectorTypeValue(const Primiti
         elements.push_back(backend->translateLiteralValueWithExpectedType(value->elements[i], expectedElementType));
 
     return wrapLLVMConstant(llvm::ConstantVector::get(elements));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitEnumTypeValue(const EnumTypeValuePtr &value)
+{
+    return wrapLLVMConstant(backend->translateLiteralValueWithExpectedType(value->baseValue, value->type->getBaseType()));
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitFunctionTypeValue(const FunctionTypeValuePtr &value)

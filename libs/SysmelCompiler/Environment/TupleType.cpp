@@ -41,8 +41,6 @@ TypePtr TupleType::make(const TypePtrList &elementTypes)
 
 TupleTypePtr TupleType::makeNormalized(const TypePtrList &elementTypes)
 {
-    sysmelAssert(!elementTypes.empty());
-
     auto &cache = RuntimeContext::getActive()->tupleTypeCache;
     auto it = cache.find(elementTypes);
     if(it != cache.end())

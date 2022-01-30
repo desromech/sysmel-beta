@@ -39,6 +39,8 @@ public:
     virtual AnyValuePtr visitPrimitiveFloatType(const PrimitiveFloatTypePtr &value) override;
     virtual AnyValuePtr visitPrimitiveVectorTypeValue(const PrimitiveVectorTypeValuePtr &value) override;
 
+    virtual AnyValuePtr visitEnumTypeValue(const EnumTypeValuePtr &value) override;
+
     virtual AnyValuePtr visitFunctionTypeValue(const FunctionTypeValuePtr &value) override;
     virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value) override;
 
