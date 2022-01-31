@@ -22,8 +22,11 @@ public:
     static constexpr bool __isDynamicCompileTimeType__ = false;
 
     virtual bool canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const;
-    virtual TypeConversionCost getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const;
+    virtual TypeConversionCost getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const;
     virtual ASTNodePtr convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const;
+
+    virtual TypePtr getCanonicalSourceTypeFor(const TypePtr &targetType) const;
+    virtual TypePtr getCanonicalTargetTypeFor(const TypePtr &sourceType) const;
 };
 
 } // End of namespace Environment

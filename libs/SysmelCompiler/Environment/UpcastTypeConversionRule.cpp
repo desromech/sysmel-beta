@@ -20,13 +20,16 @@ TypeConversionRulePtr UpcastTypeConversionRule::uniqueInstance()
 bool UpcastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    if(sourceType == targetType)
+        return false;
+
     auto undecoratedSourceType = sourceType->asUndecoratedType();
     auto undecoratedTargetType = targetType->asUndecoratedType();
 
     if(undecoratedSourceType->isPointerType() && undecoratedTargetType->isPointerType())
     {
-        auto sourceBaseType = undecoratedSourceType.staticAs<PointerLikeType> ()->getBaseType();
-        auto targetBaseType = undecoratedTargetType.staticAs<PointerLikeType> ()->getBaseType();
+        auto sourceBaseType = undecoratedSourceType->getBaseType();
+        auto targetBaseType = undecoratedTargetType->getBaseType();
 
         // Do not allow from const -> non-const
         if(sourceBaseType->isConstDecoratedType() && !targetBaseType->isConstDecoratedType())
@@ -42,8 +45,8 @@ bool UpcastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &no
         if(undecoratedTargetType->isTemporaryReferenceType() && !undecoratedSourceType->isTemporaryReferenceType())
             return false;
 
-        auto sourceBaseType = undecoratedSourceType.staticAs<PointerLikeType> ()->getBaseType();
-        auto targetBaseType = undecoratedTargetType.staticAs<PointerLikeType> ()->getBaseType();
+        auto sourceBaseType = undecoratedSourceType->getBaseType();
+        auto targetBaseType = undecoratedTargetType->getBaseType();
 
         // Do not allow from const -> non-const
         if(sourceBaseType->isConstDecoratedType() && !targetBaseType->isConstDecoratedType())
@@ -61,11 +64,20 @@ bool UpcastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &no
     return sourceType->isSubtypeOf(targetType);
 }
 
-TypeConversionCost UpcastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost UpcastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
-    (void)targetType;
-    return TypeConversionCost(DirectTypeConversionCost::Upcast);
+    auto sourceBaseType = sourceType->asDecayedType();
+    auto targetBaseType = targetType->asDecayedType();
+    if(sourceBaseType->isPointerLikeType())
+        sourceBaseType = sourceBaseType->getBaseType()->asDecayedType();
+    if(targetBaseType->isPointerLikeType())
+        targetBaseType = targetBaseType->getBaseType()->asDecayedType();
+
+    auto cost = targetBaseType->asDecayedType()->rankToMatchType(sourceBaseType->asDecayedType());
+    if(cost.directCost == DirectTypeConversionCost::Identity)
+        cost.directCost = DirectTypeConversionCost::UpcastIdentity;
+    return cost;
 }
 
 ASTNodePtr UpcastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, const ASTSourcePositionPtr &sourcePosition, const TypePtr &targetType, const ASTSemanticAnalyzerPtr &semanticAnalyzer) const
@@ -78,6 +90,14 @@ ASTNodePtr UpcastTypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &nod
     result->expression = node;
     result->analyzedType = targetType;
     return result;
+}
+
+TypePtr UpcastTypeConversionRule::getCanonicalTargetTypeFor(const TypePtr &sourceType) const
+{
+    auto baseType = sourceType->asDecayedType();
+    if(baseType->isPointerLikeType())
+        baseType = baseType->getBaseType();
+    return baseType->getSupertype();
 }
 
 } // End of namespace Environment

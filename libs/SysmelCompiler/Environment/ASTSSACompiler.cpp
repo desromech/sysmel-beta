@@ -865,7 +865,7 @@ SSAValuePtr ASTSSACompiler::prepareForReturningValueFromRegion(const SSAValuePtr
     {
         auto resultArgument = returningRegion->getArgument(0);
         sysmelAssert(!result->getValueType()->isVoidType() && resultArgument->getValueType()->isPointerLikeType());
-        assignInitialValueFrom(resultArgument, resultArgument->getValueType().staticAs<PointerLikeType> ()->getBaseType(), result);
+        assignInitialValueFrom(resultArgument, resultArgument->getValueType()->getBaseType(), result);
         return builder->literal(getVoidConstant());
     }
 

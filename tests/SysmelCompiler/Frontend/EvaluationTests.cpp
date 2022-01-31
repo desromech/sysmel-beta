@@ -1252,7 +1252,7 @@ SUITE(SysmelCompileTimeEvaluation)
                 auto enumDefinition = evaluateString("public enum TestEnum valueType: UInt32; values: #{First: 1. Second:. #Third : 3 . Fifth: Third + 2}; definition: {}.");
                 CHECK(enumDefinition->isEnumType());
                 CHECK_EQUAL(enumDeclaration, enumDefinition);
-                CHECK_EQUAL(UInt32::__staticType__(), enumDefinition.staticAs<EnumType> ()->getBaseType());
+                CHECK_EQUAL(UInt32::__staticType__(), enumDefinition.staticAs<EnumType>()->getBaseType());
                 CHECK_EQUAL(Module::getActive(), enumDefinition.staticAs<EnumType> ()->getDefinitionModule());
 
                 CHECK_EQUAL(1u, evaluateStringWithValueOfType<uint32_t> ("TestEnum First"));

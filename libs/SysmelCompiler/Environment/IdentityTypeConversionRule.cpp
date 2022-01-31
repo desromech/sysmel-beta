@@ -21,10 +21,11 @@ bool IdentityTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &
     return sourceType == targetType;
 }
 
-TypeConversionCost IdentityTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost IdentityTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
+    (void)sourceType;
     return TypeConversionCost(DirectTypeConversionCost::Identity);
 }
 

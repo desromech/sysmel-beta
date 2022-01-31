@@ -21,7 +21,7 @@ public:
     virtual bool isEnumType() const override;
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
-    virtual const TypePtr &getBaseType() override;
+    virtual TypePtr getBaseType() override;
 
     virtual bool supportsDynamicCompileTimeMessageSend() const override;
 

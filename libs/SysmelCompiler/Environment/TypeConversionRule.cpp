@@ -19,9 +19,10 @@ bool TypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, co
     return false;
 }
 
-TypeConversionCost TypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost TypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    (void)sourceType;
     (void)targetType;
     SysmelSelfSubclassResponsibility();
 }
@@ -30,6 +31,17 @@ ASTNodePtr TypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, con
 {
     (void)sourcePosition;
     return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {node->analyzedType->printString(), targetType->printString()}));
+}
+
+TypePtr TypeConversionRule::getCanonicalSourceTypeFor(const TypePtr &targetType) const
+{
+    return nullptr;
+}
+
+TypePtr TypeConversionRule::getCanonicalTargetTypeFor(const TypePtr &sourceType) const
+{
+    (void)sourceType;
+    return nullptr;
 }
 
 } // End of namespace Environment

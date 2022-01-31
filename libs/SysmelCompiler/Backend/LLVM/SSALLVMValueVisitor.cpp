@@ -935,7 +935,7 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
 
         if(argType->isPointerLikeType())
         {
-            auto baseType = argType.staticAs<PointerLikeType> ()->getBaseType()->asDecayedType();
+            auto baseType = argType->getBaseType()->asDecayedType();
             auto alignment = baseType->getMemoryAlignment();
             if(alignment > 0)
                 currentFunction->getArg(paramIndex)->addAttr(llvm::Attribute::getWithAlignment(*backend->getContext(), llvm::Align(alignment)));

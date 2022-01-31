@@ -15,7 +15,7 @@ bool DerivedType::isDerivedType() const
     return true;
 }
 
-const TypePtr &DerivedType::getBaseType()
+TypePtr DerivedType::getBaseType()
 {
     return baseType;
 }
@@ -30,7 +30,7 @@ MethodCategories DerivedTypeValue::__typeMethods__()
     return MethodCategories{
         {"accessing", {
             makeMethodBinding<TypePtr (TypePtr)> ("baseType", [](const TypePtr &type) -> TypePtr {
-                return type->isDerivedType() ? type.staticAs<DerivedType> ()->getBaseType() : Type::getVoidType();
+                return type->isDerivedType() ? type->getBaseType() : Type::getVoidType();
             }, MethodFlags::Pure),
         }}
     };

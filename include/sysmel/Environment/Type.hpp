@@ -417,6 +417,9 @@ public:
     /// Removes the decorations of this type.
     virtual TypePtr asUndecoratedType();
 
+    /// Gets the base type, if it exists.
+    virtual TypePtr getBaseType();
+
     /// Removes the decorations and ref/tempRef of this type.
     virtual TypePtr asDecayedType();
 

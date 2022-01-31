@@ -16,6 +16,7 @@
 #include "Environment/StringUtilities.hpp"
 #include "Environment/Utilities.hpp"
 #include "Environment/TypeConversionRule.hpp"
+#include "Environment/ChainedTypeConversionRule.hpp"
 #include "Environment/IdentityTypeConversionRule.hpp"
 #include "Environment/UpcastTypeConversionRule.hpp"
 #include "Environment/DowncastTypeConversionRule.hpp"
@@ -46,6 +47,8 @@
 
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+
+#include "Environment/SubclassResponsibility.hpp"
 
 #include <queue>
 #include <algorithm>
@@ -777,7 +780,8 @@ TypeConversionCost Type::rankToMatchType(const TypePtr &type)
         {
             if(upCastLength == 0)
                 return TypeConversionCost{DirectTypeConversionCost::Identity};
-            return TypeConversionCost{DirectTypeConversionCost::Upcast, upCastLength};
+            sysmelAssert(upCastLength > 0);
+            return TypeConversionCost{DirectTypeConversionCost::Upcast, upCastLength - 1};
         }
 
         ++upCastLength;
@@ -980,38 +984,117 @@ TypeConversionRulePtrList Type::getAllExplicitTypeConversionRules()
 template<typename FT>
 static TypeConversionRulePtr findTypeConversionRule(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, FT &&ruleExtractionFunction)
 {
-    std::queue<TypeConversionRulePtr> pendingRulesToEvaluate;
-    std::unordered_set<TypePtr> visitedTypes;
-
-    auto&& expandRulesWithType = [&](const TypePtr &type, const TypePtr &intermediateSourceType, const TypePtr &intermediateTargetType)
+    struct TypeConversionRuleWithCost
     {
-        if(visitedTypes.find(type) != visitedTypes.end())
-            return;
+        TypeConversionRulePtr rule;
+        TypeConversionCost cost;
+        TypePtr intermediateTargetType;
 
-        visitedTypes.insert(type);
+        bool operator<(const TypeConversionRuleWithCost &o) const
+        {
+            return o.cost < cost;
+        }
+    };
+
+    std::priority_queue<TypeConversionRuleWithCost> pendingRulesToEvaluate;
+    std::unordered_set<TypePtr> visitedTypeForTransposedRules;
+    std::unordered_map<TypePtr, TypeConversionRulePtrList> transposedRules;
+
+    auto&& findTransposedRules = [&](const TypePtr &type, auto&& recursion)
+    {
+        if(visitedTypeForTransposedRules.find(type) != visitedTypeForTransposedRules.end())
+            return;
+        visitedTypeForTransposedRules.insert(type);
+
         for(auto &rule : ruleExtractionFunction(type))
         {
-            if(rule->canBeUsedToConvertNodeFromTo(node, intermediateSourceType, intermediateTargetType))
+            auto canonicalSourceType = rule->getCanonicalSourceTypeFor(type);
+            if(!canonicalSourceType || canonicalSourceType == type)
+                continue;
+
+            // Is this a valid transposed rule?
+            if(rule->canBeUsedToConvertNodeFromTo(node, canonicalSourceType, type))
             {
-                pendingRulesToEvaluate.push(rule);
+                transposedRules[canonicalSourceType].push_back(rule);
+                recursion(canonicalSourceType, recursion);
             }
-            else
+        }
+    };
+    findTransposedRules(targetType, findTransposedRules);
+
+    std::unordered_set<TypePtr> visitedTypes;
+
+    auto&& expandRulesWithType = [&](const TypeConversionRulePtr &incomingRule, const TypeConversionCost &incomingCost, const TypePtr &intermediateSourceType)
+    {
+        if(visitedTypes.find(intermediateSourceType) != visitedTypes.end())
+            return;
+
+        visitedTypes.insert(intermediateSourceType);
+
+        auto && addRule = [&](const TypeConversionRulePtr &rule, const TypePtr &ruleTargetType) {
+            auto cost = rule->getConversionCost(node, intermediateSourceType, ruleTargetType);
+            sysmelAssert(!cost.isInvalid());
+
+            auto newRule = rule;
+            auto newRuleCost = cost;
+            if(incomingRule)
             {
-                // TODO: Find intermediate type and push it here.
+                auto chainedRule = basicMakeObject<ChainedTypeConversionRule> ();
+                chainedRule->firstConversionRule = incomingRule;
+                chainedRule->intermediateType = intermediateSourceType;
+                chainedRule->secondConversionRule = rule;
+
+                newRule = chainedRule;
+                newRuleCost = chainedRule->getConversionCost(node, sourceType, ruleTargetType);
+                sysmelAssert(!newRuleCost.isInvalid());
+            }
+
+            pendingRulesToEvaluate.push(TypeConversionRuleWithCost{newRule, newRuleCost, ruleTargetType});
+        };
+
+        auto && expandRule = [&](const TypeConversionRulePtr &rule) {
+            if(rule->canBeUsedToConvertNodeFromTo(node, intermediateSourceType, targetType))
+            {
+                addRule(rule, targetType);
+                return;
+            }
+
+            auto canonicalTargetType = rule->getCanonicalTargetTypeFor(intermediateSourceType);
+            if(!canonicalTargetType || canonicalTargetType == intermediateSourceType)
+                return;
+            
+            if(rule->canBeUsedToConvertNodeFromTo(node, intermediateSourceType, canonicalTargetType))
+                addRule(rule, canonicalTargetType);
+        };
+
+        // Expand the rules defined in the type.
+        for(auto &rule : ruleExtractionFunction(intermediateSourceType))
+            expandRule(rule);
+
+        // Expand the transposed rules
+        {
+            auto it = transposedRules.find(intermediateSourceType);
+            if(it != transposedRules.end())
+            {
+                for(auto &rule : it->second)
+                    expandRule(rule);
             }
         }
     };
 
-    expandRulesWithType(sourceType, sourceType, targetType);
-    expandRulesWithType(targetType, sourceType, targetType);
+    expandRulesWithType(nullptr, TypeConversionCost{}, sourceType);
 
     while(!pendingRulesToEvaluate.empty())
     {
-        auto rule = pendingRulesToEvaluate.front();
+        auto [rule, cost, intermediateTargetType] = pendingRulesToEvaluate.top();
         pendingRulesToEvaluate.pop();
 
-        if(rule->canBeUsedToConvertNodeFromTo(node, sourceType, targetType))
+        // Is this the rule that we are looking for?
+        if(intermediateTargetType == targetType)
             return rule;
+
+        // Keep expanding the target type.
+        expandRulesWithType(rule, cost, intermediateTargetType);
     }
 
     return nullptr;
@@ -1232,7 +1315,7 @@ ReferenceTypePtr Type::refForMemberOfReceiverWithType(const TypePtr &receiverTyp
     AnyValuePtr receiverAddressSpace;
     TypeDecorationFlags receiverDecorations = receiverType->getDecorationFlags();
     if(receiverType->isPointerLikeType())
-        receiverDecorations = receiverType.staticAs<PointerLikeType> ()->getBaseType()->getDecorationFlags();
+        receiverDecorations = receiverType->getBaseType()->getDecorationFlags();
 
     return selfFromThis()->withDecorations(receiverDecorations)->refFor(receiverAddressSpace);
 }
@@ -1324,6 +1407,11 @@ TypePtr Type::withDecorations(TypeDecorationFlags decorations)
 TypePtr Type::asUndecoratedType()
 {
     return selfFromThis();
+}
+
+TypePtr Type::getBaseType()
+{
+    SysmelSelfSubclassResponsibility();
 }
 
 TypePtr Type::asDecayedType()

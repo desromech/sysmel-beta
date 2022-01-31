@@ -26,11 +26,12 @@ bool ValueAsReceiverReferenceTypeConversionRule::canBeUsedToConvertNodeFromTo(co
         undecoratedSourceType->isSubtypeOf(targetType->asDecayedType());
 }
 
-TypeConversionCost ValueAsReceiverReferenceTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ValueAsReceiverReferenceTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    (void)sourceType;
     (void)targetType;
-    if(targetType->isReferenceType() && targetType.staticAs<ReferenceType> ()->getBaseType()->isConstDecoratedType())
+    if(targetType->isReferenceType() && targetType->getBaseType()->isConstDecoratedType())
         return TypeConversionCost(DirectTypeConversionCost::ValueAsConstRef);
     return TypeConversionCost(DirectTypeConversionCost::Identity);
 }

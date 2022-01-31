@@ -132,7 +132,7 @@ AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLike
     }
     else if(baseValue->isLiteralString())
     {
-        auto elementType = value->getType().staticAs<PointerLikeType> ()->getBaseType()->asUndecoratedType();
+        auto elementType = value->getType()->getBaseType()->asUndecoratedType();
         auto result = backend->internStringConstantPointer(elementType, baseValue->asString(), true);
         sysmelAssert(result->getType()->isPointerTy());
 

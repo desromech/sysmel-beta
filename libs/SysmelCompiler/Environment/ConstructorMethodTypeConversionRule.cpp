@@ -25,9 +25,10 @@ bool ConstructorMethodTypeConversionRule::canBeUsedToConvertNodeFromTo(const AST
     return nodeSourceType == sourceType && nodeTargetType == destinationType;
 }
 
-TypeConversionCost ConstructorMethodTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ConstructorMethodTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    (void)sourceType;
     (void)targetType;
     return TypeConversionCost(method->costForUsingAsDirectTypeConversion());
 }
@@ -43,6 +44,16 @@ ASTNodePtr ConstructorMethodTypeConversionRule::convertNodeAtIntoWith(const ASTN
     sendNode->receiver->analyzedType = targetType->getType();
     sendNode->arguments = {node};
     return method->analyzeMessageSendNode(sendNode, semanticAnalyzer);
+}
+
+TypePtr ConstructorMethodTypeConversionRule::getCanonicalSourceTypeFor(const TypePtr &targetType) const
+{
+    return sourceType;
+}
+
+TypePtr ConstructorMethodTypeConversionRule::getCanonicalTargetTypeFor(const TypePtr &sourceType) const
+{
+    return destinationType;
 }
 
 } // End of namespace Environment

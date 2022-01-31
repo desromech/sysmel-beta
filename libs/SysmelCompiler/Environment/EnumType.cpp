@@ -27,7 +27,7 @@ AnyValuePtr EnumType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
     return visitor->visitEnumType(selfFromThis());
 }
 
-const TypePtr &EnumType::getBaseType()
+TypePtr EnumType::getBaseType()
 {
     evaluatePendingValueTypeCodeFragments();
     return SuperType::getBaseType();

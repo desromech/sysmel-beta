@@ -124,6 +124,7 @@ set(Environment_Sources
     CannotEvaluateUndefinedMessage.cpp
     CannotOverloadPatternMatchingMethod.cpp
     CannotUnwrap.cpp
+    ChainedTypeConversionRule.cpp
     ClassMetaBuilder.cpp
     ClassType.cpp
     CleanUpScope.cpp

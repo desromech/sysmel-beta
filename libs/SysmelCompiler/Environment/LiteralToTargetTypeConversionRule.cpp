@@ -27,8 +27,9 @@ bool LiteralToTargetTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNo
     return literalValue->canBeConcretizedWithType(targetType);
 }
 
-TypeConversionCost LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost LiteralToTargetTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
+    (void)sourceType;
     sysmelAssert(node->isASTLiteralValueNode());
 
     auto literalValue = staticObjectCast<LiteralValue> (node.staticAs<ASTLiteralValueNode> ()->value);

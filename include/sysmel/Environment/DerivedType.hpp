@@ -20,7 +20,7 @@ class SYSMEL_COMPILER_LIB_EXPORT DerivedType : public SubMetaTypeOf<SimpleType, 
 public:
     virtual bool isDerivedType() const override;
 
-    virtual const TypePtr &getBaseType();
+    virtual TypePtr getBaseType() override;
     void setBaseType(const TypePtr &newBaseType);
 
 protected:

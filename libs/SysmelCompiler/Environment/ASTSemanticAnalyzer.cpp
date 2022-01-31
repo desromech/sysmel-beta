@@ -310,7 +310,7 @@ TypeConversionCost ASTSemanticAnalyzer::rankForMatchingTypeWithNode(const TypePt
     if(!typeConversionRule)
         return TypeConversionCost{};
 
-    return typeConversionRule->getConversionCost(node, expectedType);
+    return typeConversionRule->getConversionCost(node, node->analyzedType, expectedType);
 }
 
 ASTNodePtr ASTSemanticAnalyzer::analyzeDynamicCompileTimeMessageSendNode(const ASTMessageSendNodePtr &node)
@@ -468,7 +468,7 @@ ASTNodePtr ASTSemanticAnalyzer::addImplicitCastToOneOf(const ASTNodePtr &node, c
         if(!rule)
             continue;
         
-        auto cost = rule->getConversionCost(node, expectedType);
+        auto cost = rule->getConversionCost(node, sourceType, expectedType);
         if(cost < bestConversionRuleCost)
         {
             bestConversionRuleCost = cost;

@@ -23,9 +23,10 @@ bool ValueAsVoidTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePt
     return !sourceType->isVoidType() && targetType->isVoidType();
 }
 
-TypeConversionCost ValueAsVoidTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ValueAsVoidTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    (void)sourceType;
     (void)targetType;
     return TypeConversionCost(DirectTypeConversionCost::ValueToVoid);
 }

@@ -269,7 +269,7 @@ SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
 {
     auto referenceType = reference->getValueType();
     sysmelAssert(referenceType->isPointerLikeType());
-    auto resultType = referenceType.staticAs<PointerLikeType> ()->getBaseType();
+    auto resultType = referenceType->getBaseType();
 
     auto instruction = basicMakeObject<SSALoadInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);
@@ -283,7 +283,7 @@ SSALoadInstructionPtr SSABuilder::load(const SSAValuePtr &reference)
 SSALocalVariableInstructionPtr SSABuilder::localVariable(const TypePtr &referenceType, const TypePtr &valueType)
 {
     sysmelAssert(referenceType->isPointerLikeType());
-    sysmelAssert(referenceType.staticAs<PointerLikeType> ()->getBaseType()->isSubtypeOf(valueType));
+    sysmelAssert(referenceType->getBaseType()->isSubtypeOf(valueType));
 
     auto instruction = basicMakeObject<SSALocalVariableInstruction> ();
     instruction->setSourcePosition(currentSourcePosition);

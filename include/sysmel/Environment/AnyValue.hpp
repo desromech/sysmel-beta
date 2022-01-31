@@ -63,6 +63,7 @@ enum class DirectTypeConversionCost : uint8_t
 {
     Invalid = 0,
     Identity,
+    UpcastIdentity,
     Upcast,
     ValueToVoid,
 
@@ -96,14 +97,6 @@ struct TypeConversionCost
     bool isInvalid() const
     {
         return directCost == DirectTypeConversionCost::Invalid;
-    }
-
-    TypeConversionCost operator+(const TypeConversionCost &o) const
-    {
-        return TypeConversionCost(
-            uint8_t(directCost) > uint8_t(o.directCost) ? directCost : o.directCost,
-            (chainLength > o.chainLength ? chainLength : o.chainLength) + 1
-        );
     }
 
     bool operator==(const TypeConversionCost &o) const

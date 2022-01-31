@@ -30,16 +30,17 @@ bool ValueAsConstRefTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNo
     if(!targetType->isReferenceType())
         return false;
     
-    auto targetBaseType = targetType.staticAs<PointerLikeType> ()->getBaseType();
+    auto targetBaseType = targetType->getBaseType();
     if(!targetBaseType->isConstDecoratedType())
         return false;
     
     return undecoratedSourceType->isSubtypeOf(targetBaseType->asUndecoratedType());
 }
 
-TypeConversionCost ValueAsConstRefTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost ValueAsConstRefTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
+    (void)sourceType;
     (void)targetType;
     return TypeConversionCost(DirectTypeConversionCost::ValueAsConstRef);
 }

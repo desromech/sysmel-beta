@@ -33,10 +33,11 @@ bool DowncastTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &
     return targetType->isSubtypeOf(sourceType);
 }
 
-TypeConversionCost DowncastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &targetType) const
+TypeConversionCost DowncastTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     (void)node;
     (void)targetType;
+    (void)sourceType;
     return TypeConversionCost(DirectTypeConversionCost::Downcast);
 }
 
