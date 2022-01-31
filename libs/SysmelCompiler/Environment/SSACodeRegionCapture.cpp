@@ -2,6 +2,7 @@
 #include "Environment/SSAValueVisitor.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/Type.hpp"
+#include "Environment/ReferenceType.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -15,6 +16,8 @@ SSACodeRegionCapturePtr SSACodeRegionCapture::make(const TypePtr &valueType)
 {
     auto result = basicMakeObject<SSACodeRegionCapture> ();
     result->valueType = valueType;
+    if(valueType->isPassedByReference())
+        result->valueType = valueType->ref();
     return result;
 }
 
