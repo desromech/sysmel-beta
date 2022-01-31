@@ -1,6 +1,11 @@
 #include "Environment/ASTValuePatternNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
+#include "Environment/ASTBuilder.hpp"
+#include "Environment/ASTIfNode.hpp"
+#include "Environment/ASTFailPatternNode.hpp"
+#include "Environment/ASTMessageSendNode.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
 namespace Sysmel
@@ -26,6 +31,13 @@ SExpression ASTValuePatternNode::asSExpression() const
         sourcePosition->asSExpression(),
         expectedValue->asSExpression()
     }};
+}
+
+ASTNodePtr ASTValuePatternNode::expandPatternNodeForExpectedTypeWith(const TypePtr &, const ASTNodePtr &patternValueNode, const ASTSemanticAnalyzerPtr &)
+{
+    auto builder = ASTBuilder::withSourcePosition(sourcePosition);
+    auto isMatching = builder->sendToWithArguments(builder->literalSymbol("="), patternValueNode, {expectedValue});
+    return builder->ifElse(isMatching, builder->failPattern());
 }
 
 } // End of namespace Environment
