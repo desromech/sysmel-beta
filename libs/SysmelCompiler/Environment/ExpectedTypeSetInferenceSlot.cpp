@@ -1,5 +1,6 @@
 #include "Environment/ExpectedTypeSetInferenceSlot.hpp"
 #include "Environment/Type.hpp"
+#include "Environment/FunctionalType.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -38,6 +39,42 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForTypeSet(const TypePtr
 ASTNodePtr ExpectedTypeSetInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return semanticAnalyzer->addImplicitCastToOneOf(node, expectedTypeSet, isReceiverType);
+}
+
+TypePtr ExpectedTypeSetInferenceSlot::getExpectedFunctionalArgumentType(size_t index) const
+{
+    TypePtr argumentType;
+    for(auto &type : expectedTypeSet)
+    {
+        if(type->isFunctionalType() && index < type.staticAs<FunctionalType> ()->getArgumentCount())
+        {
+            auto newArgumentType = type.staticAs<FunctionalType> ()->getArgument(index);
+            if(argumentType && argumentType != newArgumentType)
+                return nullptr;
+            
+            argumentType = newArgumentType;
+        }
+    }
+
+    return argumentType;
+}
+
+TypePtr ExpectedTypeSetInferenceSlot::getExpectedFunctionalResultType() const
+{
+    TypePtr resultType;
+    for(auto &type : expectedTypeSet)
+    {
+        if(type->isFunctionalType())
+        {
+            auto newResultType = type.staticAs<FunctionalType> ()->getResultType();
+            if(resultType && resultType != newResultType)
+                return nullptr;
+            
+            resultType = newResultType;
+        }
+    }
+
+    return resultType;
 }
 
 } // End of namespace Environment

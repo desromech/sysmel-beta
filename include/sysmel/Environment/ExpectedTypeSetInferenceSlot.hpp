@@ -20,6 +20,8 @@ public:
     static constexpr char const __typeName__[] = "ExpectedTypeSetInferenceSlot";
 
     virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual TypePtr getExpectedFunctionalArgumentType(size_t index) const override;
+    virtual TypePtr getExpectedFunctionalResultType() const override;
 
     TypePtrList expectedTypeSet;
     bool isReceiverType = false;
