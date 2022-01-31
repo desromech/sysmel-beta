@@ -29,6 +29,7 @@ SYSMEL_DECLARE_BOOTSTRAP_CLASS(MethodType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(ClosureType);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(LiteralSymbol);
 SYSMEL_DECLARE_BOOTSTRAP_CLASS(PrimitiveVectorType);
+SYSMEL_DECLARE_BOOTSTRAP_CLASS(TypeConversionRule);
 
 /**
  * I represent an active runtime context in the object model environment.
@@ -98,6 +99,9 @@ public:
         return target;
     }
 
+    TypeConversionRulePtr findCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit);
+    void setCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit, const TypeConversionRulePtr &rule);
+
 protected:
     friend class FunctionType;
     friend class ClosureType;
@@ -132,6 +136,8 @@ protected:
     std::map<std::tuple<TypePtr, TypePtr, TypePtrList>, MethodTypePtr> methodTypeCache;
 
     std::unordered_map<std::string, LiteralSymbolPtr> symbolInternTable;
+    std::map<std::pair<TypePtr, TypePtr>, TypeConversionRulePtr> implicitTypeConversionRuleCache;
+    std::map<std::pair<TypePtr, TypePtr>, TypeConversionRulePtr> explicitTypeConversionRuleCache;
 };
 
 } // End of namespace Environment

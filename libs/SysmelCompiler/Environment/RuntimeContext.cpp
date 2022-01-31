@@ -1,7 +1,10 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/BootstrapModule.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/ASTNode.hpp"
+#include "Environment/Type.hpp"
 #include "Frontend/SysmelSyntax/SysmelLanguageSupport.hpp"
+#include <iostream>
 
 namespace Sysmel
 {
@@ -53,6 +56,24 @@ void RuntimeContext::setActive(const RuntimeContextPtr &aRuntimeContext)
     activeRuntimeContextInThisThread = aRuntimeContext;
 }
 
+TypeConversionRulePtr RuntimeContext::findCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit)
+{
+    if(node && !node->isValidForCachingTypeConversionRules())
+        return nullptr;
+
+    auto dictionary = isExplicit ? &explicitTypeConversionRuleCache : &implicitTypeConversionRuleCache;
+    auto it = dictionary->find({sourceType, targetType});
+    return it != dictionary->end() ? it->second : nullptr;
+}
+
+void RuntimeContext::setCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit, const TypeConversionRulePtr &rule)
+{
+    if(node && !node->isValidForCachingTypeConversionRules())
+        return;
+
+    auto dictionary = isExplicit ? &explicitTypeConversionRuleCache : &implicitTypeConversionRuleCache;
+    dictionary->insert({{sourceType, targetType}, rule});
+}
 
 } // End of namespace Environment
 } // End of namespace Sysmel

@@ -23,6 +23,7 @@ public:
     virtual bool isASTLiteralTypeNode() const override;
     virtual bool isPureCompileTimeLiteralValueNode() const override;
     virtual bool isPureCompileTimeEvaluableNode() const override;
+    virtual bool isValidForCachingTypeConversionRules() const override;
 
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;

@@ -1,6 +1,7 @@
 #include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
 #include "Environment/ASTVisitor.hpp"
+#include "Environment/LiteralValue.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -60,6 +61,11 @@ SExpression ASTLiteralValueNode::asSExpression() const
         type ? (type->isASTNode() ? type->asSExpression() : SExpressionSymbol{type->asString()}) : nullptr,
         sourcePosition->asSExpression(),
     }};
+}
+
+bool ASTLiteralValueNode::isValidForCachingTypeConversionRules() const
+{
+    return !type->isSubtypeOf(LiteralValue::__staticType__());
 }
 
 } // End of namespace Environment

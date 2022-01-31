@@ -117,6 +117,11 @@ bool ASTNode::isNeverMatchingPattern() const
     return false;
 }
 
+bool ASTNode::isValidForCachingTypeConversionRules() const
+{
+    return true;
+}
+
 ASTNodePtr ASTNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "This is not a valid argument argument specification.");

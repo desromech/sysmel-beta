@@ -48,6 +48,8 @@
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
 
+#include "Environment/RuntimeContext.hpp"
+
 #include "Environment/SubclassResponsibility.hpp"
 
 #include <queue>
@@ -1045,7 +1047,10 @@ static TypeConversionRulePtr findTypeConversionRule(const ASTNodePtr &node, cons
                 chainedRule->secondConversionRule = rule;
 
                 newRule = chainedRule;
-                newRuleCost = chainedRule->getConversionCost(node, sourceType, ruleTargetType);
+                newRuleCost = TypeConversionCost{
+                    uint8_t(incomingCost.directCost) > uint8_t(cost.directCost) ? incomingCost.directCost : cost.directCost,
+                    incomingCost.chainLength + cost.chainLength + 1
+                };
                 sysmelAssert(!newRuleCost.isInvalid());
             }
 
@@ -1108,16 +1113,30 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
         return ValueAsReceiverReferenceTypeConversionRule::uniqueInstance();
     }
 
-    return findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
+    auto rule = RuntimeContext::getActive()->findCachedTypeConversionRuleFor(node, selfFromThis(), targetType, false);
+    if(rule)
+        return rule;
+
+    rule = findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
         return type->getAllImplicitTypeConversionRules();
     });
+
+    RuntimeContext::getActive()->setCachedTypeConversionRuleFor(node, selfFromThis(), targetType, false, rule);
+    return rule;
 }
 
 TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodePtr &node, const TypePtr &targetType)
 {
-    return findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
+    auto rule = RuntimeContext::getActive()->findCachedTypeConversionRuleFor(node, selfFromThis(), targetType, true);
+    if(rule)
+        return rule;
+
+    rule = findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
         return type->getAllExplicitTypeConversionRules();
     });
+
+    RuntimeContext::getActive()->setCachedTypeConversionRuleFor(node, selfFromThis(), targetType, true, rule);
+    return rule;
 }
 
 bool Type::canBeReinterpretedAsType(const TypePtr &otherType)
