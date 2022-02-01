@@ -78,10 +78,10 @@ MethodCategories StructureTypeValue::__typeMethods__()
                 return true;
             }, MethodFlags::Pure),
 
-            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &structureType){
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMinSize", +[](const TypePtr &structureType) -> uint64_t{
                 return structureType.staticAs<StructureType>()->getFieldCount();
             }, MethodFlags::Pure),
-            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMaxSize", +[](const TypePtr &structureType){
+            makeMethodBinding<uint64_t (const TypePtr &)> ("sequencePatternTypeMaxSize", +[](const TypePtr &structureType) -> uint64_t {
                 return structureType.staticAs<StructureType>()->getFieldCount();
             }, MethodFlags::Pure),
             makeMethodBinding<TypePtr (const TypePtr &, uint64_t)> ("sequencePatternTypeAt:", +[](const TypePtr &structureType, uint64_t i){

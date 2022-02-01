@@ -121,7 +121,7 @@ public:
     virtual AnyValuePtr lookupLocalSelector(const AnyValuePtr &selector) override;
 
     /// This method performs the lookup for a message with the specified selector only in this type.
-    virtual AnyValuePtr lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType = nullptr, MethodFlags signatureMethodFlags = MethodFlags::None);
+    virtual AnyValuePtr lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType = nullptr, MethodFlags signatureMethodFlags = MethodFlags::None) override;
 
     /// This method performs the lookup of the doesNotUnderstand: macro
     virtual AnyValuePtr lookupDoesNotUnderstandMacro();
