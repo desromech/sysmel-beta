@@ -1115,7 +1115,12 @@ TypeConversionRulePtr Type::findImplicitTypeConversionRuleForInto(const ASTNodeP
 
     auto rule = RuntimeContext::getActive()->findCachedTypeConversionRuleFor(node, selfFromThis(), targetType, false);
     if(rule)
+    {
+        if(!rule->canBeUsedToConvertNodeFromTo(node, selfFromThis(), targetType))
+            return nullptr;
+
         return rule;
+    }
 
     rule = findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
         return type->getAllImplicitTypeConversionRules();
@@ -1129,7 +1134,12 @@ TypeConversionRulePtr Type::findExplicitTypeConversionRuleForInto(const ASTNodeP
 {
     auto rule = RuntimeContext::getActive()->findCachedTypeConversionRuleFor(node, selfFromThis(), targetType, true);
     if(rule)
+    {
+        if(!rule->canBeUsedToConvertNodeFromTo(node, selfFromThis(), targetType))
+            return nullptr;
+
         return rule;
+    }
 
     rule = findTypeConversionRule(node, selfFromThis(), targetType, [](const TypePtr &type){
         return type->getAllExplicitTypeConversionRules();

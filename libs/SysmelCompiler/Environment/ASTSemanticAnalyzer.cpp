@@ -2487,7 +2487,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitExplicitCastNode(const ASTExplicitCastNode
 
     auto typeConversionRule = sourceType->findExplicitTypeConversionRuleForInto(analyzedExpression, targetType);
     if(!typeConversionRule)
-        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
+        return recordSemanticErrorInNode(analyzedExpression, formatString("Cannot perform explicit cast from '{0}' onto '{1}'.", {sourceType->printString(), targetType->printString()}));
     
     return typeConversionRule->convertNodeAtIntoWith(analyzedExpression, node->sourcePosition, targetType, selfFromThis());
 }

@@ -20,7 +20,7 @@ TypePtr Type::getLiteralValueType()
 
 void LiteralValue::__addTypeConversionRules__(const TypePtr &type)
 {
-    type->addTypeConversionRule(LiteralToTargetTypeConversionRule::uniqueInstance());
+    type->addImplicitTypeConversionRule(LiteralToTargetTypeConversionRule::uniqueInstance());
 }
 
 TypePtr LiteralValue::__asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment)

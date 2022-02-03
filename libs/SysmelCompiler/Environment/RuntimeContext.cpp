@@ -58,8 +58,9 @@ void RuntimeContext::setActive(const RuntimeContextPtr &aRuntimeContext)
 
 TypeConversionRulePtr RuntimeContext::findCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit)
 {
-    if(node && !node->isValidForCachingTypeConversionRules())
-        return nullptr;
+    (void)node;
+    //if(node && !node->isValidForCachingTypeConversionRules())
+    //    return nullptr;
 
     auto dictionary = isExplicit ? &explicitTypeConversionRuleCache : &implicitTypeConversionRuleCache;
     auto it = dictionary->find({sourceType, targetType});
@@ -68,7 +69,7 @@ TypeConversionRulePtr RuntimeContext::findCachedTypeConversionRuleFor(const ASTN
 
 void RuntimeContext::setCachedTypeConversionRuleFor(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType, bool isExplicit, const TypeConversionRulePtr &rule)
 {
-    if(node && !node->isValidForCachingTypeConversionRules())
+    if(node && !node->isValidForCachingTypeConversionRules() && !rule)
         return;
 
     auto dictionary = isExplicit ? &explicitTypeConversionRuleCache : &implicitTypeConversionRuleCache;

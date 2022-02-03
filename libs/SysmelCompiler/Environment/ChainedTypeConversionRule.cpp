@@ -1,6 +1,7 @@
 #include "Environment/ChainedTypeConversionRule.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include <iostream>
 
 namespace Sysmel
 {
@@ -11,7 +12,7 @@ static BootstrapTypeRegistration<ChainedTypeConversionRule> ChainedTypeConversio
 bool ChainedTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
 {
     return firstConversionRule->canBeUsedToConvertNodeFromTo(node, sourceType, intermediateType)
-        && secondConversionRule->canBeUsedToConvertNodeFromTo(node, intermediateType, sourceType);
+        && secondConversionRule->canBeUsedToConvertNodeFromTo(node, intermediateType, targetType);
 }
 
 TypeConversionCost ChainedTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &sourceType, const TypePtr &targetType) const
