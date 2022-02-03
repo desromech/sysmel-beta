@@ -131,9 +131,13 @@ struct CollectionRange
 
     size_t hash() const
     {
-        return std::hash<CollectionPtr> ()(collection) ^
-            std::hash<size_t> ()(startPosition) ^
-            std::hash<size_t> ()(endPosition);
+        //return std::hash<CollectionPtr> ()(collection) ^ std::hash<size_t> ()(startPosition) ^ std::hash<size_t> ()(endPosition);
+        const size_t HashConstant = size_t(1103515245);
+
+        auto result = std::hash<CollectionPtr> ()(collection);
+        result = result * HashConstant + std::hash<size_t> ()(startPosition);
+        result = result * HashConstant + std::hash<size_t> ()(endPosition);
+        return result;
     }
 };
 

@@ -19,171 +19,171 @@ struct ASTSequentialVisitor : ASTVisitor
             visitNode(*node);
     }
 
-    virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
+    virtual AnyValuePtr visitParseErrorNode(ASTParseErrorNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitExpressionListNode(ASTExpressionListNode &node) override
+    virtual AnyValuePtr visitExpressionListNode(ASTExpressionListNode &node) override
     {
         visitNodeList(node.expressions);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitPragmaNode(ASTPragmaNode &node) override
+    virtual AnyValuePtr visitPragmaNode(ASTPragmaNode &node) override
     {
         visitNode(*node.selector);
         visitNodeList(node.arguments);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitBlockNode(ASTBlockNode &node) override
+    virtual AnyValuePtr visitBlockNode(ASTBlockNode &node) override
     {
         if(node.blockClosureSignature)
             visitNode(*node.blockClosureSignature);
         visitNodeList(node.pragmas);
         visitNode(*node.expressionList);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) override
+    virtual AnyValuePtr visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) override
     {
         if(node.type)
             visitNode(*node.type);
         visitNode(*node.identifier);
-        return std::any();
+        return nullptr;
     }
-    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &node) override
+    virtual AnyValuePtr visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &node) override
     {
         visitNodeList(node.arguments);
         if(node.returnType)
             visitNode(*node.returnType);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
+    virtual AnyValuePtr visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
+    virtual AnyValuePtr visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
+    virtual AnyValuePtr visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
+    virtual AnyValuePtr visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
+    virtual AnyValuePtr visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
+    virtual AnyValuePtr visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
     {
         (void)node;
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
+    virtual AnyValuePtr visitMessageSendNode(ASTMessageSendNode &node) override
     {
         visitNode(*node.selector);
         if(node.receiver)
             visitNode(*node.receiver);
         visitNodeList(node.arguments);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
+    virtual AnyValuePtr visitMessageChainNode(ASTMessageChainNode &node) override
     {
         if(node.receiver)
             visitNode(*node.receiver);
         visitNodeList(node.messages);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
+    virtual AnyValuePtr visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
     {
         visitNode(*node.selector);
         visitNodeList(node.arguments);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitCallNode(ASTCallNode &node) override
+    virtual AnyValuePtr visitCallNode(ASTCallNode &node) override
     {
         visitNode(*node.callable);
         visitNodeList(node.arguments);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitSubscriptNode(ASTSubscriptNode &node) override
+    virtual AnyValuePtr visitSubscriptNode(ASTSubscriptNode &node) override
     {
         visitNode(*node.array);
         visitNode(*node.index);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) override
+    virtual AnyValuePtr visitMakeTupleNode(ASTMakeTupleNode &node) override
     {
         visitNodeList(node.elements);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
+    virtual AnyValuePtr visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
     {
         visitNodeList(node.elements);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) override
+    virtual AnyValuePtr visitDictionaryElementNode(ASTDictionaryElementNode &node) override
     {
         visitNode(*node.key);
         if(node.value)
             visitNode(*node.value);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) override
+    virtual AnyValuePtr visitLiteralArrayNode(ASTLiteralArrayNode &node) override
     {
         visitNodeList(node.elements);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitQuoteNode(ASTQuoteNode &node) override
+    virtual AnyValuePtr visitQuoteNode(ASTQuoteNode &node) override
     {
         visitNode(*node.quoted);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
+    virtual AnyValuePtr visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
     {
         visitNode(*node.quoted);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
+    virtual AnyValuePtr visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
     {
         visitNode(*node.expression);
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitSpliceNode(ASTSpliceNode &node) override
+    virtual AnyValuePtr visitSpliceNode(ASTSpliceNode &node) override
     {
         visitNode(*node.expression);
-        return std::any();
+        return nullptr;
     }
 };
 
@@ -198,11 +198,11 @@ bool validateASTParseErrors(const ASTNodePtr &ast, const FT &parseErrorCallback)
         const FT &parseErrorCallback;
         bool hasParseError = false;
 
-        virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
+        virtual AnyValuePtr visitParseErrorNode(ASTParseErrorNode &node) override
         {
             hasParseError = true;
             parseErrorCallback(node);
-            return std::any();
+            return nullptr;
         }
     };
 

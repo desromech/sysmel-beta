@@ -4,8 +4,8 @@
 
 #include "Token.hpp"
 #include "Environment/LargeInteger.hpp"
+#include "Environment/AnyValue.hpp"
 #include <memory>
-#include <any>
 
 namespace Sysmel
 {
@@ -15,6 +15,7 @@ namespace SysmelSyntax
 {
 
 using Sysmel::Environment::LargeInteger;
+using Sysmel::Environment::AnyValuePtr;
 
 struct ASTNode;
 struct ASTParseErrorNode;
@@ -51,7 +52,7 @@ struct ASTNode
 {
     virtual ~ASTNode() {}
     
-    virtual std::any accept(ASTVisitor &visitor) = 0;
+    virtual AnyValuePtr accept(ASTVisitor &visitor) = 0;
 
     virtual bool isParseErrorNode() const { return false; }
     virtual bool isExpressionListNode() const { return false; }
@@ -110,47 +111,47 @@ typedef std::vector<ASTNodePtr> ASTNodePtrList;
 
 struct ASTVisitor
 {
-    virtual std::any visitNode(ASTNode &node)
+    virtual AnyValuePtr visitNode(ASTNode &node)
     {
         return node.accept(*this);
     }
 
-    virtual std::any visitParseErrorNode(ASTParseErrorNode &node) = 0;
-    virtual std::any visitExpressionListNode(ASTExpressionListNode &node) = 0;
-    virtual std::any visitPragmaNode(ASTPragmaNode &node) = 0;
-    virtual std::any visitBlockNode(ASTBlockNode &node) = 0;
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) = 0;
-    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &node) = 0;
+    virtual AnyValuePtr visitParseErrorNode(ASTParseErrorNode &node) = 0;
+    virtual AnyValuePtr visitExpressionListNode(ASTExpressionListNode &node) = 0;
+    virtual AnyValuePtr visitPragmaNode(ASTPragmaNode &node) = 0;
+    virtual AnyValuePtr visitBlockNode(ASTBlockNode &node) = 0;
+    virtual AnyValuePtr visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) = 0;
+    virtual AnyValuePtr visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &node) = 0;
 
-    virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) = 0;
-    virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) = 0;
-    virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) = 0;
-    virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) = 0;
-    virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) = 0;
+    virtual AnyValuePtr visitIntegerLiteralNode(ASTIntegerLiteralNode &node) = 0;
+    virtual AnyValuePtr visitFloatLiteralNode(ASTFloatLiteralNode &node) = 0;
+    virtual AnyValuePtr visitCharacterLiteralNode(ASTCharacterLiteralNode &node) = 0;
+    virtual AnyValuePtr visitStringLiteralNode(ASTStringLiteralNode &node) = 0;
+    virtual AnyValuePtr visitSymbolLiteralNode(ASTSymbolLiteralNode &node) = 0;
 
-    virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) = 0;
-    virtual std::any visitMessageSendNode(ASTMessageSendNode &node) = 0;
-    virtual std::any visitMessageChainNode(ASTMessageChainNode &node) = 0;
-    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) = 0;
-    virtual std::any visitCallNode(ASTCallNode &node) = 0;
-    virtual std::any visitSubscriptNode(ASTSubscriptNode &node) = 0;
+    virtual AnyValuePtr visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) = 0;
+    virtual AnyValuePtr visitMessageSendNode(ASTMessageSendNode &node) = 0;
+    virtual AnyValuePtr visitMessageChainNode(ASTMessageChainNode &node) = 0;
+    virtual AnyValuePtr visitMessageChainMessageNode(ASTMessageChainMessageNode &node) = 0;
+    virtual AnyValuePtr visitCallNode(ASTCallNode &node) = 0;
+    virtual AnyValuePtr visitSubscriptNode(ASTSubscriptNode &node) = 0;
 
-    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) = 0;
-    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) = 0;
-    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) = 0;
-    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) = 0;
+    virtual AnyValuePtr visitMakeTupleNode(ASTMakeTupleNode &node) = 0;
+    virtual AnyValuePtr visitMakeDictionaryNode(ASTMakeDictionaryNode &node) = 0;
+    virtual AnyValuePtr visitDictionaryElementNode(ASTDictionaryElementNode &node) = 0;
+    virtual AnyValuePtr visitLiteralArrayNode(ASTLiteralArrayNode &node) = 0;
 
-    virtual std::any visitQuoteNode(ASTQuoteNode &node) = 0;
-    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) = 0;
-    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) = 0;
-    virtual std::any visitSpliceNode(ASTSpliceNode &node) = 0;
+    virtual AnyValuePtr visitQuoteNode(ASTQuoteNode &node) = 0;
+    virtual AnyValuePtr visitQuasiQuoteNode(ASTQuasiQuoteNode &node) = 0;
+    virtual AnyValuePtr visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) = 0;
+    virtual AnyValuePtr visitSpliceNode(ASTSpliceNode &node) = 0;
 };
 
 struct ASTExpressionListNode : ASTNode
 {
     ASTNodePtrList expressions;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitExpressionListNode(*this);
     }
@@ -166,7 +167,7 @@ struct ASTPragmaNode : ASTNode
     ASTNodePtr selector;
     ASTNodePtrList arguments;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitPragmaNode(*this);
     }
@@ -182,7 +183,7 @@ struct ASTBlockClosureArgumentNode : ASTNode
     ASTNodePtr type;
     ASTNodePtr identifier;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitBlockClosureArgumentNode(*this);
     }
@@ -197,7 +198,7 @@ struct ASTBlockClosureSignatureNode : ASTNode
     ASTNodePtrList arguments;
     ASTNodePtr returnType;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitBlockClosureSignatureNode(*this);
     }
@@ -214,7 +215,7 @@ struct ASTBlockNode : ASTNode
     ASTNodePtrList pragmas;
     ASTNodePtr expressionList;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitBlockNode(*this);
     }
@@ -230,7 +231,7 @@ struct ASTIntegerLiteralNode : ASTNode
 {
     LargeInteger value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitIntegerLiteralNode(*this);
     }
@@ -245,7 +246,7 @@ struct ASTFloatLiteralNode : ASTNode
 {
     double value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitFloatLiteralNode(*this);
     }
@@ -260,7 +261,7 @@ struct ASTCharacterLiteralNode : ASTNode
 {
     char32_t value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitCharacterLiteralNode(*this);
     }
@@ -275,7 +276,7 @@ struct ASTStringLiteralNode : ASTNode
 {
     std::string value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitStringLiteralNode(*this);
     }
@@ -290,7 +291,7 @@ struct ASTSymbolLiteralNode : ASTNode
 {
     std::string value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitSymbolLiteralNode(*this);
     }
@@ -305,7 +306,7 @@ struct ASTParseErrorNode : ASTNode
 {
     std::string errorMessage;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitParseErrorNode(*this);
     }
@@ -320,7 +321,7 @@ struct ASTIdentifierReferenceNode : ASTNode
 {
     std::string identifier;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitIdentifierReferenceNode(*this);
     }
@@ -337,7 +338,7 @@ struct ASTMessageSendNode : ASTNode
     ASTNodePtr receiver;
     ASTNodePtrList arguments;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitMessageSendNode(*this);
     }
@@ -353,7 +354,7 @@ struct ASTMessageChainMessageNode : ASTNode
     ASTNodePtr selector;
     ASTNodePtrList arguments;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitMessageChainMessageNode(*this);
     }
@@ -369,7 +370,7 @@ struct ASTMessageChainNode : ASTNode
     ASTNodePtr receiver;
     ASTNodePtrList messages;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitMessageChainNode(*this);
     }
@@ -385,7 +386,7 @@ struct ASTCallNode : ASTNode
     ASTNodePtr callable;
     ASTNodePtrList arguments;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitCallNode(*this);
     }
@@ -401,7 +402,7 @@ struct ASTSubscriptNode : ASTNode
     ASTNodePtr array;
     ASTNodePtr index;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitSubscriptNode(*this);
     }
@@ -416,7 +417,7 @@ struct ASTMakeTupleNode : ASTNode
 {
     ASTNodePtrList elements;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitMakeTupleNode(*this);
     }
@@ -431,7 +432,7 @@ struct ASTMakeDictionaryNode : ASTNode
 {
     ASTNodePtrList elements;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitMakeDictionaryNode(*this);
     }
@@ -447,7 +448,7 @@ struct ASTDictionaryElementNode : ASTNode
     ASTNodePtr key;
     ASTNodePtr value;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitDictionaryElementNode(*this);
     }
@@ -462,7 +463,7 @@ struct ASTLiteralArrayNode : ASTNode
 {
     ASTNodePtrList elements;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitLiteralArrayNode(*this);
     }
@@ -477,7 +478,7 @@ struct ASTQuoteNode : ASTNode
 {
     ASTNodePtr quoted;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitQuoteNode(*this);
     }
@@ -492,7 +493,7 @@ struct ASTQuasiQuoteNode : ASTNode
 {
     ASTNodePtr quoted;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitQuasiQuoteNode(*this);
     }
@@ -507,7 +508,7 @@ struct ASTQuasiUnquoteNode : ASTNode
 {
     ASTNodePtr expression;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitQuasiUnquoteNode(*this);
     }
@@ -522,7 +523,7 @@ struct ASTSpliceNode : ASTNode
 {
     ASTNodePtr expression;
 
-    virtual std::any accept(ASTVisitor &visitor) override
+    virtual AnyValuePtr accept(ASTVisitor &visitor) override
     {
         return visitor.visitSpliceNode(*this);
     }

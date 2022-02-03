@@ -78,11 +78,15 @@ namespace SysmelSyntax
 using Environment::wrapValue;
 using Environment::internSymbol;
 
+static Environment::ASTNodePtr castToNode(const AnyValuePtr &value)
+{
+    sysmelAssert(value && value->isASTNode());
+    return Environment::staticObjectCast<Environment::ASTNode> (value);
+}
+
 class SysmelASTConverter : public ASTVisitor
 {
 public:
-    typedef Environment::ASTNodePtr ResultType;
-
     std::unordered_map<SourceCollectionPtr, Environment::ASTSourceCodePtr> convertedSourceCollectionMap;
     std::unordered_map<SourcePosition, Environment::ASTSourcePositionPtr> convertedSourcePositionMap;
 
@@ -127,48 +131,46 @@ public:
         return result;
     }
 
-    virtual std::any visitParseErrorNode(ASTParseErrorNode &node) override
+    virtual AnyValuePtr visitParseErrorNode(ASTParseErrorNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTParseErrorNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->errorMessage = node.errorMessage;
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitExpressionListNode(ASTExpressionListNode &node) override
+    virtual AnyValuePtr visitExpressionListNode(ASTExpressionListNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTSequenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->expressions.reserve(node.expressions.size());
         for(auto expr : node.expressions)
-        {
-            convertedNode->expressions.push_back(std::any_cast<ResultType> (visitNode(*expr)));
-        }
+            convertedNode->expressions.push_back(castToNode(visitNode(*expr)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
     
-    virtual std::any visitPragmaNode(ASTPragmaNode &node) override
+    virtual AnyValuePtr visitPragmaNode(ASTPragmaNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTPragmaNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
-        convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
+        convertedNode->selector = castToNode(visitNode(*node.selector));
         convertedNode->arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
-            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+            convertedNode->arguments.push_back(castToNode(visitNode(*arg)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
     
-    virtual std::any visitBlockNode(ASTBlockNode &node) override
+    virtual AnyValuePtr visitBlockNode(ASTBlockNode &node) override
     {
-        auto convertedSequence = Environment::staticObjectCast<Environment::ASTSequenceNode> (std::any_cast<ResultType> (visitNode(*node.expressionList)));
+        auto convertedSequence = Environment::staticObjectCast<Environment::ASTSequenceNode> (visitNode(*node.expressionList));
         auto blockPosition = convertSourcePosition(node.sourcePosition);
 
         convertedSequence->pragmas.reserve(node.pragmas.size());
         for(const auto &pragma : node.pragmas)
-            convertedSequence->pragmas.push_back(std::any_cast<ResultType> (visitNode(*pragma)));
+            convertedSequence->pragmas.push_back(castToNode(visitNode(*pragma)));
 
         if(node.blockClosureSignature)
         {
@@ -178,13 +180,13 @@ public:
             blockClosureNode->kind = Environment::ASTClosureNodeKind::Block;
             blockClosureNode->arguments.reserve(signature->arguments.size());
             for(const auto &arg : signature->arguments)
-                blockClosureNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+                blockClosureNode->arguments.push_back(castToNode(visitNode(*arg)));
 
             if(signature->returnType)
-                blockClosureNode->resultType = std::any_cast<ResultType> (visitNode(*signature->returnType));
+                blockClosureNode->resultType = castToNode(visitNode(*signature->returnType));
             blockClosureNode->body = convertedSequence;
             
-            return ResultType(blockClosureNode);
+            return blockClosureNode;
         }
         else
         {
@@ -195,137 +197,137 @@ public:
             auto cleanUpScope = Environment::basicMakeObject<Environment::ASTCleanUpScopeNode> ();
             cleanUpScope->sourcePosition = blockPosition;
             cleanUpScope->body = lexicalScope;
-            return ResultType(cleanUpScope);
+            return cleanUpScope;
         }
     }
     
-    virtual std::any visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) override
+    virtual AnyValuePtr visitBlockClosureArgumentNode(ASTBlockClosureArgumentNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTArgumentDefinitionNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         if(node.identifier)
-            convertedNode->identifier = std::any_cast<ResultType> (visitNode(*node.identifier));
+            convertedNode->identifier = castToNode(visitNode(*node.identifier));
         if(node.type)
-            convertedNode->type = std::any_cast<ResultType> (visitNode(*node.type));
-        return ResultType(convertedNode);
+            convertedNode->type = castToNode(visitNode(*node.type));
+        return convertedNode;
     }
     
-    virtual std::any visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &) override
+    virtual AnyValuePtr visitBlockClosureSignatureNode(ASTBlockClosureSignatureNode &) override
     {
         // This should be unreachable.
-        return std::any();
+        return nullptr;
     }
 
-    virtual std::any visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
+    virtual AnyValuePtr visitIntegerLiteralNode(ASTIntegerLiteralNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitFloatLiteralNode(ASTFloatLiteralNode &node) override
+    virtual AnyValuePtr visitFloatLiteralNode(ASTFloatLiteralNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
+    virtual AnyValuePtr visitCharacterLiteralNode(ASTCharacterLiteralNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitStringLiteralNode(ASTStringLiteralNode &node) override
+    virtual AnyValuePtr visitStringLiteralNode(ASTStringLiteralNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(wrapValue(node.value));
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
+    virtual AnyValuePtr visitSymbolLiteralNode(ASTSymbolLiteralNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTLiteralValueNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->setValueAndType(internSymbol(node.value));
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
+    virtual AnyValuePtr visitIdentifierReferenceNode(ASTIdentifierReferenceNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTIdentifierReferenceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->identifier = internSymbol(node.identifier);
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitMessageSendNode(ASTMessageSendNode &node) override
+    virtual AnyValuePtr visitMessageSendNode(ASTMessageSendNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMessageSendNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
-            convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.receiver));
+            convertedNode->receiver = castToNode(visitNode(*node.receiver));
 
-        convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
+        convertedNode->selector = castToNode(visitNode(*node.selector));
 
         convertedNode->arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
-            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+            convertedNode->arguments.push_back(castToNode(visitNode(*arg)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitMessageChainNode(ASTMessageChainNode &node) override
+    virtual AnyValuePtr visitMessageChainNode(ASTMessageChainNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMessageChainNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
         if(node.receiver)
-            convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.receiver));
+            convertedNode->receiver = castToNode(visitNode(*node.receiver));
 
         convertedNode->messages.reserve(node.messages.size());
         for(auto &message : node.messages)
-            convertedNode->messages.push_back(std::any_cast<ResultType> (visitNode(*message)));
+            convertedNode->messages.push_back(castToNode(visitNode(*message)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
+    virtual AnyValuePtr visitMessageChainMessageNode(ASTMessageChainMessageNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMessageChainMessageNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
 
-        convertedNode->selector = std::any_cast<ResultType> (visitNode(*node.selector));
+        convertedNode->selector = castToNode(visitNode(*node.selector));
 
         convertedNode->arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
-            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+            convertedNode->arguments.push_back(castToNode(visitNode(*arg)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitCallNode(ASTCallNode &node) override
+    virtual AnyValuePtr visitCallNode(ASTCallNode &node) override
     {
         auto sourcePosition = convertSourcePosition(node.sourcePosition);
 
         auto convertedNode = Environment::basicMakeObject<Environment::ASTCallNode> ();
         convertedNode->sourcePosition = sourcePosition;
-        convertedNode->function = std::any_cast<ResultType> (visitNode(*node.callable));
+        convertedNode->function = castToNode(visitNode(*node.callable));
 
         convertedNode->arguments.reserve(node.arguments.size());
         for(auto &arg : node.arguments)
-            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*arg)));
+            convertedNode->arguments.push_back(castToNode(visitNode(*arg)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitSubscriptNode(ASTSubscriptNode &node) override
+    virtual AnyValuePtr visitSubscriptNode(ASTSubscriptNode &node) override
     {
         auto sourcePosition = convertSourcePosition(node.sourcePosition);
 
@@ -336,94 +338,94 @@ public:
         selector->sourcePosition = sourcePosition;
         selector->setValueAndType(internSymbol("[]"));
 
-        convertedNode->receiver = std::any_cast<ResultType> (visitNode(*node.array));
+        convertedNode->receiver = castToNode(visitNode(*node.array));
         convertedNode->selector = selector;
 
         // Pass the optional index.
         if(node.index)
         {
             convertedNode->arguments.reserve(1);
-            convertedNode->arguments.push_back(std::any_cast<ResultType> (visitNode(*node.index)));
+            convertedNode->arguments.push_back(castToNode(visitNode(*node.index)));
         }
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitMakeTupleNode(ASTMakeTupleNode &node) override
+    virtual AnyValuePtr visitMakeTupleNode(ASTMakeTupleNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMakeTupleNode>  ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(auto &element : node.elements)
-            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+            convertedNode->elements.push_back(castToNode(visitNode(*element)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
+    virtual AnyValuePtr visitMakeDictionaryNode(ASTMakeDictionaryNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMakeDictionaryNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(const auto &element : node.elements)
-            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+            convertedNode->elements.push_back(castToNode(visitNode(*element)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitDictionaryElementNode(ASTDictionaryElementNode &node) override
+    virtual AnyValuePtr visitDictionaryElementNode(ASTDictionaryElementNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMakeAssociationNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         if(node.key)
-            convertedNode->key = std::any_cast<ResultType> (visitNode(*node.key));
+            convertedNode->key = castToNode(visitNode(*node.key));
         if(node.value)
-            convertedNode->value = std::any_cast<ResultType> (visitNode(*node.value));
+            convertedNode->value = castToNode(visitNode(*node.value));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitLiteralArrayNode(ASTLiteralArrayNode &node) override
+    virtual AnyValuePtr visitLiteralArrayNode(ASTLiteralArrayNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTMakeLiteralArrayNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
         convertedNode->elements.reserve(node.elements.size());
         for(const auto &element : node.elements)
-            convertedNode->elements.push_back(std::any_cast<ResultType> (visitNode(*element)));
+            convertedNode->elements.push_back(castToNode(visitNode(*element)));
 
-        return ResultType(convertedNode);
+        return convertedNode;
     }
 
-    virtual std::any visitQuoteNode(ASTQuoteNode &node) override
+    virtual AnyValuePtr visitQuoteNode(ASTQuoteNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
-        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
-        return ResultType(convertedNode);
+        convertedNode->expression = castToNode(visitNode(*node.quoted));
+        return convertedNode;
     }
 
-    virtual std::any visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
+    virtual AnyValuePtr visitQuasiQuoteNode(ASTQuasiQuoteNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTQuasiQuoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
-        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.quoted));
-        return ResultType(convertedNode);
+        convertedNode->expression = castToNode(visitNode(*node.quoted));
+        return convertedNode;
     }
 
-    virtual std::any visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
+    virtual AnyValuePtr visitQuasiUnquoteNode(ASTQuasiUnquoteNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTQuasiUnquoteNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
-        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
-        return ResultType(convertedNode);
+        convertedNode->expression = castToNode(visitNode(*node.expression));
+        return convertedNode;
     }
 
-    virtual std::any visitSpliceNode(ASTSpliceNode &node) override
+    virtual AnyValuePtr visitSpliceNode(ASTSpliceNode &node) override
     {
         auto convertedNode = Environment::basicMakeObject<Environment::ASTSpliceNode> ();
         convertedNode->sourcePosition = convertSourcePosition(node.sourcePosition);
-        convertedNode->expression = std::any_cast<ResultType> (visitNode(*node.expression));
-        return ResultType(convertedNode);
+        convertedNode->expression = castToNode(visitNode(*node.expression));
+        return convertedNode;
     }
 };
 
@@ -543,7 +545,7 @@ LexicalScopePtr SysmelLanguageSupport::createMakeLiteralArrayTopLevelLexicalScop
 ASTNodePtr SysmelLanguageSupport::parseSourceStringNamed(const std::string &sourceString, const std::string &sourceStringName)
 {
     auto sysmelAST = Sysmel::Frontend::SysmelSyntax::parseString(sourceString, sourceStringName);
-    return std::any_cast<ASTNodePtr> (Sysmel::Frontend::SysmelSyntax::SysmelASTConverter().visitNode(*sysmelAST));
+    return staticObjectCast<ASTNode> (Sysmel::Frontend::SysmelSyntax::SysmelASTConverter().visitNode(*sysmelAST));
 }
 
 } // End of namespace Environment
