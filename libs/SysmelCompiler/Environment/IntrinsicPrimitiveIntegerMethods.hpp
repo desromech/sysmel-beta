@@ -15,6 +15,7 @@
 #include "Environment/PrimitiveFloatType.hpp"
 #include "Environment/BootstrapMethod.hpp"
 #include <string.h>
+#include <limits>
 
 namespace Sysmel
 {

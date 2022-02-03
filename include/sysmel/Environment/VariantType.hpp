@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AggregateType.hpp"
+#include <optional>
 
 namespace Sysmel
 {
