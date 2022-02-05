@@ -21,6 +21,7 @@ public:
     static constexpr char const __typeName__[] = "AutoTypeInferenceSlot";
 
     virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
+    virtual ResultTypeInferenceSlotPtr asExpectedTypeForBranches() override;
 
     TypeInferenceMode mode = TypeInferenceMode::Value;
     bool isMutable = false;

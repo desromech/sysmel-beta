@@ -400,6 +400,15 @@ AnyValuePtr Type::lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const Id
             return getInstanceType();
     }
 
+    return nullptr;
+}
+
+AnyValuePtr Type::lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    auto result = lookupLocalSymbolFromScope(symbol, accessingScope);
+    if(result)
+        return result;
+
     if(supertype)
         return supertype->lookupLocalSymbolFromScope(symbol, accessingScope);
     return nullptr;

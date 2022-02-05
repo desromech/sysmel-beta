@@ -31,6 +31,7 @@ public:
     virtual ASTNodePtr concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual TypePtr getExpectedFunctionalArgumentType(size_t index) const;
     virtual TypePtr getExpectedFunctionalResultType() const;
+    virtual ResultTypeInferenceSlotPtr asExpectedTypeForBranches();
 };
 
 } // End of namespace Environment

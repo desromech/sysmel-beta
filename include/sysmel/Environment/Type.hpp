@@ -133,6 +133,7 @@ public:
     virtual AnyValuePtr lookupLocalMacroFallbackSelector(const AnyValuePtr &selector) override;
 
     virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
+    virtual AnyValuePtr lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
 
     /// Does this type support dynamic compile time message sends?
     virtual bool supportsDynamicCompileTimeMessageSend() const;

@@ -46,6 +46,11 @@ AnyValuePtr DecoratedType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
     return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
 }
 
+AnyValuePtr DecoratedType::lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolRecursivelyFromScope(symbol, accessingScope);
+}
+
 ASTNodePtr DecoratedType::analyzeUnboundMessageSendNode(const ASTMessageSendNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);

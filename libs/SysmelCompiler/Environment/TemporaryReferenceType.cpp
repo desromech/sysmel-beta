@@ -57,6 +57,11 @@ AnyValuePtr TemporaryReferenceType::lookupLocalSymbolFromScope(const AnyValuePtr
     return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
 }
 
+AnyValuePtr TemporaryReferenceType::lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolRecursivelyFromScope(symbol, accessingScope);
+}
+
 ReferenceTypePtr TemporaryReferenceType::ref()
 {
     return baseType->ref();

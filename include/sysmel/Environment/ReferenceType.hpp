@@ -26,6 +26,7 @@ public:
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual AnyValuePtr lookupLocalSymbolFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
+    virtual AnyValuePtr lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope) override;
 
     // Is this a pointer like type value?
     virtual ReferenceTypePtr ref() override;

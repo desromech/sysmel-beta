@@ -1329,7 +1329,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
         }
         else
         {
-            sysmelAssert("TODO: Support deferred and/or default type " && false);    
+            return recordSemanticErrorInNode(analyzedNode, "A type specification is required.");
         }
     }
 
@@ -1360,6 +1360,11 @@ AnyValuePtr ASTSemanticAnalyzer::visitGlobalVariableNode(const ASTGlobalVariable
 
         ownerEntity->recordChildProgramEntityDefinition(globalVariable);
         ownerEntity->bindProgramEntityWithVisibility(globalVariable, analyzedNode->visibility);
+    }
+    else
+    {
+        if(globalVariable->getValueType() != valueType)
+            return recordSemanticErrorInNode(analyzedNode, formatString("Global variable {1} overrides a previous definition with a different value type.", {{name->printString()}}));
     }
 
     if(analyzedNode->initialValue)
@@ -1420,7 +1425,7 @@ AnyValuePtr ASTSemanticAnalyzer::visitFieldVariableNode(const ASTFieldVariableNo
         }
         else
         {
-            sysmelAssert("TODO: Support deferred and/or default type " && false);    
+            return recordSemanticErrorInNode(analyzedNode, "A type specification is required.");
         }
     }
 
@@ -2566,10 +2571,10 @@ AnyValuePtr ASTSemanticAnalyzer::visitIfNode(const ASTIfNodePtr &node)
     analyzedNode->condition = analyzeNodeIfNeededWithBooleanExpectedType(analyzedNode->condition);
 
     if(analyzedNode->trueExpression)
-        analyzedNode->trueExpression = analyzeNodeIfNeededWithAutoType(analyzedNode->trueExpression);
+        analyzedNode->trueExpression = analyzeNodeIfNeededWithTypeInference(analyzedNode->trueExpression, currentExpectedType->asExpectedTypeForBranches());
 
     if(analyzedNode->falseExpression)
-        analyzedNode->falseExpression = analyzeNodeIfNeededWithAutoType(analyzedNode->falseExpression);
+        analyzedNode->falseExpression = analyzeNodeIfNeededWithTypeInference(analyzedNode->falseExpression, currentExpectedType->asExpectedTypeForBranches());
 
     // Compute the result coercion type
     auto trueType = analyzedNode->trueExpression ? analyzedNode->trueExpression->analyzedType : Type::getVoidType();
@@ -2856,13 +2861,13 @@ AnyValuePtr ASTSemanticAnalyzer::visitEvaluatePatternWithValueNode(const ASTEval
     if(analyzedNode->successAction)
     {
         analyzedNode->successAction = withEnvironmentDoAnalysis(patternEnvironment, [&](){
-            return analyzeNodeIfNeededWithAutoType(analyzedNode->successAction);
+            return analyzeNodeIfNeededWithTypeInference(analyzedNode->successAction, currentExpectedType->asExpectedTypeForBranches());
         });
     }
 
     // Analyze the fail action.
     if(analyzedNode->failureAction)
-        analyzedNode->failureAction = analyzeNodeIfNeededWithAutoType(analyzedNode->failureAction);
+        analyzedNode->failureAction = analyzeNodeIfNeededWithTypeInference(analyzedNode->failureAction, currentExpectedType->asExpectedTypeForBranches());
 
     auto successType = analyzedNode->successAction ? analyzedNode->successAction->analyzedType : Type::getVoidType();
     auto failureType = analyzedNode->failureAction ? analyzedNode->failureAction->analyzedType : Type::getVoidType();

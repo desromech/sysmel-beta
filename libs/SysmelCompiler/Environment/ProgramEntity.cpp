@@ -158,6 +158,11 @@ AnyValuePtr ProgramEntity::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
     return nullptr;
 }
 
+AnyValuePtr ProgramEntity::lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return lookupLocalSymbolFromScope(symbol, accessingScope);
+}
+
 AnyValuePtr ProgramEntity::lookupLocalMacroSelector(const AnyValuePtr &selector)
 {
     (void)selector;

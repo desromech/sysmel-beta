@@ -11,7 +11,7 @@ static BootstrapTypeRegistration<ReceiverMemberLookupScope> ReceiverMemberLookup
 
 AnyValuePtr ReceiverMemberLookupScope::lookupSymbolLocally(const AnyValuePtr &symbol)
 {
-    auto found = receiverType->lookupLocalSymbolFromScope(symbol, selfFromThis());
+    auto found = receiverType->lookupLocalSymbolRecursivelyFromScope(symbol, selfFromThis());
     return found ? found->asMemberBoundWithReceiverVariable(receiverVariable) : nullptr;
 }
 

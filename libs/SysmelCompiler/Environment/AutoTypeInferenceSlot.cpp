@@ -31,6 +31,11 @@ ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::makeForAutoWithMode(TypeInfe
     return result;
 }
 
+ResultTypeInferenceSlotPtr ResultTypeInferenceSlot::asExpectedTypeForBranches()
+{
+    return selfFromThis();
+}
+
 ASTNodePtr AutoTypeInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNodePtr &node, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     auto inferredType = node->analyzedType->asInferredTypeForWithModeInEnvironment(node, mode, isMutable, concreteLiterals, semanticAnalyzer->environment);
@@ -41,6 +46,11 @@ ASTNodePtr AutoTypeInferenceSlot::concretizeTypeInferenceOfNodeWith(const ASTNod
         return semanticAnalyzer->recordSemanticErrorInNode(node, "Cannot perform type inference with the selected mode.");
 
     return semanticAnalyzer->addImplicitCastTo(node, inferredType);
+}
+
+ResultTypeInferenceSlotPtr AutoTypeInferenceSlot::asExpectedTypeForBranches()
+{
+    return makeForAuto();
 }
 
 } // End of namespace Environment

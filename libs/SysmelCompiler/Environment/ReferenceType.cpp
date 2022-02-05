@@ -59,6 +59,11 @@ AnyValuePtr ReferenceType::lookupLocalSymbolFromScope(const AnyValuePtr &symbol,
     return baseType->lookupLocalSymbolFromScope(symbol, accessingScope);
 }
 
+AnyValuePtr ReferenceType::lookupLocalSymbolRecursivelyFromScope(const AnyValuePtr &symbol, const IdentifierLookupScopePtr &accessingScope)
+{
+    return baseType->lookupLocalSymbolRecursivelyFromScope(symbol, accessingScope);
+}
+
 ReferenceTypePtr ReferenceType::ref()
 {
     return selfFromThis();
