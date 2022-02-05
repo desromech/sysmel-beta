@@ -17,6 +17,11 @@ bool ASTVariableAccessNode::isASTVariableAccessNode() const
     return true;
 }
 
+bool ASTVariableAccessNode::isSuperReference() const
+{
+    return variable->isSuperArgument();
+}
+
 AnyValuePtr ASTVariableAccessNode::accept(const ASTVisitorPtr &visitor)
 {
     return visitor->visitVariableAccessNode(selfFromThis());

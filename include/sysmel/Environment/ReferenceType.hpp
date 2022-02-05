@@ -37,6 +37,7 @@ public:
 
     virtual bool isConstOrConstReferenceType() const override;
     virtual TypePtr asConstOrConstReferenceType() override;
+    virtual TypePtr asSuperReceiverType() override;
 
     virtual std::string getQualifiedName() const override;
     virtual SExpression asSExpression() const override;

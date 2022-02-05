@@ -244,6 +244,14 @@ ASTNodePtr SpecificMethod::analyzeMessageSendNode(const ASTMessageSendNodePtr &n
     node->analyzedBoundMessageIsDirect = isConstructor() || isConversion() || !receiverType->supportsDynamicCompileTimeMessageSend() ;
     node->useVirtualTable = hasVirtualSendSemantics() && !isFinal();
     node->analyzedBoundMessageIsDirect = node->analyzedBoundMessageIsDirect && !node->useVirtualTable;
+
+    // Be always direct when going through a super reference.
+    if(node->receiver && node->receiver->isSuperReference())
+    {
+        node->useVirtualTable = false;
+        node->analyzedBoundMessageIsDirect = true;
+    }
+
     node->analyzedBoundMessage = selfFromThis();
     node->calledMessageType = getFunctionalType();
     node->analyzedType = functionalType->getResultType();

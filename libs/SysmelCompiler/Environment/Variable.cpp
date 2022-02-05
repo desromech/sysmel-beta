@@ -26,6 +26,11 @@ bool Variable::isVariable() const
     return true;
 }
 
+bool Variable::isSuperArgument() const
+{
+    return false;
+}
+
 AnyValuePtr Variable::getName() const
 {
     return name;

@@ -20,6 +20,7 @@ public:
     static constexpr char const __typeName__[] = "ArgumentVariable";
 
     virtual bool isArgumentVariable() const override;
+    virtual bool isSuperArgument() const;
 
     void setType(const TypePtr &type);
     void setName(const AnyValuePtr &newName);
@@ -31,6 +32,7 @@ public:
     
     bool isImplicit = false;
     bool isReceiver = false;
+    bool isSuper = false;
     uint32_t argumentIndex = 0;
 };
 

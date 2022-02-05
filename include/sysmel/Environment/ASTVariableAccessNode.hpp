@@ -20,6 +20,8 @@ public:
     static constexpr char const __typeName__[] = "ASTVariableAccessNode";
 
     virtual bool isASTVariableAccessNode() const override;
+    virtual bool isSuperReference() const override;
+
     virtual AnyValuePtr accept(const ASTVisitorPtr &visitor) override;
     virtual SExpression asSExpression() const override;
 

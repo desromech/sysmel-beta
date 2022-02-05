@@ -100,6 +100,9 @@ public:
     /// Converts this type into a specific receiver type.
     virtual TypePtr asReceiverType() override;
 
+    /// Converts this receiver type into a specific super receiver type.
+    virtual TypePtr asSuperReceiverType();
+
     virtual AnyValuePtr asSelfForStaticMethod() override;
 
     /// This method performs the lookup for a macro message with the specified selector.

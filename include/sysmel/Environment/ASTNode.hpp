@@ -134,6 +134,8 @@ public:
 
     virtual bool isValidForCachingTypeConversionRules() const;
 
+    virtual bool isSuperReference() const;
+
     virtual ASTNodePtr parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual ASTNodePtr parseAsPatternMatchingCaseWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer);
     virtual ASTNodePtr parseAsPatternNode();

@@ -108,6 +108,15 @@ TypePtr ReferenceType::asConstOrConstReferenceType()
     return baseType->withConst()->refFor(addressSpace);
 }
 
+TypePtr ReferenceType::asSuperReceiverType()
+{
+    auto superType = baseType->asUndecoratedType()->getSupertype();
+    if(!superType)
+        return nullptr;
+
+    return superType->withDecorations(baseType->getDecorationFlags())->refFor(addressSpace);
+}
+
 std::string ReferenceType::getQualifiedName() const
 {
     if(hasGenericAddressSpace())

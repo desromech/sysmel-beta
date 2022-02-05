@@ -100,6 +100,14 @@ ASTAnalysisEnvironmentPtr CompiledMethod::createSemanticAnalysisEnvironment()
         lexicalScope->setSymbolBinding(receiverArgument->getName(), receiverArgument);
     }
 
+    // Add the super receiver argument
+    if(superReceiverArgument)
+    {
+        if(validAnyValue(superReceiverArgument->getName())->isAnonymousNameSymbol())
+            superReceiverArgument->setName(internSymbol("super"));
+        lexicalScope->setSymbolBinding(superReceiverArgument->getName(), superReceiverArgument);
+    }
+
     // Add the arguments to the lexical scope.
     for(auto &arg : arguments)
     {
@@ -139,6 +147,17 @@ void CompiledMethod::createImplicitReceiverArgumentVariableWithType(const TypePt
     receiverArgument->isReceiver = true;
     recordChildProgramEntityDefinition(receiverArgument);
     receiverArgument->setType(receiverType);
+
+    auto superReceiverType = receiverType->asSuperReceiverType();
+    if(!superReceiverType || superReceiverType->isVoidType())
+        return;
+
+    superReceiverArgument = basicMakeObject<ArgumentVariable> ();
+    superReceiverArgument->isImplicit = true;
+    superReceiverArgument->isReceiver = true;
+    superReceiverArgument->isSuper = true;
+    recordChildProgramEntityDefinition(superReceiverArgument);
+    superReceiverArgument->setType(superReceiverType);
 }
 
 void CompiledMethod::createArgumentVariablesWithTypes(const TypePtrList &argumentTypes)
@@ -201,6 +220,11 @@ void CompiledMethod::ensureSemanticAnalysis()
 const ArgumentVariablePtr &CompiledMethod::getReceiverArgument() const
 {
     return receiverArgument;
+}
+
+const ArgumentVariablePtr &CompiledMethod::getSuperReceiverArgument() const
+{
+    return superReceiverArgument;
 }
 
 const ArgumentVariablePtrList &CompiledMethod::getArguments() const

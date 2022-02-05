@@ -241,7 +241,12 @@ void ASTSSACompiler::compileMethodBody(const CompiledMethodPtr &method, const SS
     // Map the receiver
     if(!receiverType->isVoidType())
     {
-        mapLocalVariableToValue(method->getReceiverArgument(), methodCodeRegionArguments[receiverOffset]);
+        auto receiverValue = methodCodeRegionArguments[receiverOffset];
+        mapLocalVariableToValue(method->getReceiverArgument(), receiverValue);
+        auto superArgument = method->getSuperReceiverArgument();
+        if(superArgument)
+            mapLocalVariableToValue(superArgument, receiverValue);
+        
         ++argumentsOffset;
     }
 
@@ -637,6 +642,8 @@ AnyValuePtr ASTSSACompiler::visitSlotAccessNode(const ASTSlotAccessNodePtr &node
 AnyValuePtr ASTSSACompiler::visitVariableAccessNode(const ASTVariableAccessNodePtr &node)
 {
     auto localValue = findLocalVariableMapping(node->variable);
+    if(localValue && node->isSuperReference())
+        return builder->upcast(node->analyzedType, localValue);
     return localValue ? localValue : node->variable->asSSAValueRequiredInPosition(node->sourcePosition);
 }
 

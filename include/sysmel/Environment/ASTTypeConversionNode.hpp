@@ -18,6 +18,7 @@ public:
     static constexpr char const __typeName__[] = "ASTTypeConversionNode";
 
     virtual bool isASTTypeConversionNode() const override;
+    virtual bool isSuperReference() const override;
 
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 

@@ -17,12 +17,16 @@ bool ArgumentVariable::isArgumentVariable() const
     return true;
 }
 
+bool ArgumentVariable::isSuperArgument() const
+{
+    return isSuper;
+}
+
 void ArgumentVariable::setType(const TypePtr &type)
 {
     valueType = type;
     referenceType = type;
 }
-
 
 void ArgumentVariable::setName(const AnyValuePtr &newName)
 {

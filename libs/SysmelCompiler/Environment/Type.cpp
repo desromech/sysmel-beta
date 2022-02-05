@@ -287,6 +287,12 @@ TypePtr Type::asReceiverType()
     return selfFromThis();
 }
 
+TypePtr Type::asSuperReceiverType()
+{
+    auto superType = getSupertype();
+    return superType ? superType->asReceiverType() : nullptr;
+}
+
 AnyValuePtr Type::asSelfForStaticMethod()
 {
     return getInstanceType();

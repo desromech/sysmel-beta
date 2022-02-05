@@ -122,6 +122,11 @@ bool ASTNode::isValidForCachingTypeConversionRules() const
     return true;
 }
 
+bool ASTNode::isSuperReference() const
+{
+    return false;
+}
+
 ASTNodePtr ASTNode::parseAsArgumentNodeWith(const ASTSemanticAnalyzerPtr &semanticAnalyzer)
 {
     return semanticAnalyzer->recordSemanticErrorInNode(selfFromThis(), "This is not a valid argument argument specification.");
