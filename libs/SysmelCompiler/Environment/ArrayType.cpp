@@ -201,12 +201,12 @@ MethodCategories ArrayTypeValue::__typeMethods__()
 {
     return MethodCategories{
         {"accessing", {
-            makeMethodBinding<TypePtr (TypePtr)> ("elementType", [](const TypePtr &type) -> TypePtr {
-                return type->isArrayType() ? type.staticAs<ArrayType> ()->elementType : Type::getVoidType();
+            makeMethodBinding<TypePtr (TypePtr)> ("elementType", [](const TypePtr &self) -> TypePtr {
+                return self->isArrayType() ? self.staticAs<ArrayType> ()->elementType : Type::getVoidType();
             }, MethodFlags::Pure),
 
-            makeMethodBinding<uint64_t (TypePtr)> ("size", [](const TypePtr &type) -> uint64_t{
-                return type->isArrayType() ? type.staticAs<ArrayType> ()->size : 0;
+            makeMethodBinding<uint64_t (TypePtr)> ("size", [](const TypePtr &self) -> uint64_t{
+                return self->isArrayType() ? self.staticAs<ArrayType> ()->size : 0;
             }, MethodFlags::Pure),
         }}
     };

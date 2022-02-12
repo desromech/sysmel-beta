@@ -51,7 +51,7 @@ void Namespace::recordChildProgramEntityDefinition(const ProgramEntityPtr &newCh
     newChild->setParentProgramEntity(selfFromThis());
 }
 
-void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility visibility, const ProgramEntityPtr &binding)
+void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntityVisibility symbolVisibility, const ProgramEntityPtr &binding)
 {
     sysmelAssert(symbol && !symbol->isAnonymousNameSymbol());
     ProgramEntityPtr newBinding = binding;
@@ -67,9 +67,9 @@ void Namespace::bindSymbolWithVisibility(const AnyValuePtr &symbol, ProgramEntit
         }
     }
 
-    bindings[symbol] = std::make_pair(visibility, newBinding);
+    bindings[symbol] = std::make_pair(symbolVisibility, newBinding);
 
-    if(symbol->isLiteralSymbol() && visibility == ProgramEntityVisibility::Public)
+    if(symbol->isLiteralSymbol() && symbolVisibility == ProgramEntityVisibility::Public)
         newBinding->addPublicAccessingMethodsWithSymbolOnto(symbol, selfFromThis());
 }
 
@@ -201,7 +201,7 @@ SExpression Namespace::asFullDefinitionSExpression() const
     }};
 }
 
-SSAValuePtr Namespace::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
+SSAValuePtr Namespace::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &)
 {
     if(!ssaNamespace)
     {

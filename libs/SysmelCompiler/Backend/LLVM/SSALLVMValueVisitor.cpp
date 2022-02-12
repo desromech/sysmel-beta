@@ -238,7 +238,7 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         auto integerType = x->getType();
         return context.builder->CreateSelect(
             context.builder->CreateICmpSLT(x, llvm::ConstantInt::get(integerType, 0)),
-            llvm::ConstantInt::get(integerType, -1),
+            llvm::ConstantInt::get(integerType, uint64_t(-1), true),
             context.builder->CreateSelect(
                 context.builder->CreateICmpUGT(x, llvm::ConstantInt::get(integerType, 0)),
                 llvm::ConstantInt::get(integerType, 1),
@@ -925,11 +925,11 @@ AnyValuePtr SSALLVMValueVisitor::visitFunction(const SSAFunctionPtr &function)
     for(size_t i = firstArgumentIndex; i < argumentCount; ++i)
     {
         auto argType = mainCodeRegion->getArgument(i)->getValueType();
-        auto paramIndex = isClosure ? i + 1 : i;
+        auto paramIndex = uint32_t(isClosure ? i + 1 : i);
         if(backend->isSignedIntegerType(argType))
-            currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::SExt);
+            currentFunction->addParamAttr(paramIndex, llvm::Attribute::SExt);
         else if(backend->isUnsignedIntegerType(argType))
-            currentFunction->addParamAttr(uint32_t(paramIndex), llvm::Attribute::ZExt);
+            currentFunction->addParamAttr(paramIndex, llvm::Attribute::ZExt);
 
         auto declaredArgumentType = declaredArguments[i - firstArgumentIndex];
 
@@ -1944,7 +1944,7 @@ AnyValuePtr SSALLVMValueVisitor::visitLocalFinalization(const SSALocalFinalizati
 AnyValuePtr SSALLVMValueVisitor::visitCheckExpectedTypeSelectorValueInstruction(const SSACheckExpectedTypeSelectorValueInstructionPtr &instruction)
 {
     auto aggregate = translateValue(instruction->getAggregate());
-    auto typeSelectorSlot = builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, instruction->getTypeSelectorIndex());
+    auto typeSelectorSlot = builder->CreateConstInBoundsGEP2_32(nullptr, aggregate, 0, uint32_t(instruction->getTypeSelectorIndex()));
     auto expectedTypeSelectorType = backend->translateType(instruction->getTypeSelectorReferenceType());
     typeSelectorSlot = builder->CreateBitOrPointerCast(typeSelectorSlot, expectedTypeSelectorType);
 

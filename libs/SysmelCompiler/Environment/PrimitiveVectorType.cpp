@@ -241,7 +241,7 @@ ASTNodePtr PrimitiveVectorType::analyzeUnboundMessageSendNode(const ASTMessageSe
             swizzle->sourcePosition = node->sourcePosition;
             swizzle->vector = semanticAnalyzer->analyzeNodeIfNeededWithExpectedType(node->receiver, selfFromThis());
             swizzle->selectedElements = selectedElements;
-            swizzle->analyzedType = make(elementType, selectedElements.size());
+            swizzle->analyzedType = make(elementType, uint32_t(selectedElements.size()));
             return swizzle;
         }
     }
@@ -611,7 +611,7 @@ AnyValuePtr PrimitiveVectorTypeValue::swizzle(const std::vector<uint32_t> &selec
     sysmelAssert(selectedElementsMask.size() > 1);
     auto result = basicMakeObject<PrimitiveVectorTypeValue> ();
     result->type = staticObjectCast<PrimitiveVectorType> (
-        PrimitiveVectorType::make(type->elementType, selectedElementsMask.size())
+        PrimitiveVectorType::make(type->elementType, uint32_t(selectedElementsMask.size()))
     );
     result->elements.reserve(selectedElementsMask.size());
     for(auto index: selectedElementsMask)

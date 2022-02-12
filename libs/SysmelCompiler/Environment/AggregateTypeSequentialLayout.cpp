@@ -124,7 +124,7 @@ void AggregateTypeSequentialLayout::ensureVirtualTableExists()
         return;
 
     virtualTable = basicMakeObject<VirtualTable> ();
-    virtualTableSlotIndex = slotTypes.size();
+    virtualTableSlotIndex = uint32_t(slotTypes.size());
 
     if(memoryAlignment != 0)
     {
@@ -159,7 +159,7 @@ void AggregateTypeSequentialLayout::addVirtualMethod(const SpecificMethodPtr &vi
     }
     else
     {
-        virtualMethod->setVirtualTableEntry(virtualTableSlotIndex, virtualTable->slots.size());
+        virtualMethod->setVirtualTableEntry(virtualTableSlotIndex, uint32_t(virtualTable->slots.size()));
         virtualTable->slots.push_back(virtualMethod);
     }
 }
