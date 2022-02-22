@@ -144,15 +144,15 @@ void BootstrapModule::initializePrimitiveVectorTypes()
         2, 3, 4, 8
     };
 
-    // Synthethize the basic primitive vector types.
+    // Synthesize the basic primitive vector types.
     for(const auto &elementType : primitiveTypes)
     {
         for(auto elements : primitiveVectorTypeElements)
         {
             std::ostringstream out;
             out << elementType->getValidNameString() << "x" << elements;
-            auto name = out.str();
-            auto nameSymbol = internSymbol(name);
+            auto elementName = out.str();
+            auto nameSymbol = internSymbol(elementName);
 
             auto vectorType = PrimitiveVectorType::make(elementType, elements);
             vectorType->setName(nameSymbol);

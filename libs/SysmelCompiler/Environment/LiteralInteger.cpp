@@ -318,7 +318,7 @@ int8_t LiteralInteger::unwrapAsInt8() const
 {
     if(value < LargeInteger{std::numeric_limits<int8_t>::min()} || value > LargeInteger{std::numeric_limits<int8_t>::max()})
         signalNew<CannotUnwrap> ();
-    return value.isNegative() ? int8_t(-value.wordAt(0)) : int8_t(value.wordAt(0));
+    return value.isNegative() ? -int8_t(value.wordAt(0)) : int8_t(value.wordAt(0));
 }
 
 uint16_t LiteralInteger::unwrapAsUInt16() const
@@ -332,7 +332,7 @@ int16_t LiteralInteger::unwrapAsInt16() const
 {
     if(value < LargeInteger{std::numeric_limits<int16_t>::min()} || value > LargeInteger{std::numeric_limits<int16_t>::max()})
         signalNew<CannotUnwrap> ();
-    return value.isNegative() ? int16_t(-value.wordAt(0)) : int16_t(value.wordAt(0));
+    return value.isNegative() ? -int16_t(value.wordAt(0)) : int16_t(value.wordAt(0));
 }
 
 uint32_t LiteralInteger::unwrapAsUInt32() const
@@ -346,7 +346,7 @@ int32_t LiteralInteger::unwrapAsInt32() const
 {
     if(value < LargeInteger{std::numeric_limits<int32_t>::min()} || value > LargeInteger{std::numeric_limits<int32_t>::max()})
         signalNew<CannotUnwrap> ();
-    return value.isNegative() ? int32_t(-value.wordAt(0)) : int32_t(value.wordAt(0));
+    return value.isNegative() ? -int32_t(value.wordAt(0)) : int32_t(value.wordAt(0));
 }
 
 uint64_t LiteralInteger::unwrapAsUInt64() const

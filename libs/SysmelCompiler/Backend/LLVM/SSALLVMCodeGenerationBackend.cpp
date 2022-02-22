@@ -521,17 +521,15 @@ llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstant(const TypePtr
 
 llvm::Constant *SSALLVMCodeGenerationBackend::internStringConstantPointer(const TypePtr &elementType, const std::string &constant, bool addNullTerminator)
 {
-    auto elementSize = elementType->getMemorySize();
+    auto elementSize = uint32_t(elementType->getMemorySize());
+    auto &cache = internedStringConstants[{elementSize, constant}];
+    if(!cache)
     {
-        auto it = internedStringConstants.find({elementSize, constant});
-        if(it != internedStringConstants.end())
-            return it->second;
+        auto stringConstantData = internStringConstant(elementType, constant, addNullTerminator);
+        cache = new llvm::GlobalVariable(*targetModule, stringConstantData->getType(), true, llvm::GlobalValue::PrivateLinkage, stringConstantData);
     }
 
-    auto stringConstantData = internStringConstant(elementType, constant, addNullTerminator);
-    auto result = new llvm::GlobalVariable(*targetModule, stringConstantData->getType(), true, llvm::GlobalValue::PrivateLinkage, stringConstantData);
-    internedStringConstants.insert({{elementSize, constant}, result});
-    return result;
+    return cache;
 }
 
 bool SSALLVMCodeGenerationBackend::isSignedIntegerType(const TypePtr &type)

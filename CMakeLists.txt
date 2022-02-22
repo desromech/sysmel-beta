@@ -22,7 +22,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Turn warnings and use C++ 2011.
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	# using Visual Studio C++
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /std:c++17 /wd4251")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /std:c++17 /wd4251 /wd4702 /wd4458 /wd4146")
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17")
 	if(UNIX)

@@ -169,11 +169,11 @@ struct IntrinsicPrimitiveFloatMethods
                     return makeValue(-v->value);
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.reciprocal", "reciprocal", +[](const PrimitiveFloatPtr &v) {
-                    return makeValue(1.0 / v->value);
+                    return makeValue(ValueType(1.0 / v->value));
                 }, MethodFlags::Pure),
 
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.sign", "sign", +[](const PrimitiveFloatPtr &v) {
-                    return makeValue(v->value < 0 ? -1 : (v->value > 0 ? 1 : 0));
+                    return makeValue(ValueType(v->value < 0 ? -1 : (v->value > 0 ? 1 : 0)));
                 }, MethodFlags::Pure),
                 makeIntrinsicMethodBinding<PrimitiveFloatPtr (PrimitiveFloatPtr)> ("float.abs", "abs", +[](const PrimitiveFloatPtr &v) {
                     return makeValue(v->value < 0 ? -v->value : v->value);

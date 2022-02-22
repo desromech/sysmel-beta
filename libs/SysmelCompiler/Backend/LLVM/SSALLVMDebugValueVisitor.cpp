@@ -58,7 +58,7 @@ AnyValuePtr SSALLVMDebugValueVisitor::visitFunction(const SSAFunctionPtr &functi
     return wrapLLVMDIScope(subprogram);
 }
 
-AnyValuePtr SSALLVMDebugValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr &value)
+AnyValuePtr SSALLVMDebugValueVisitor::visitGlobalVariable(const SSAGlobalVariablePtr &)
 {
     return wrapLLVMDIScope(nullptr);
 }

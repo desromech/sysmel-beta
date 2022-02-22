@@ -33,14 +33,15 @@ ASTNodePtr TypeConversionRule::convertNodeAtIntoWith(const ASTNodePtr &node, con
     return semanticAnalyzer->recordSemanticErrorInNode(node, formatString("Cannot perform implicit cast from '{0}' onto '{1}'.", {node->analyzedType->printString(), targetType->printString()}));
 }
 
-TypePtr TypeConversionRule::getCanonicalSourceTypeFor(const TypePtr &targetType) const
+TypePtr TypeConversionRule::getCanonicalSourceTypeFor(const TypePtr &conversionTargetType) const
 {
+    (void)conversionTargetType;
     return nullptr;
 }
 
-TypePtr TypeConversionRule::getCanonicalTargetTypeFor(const TypePtr &sourceType) const
+TypePtr TypeConversionRule::getCanonicalTargetTypeFor(const TypePtr &conversionSourceType) const
 {
-    (void)sourceType;
+    (void)conversionSourceType;
     return nullptr;
 }
 

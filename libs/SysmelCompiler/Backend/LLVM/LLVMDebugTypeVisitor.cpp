@@ -118,7 +118,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitEnumType(const EnumTypePtr &type)
     auto name = type->getValidNameStringIncludingTemplateName();
     auto line = sourcePosition->getLine();
     auto size = type->getMemorySize()*8;
-    auto alignment = type->getMemoryAlignment()*8;
+    auto alignment = uint32_t(type->getMemoryAlignment()*8);
 
     auto baseType = backend->translateDIType(type->getBaseType());
 
@@ -172,7 +172,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitClosureType(const ClosureTypePtr &type)
     );
 
     auto closurePointerType = builder->createPointerType(closureType, 
-        type->getMemorySize()*8, type->getMemoryAlignment()*8);
+        type->getMemorySize()*8, uint32_t(type->getMemoryAlignment()*8));
     backend->setDebugTypeTranslation(type, closurePointerType);
 
     //auto closureFunctionType = backend->getOrCreateDIFunctionType(type);
@@ -344,13 +344,13 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
     auto alignment = type->getMemoryAlignment()*8;
 
     auto discriminantOffset = layout->getOffsetForSlotIndex(0)*8;
-    auto elementOffset = layout->getOffsetForSlotIndex(layout->getElementMemorySlotIndex())*8;
+    auto elementOffset = layout->getOffsetForSlotIndex(uint32_t(layout->getElementMemorySlotIndex()))*8;
 
     auto discriminatorType = layout->getDataTypeIndexType();
     auto discriminatorLLVMType = backend->translateType(discriminatorType);
     auto discriminator = builder->createMemberType(
         nullptr, "typeSelector", nullptr, 0,
-        discriminatorType->getMemorySize()*8, discriminatorType->getMemoryAlignment()*8,
+        discriminatorType->getMemorySize()*8, uint32_t(discriminatorType->getMemoryAlignment()*8),
         discriminantOffset, llvm::DINode::FlagArtificial, backend->translateDIType(discriminatorType)
     );
 
@@ -381,7 +381,7 @@ AnyValuePtr LLVMDebugTypeVisitor::visitVariantType(const VariantTypePtr &type)
         auto elementDebugType = backend->translateDIType(elementType);
         auto elementName = "";
         elements.push_back(builder->createVariantMemberType(variantPart, elementName, nullptr, 0,
-            elementType->getMemorySize()*8, elementType->getMemoryAlignment()*8, elementOffset,
+            elementType->getMemorySize()*8, uint32_t(elementType->getMemoryAlignment()*8), elementOffset,
             discriminantConstant, llvm::DINode::FlagZero, elementDebugType
         ));
     }

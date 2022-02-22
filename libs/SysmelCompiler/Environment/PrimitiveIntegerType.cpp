@@ -52,7 +52,7 @@ AnyValuePtr WrapValue<IntPointerValue>::apply(IntPointerValue value)
     if(RuntimeContext::getActive()->getTargetDescription().pointerSize == 4)
     {
         auto result = basicMakeObject<Int32> ();
-        result->value = value.value;
+        result->value = int32_t(value.value);
         return result;
     }
     else

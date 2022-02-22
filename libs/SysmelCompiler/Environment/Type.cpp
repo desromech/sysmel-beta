@@ -1531,6 +1531,7 @@ AnyValuePtr Type::lookupValidLifetimeMethod(const std::string &selector, const T
 
 AnyValuePtr Type::lookupExistentLocalMethodWithSignature(const AnyValuePtr &selector, const TypePtrList &argumentTypes, const TypePtr &resultType, MethodFlags signatureMethodFlags)
 {
+    (void)signatureMethodFlags;
     if(!methodDictionary)
         return nullptr;
 
