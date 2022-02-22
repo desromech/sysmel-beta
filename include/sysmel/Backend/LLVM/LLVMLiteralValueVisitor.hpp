@@ -49,6 +49,8 @@ public:
     virtual AnyValuePtr visitTupleTypeValue(const TupleTypeValuePtr &value) override;
     virtual AnyValuePtr visitClassTypeValue(const ClassTypeValuePtr &value) override;
     virtual AnyValuePtr visitStructureTypeValue(const StructureTypeValuePtr &value) override;
+    virtual AnyValuePtr visitVariantTypeValue(const VariantTypeValuePtr &value) override;
+    virtual AnyValuePtr visitUnionTypeValue(const UnionTypeValuePtr &value) override;
 
     SSALLVMCodeGenerationBackend *backend = nullptr;
     llvm::Type *translatedExpectedType = nullptr;

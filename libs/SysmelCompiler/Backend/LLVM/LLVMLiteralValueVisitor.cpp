@@ -19,6 +19,8 @@
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
 #include "Environment/TupleType.hpp"
+#include "Environment/VariantType.hpp"
+#include "Environment/UnionType.hpp"
 
 #include "Environment/AggregateTypeSequentialLayout.hpp"
 
@@ -187,6 +189,20 @@ llvm::Constant *LLVMLiteralValueVisitor::translateSequentialStructAggregateTypeV
 AnyValuePtr LLVMLiteralValueVisitor::visitTupleTypeValue(const TupleTypeValuePtr &value)
 {
     return wrapLLVMConstant(translateSequentialStructAggregateTypeValue(value));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitVariantTypeValue(const VariantTypeValuePtr &value)
+{
+    // FIXME: Implement this in a proper way.
+    auto translatedVariantType = backend->translateType(value->getType());
+    return wrapLLVMConstant(llvm::ConstantAggregateZero::get(translatedVariantType));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitUnionTypeValue(const UnionTypeValuePtr &value)
+{
+    // FIXME: Implement this in a proper way.
+    auto translatedUnionType = backend->translateType(value->getType());
+    return wrapLLVMConstant(llvm::ConstantAggregateZero::get(translatedUnionType));
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitClassTypeValue(const ClassTypeValuePtr &value)
