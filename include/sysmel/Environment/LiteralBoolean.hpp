@@ -20,6 +20,7 @@ public:
     static constexpr char const __typeName__[] = "LiteralBoolean";
     static constexpr char const __sysmelTypeName__[] = "LiteralBoolean";
 
+    static MethodCategories __instanceMethods__();
     static MethodCategories __instanceMacroMethods__();
     static TypePtr __asInferredTypeForWithModeInEnvironment__(const TypePtr &selfType, const ASTNodePtr &node, TypeInferenceMode mode, bool isMutable, bool concreteLiterals, const ASTAnalysisEnvironmentPtr &environment);
 

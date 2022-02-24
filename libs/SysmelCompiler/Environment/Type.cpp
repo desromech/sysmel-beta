@@ -132,6 +132,14 @@ MethodCategories Type::__instanceMethods__()
             makeMethodBinding("|", &Type::appendTypeMakingVariant, MethodFlags::Pure),
             makeMethodBinding("=>", &Type::appendResultTypeMakingFunctionType, MethodFlags::Pure),
         }},
+
+        {"type conversion", {
+            makeMethodBinding("asDecayedType", &Type::asDecayedType, MethodFlags::Pure),
+        }},
+
+        {"testing", {
+            makeMethodBinding("isConstDecoratedType", &Type::isConstDecoratedType, MethodFlags::Pure),
+        }},
     };
 }
 

@@ -21,6 +21,18 @@ TypePtr WrapperTypeFor<bool>::apply()
     return LiteralBoolean::__staticType__();
 }
 
+MethodCategories LiteralBoolean::__instanceMethods__()
+{
+    return MethodCategories{
+        {"boolean algebra", {
+            makeMethodBinding<bool (bool)> ("not", [](bool self) {
+                return !self;
+            }, MethodFlags::Pure),
+        }}
+    };
+}
+
+
 MethodCategories LiteralBoolean::__instanceMacroMethods__()
 {
     return MethodCategories{
