@@ -139,6 +139,7 @@ MethodCategories Type::__instanceMethods__()
 
         {"testing", {
             makeMethodBinding("isConstDecoratedType", &Type::isConstDecoratedType, MethodFlags::Pure),
+            makeMethodBinding("isSubtypeOf:", &Type::isSubtypeOf, MethodFlags::Pure),
         }},
     };
 }

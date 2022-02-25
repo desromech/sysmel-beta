@@ -141,12 +141,8 @@ void EnumType::addSpecializedMethods()
     }
 
     // Binary intrinsics.
-    if(bitMask)
+    auto &&addScalarSelectors = [&](std::vector<std::string> &scalarSelectors)
     {
-        std::string scalarSelectors[] = {
-            "|", "bitOr:", "&", "bitAnd:", "^", "bitXor:", "<<", ">>",
-        };
-
         for(const auto &scalarSelector : scalarSelectors)
         {
             auto scalarSelectorSymbol = internSymbol(scalarSelector);
@@ -161,17 +157,44 @@ void EnumType::addSpecializedMethods()
             auto scalarResultType = scalarMethod.staticAs<SpecificMethod> ()->getFunctionalType()->getResultType();
             auto resultType = selfFromThis();
 
-            addMethodCategories({
-                {"arithmetic", {
-                    makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr, EnumTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const EnumTypeValuePtr &self, const EnumTypeValuePtr &other){
-                        auto result = basicMakeObject<EnumTypeValue> ();
-                        result->type = resultType;
-                        result->baseValue = self->baseValue->performWithArguments(scalarSelectorSymbol, {other->baseValue});
-                        return result;
-                    }, MethodFlags::Pure),
-                }}
-            });
+            if(scalarResultType->asDecayedType() == getBaseType()->asDecayedType())
+            {
+                addMethodCategories({
+                    {"arithmetic", {
+                        makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr, EnumTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), resultType, {selfFromThis()}, [=](const EnumTypeValuePtr &self, const EnumTypeValuePtr &other){
+                            auto result = basicMakeObject<EnumTypeValue> ();
+                            result->type = resultType;
+                            result->baseValue = self->baseValue->performWithArguments(scalarSelectorSymbol, {other->baseValue});
+                            return result;
+                        }, MethodFlags::Pure),
+                    }}
+                });
+            }
+            else
+            {
+                addMethodCategories({
+                    {"comparison", {
+                        makeIntrinsicMethodBindingWithSignature<AnyValuePtr (EnumTypeValuePtr, EnumTypeValuePtr)> (intrinsicName->asString(), scalarSelector, selfFromThis(), scalarResultType, {selfFromThis()}, [=](const EnumTypeValuePtr &self, const EnumTypeValuePtr &other){
+                            return self->baseValue->performWithArguments(scalarSelectorSymbol, {other->baseValue});
+                        }, MethodFlags::Pure),
+                    }}
+                });
+            }
         }
+    };
+
+    std::vector<std::string> comparisonScalarSelectors = {
+        "=", "==", "~=", "~~",
+        "<", "<=" ">", ">=",
+    };
+    addScalarSelectors(comparisonScalarSelectors);
+
+    if(bitMask)
+    {
+        std::vector<std::string> bitMaskScalarSelectors = {
+            "|", "bitOr:", "&", "bitAnd:", "^", "bitXor:", "<<", ">>",
+        };
+        addScalarSelectors(bitMaskScalarSelectors);
     }
 }
 
