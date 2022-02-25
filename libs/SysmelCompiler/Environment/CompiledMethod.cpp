@@ -1,5 +1,7 @@
 #include "Environment/CompiledMethod.hpp"
 #include "Environment/ASTNode.hpp"
+#include "Environment/ASTPragmaNode.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/CannotEvaluateMessageInCompileTime.hpp"
 #include "Environment/CannotEvaluateUndefinedMessage.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
@@ -191,6 +193,14 @@ ASTNodePtr CompiledMethod::analyzeDefinitionWith(const ASTSemanticAnalyzerPtr &a
 {
     if(analyzedBodyNode)
         return analyzedBodyNode;
+
+    auto intrinsicPragma = definitionBodyNode->getPragmaNamed(internSymbol("intrinsic:"));
+    if(intrinsicPragma && intrinsicPragma->arguments.size() == 1)
+    {
+        auto intrinsicNameNode = intrinsicPragma->arguments[0];
+        if(intrinsicNameNode->isASTLiteralValueNode())
+            setIntrinsicName(intrinsicNameNode.staticAs<ASTLiteralValueNode> ()->value);
+    }
 
     analyzedBodyEnvironment = createSemanticAnalysisEnvironment();
     analyzedBodyNode = analyzer->withEnvironmentDoAnalysis(analyzedBodyEnvironment, [&]() {

@@ -42,5 +42,10 @@ void ASTCleanUpScopeNode::childrenDo(const ASTIterationBlock &aBlock)
     if(body) aBlock(body);
 }
 
+ASTPragmaNodePtr ASTCleanUpScopeNode::getPragmaNamed(const AnyValuePtr &requestedPragmaSelector)
+{
+    return body ? body->getPragmaNamed(requestedPragmaSelector) : nullptr;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

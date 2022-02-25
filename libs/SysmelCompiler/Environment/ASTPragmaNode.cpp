@@ -1,5 +1,6 @@
 #include "Environment/ASTPragmaNode.hpp"
 #include "Environment/ASTSourcePosition.hpp"
+#include "Environment/ASTLiteralValueNode.hpp"
 #include "Environment/ASTVisitor.hpp"
 #include "Environment/Type.hpp"
 #include "Environment/BootstrapMethod.hpp"
@@ -43,6 +44,14 @@ void ASTPragmaNode::childrenDo(const ASTIterationBlock &aBlock)
     if(selector) aBlock(selector);
     for(auto &arg : arguments)
         aBlock(arg);
+}
+
+ASTPragmaNodePtr ASTPragmaNode::getPragmaNamed(const AnyValuePtr &requestedPragmaSelector)
+{
+    if(selector && selector->isASTLiteralValueNode() && selector.staticAs<ASTLiteralValueNode> ()->value == requestedPragmaSelector)
+        return selfFromThis();
+
+    return nullptr;
 }
 
 } // End of namespace Environment

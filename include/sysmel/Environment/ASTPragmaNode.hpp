@@ -22,6 +22,7 @@ public:
     virtual SExpression asSExpression() const override;
     
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
+    virtual ASTPragmaNodePtr getPragmaNamed(const AnyValuePtr &requestedPragmaSelector) override;
 
     ASTNodePtr selector;
     ASTNodePtrList arguments;

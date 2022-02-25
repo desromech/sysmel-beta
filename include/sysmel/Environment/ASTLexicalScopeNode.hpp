@@ -27,6 +27,8 @@ public:
 
     virtual void childrenDo(const ASTIterationBlock &aBlock) override;
 
+    virtual ASTPragmaNodePtr getPragmaNamed(const AnyValuePtr &requestedPragmaSelector) override;
+
     ASTNodePtr body;
     LexicalScopePtr analyzedScope;
 };

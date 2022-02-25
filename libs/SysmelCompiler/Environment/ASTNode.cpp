@@ -174,5 +174,10 @@ void ASTNode::withAllChildrenDo(const ASTIterationBlock &aBlock)
     allChildrenDo(aBlock);
 }
 
+ASTPragmaNodePtr ASTNode::getPragmaNamed(const AnyValuePtr &requestedPragmaSelector)
+{
+    return nullptr;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel

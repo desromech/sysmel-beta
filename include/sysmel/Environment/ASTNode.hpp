@@ -156,6 +156,8 @@ public:
     virtual void allChildrenDo(const ASTIterationBlock &aBlock);
     virtual void withAllChildrenDo(const ASTIterationBlock &aBlock);
 
+    virtual ASTPragmaNodePtr getPragmaNamed(const AnyValuePtr &requestedPragmaSelector);
+
     ASTSourcePositionPtr sourcePosition;
     TypePtr analyzedType;
 };

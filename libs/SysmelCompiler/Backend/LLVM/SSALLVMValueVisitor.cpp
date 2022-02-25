@@ -784,6 +784,17 @@ std::unordered_map<std::string, std::function<llvm::Value* (const IntrinsicGener
         sysmelAssert(context.arguments.size() == 1);
         return context.arguments.back();
     }},
+
+    // Memory barriers
+    {"memory.barrier.read", +[](const IntrinsicGenerationContext &context) {
+        return context.builder->CreateFence(llvm::AtomicOrdering::Acquire);
+    }},
+    {"memory.barrier.write", +[](const IntrinsicGenerationContext &context) {
+        return context.builder->CreateFence(llvm::AtomicOrdering::Release);
+    }},
+    {"memory.barrier.read-write", +[](const IntrinsicGenerationContext &context) {
+        return context.builder->CreateFence(llvm::AtomicOrdering::AcquireRelease);
+    }},
 };
 
 static llvm::GlobalValue::DLLStorageClassTypes convertDLLStorageClass(DllLinkageMode mode)

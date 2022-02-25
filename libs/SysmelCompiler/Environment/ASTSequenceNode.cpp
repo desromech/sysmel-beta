@@ -48,5 +48,17 @@ void ASTSequenceNode::childrenDo(const ASTIterationBlock &aBlock)
         aBlock(expr);
 }
 
+ASTPragmaNodePtr ASTSequenceNode::getPragmaNamed(const AnyValuePtr &requestedPragmaSelector)
+{
+    for(auto &pragma : pragmas)
+    {
+        auto result = pragma->getPragmaNamed(requestedPragmaSelector);
+        if(result)
+            return result;
+    }
+    
+    return nullptr;
+}
+
 } // End of namespace Environment
 } // End of namespace Sysmel
