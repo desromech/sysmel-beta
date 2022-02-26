@@ -1,5 +1,6 @@
 #include "Environment/ConversionMethodTypeConversionRule.hpp"
 #include "Environment/ASTMessageSendNode.hpp"
+#include "Environment/ValueAsReceiverReferenceTypeConversionRule.hpp"
 #include "Environment/Method.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 
@@ -20,8 +21,10 @@ TypeConversionRulePtr ConversionMethodTypeConversionRule::makeFor(const TypePtr 
 
 bool ConversionMethodTypeConversionRule::canBeUsedToConvertNodeFromTo(const ASTNodePtr &node, const TypePtr &nodeSourceType, const TypePtr &nodeTargetType) const
 {
-    (void)node;
-    return nodeSourceType == sourceType && nodeTargetType == destinationType;
+    bool isValidSourceType = nodeSourceType == sourceType;
+    if(!isValidSourceType)
+        isValidSourceType = ValueAsReceiverReferenceTypeConversionRule::uniqueInstance()->canBeUsedToConvertNodeFromTo(node, nodeSourceType, sourceType);
+    return isValidSourceType && nodeTargetType == destinationType;
 }
 
 TypeConversionCost ConversionMethodTypeConversionRule::getConversionCost(const ASTNodePtr &node, const TypePtr &nodeSourceType, const TypePtr &nodeTargetType) const

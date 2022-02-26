@@ -228,8 +228,32 @@ public:
 
     std::string mangleTemplateArgument(const AnyValuePtr &argument)
     {
+        if(validAnyValue(argument)->isUndefined())
+            return "LDnE";
+
         if(argument->isType())
             return mangleType(staticObjectCast<Type> (argument));
+
+        else if(argument->isLiteralInteger())
+        {
+            std::ostringstream out;
+            out << "Lu14LiteralInteger" << argument->asString() << "E";
+            return out.str();
+        }
+        else if(argument->isLiteralFloat())
+        {
+            std::ostringstream out;
+            out << "Lu12LiteralFloat" << argument->asString() << "E";
+            return out.str();
+            
+        }
+        else if(argument->isLiteralBoolean())
+        {
+            std::ostringstream out;
+            out << "Lu14LiteralBoolean" << argument->asString() << "E";
+            return out.str();
+            
+        }
 
         sysmelAssert("TODO: not yet supported" && false);
     }
