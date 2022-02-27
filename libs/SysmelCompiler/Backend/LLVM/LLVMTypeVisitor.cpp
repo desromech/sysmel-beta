@@ -117,6 +117,8 @@ AnyValuePtr LLVMTypeVisitor::visitFunctionalType(const FunctionalTypePtr &type)
     // The closure type is actually a pointer type.
     if(isClosureType)
         llvmType = llvm::PointerType::getUnqual(llvm::PointerType::getUnqual(llvmFunctionalType));
+    else
+        llvmType = llvm::PointerType::getUnqual(llvmFunctionalType);
 
     return wrapLLVMType(llvmType);
 }

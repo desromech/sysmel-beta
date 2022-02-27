@@ -42,6 +42,7 @@ public:
     virtual AnyValuePtr visitEnumTypeValue(const EnumTypeValuePtr &value) override;
 
     virtual AnyValuePtr visitFunctionTypeValue(const FunctionTypeValuePtr &value) override;
+    virtual AnyValuePtr visitClosureTypeValue(const ClosureTypeValuePtr &value) override;
     virtual AnyValuePtr visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value) override;
 
     virtual AnyValuePtr visitArrayTypeValue(const ArrayTypeValuePtr &value) override;

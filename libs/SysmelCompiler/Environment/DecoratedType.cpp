@@ -56,6 +56,12 @@ ASTNodePtr DecoratedType::analyzeUnboundMessageSendNode(const ASTMessageSendNode
     return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
 }
 
+ASTNodePtr DecoratedType::analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeCallNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
+
 bool DecoratedType::isConstDecoratedType() const
 {
     return (decorations & TypeDecorationFlags::Const) != TypeDecorationFlags::None;

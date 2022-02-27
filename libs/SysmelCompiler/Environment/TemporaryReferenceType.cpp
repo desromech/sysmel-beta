@@ -153,6 +153,11 @@ ASTNodePtr TemporaryReferenceType::analyzeUnboundMessageSendNode(const ASTMessag
     return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
 }
 
+ASTNodePtr TemporaryReferenceType::analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeCallNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
 bool TemporaryReferenceTypeValue::isTemporaryReferenceTypeValue() const
 {
     return true;

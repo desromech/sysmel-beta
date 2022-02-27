@@ -15,6 +15,7 @@
 #include "Environment/PrimitiveVectorType.hpp"
 #include "Environment/EnumType.hpp"
 #include "Environment/FunctionType.hpp"
+#include "Environment/ClosureType.hpp"
 #include "Environment/ArrayType.hpp"
 #include "Environment/ClassType.hpp"
 #include "Environment/StructureType.hpp"
@@ -119,8 +120,19 @@ AnyValuePtr LLVMLiteralValueVisitor::visitEnumTypeValue(const EnumTypeValuePtr &
 
 AnyValuePtr LLVMLiteralValueVisitor::visitFunctionTypeValue(const FunctionTypeValuePtr &value)
 {
+    if(validAnyValue(value->functionalImplementation)->isUndefined())
+        return wrapLLVMConstant(llvm::ConstantPointerNull::get(llvm::cast<llvm::PointerType> (translatedExpectedType)));
+
     auto functionValue = backend->translateGlobalValue(value->functionalImplementation->asSSAValueRequiredInPosition(ASTSourcePosition::empty()));
     return wrapLLVMConstant(llvm::cast<llvm::Constant> (functionValue));
+}
+
+AnyValuePtr LLVMLiteralValueVisitor::visitClosureTypeValue(const ClosureTypeValuePtr &value)
+{
+    if(validAnyValue(value->functionalImplementation)->isUndefined())
+        return wrapLLVMConstant(llvm::ConstantPointerNull::get(llvm::cast<llvm::PointerType> (translatedExpectedType)));
+
+    sysmelAssert("TODO LLVMLiteralValueVisitor::visitClosureTypeValue" && false);
 }
 
 AnyValuePtr LLVMLiteralValueVisitor::visitPointerLikeTypeValue(const PointerLikeTypeValuePtr &value)

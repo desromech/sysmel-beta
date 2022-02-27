@@ -4,6 +4,7 @@
 #include "Environment/RuntimeContext.hpp"
 #include "Environment/TypeVisitor.hpp"
 #include "Environment/LiteralValueVisitor.hpp"
+#include "Environment/SSAConstantLiteralValue.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
 #include "Environment/BootstrapMethod.hpp"
 
@@ -32,6 +33,7 @@ FunctionTypePtr FunctionType::make(const TypePtr &resultType, const TypePtrList 
     result->result = canonicalResultType;
     cache.insert({{canonicalResultType, canonicalArgumentTypes}, result});
     result->addSpecializedMethods();
+    result->addSpecializedInstanceMethods();
     return result;
 }
 
@@ -61,6 +63,12 @@ FunctionalTypeValuePtr FunctionType::makeValueWithImplementation(const AnyValueP
     resultValue->type = selfFromThis();
     resultValue->functionalImplementation = implementation;
     return resultValue;
+}
+
+FunctionalTypeValuePtr FunctionType::makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation)
+{
+    sysmelAssert(validAnyValue(environment)->isUndefined());
+    return makeValueWithImplementation(implementation);
 }
 
 SExpression FunctionType::asSExpression() const
@@ -110,11 +118,14 @@ AnyValuePtr FunctionTypeValue::acceptLiteralValueVisitor(const LiteralValueVisit
 
 AnyValuePtr FunctionTypeValue::applyWithArguments(const std::vector<AnyValuePtr> &arguments)
 {
-    return functionalImplementation->applyWithArguments(arguments);
+    return validAnyValue(functionalImplementation)->applyWithArguments(arguments);
 }
 
 SSAValuePtr FunctionTypeValue::asSSAValueRequiredInPosition(const ASTSourcePositionPtr &requiredSourcePosition)
 {
+    if(validAnyValue(functionalImplementation)->isUndefined())
+        return SSAConstantLiteralValue::makeWith(selfFromThis(), getType(), requiredSourcePosition);
+
     return functionalImplementation->asSSAValueRequiredInPosition(requiredSourcePosition);
 }
 

@@ -21,6 +21,22 @@ public:
     virtual bool isFunctionalType() const override;
     virtual ASTNodePtr analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer) override;
 
+    virtual bool supportsDynamicCompileTimeMessageSend() const override;
+
+    virtual bool isNullableType() const override;
+    virtual bool isImmutableType() override;
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
+
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
+    void addSpecializedInstanceMethods();
+
     size_t getArgumentCount() const;
     const TypePtr &getArgument(size_t index) const;
     const TypePtr &getResultType() const;

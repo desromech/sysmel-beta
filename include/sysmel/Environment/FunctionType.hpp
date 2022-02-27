@@ -25,6 +25,7 @@ public:
     virtual AnyValuePtr acceptTypeVisitor(const TypeVisitorPtr &visitor) override;
 
     virtual FunctionalTypeValuePtr makeValueWithImplementation(const AnyValuePtr &implementation) override;
+    virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation) override;
     virtual FunctionTypePtr copyWithResultType(const TypePtr &newResultType) override;
 
     virtual SExpression asSExpression() const override;

@@ -472,9 +472,11 @@ ASTNodePtr Type::analyzeMessageSendNodeWithTypeDefinedMethods(const ASTMessageSe
     // further discover more error, and then return the receiver to propagate an error node.
     if(isCompilationErrorValueType())
     {
-        sysmelAssert(node->receiver->analyzedType->isCompilationErrorValueType());
-        for(const auto &arg : node->arguments)
-            semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
+        if(node->receiver->analyzedType->isCompilationErrorValueType())
+        {
+            for(const auto &arg : node->arguments)
+                semanticAnalyzer->analyzeNodeIfNeededWithTemporaryAutoType(arg);
+        }
         return node->receiver;
     }
 

@@ -705,6 +705,8 @@ AnyValuePtr ASTSemanticAnalyzer::visitCallNode(const ASTCallNodePtr &node)
 ASTNodePtr ASTSemanticAnalyzer::analyzeCallNodeWithFunctionalType(const ASTCallNodePtr &node, const FunctionalTypePtr &functionType)
 {
     auto functionTypeArgumentCount = functionType->getArgumentCount();
+    node->function = analyzeNodeIfNeededWithExpectedType(node->function, functionType);
+    
     auto callArgumentCount = node->arguments.size();
     auto paramsType = functionType->getParamsType();
     auto hasCVarArg = false;

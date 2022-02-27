@@ -1407,8 +1407,11 @@ llvm::Value *SSALLVMValueVisitor::translateCallWithArguments(llvm::Value *called
     }
     else
     {
-        sysmelAssert(translatedFunctionType->isFunctionTy());
-        calledFunctionType = llvm::cast<llvm::FunctionType> (translatedFunctionType);
+        sysmelAssert(translatedFunctionType->isPointerTy());
+        auto unwrappedType = llvm::cast<llvm::PointerType> (translatedFunctionType)->getElementType();
+        sysmelAssert(unwrappedType->isFunctionTy());
+
+        calledFunctionType = llvm::cast<llvm::FunctionType> (unwrappedType);
     }
 
     // Pass the remaining arguments.
@@ -1789,7 +1792,7 @@ AnyValuePtr SSALLVMValueVisitor::visitSendMessageInstruction(const SSASendMessag
     {
         auto vtablePointer = builder->CreateLoad(builder->CreateConstInBoundsGEP2_32(nullptr, translatedReceiver, 0, instruction->getVirtualTableSlotIndex()));
         auto methodPointer = builder->CreateLoad(builder->CreateConstInBoundsGEP1_64(nullptr, vtablePointer, instruction->getVirtualTableEntrySlotIndex()));
-        auto expectedMethodPointerType = llvm::PointerType::getUnqual(backend->translateType(functionalType));
+        auto expectedMethodPointerType = backend->translateType(functionalType);
         dispatchedMethod = builder->CreateBitOrPointerCast(methodPointer, expectedMethodPointerType);
     }
     else

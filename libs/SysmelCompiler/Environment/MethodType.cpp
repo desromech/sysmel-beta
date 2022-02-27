@@ -30,6 +30,7 @@ MethodTypePtr MethodType::make(const TypePtr &receiverType, const TypePtr &resul
     result->result = canonicalResultType;
     result->setSupertypeAndImplicitMetaType(MethodTypeValue::__staticType__());
     cache.insert({{canonicalReceiverType, canonicalResultType, canonicalArgumentTypes}, result});
+    //result->addSpecializedInstanceMethods();
     return result;
 }
 

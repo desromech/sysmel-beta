@@ -1,7 +1,11 @@
 #include "Environment/FunctionalType.hpp"
+#include "Environment/RuntimeContext.hpp"
 #include "Environment/ASTSemanticAnalyzer.hpp"
 #include "Environment/SubclassResponsibility.hpp"
+#include "Environment/PrimitiveBooleanType.hpp"
+#include "Environment/Undefined.hpp"
 #include "Environment/BootstrapTypeRegistration.hpp"
+#include "Environment/BootstrapMethod.hpp"
 #include <sstream>
 
 namespace Sysmel
@@ -78,6 +82,88 @@ FunctionalTypeValuePtr FunctionalType::makeValueWithEnvironmentAndImplementation
 bool FunctionalType::hasAutoResultType() const
 {
     return result->isAutoType();
+}
+
+bool FunctionalType::supportsDynamicCompileTimeMessageSend() const
+{
+    return false;
+}
+
+bool FunctionalType::isNullableType() const
+{
+    return false;
+}
+
+bool FunctionalType::isImmutableType()
+{
+    return true;
+}
+
+bool FunctionalType::hasTrivialInitialization()
+{
+    return true;
+}
+
+bool FunctionalType::hasTrivialInitializationCopyingFrom()
+{
+    return true;
+}
+
+bool FunctionalType::hasTrivialInitializationMovingFrom()
+{
+    return true;
+}
+
+uint64_t FunctionalType::getMemorySize()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerSize;
+}
+
+uint64_t FunctionalType::getMemoryAlignment()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerAlignment;
+}
+
+bool FunctionalType::hasTrivialFinalization()
+{
+    return true;
+}
+
+bool FunctionalType::hasTrivialAssignCopyingFrom()
+{
+    return true;
+}
+
+bool FunctionalType::hasTrivialAssignMovingFrom()
+{
+    return true;
+}
+
+void FunctionalType::addSpecializedInstanceMethods()
+{
+    // nil -> functional.
+    addConstructor(makeIntrinsicConstructorWithSignature<FunctionalTypeValuePtr (FunctionalTypePtr, UndefinedPtr)> ("pointer.null", getType(), selfFromThis(), {Undefined::__staticType__()}, [=](const FunctionalTypePtr &, const UndefinedPtr &) -> FunctionalTypeValuePtr {
+        return staticObjectCast<FunctionalTypeValue> (makeValueWithEnvironmentAndImplementation(nullptr, nullptr));
+    }, MethodFlags::Pure));
+
+    auto booleanType = Boolean8::__staticType__();
+    addMethodCategories(MethodCategories{
+        {"comparisons", {
+            makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (FunctionalTypeValuePtr, FunctionalTypeValuePtr)> ("pointer.equals", "=", selfFromThis(), booleanType, {selfFromThis()}, [=](const FunctionalTypeValuePtr &a, const FunctionalTypeValuePtr &b) -> Boolean8Ptr {
+                return Boolean8::make(a == b);
+            }, MethodFlags::NotInCompileTime),
+            makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (FunctionalTypeValuePtr, FunctionalTypeValuePtr)> ("pointer.equals", "==", selfFromThis(), booleanType, {selfFromThis()}, [=](const FunctionalTypeValuePtr &a, const FunctionalTypeValuePtr &b) -> Boolean8Ptr {
+                return Boolean8::make(a == b);
+            }, MethodFlags::NotInCompileTime),
+
+            makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (FunctionalTypeValuePtr, FunctionalTypeValuePtr)> ("pointer.not-equals", "~=", selfFromThis(), booleanType, {selfFromThis()}, [=](const FunctionalTypeValuePtr &a, const FunctionalTypeValuePtr &b) -> Boolean8Ptr {
+                return Boolean8::make(a != b);
+            }, MethodFlags::NotInCompileTime),
+            makeIntrinsicMethodBindingWithSignature<Boolean8Ptr (FunctionalTypeValuePtr, FunctionalTypeValuePtr)> ("pointer.not-equals", "~~", selfFromThis(), booleanType, {selfFromThis()}, [=](const FunctionalTypeValuePtr &a, const FunctionalTypeValuePtr &b) -> Boolean8Ptr {
+                return Boolean8::make(a != b);
+            }, MethodFlags::NotInCompileTime),
+        }},
+    });
 }
 
 FunctionTypePtr FunctionalType::copyWithResultType(const TypePtr &newResultType)

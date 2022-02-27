@@ -205,6 +205,11 @@ ASTNodePtr ReferenceType::analyzeUnboundMessageSendNode(const ASTMessageSendNode
     return baseType->analyzeMessageSendNode(partiallyAnalyzedNode, semanticAnalyzer);
 }
 
+ASTNodePtr ReferenceType::analyzeCallNode(const ASTCallNodePtr &partiallyAnalyzedNode, const ASTSemanticAnalyzerPtr &semanticAnalyzer)
+{
+    return baseType->analyzeCallNode(partiallyAnalyzedNode, semanticAnalyzer);
+}
+
 bool ReferenceTypeValue::isReferenceTypeValue() const
 {
     return true;
