@@ -41,6 +41,56 @@ bool ClosureType::isClosureType() const
     return true;
 }
 
+bool ClosureType::isNullableType() const
+{
+    return false;
+}
+
+bool ClosureType::isImmutableType()
+{
+    return true;
+}
+
+bool ClosureType::hasTrivialInitialization()
+{
+    return true;
+}
+
+bool ClosureType::hasTrivialInitializationCopyingFrom()
+{
+    return true;
+}
+
+bool ClosureType::hasTrivialInitializationMovingFrom()
+{
+    return true;
+}
+
+uint64_t ClosureType::getMemorySize()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerSize;
+}
+
+uint64_t ClosureType::getMemoryAlignment()
+{
+    return RuntimeContext::getActive()->getTargetDescription().pointerAlignment;
+}
+
+bool ClosureType::hasTrivialFinalization()
+{
+    return true;
+}
+
+bool ClosureType::hasTrivialAssignCopyingFrom()
+{
+    return true;
+}
+
+bool ClosureType::hasTrivialAssignMovingFrom()
+{
+    return true;
+}
+
 AnyValuePtr ClosureType::acceptTypeVisitor(const TypeVisitorPtr &visitor)
 {
     return visitor->visitClosureType(selfFromThis());

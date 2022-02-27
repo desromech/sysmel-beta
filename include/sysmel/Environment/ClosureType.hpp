@@ -24,6 +24,18 @@ public:
     virtual std::string getQualifiedName() const override;
     virtual SExpression asSExpression() const override;
 
+    virtual bool isNullableType() const override;
+    virtual bool isImmutableType() override;
+    virtual bool hasTrivialInitialization() override;
+    virtual bool hasTrivialInitializationCopyingFrom() override;
+    virtual bool hasTrivialInitializationMovingFrom() override;
+    virtual bool hasTrivialFinalization() override;
+    virtual bool hasTrivialAssignCopyingFrom() override;
+    virtual bool hasTrivialAssignMovingFrom() override;
+
+    virtual uint64_t getMemorySize() override;
+    virtual uint64_t getMemoryAlignment() override;
+
     static ClosureTypePtr make(const TypePtr &resultType, const TypePtrList &arguments);
     
     virtual FunctionalTypeValuePtr makeValueWithEnvironmentAndImplementation(const AnyValuePtr &environment, const AnyValuePtr &implementation) override;
