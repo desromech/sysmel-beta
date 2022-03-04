@@ -5,6 +5,13 @@
 #ifndef _WIN32
 #include <limits.h>
 #include <unistd.h>
+
+#else
+#ifndef WIN32_LEAN_AND_MEAN 
+#define WIN32_LEAN_AND_MEAN 
+#endif
+
+#include <windows.h>
 #endif
 
 namespace Sysmel
@@ -260,13 +267,45 @@ std::string dirname(const std::string &path)
     return pos != std::string::npos ? path.substr(0, pos) : std::string();
 }
 
+
+#ifdef _WIN32
+std::wstring toUTF16(const std::string &s)
+{
+    auto requiredBufferSize = MultiByteToWideChar(CP_UTF8, 0, s.data(), int(s.size()), nullptr, 0);
+    if(requiredBufferSize == 0)
+        return std::wstring();
+
+    std::wstring result;
+    result.resize(requiredBufferSize);
+    MultiByteToWideChar(CP_UTF8, 0, s.data(), int(s.size()), result.data(), requiredBufferSize);
+    return result;
+}
+
+std::string toUTF8(const std::wstring &s)
+{
+    auto requiredBufferSize = WideCharToMultiByte(CP_UTF8, 0, s.data(), int(s.size()), nullptr, 0, nullptr, nullptr);
+    if(requiredBufferSize == 0)
+        return std::string();
+
+    std::string result;
+    result.resize(requiredBufferSize);
+    WideCharToMultiByte(CP_UTF8, 0, s.data(), int(s.size()), result.data(), requiredBufferSize, nullptr, nullptr);
+    return result;
+}
+
+#endif
+
 std::string makeAbsolutePath(const std::string &path)
 {
     if(path == "-")
         return path;
 
 #ifdef _WIN32
-    // TODO: Use GetFullPathName
+    std::vector<wchar_t> buffer;
+    buffer.resize(32767);
+
+    auto resultSize = GetFullPathNameW(toUTF16(path).c_str(), DWORD(buffer.size()), buffer.data(), NULL);
+    return toUTF8(std::wstring(buffer.data(), buffer.data() + resultSize));
 #else
     std::unique_ptr<char[]> buffer(new char[PATH_MAX+1]);
     auto result = realpath(path.c_str(), buffer.get());
