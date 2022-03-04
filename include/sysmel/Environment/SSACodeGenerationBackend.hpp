@@ -65,7 +65,9 @@ public:
     virtual void setMainInputFileName(const std::string &newInputFileName);
     virtual void setOutputFileName(const std::string &newOutputFileName);
     virtual void setEmitTargetIR(bool newEmitTargetIR);
+    virtual void setUseFastMath(bool useUseFastMath);
     virtual bool processAndWriteProgramModule(const ProgramModulePtr &programModule);
+
 
 
 protected:
@@ -76,6 +78,7 @@ protected:
     PICMode picMode = PICMode::Default;
     OptimizationLevel optimizationLevel = OptimizationLevel::O0;
     bool emitTargetIR = false;
+    bool useFastMath = false;
 };
 
 } // End of namespace Environment

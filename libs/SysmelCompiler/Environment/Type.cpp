@@ -1256,7 +1256,7 @@ ASTNodePtr Type::analyzeValueConstructionWithArguments(const ASTNodePtr &node, c
         auto argumentType = argument->analyzedType;
 
         // Copy constructor.
-        if(argumentType == selfFromThis())
+        if(argumentType->asDecayedType() == selfFromThis())
             return semanticAnalyzer->analyzeNodeIfNeededWithCurrentExpectedType(
                 expandCopyConstruction(semanticAnalyzer->makeMacroInvocationContextFor(node), argument)
             );

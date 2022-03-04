@@ -76,6 +76,11 @@ void SSACodeGenerationBackend::setEmitTargetIR(bool newEmitTargetIR)
     emitTargetIR = newEmitTargetIR;
 }
 
+void SSACodeGenerationBackend::setUseFastMath(bool newUseFastMath)
+{
+    useFastMath = newUseFastMath;
+}
+
 bool SSACodeGenerationBackend::processAndWriteProgramModule(const ProgramModulePtr &programModule)
 {
     (void)programModule;

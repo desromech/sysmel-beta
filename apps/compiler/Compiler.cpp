@@ -23,6 +23,7 @@ struct CompilerParameters
     SSACodeGenerationOutputMode outputMode = SSACodeGenerationOutputMode::Executable;
     DebugInformationType debugInformationType = DebugInformationType::None;
     OptimizationLevel optimizationLevel = OptimizationLevel::O0;
+    bool useFastMath = false;
     PICMode picMode = PICMode::Default;
     std::string moduleName;
     std::string outputFileName;
@@ -91,6 +92,7 @@ R"(sysmelc [options] (input files)+
 -O3
 -Os
 -Oz
+-ffast-math
 -fPIC
 -fPIE
 -semantic-analysis-only     No generation. For error detection and performance measurements.
@@ -171,6 +173,8 @@ int main(int argc, const char *argv[])
                 parameters.optimizationLevel = OptimizationLevel::Os;
             else if(arg == "-Oz")
                 parameters.optimizationLevel = OptimizationLevel::Oz;
+            else if(arg == "-ffast-math")
+                parameters.useFastMath = true;
             else if(arg == "-fPIC")
                 parameters.picMode = PICMode::PIC;
             else if(arg == "-fPIE")
@@ -246,6 +250,7 @@ int main(int argc, const char *argv[])
             backend->setOutputFileName(parameters.outputFileName);
             backend->setMainInputFileName(parameters.inputFileNames.front());
             backend->setOptimizationLevel(parameters.optimizationLevel);
+            backend->setUseFastMath(parameters.useFastMath);
             backend->setPICMode(parameters.picMode);
             backend->setEmitTargetIR(parameters.emitTargetIR);
             auto success = backend->processAndWriteProgramModule(programModule);

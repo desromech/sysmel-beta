@@ -90,9 +90,15 @@ void TargetNameAndFeatures::setTriple(const std::string &newTriple)
     if(stringBeginsWith(architecture, "arm"))
     {
         if(stringBeginsWith(architecture, "arm64"))
+        {
             subarchitecture = architecture.substr(5);
+            architecture = "arm64";
+        }
         else
+        {
             subarchitecture = architecture.substr(3);
+            architecture = "arm";
+        }
     }
 }
 

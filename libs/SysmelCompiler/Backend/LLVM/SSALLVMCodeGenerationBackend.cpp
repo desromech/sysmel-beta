@@ -611,7 +611,7 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
     if(currentTarget)
     {
         auto cpu = currentTargetNameAndFeatures.cpu;
-        auto features = "";
+        std::string features;
 
         llvm::TargetOptions opt;
 
@@ -624,11 +624,27 @@ bool SSALLVMCodeGenerationBackend::processAndWriteProgramModule(const ProgramMod
         if(isPic || isPie)
             relocationModel = llvm::Reloc::Model::PIC_;
 
+        if(!currentTargetNameAndFeatures.fpu.empty())
+        {
+            features.push_back('+');
+            features += currentTargetNameAndFeatures.fpu;
+        }
+
         // Float abi.
         if(currentTargetNameAndFeatures.floatAbi == "soft")
             opt.FloatABIType = llvm::FloatABI::Soft;
         else if(currentTargetNameAndFeatures.floatAbi == "hard")
             opt.FloatABIType = llvm::FloatABI::Hard;
+
+        if(useFastMath)
+        {
+            opt.UnsafeFPMath = true;
+            opt.NoInfsFPMath = true;
+            opt.NoNaNsFPMath = true;
+            opt.NoTrappingFPMath = true;
+            opt.NoSignedZerosFPMath = true;
+            opt.AllowFPOpFusion = llvm::FPOpFusion::Fast;
+        }
 
         currentTargetMachine = currentTarget->createTargetMachine(triple, cpu, features, opt, relocationModel);
         targetModule->setDataLayout(currentTargetMachine->createDataLayout());
